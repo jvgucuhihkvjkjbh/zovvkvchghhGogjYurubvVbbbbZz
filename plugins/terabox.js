@@ -6,12 +6,7 @@ const os = require('os');
 const crypto = require('crypto');
 const ffmpeg = require('fluent-ffmpeg');
 
-const tempFile = (ext) => {
-    return path.join(
-        os.tmpdir(),
-        `${crypto.randomBytes(6).toString('hex')}.${ext}`
-    );
-};
+const tempFile = (ext) => path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
 
 cmd({
     pattern: "terabox",
@@ -27,85 +22,44 @@ async (conn, mek, m, { from, q, reply }) => {
 
     try {
 
-        if (!q) {
-            return reply("❌ Please send a Terabox link");
-        }
+        if (!q) return reply("❌ Please send a Terabox link");
 
         const url = q.trim();
 
-        await conn.sendMessage(from, {
-            react: { text: "⏳", key: mek.key }
-        });
+        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
         const { data } = await axios.get(
             `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
-            {
-                timeout: 30000,
-                headers: {
-                    "User-Agent": "Mozilla/5.0"
-                }
-            }
+            { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
         );
 
-        if (!data.status || !data.result?.files?.length) {
-            return reply("❌ Failed to fetch video");
-        }
+        if (!data.status || !data.result?.files?.length) return reply("❌ Failed to fetch video");
 
         const file = data.result.files[0];
-
-        const streamUrl =
-            file?.streams?.["720p"] ||
-            file?.streams?.["480p"] ||
-            file?.streams?.["360p"];
-
+        const streamUrl = file?.streams?.["720p"] || file?.streams?.["480p"] || file?.streams?.["360p"];
         const downloadUrl = file?.download;
 
-        if (!streamUrl && !downloadUrl) {
-            return reply("❌ No downloadable video found");
-        }
+        if (!streamUrl && !downloadUrl) return reply("❌ No downloadable video found");
 
-        const quality =
-            file?.streams?.["720p"] ? "720p" :
-            file?.streams?.["480p"] ? "480p" :
-            "360p";
-
-        const fileName =
-            file.file_name ||
-            `terabox_${Date.now()}.mp4`;
-
-        const caption =
-`🎬 *${fileName}*
-
-📦 Size: ${file.size_mb || "Unknown"}
-📥 Quality: ${quality}
-
-> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+        const quality = file?.streams?.["720p"] ? "720p" : file?.streams?.["480p"] ? "480p" : "360p";
+        const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
+        const caption = `🎬 *${fileName}*\n\n📦 Size: ${file.size_mb || "Unknown"}\n📥 Quality: ${quality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
         if (file.thumbnail) {
             try {
-                await conn.sendMessage(from, {
-                    image: { url: file.thumbnail },
-                    caption
-                }, { quoted: mek });
+                await conn.sendMessage(from, { image: { url: file.thumbnail }, caption }, { quoted: mek });
             } catch {}
         }
 
         outputPath = tempFile('mp4');
 
-        await reply("⏳ Downloading video...");
-
         try {
-
             await new Promise((resolve, reject) => {
-
                 ffmpeg(streamUrl)
                     .inputOptions([
-                        '-protocol_whitelist',
-                        'file,http,https,tcp,tls,crypto',
-                        '-allowed_extensions',
-                        'ALL',
-                        '-headers',
-                        'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
+                        '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
+                        '-allowed_extensions', 'ALL',
+                        '-headers', 'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
                     ])
                     .outputOptions([
                         '-c:v copy',
@@ -117,34 +71,25 @@ async (conn, mek, m, { from, q, reply }) => {
                     .on('end', resolve)
                     .on('error', reject)
                     .save(outputPath);
-
             });
-
         } catch {
-
-            const videoBuffer = await axios.get(downloadUrl, {
+            const res = await axios.get(downloadUrl, {
                 responseType: 'arraybuffer',
-                headers: {
-                    "User-Agent": "Mozilla/5.0"
-                }
+                timeout: 600000,
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
+                headers: { "User-Agent": "Mozilla/5.0" }
             });
-
-            fs.writeFileSync(outputPath, videoBuffer.data);
-
+            fs.writeFileSync(outputPath, res.data);
         }
 
-        if (!fs.existsSync(outputPath)) {
-            return reply("❌ Conversion failed");
-        }
+        if (!fs.existsSync(outputPath)) return reply("❌ Download failed");
 
         const stats = fs.statSync(outputPath);
-
         if (stats.size < 10000) {
             fs.unlinkSync(outputPath);
-            return reply("❌ Invalid video generated");
+            return reply("❌ Invalid video file");
         }
-
-        await reply("⏳ Uploading document...");
 
         await conn.sendMessage(from, {
             document: fs.readFileSync(outputPath),
@@ -153,26 +98,13 @@ async (conn, mek, m, { from, q, reply }) => {
             caption
         }, { quoted: mek });
 
-        await conn.sendMessage(from, {
-            react: { text: "✅", key: mek.key }
-        });
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
     } catch (e) {
-
-        console.log("TERABOX ERROR:", e);
-
-        await conn.sendMessage(from, {
-            react: { text: "❌", key: mek.key }
-        });
-
+        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
         reply(`❌ ${e.message}`);
-
     } finally {
-
-        if (outputPath && fs.existsSync(outputPath)) {
-            fs.unlinkSync(outputPath);
-        }
-
+        if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
     }
 
 });
