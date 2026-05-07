@@ -2,24 +2,41 @@ const { cmd } = require('../command');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const ffmpeg = require('fluent-ffmpeg');
+const os = require('os');
+const crypto = require('crypto');
+
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const { spawn } = require('child_process');
+
+const tempFile = (ext) => {
+    return path.join(
+        os.tmpdir(),
+        `${crypto.randomBytes(6).toString('hex')}.${ext}`
+    );
+};
 
 cmd({
     pattern: "terabox",
     alias: ["tera", "tbx"],
-    desc: "Download Terabox stream as mp4",
+    desc: "Download Terabox stream",
     category: "download",
     react: "📦",
     filename: __filename
 },
 async (conn, mek, m, { from, q, reply }) => {
 
-    let outputPath;
+    let outputPath = null;
 
     try {
 
         if (!q) {
-            return reply("❌ Please send a Terabox link");
+            return reply("❌ Please send a Terabox URL");
+        }
+
+        const inputUrl = q.trim();
+
+        if (!inputUrl.startsWith("http")) {
+            return reply("❌ Invalid URL");
         }
 
         await conn.sendMessage(from, {
@@ -29,31 +46,36 @@ async (conn, mek, m, { from, q, reply }) => {
             }
         });
 
-        
+        // API REQUEST
         let response;
 
         try {
 
             response = await axios.get(
-                `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(q)}`,
+                "https://jerryproxy.vercel.app/api/download",
                 {
-                    timeout: 30000,
+                    params: {
+                        url: inputUrl
+                    },
+                    timeout: 60000,
                     headers: {
-                        "User-Agent": "Mozilla/5.0"
+                        "User-Agent": "Mozilla/5.0",
+                        "Referer": "https://terabox.com/"
                     }
                 }
             );
 
         } catch (apiError) {
 
-            console.log("API ERROR:", apiError);
+            console.log("API ERROR:");
+            console.log(apiError?.response?.data || apiError);
 
             if (apiError.response) {
 
                 return reply(
                     `❌ API Error\n\n` +
                     `Status: ${apiError.response.status}\n` +
-                    `Response:\n${
+                    `${
                         typeof apiError.response.data === "object"
                             ? JSON.stringify(apiError.response.data, null, 2)
                             : apiError.response.data
@@ -61,36 +83,30 @@ async (conn, mek, m, { from, q, reply }) => {
                 );
             }
 
-            if (apiError.code === "ECONNABORTED") {
-                return reply("❌ API request timeout");
-            }
-
-            return reply(`❌ API Failed\n\n${apiError.message}`);
+            return reply(
+                `❌ API Failed\n\n${apiError.message}`
+            );
         }
 
         const data = response.data;
 
-        console.log("FULL API RESPONSE:");
+        console.log("API RESPONSE:");
         console.log(JSON.stringify(data, null, 2));
 
         if (!data.status || !data.result?.files?.length) {
-            return reply(
-                `❌ Invalid API Response\n\n${JSON.stringify(data, null, 2)}`
-            );
+            return reply("❌ Invalid API response");
         }
 
         const file = data.result.files[0];
 
-        
+        // QUALITY SELECT
         const streamUrl =
             file?.streams?.["720p"] ||
             file?.streams?.["480p"] ||
             file?.streams?.["360p"];
 
         if (!streamUrl) {
-            return reply(
-                `❌ No stream URL found\n\n${JSON.stringify(file, null, 2)}`
-            );
+            return reply("❌ No playable stream found");
         }
 
         const quality =
@@ -109,9 +125,9 @@ async (conn, mek, m, { from, q, reply }) => {
 📥 *Quality:* ${quality}
 📦 *Size:* ${file.size_mb || "Unknown"}
 
-> ⚡ Powered By  Proxy ⚡`;
+> ⚡ Powered By Proxy ⚡`;
 
-        
+        // THUMBNAIL
         if (file.thumbnail) {
 
             try {
@@ -125,124 +141,112 @@ async (conn, mek, m, { from, q, reply }) => {
                     quoted: mek
                 });
 
-            } catch (thumbError) {
+            } catch (thumbErr) {
 
-                console.log("THUMB ERROR:", thumbError.message);
+                console.log("THUMB ERROR:");
+                console.log(thumbErr.message);
 
             }
         }
 
-        
-        outputPath = path.join(
-            process.cwd(),
-            `terabox_${Date.now()}.mp4`
-        );
+        // OUTPUT FILE
+        outputPath = tempFile("mp4");
 
         await conn.sendMessage(from, {
-            text: "_Converting stream to mp4..._"
+            text: "_Downloading & converting video..._"
         }, {
             quoted: mek
         });
 
-        
-        try {
-
-            await axios.get(streamUrl, {
-                timeout: 15000,
-                headers: {
-                    "User-Agent": "Mozilla/5.0",
-                    "Referer": "https://www.terabox.com/"
-                }
-            });
-
-            console.log("STREAM ACCESS SUCCESS");
-
-        } catch (streamError) {
-
-            console.log("STREAM ERROR:", streamError);
-
-            return reply(
-                `❌ Stream Error\n\n` +
-                `Status: ${streamError?.response?.status || "Unknown"}\n` +
-                `Message: ${streamError.message}`
-            );
-        }
-
-        
+        // FFMPEG SPAWN
         await new Promise((resolve, reject) => {
 
-            ffmpeg(streamUrl)
+            const ffmpeg = spawn(ffmpegPath, [
 
-                .inputOptions([
-                    "-protocol_whitelist",
-                    "file,http,https,tcp,tls,crypto",
-                    "-allowed_extensions",
-                    "ALL",
-                    "-reconnect",
-                    "1",
-                    "-reconnect_streamed",
-                    "1",
-                    "-reconnect_delay_max",
-                    "5",
-                    "-user_agent",
-                    "Mozilla/5.0"
-                ])
+                '-y',
 
-                .outputOptions([
-                    "-c:v",
-                    "copy",
-                    "-c:a",
-                    "aac",
-                    "-bsf:a",
-                    "aac_adtstoasc",
-                    "-movflags",
-                    "+faststart"
-                ])
+                '-protocol_whitelist',
+                'file,http,https,tcp,tls,crypto,data',
 
-                .format("mp4")
+                '-allowed_extensions',
+                'ALL',
 
-                .save(outputPath)
+                '-user_agent',
+                'Mozilla/5.0',
 
-                .on("start", commandLine => {
+                '-headers',
+                'Referer: https://terabox.com/\r\n',
 
-                    console.log("FFMPEG COMMAND:");
-                    console.log(commandLine);
+                '-i',
+                streamUrl,
 
-                })
+                '-map',
+                '0:v?',
 
-                .on("stderr", stderrLine => {
+                '-map',
+                '0:a?',
 
-                    console.log("FFMPEG STDERR:");
-                    console.log(stderrLine);
+                '-c:v',
+                'copy',
 
-                })
+                '-c:a',
+                'aac',
 
-                .on("end", () => {
+                '-bsf:a',
+                'aac_adtstoasc',
 
-                    console.log("FFMPEG FINISHED");
-                    resolve();
+                '-movflags',
+                '+faststart',
 
-                })
+                outputPath
 
-                .on("error", err => {
+            ], {
+                timeout: 1000 * 60 * 15
+            });
 
-                    console.log("FFMPEG FULL ERROR:");
-                    console.log(err);
+            let stderr = '';
 
-                    reject(
+            ffmpeg.stderr.on('data', (data) => {
+
+                const text = data.toString();
+
+                stderr += text;
+
+                console.log("FFMPEG:", text);
+
+            });
+
+            ffmpeg.on('close', async (code) => {
+
+                console.log("FFMPEG EXIT CODE:", code);
+
+                if (code !== 0) {
+
+                    return reject(
                         new Error(
-                            err.message ||
-                            "Unknown ffmpeg conversion error"
+                            stderr || `FFmpeg failed with code ${code}`
                         )
                     );
+                }
 
-                });
+                resolve();
+
+            });
+
+            ffmpeg.on('error', (err) => {
+
+                console.log("SPAWN ERROR:");
+                console.log(err);
+
+                reject(err);
+
+            });
 
         });
 
-       
+        // CHECK OUTPUT
         if (!fs.existsSync(outputPath)) {
-            return reply("❌ Output file not generated");
+            return reply("❌ Output file not created");
         }
 
         const stats = fs.statSync(outputPath);
@@ -253,12 +257,10 @@ async (conn, mek, m, { from, q, reply }) => {
 
             fs.unlinkSync(outputPath);
 
-            return reply(
-                `❌ Corrupted video generated\n\nSize: ${stats.size} bytes`
-            );
+            return reply("❌ Corrupted video generated");
         }
 
-       
+        // SEND FILE
         await conn.sendMessage(from, {
             document: fs.readFileSync(outputPath),
             mimetype: "video/mp4",
@@ -268,7 +270,7 @@ async (conn, mek, m, { from, q, reply }) => {
             quoted: mek
         });
 
-        
+        // CLEANUP
         if (fs.existsSync(outputPath)) {
             fs.unlinkSync(outputPath);
         }
@@ -296,12 +298,8 @@ async (conn, mek, m, { from, q, reply }) => {
             }
         });
 
-       
         return reply(
-            `❌ Error Details\n\n` +
-            `Name: ${error.name}\n` +
-            `Message: ${error.message}\n\n` +
-            `Check terminal for full logs`
+            `❌ Error\n\n${error.message}`
         );
     }
 });
