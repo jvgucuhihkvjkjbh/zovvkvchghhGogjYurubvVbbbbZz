@@ -7,7 +7,7 @@ const path = require('path');
 cmd({
     pattern: "terabox",
     alias: ["tera", "tbx"],
-    desc: "Download Terabox video fast",
+    desc: "Download Terabox videos",
     category: "download",
     react: "📦",
     filename: __filename
@@ -17,7 +17,7 @@ async (conn, mek, m, { from, q, reply }) => {
     try {
 
         if (!q) {
-            return reply("❌ Terabox link do\nExample: .terabox https://terasharefile.com/s/xxxx");
+            return reply("❌ Terabox link do\nExample: .terabox https://1024terabox.com/s/xxxx");
         }
 
         const url = q.trim();
@@ -34,18 +34,21 @@ async (conn, mek, m, { from, q, reply }) => {
             "nephobox.com"
         ];
 
-        const isValid = validDomains.some(d => url.includes(d));
+        const isValid = validDomains.some(domain => url.includes(domain));
 
         if (!isValid) {
             return reply("❌ Valid Terabox link do");
         }
 
         await conn.sendMessage(from, {
-            react: { text: "⏳", key: mek.key }
+            react: {
+                text: "⏳",
+                key: mek.key
+            }
         });
 
         const response = await axios.get(
-            `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
+            `https://jerrycoder.oggyapi.workers.dev/turbo?url=${encodeURIComponent(url)}`,
             {
                 timeout: 60000
             }
@@ -57,19 +60,19 @@ async (conn, mek, m, { from, q, reply }) => {
             return reply("❌ Download failed");
         }
 
-        const streamUrl = data.stream || data.download;
+        const videoUrl = data.download || data.stream;
 
-        if (!streamUrl) {
-            return reply("❌ Video stream not found");
+        if (!videoUrl) {
+            return reply("❌ Video URL not found");
         }
 
         const fileName = data.title || `ADEEL-MD_${Date.now()}.mp4`;
 
+        const thumb = data.thumbnail || null;
+
         const sizeMB = data.size
             ? (Number(data.size) / 1024 / 1024).toFixed(2) + " MB"
             : "Unknown";
-
-        const thumb = data.thumbnail || "";
 
         const outputPath = path.join(
             __dirname,
@@ -82,22 +85,28 @@ async (conn, mek, m, { from, q, reply }) => {
 
 > ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
-        if (thumb && thumb !== "") {
+        if (thumb) {
 
             await conn.sendMessage(from, {
-                image: { url: thumb },
+                image: {
+                    url: thumb
+                },
                 caption
-            }, { quoted: mek });
+            }, {
+                quoted: mek
+            });
 
         }
 
         await conn.sendMessage(from, {
             text: "⏳ Converting video..."
-        }, { quoted: mek });
+        }, {
+            quoted: mek
+        });
 
         await new Promise((resolve, reject) => {
 
-            ffmpeg(streamUrl)
+            ffmpeg(videoUrl)
                 .inputOptions([
                     "-protocol_whitelist",
                     "file,http,https,tcp,tls,crypto",
@@ -124,14 +133,19 @@ async (conn, mek, m, { from, q, reply }) => {
             mimetype: "video/mp4",
             fileName,
             caption
-        }, { quoted: mek });
+        }, {
+            quoted: mek
+        });
 
         if (fs.existsSync(outputPath)) {
             fs.unlinkSync(outputPath);
         }
 
         await conn.sendMessage(from, {
-            react: { text: "✅", key: mek.key }
+            react: {
+                text: "✅",
+                key: mek.key
+            }
         });
 
     } catch (e) {
@@ -139,7 +153,10 @@ async (conn, mek, m, { from, q, reply }) => {
         console.log("TERABOX ERROR:", e);
 
         await conn.sendMessage(from, {
-            react: { text: "❌", key: mek.key }
+            react: {
+                text: "❌",
+                key: mek.key
+            }
         });
 
         reply("❌ Error occurred while processing Terabox link");
