@@ -100,8 +100,8 @@ async (conn, mek, m, { from, q, reply }) => {
                     'file,http,https,tcp,tls,crypto',
                     '-allowed_extensions',
                     'ALL',
-                    '-user_agent',
-                    'Mozilla/5.0'
+                    '-headers',
+                    'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
                 ])
                 .outputOptions([
                     '-c:v copy',
@@ -110,8 +110,17 @@ async (conn, mek, m, { from, q, reply }) => {
                     '-movflags +faststart'
                 ])
                 .format('mp4')
+                .on('start', cmd => {
+                    console.log('FFMPEG START:', cmd);
+                })
+                .on('stderr', line => {
+                    console.log('FFMPEG:', line);
+                })
                 .on('end', resolve)
-                .on('error', reject)
+                .on('error', err => {
+                    console.log('FFMPEG ERROR:', err.message);
+                    reject(err);
+                })
                 .save(outputPath);
 
         });
