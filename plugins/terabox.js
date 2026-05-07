@@ -45,100 +45,47 @@ async (conn, mek, m, { from, q, reply }) => {
             }
         });
 
-        let data;
-
         // =========================
-        // API 1
+        // ONLY API 2
         // =========================
 
-        try {
-
-            const api1 = await axios.get(
-                `https://jerrycoder.oggyapi.workers.dev/turbo?url=${encodeURIComponent(url)}`,
-                {
-                    timeout: 30000
-                }
-            );
-
-            if (api1.data && api1.data.status === "success") {
-
-                data = {
-                    type: "api1",
-                    title: api1.data.title,
-                    size: api1.data.size,
-                    thumbnail: api1.data.thumbnail,
-                    download: api1.data.download || api1.data.stream
-                };
-
+        const response = await axios.get(
+            `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
+            {
+                timeout: 30000
             }
+        );
 
-        } catch (e) {
-            console.log("API1 Failed");
+        const res = response.data;
+
+        if (
+            !res.status ||
+            !res.result ||
+            !res.result.files ||
+            !res.result.files.length
+        ) {
+            return reply("❌ Download failed. Try another link.");
         }
 
-        // =========================
-        // API 2 Fallback
-        // =========================
+        const file = res.result.files[0];
 
-        if (!data) {
+        const title = file.file_name || "video.mp4";
+        const size = file.size_mb || "Unknown";
+        const thumbnail = file.thumbnail;
 
-            try {
+        const videoUrl =
+            file.download ||
+            file.streams?.["720p"] ||
+            file.streams?.["480p"] ||
+            file.streams?.["360p"];
 
-                const api2 = await axios.get(
-                    `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
-                    {
-                        timeout: 30000
-                    }
-                );
-
-                const res = api2.data;
-
-                if (
-                    res.status &&
-                    res.result &&
-                    res.result.files &&
-                    res.result.files.length > 0
-                ) {
-
-                    const file = res.result.files[0];
-
-                    data = {
-                        type: "api2",
-                        title: file.file_name,
-                        size: file.size_mb || "Unknown",
-                        thumbnail: file.thumbnail,
-                        download:
-                            file.download ||
-                            file.streams?.["720p"] ||
-                            file.streams?.["480p"] ||
-                            file.streams?.["360p"]
-                    };
-
-                }
-
-            } catch (e) {
-                console.log("API2 Failed");
-            }
-
+        if (!videoUrl) {
+            return reply("❌ Video URL not found.");
         }
 
-        // =========================
-        // Final Check
-        // =========================
+        const caption = `🎬 *${title}*
 
-        if (!data || !data.download) {
-            return reply("❌ Download failed. Try another Terabox link.");
-        }
-
-        let sizeText = data.size;
-
-        if (!isNaN(sizeText)) {
-            sizeText = (Number(sizeText) / 1024 / 1024).toFixed(2) + " MB";
-        }
-
-        const caption = `🎬 *${data.title}*
-
-📦 Size: ${sizeText}
+📦 Size: ${size}
 
 > ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
@@ -146,11 +93,11 @@ async (conn, mek, m, { from, q, reply }) => {
         // Thumbnail
         // =========================
 
-        if (data.thumbnail) {
+        if (thumbnail) {
 
             await conn.sendMessage(from, {
                 image: {
-                    url: data.thumbnail
+                    url: thumbnail
                 },
                 caption: caption
             }, {
@@ -160,15 +107,15 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         // =========================
-        // Video Send
+        // Send Video
         // =========================
 
         await conn.sendMessage(from, {
             video: {
-                url: data.download
+                url: videoUrl
             },
             mimetype: "video/mp4",
-            fileName: data.title,
+            fileName: title,
             caption: caption
         }, {
             quoted: mek
