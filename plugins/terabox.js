@@ -89,10 +89,6 @@ async (conn, mek, m, { from, q, reply }) => {
             }
         }
 
-        await conn.sendMessage(from, {
-            text: `⬇️ *Downloading... Please wait*\n📦 Size: ${videoData.size}`
-        }, { quoted: mek });
-
         outputPath = path.join(process.cwd(), `terabox_${Date.now()}.mp4`);
 
         const downloadFile = async (downloadUrl) => {
