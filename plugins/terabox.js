@@ -6,8 +6,8 @@ const path = require('path');
 
 cmd({
     pattern: "terabox",
-    alias: ["tera", "tbx"],
-    desc: "Download Terabox video as document",
+    alias: ["tera", "tbx", "terabox2"],
+    desc: "Download Terabox video",
     category: "download",
     react: "📦",
     filename: __filename
@@ -21,104 +21,150 @@ async (conn, mek, m, { from, q, reply }) => {
 
         const url = q.trim();
 
-        const validDomains = [
-            "terabox.com",
-            "1024terabox.com",
-            "terasharefile.com",
-            "1024tera.com",
-            "teraboxapp.com",
-            "terabox.app",
-            "4funbox.com",
-            "mirrorbox.com",
-            "nephobox.com",
-            "freeterabox.com"
-        ];
-
-        const isValid = validDomains.some(d => url.includes(d));
-
-        if (!isValid) {
-            return reply("❌ Valid Terabox link do");
-        }
-
         await conn.sendMessage(from, {
             react: { text: "⏳", key: mek.key }
         });
 
-        const api = `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`;
+        // ======================
+        // API REQUEST
+        // ======================
 
-        const res = await axios.get(api, {
-            timeout: 60000
-        });
+        const response = await axios.get(
+            `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
+            { timeout: 30000 }
+        );
 
-        const data = res.data;
+        const data = response.data;
 
         if (!data.status || !data.result?.files?.length) {
-            return reply("❌ Download failed");
+            return reply("❌ Failed to fetch video info");
         }
 
         const file = data.result.files[0];
 
-        const streamUrl =
-            file?.streams?.["720p"] ||
-            file?.streams?.["480p"] ||
-            file?.streams?.["360p"];
+        // ======================
+        // GET BEST STREAM URL
+        // ======================
 
-        if (!streamUrl) {
-            return reply("❌ Stream URL not found");
+        const streams = file?.streams || {};
+        const streamUrl =
+            streams["720p"] ||
+            streams["480p"] ||
+            streams["360p"] ||
+            file.download;
+
+        const directDownload = file.download;
+
+        if (!streamUrl && !directDownload) {
+            return reply("❌ No download URL found");
         }
+
+        const quality =
+            streams["720p"] ? "720p" :
+            streams["480p"] ? "480p" :
+            streams["360p"] ? "360p" : "Original";
 
         const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
-
-        const thumb =
-            file.thumbnail ||
-            file.raw?.file?.thumbs?.url3 ||
-            file.raw?.file?.thumbs?.url2;
-
         const size = file.size_mb || "Unknown";
+        const thumbnail = file.thumbnail || "";
 
-        const caption = `🎬 *${fileName}*
+        const caption = `🎬 *${fileName}*\n\n📦 Size: ${size}\n🎞️ Quality: ${quality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
-📦 Size: ${size}
+        // ======================
+        // THUMBNAIL
+        // ======================
 
-> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
-
-        if (thumb) {
-            await conn.sendMessage(from, {
-                image: { url: thumb },
-                caption
-            }, { quoted: mek });
+        if (thumbnail) {
+            try {
+                await conn.sendMessage(from, {
+                    image: { url: thumbnail },
+                    caption: caption
+                }, { quoted: mek });
+            } catch (e) {
+                console.log("Thumbnail send failed:", e.message);
+            }
         }
 
-        await reply("⏳ Converting video...");
+        // ======================
+        // DOWNLOAD VIDEO
+        // ======================
 
-        const outputPath = path.join(
-            __dirname,
-            `../temp/${Date.now()}.mp4`
-        );
+        await conn.sendMessage(from, {
+            text: "⬇️ *Downloading Video...*"
+        }, { quoted: mek });
 
-        await new Promise((resolve, reject) => {
-            ffmpeg(streamUrl)
-                .inputOptions([
-                    "-protocol_whitelist",
-                    "file,http,https,tcp,tls,crypto",
-                    "-allowed_extensions",
-                    "ALL",
-                    "-user_agent",
-                    "Mozilla/5.0"
-                ])
-                .outputOptions([
-                    "-c:v copy",
-                    "-c:a aac",
-                    "-bsf:a aac_adtstoasc",
-                    "-movflags +faststart"
-                ])
-                .format("mp4")
-                .save(outputPath)
-                .on("end", resolve)
-                .on("error", reject);
-        });
+        const outputPath = path.join(process.cwd(), `terabox_${Date.now()}.mp4`);
 
-        await reply("📤 Uploading document...");
+        // If stream is HLS (.m3u8), convert with ffmpeg
+        // If direct download link, download with axios (faster)
+
+        if (streamUrl && streamUrl.includes(".m3u8")) {
+
+            await new Promise((resolve, reject) => {
+                ffmpeg(streamUrl)
+                    .inputOptions([
+                        "-protocol_whitelist", "file,http,https,tcp,tls,crypto",
+                        "-allowed_extensions", "ALL"
+                    ])
+                    .outputOptions([
+                        "-c copy",
+                        "-bsf:a", "aac_adtstoasc"
+                    ])
+                    .format("mp4")
+                    .on("start", (cmd) => console.log("FFmpeg started:", cmd))
+                    .on("progress", (p) => console.log("Progress:", p.percent + "%"))
+                    .on("end", () => {
+                        console.log("FFmpeg done");
+                        resolve();
+                    })
+                    .on("error", (err) => {
+                        console.log("FFMPEG ERROR:", err.message);
+                        reject(err);
+                    })
+                    .save(outputPath);
+            });
+
+        } else {
+
+            // Direct download with axios (for non-HLS)
+            const writer = fs.createWriteStream(outputPath);
+            const dlResponse = await axios({
+                method: "GET",
+                url: directDownload || streamUrl,
+                responseType: "stream",
+                timeout: 120000,
+                headers: {
+                    "User-Agent": "Mozilla/5.0"
+                }
+            });
+
+            await new Promise((resolve, reject) => {
+                dlResponse.data.pipe(writer);
+                writer.on("finish", resolve);
+                writer.on("error", reject);
+            });
+
+        }
+
+        // ======================
+        // CHECK FILE EXISTS
+        // ======================
+
+        if (!fs.existsSync(outputPath)) {
+            return reply("❌ Download failed — file not created");
+        }
+
+        const fileStat = fs.statSync(outputPath);
+        console.log("Downloaded file size:", fileStat.size, "bytes");
+
+        if (fileStat.size < 10000) {
+            fs.unlinkSync(outputPath);
+            return reply("❌ Downloaded file is too small — something went wrong");
+        }
+
+        // ======================
+        // SEND VIDEO
+        // ======================
 
         await conn.sendMessage(from, {
             document: fs.readFileSync(outputPath),
@@ -126,6 +172,10 @@ async (conn, mek, m, { from, q, reply }) => {
             fileName: fileName,
             caption: caption
         }, { quoted: mek });
+
+        // ======================
+        // CLEANUP
+        // ======================
 
         if (fs.existsSync(outputPath)) {
             fs.unlinkSync(outputPath);
@@ -136,8 +186,13 @@ async (conn, mek, m, { from, q, reply }) => {
         });
 
     } catch (e) {
-        console.log("TERABOX ERROR:", e);
 
-        return reply("❌ Error occurred while downloading");
+        console.log("TERABOX ERROR:", e.message || e);
+
+        await conn.sendMessage(from, {
+            react: { text: "❌", key: mek.key }
+        });
+
+        reply(`❌ Error: ${e.message || "Unknown error"}`);
     }
 });
