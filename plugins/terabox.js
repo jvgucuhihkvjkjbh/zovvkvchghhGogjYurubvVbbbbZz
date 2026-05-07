@@ -1,5 +1,8 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+const path = require('path');
 
 cmd({
     pattern: "terabox",
@@ -46,7 +49,7 @@ async (conn, mek, m, { from, q, reply }) => {
         });
 
         // =========================
-        // ONLY API 2
+        // API REQUEST
         // =========================
 
         const response = await axios.get(
@@ -56,42 +59,62 @@ async (conn, mek, m, { from, q, reply }) => {
             }
         );
 
-        const res = response.data;
+        const data = response.data;
 
         if (
-            !res.status ||
-            !res.result ||
-            !res.result.files ||
-            !res.result.files.length
+            !data.status ||
+            !data.result ||
+            !data.result.files ||
+            !data.result.files.length
         ) {
-            return reply("❌ Download failed. Try another link.");
+            return reply("❌ Failed to fetch video");
         }
 
-        const file = res.result.files[0];
+        const file = data.result.files[0];
 
-        const title = file.file_name || "video.mp4";
-        const size = file.size_mb || "Unknown";
-        const thumbnail = file.thumbnail;
+        // =========================
+        // STREAM URL
+        // =========================
 
-        const videoUrl =
-            file.download ||
-            file.streams?.["720p"] ||
-            file.streams?.["480p"] ||
-            file.streams?.["360p"];
+        const streamUrl =
+            file?.streams?.["360p"] ||
+            file?.streams?.["480p"] ||
+            file?.streams?.["720p"];
 
-        if (!videoUrl) {
-            return reply("❌ Video URL not found.");
+        if (!streamUrl) {
+            return reply("❌ No playable stream found");
         }
 
-        const caption = `🎬 *${title}*
+        // =========================
+        // FILE INFO
+        // =========================
+
+        const fileName =
+            file.file_name || `terabox_${Date.now()}.mp4`;
+
+        const quality =
+            file?.streams?.["360p"]
+                ? "360p"
+                : file?.streams?.["480p"]
+                ? "480p"
+                : "720p";
+
+        const size =
+            file.size_mb || "Unknown";
+
+        const thumbnail =
+            file.thumbnail || null;
+
+        // =========================
+        // THUMBNAIL
+        // =========================
+
+        const caption = `🎬 *${fileName}*
 
 📦 Size: ${size}
+🎞️ Quality: ${quality}
 
 > ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
-
-        // =========================
-        // Thumbnail
-        // =========================
 
         if (thumbnail) {
 
@@ -107,19 +130,68 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         // =========================
-        // Send Video
+        // CONVERTING
         // =========================
 
         await conn.sendMessage(from, {
-            video: {
-                url: videoUrl
-            },
+            text: "⏳ *Converting stream to mp4...*"
+        }, {
+            quoted: mek
+        });
+
+        const outputPath = path.join(
+            __dirname,
+            `terabox_${Date.now()}.mp4`
+        );
+
+        await new Promise((resolve, reject) => {
+
+            ffmpeg(streamUrl)
+
+                .inputOptions([
+                    "-protocol_whitelist",
+                    "file,http,https,tcp,tls,crypto",
+                    "-allowed_extensions",
+                    "ALL",
+                    "-user_agent",
+                    "Mozilla/5.0"
+                ])
+
+                .outputOptions([
+                    "-c:v copy",
+                    "-c:a aac",
+                    "-bsf:a aac_adtstoasc",
+                    "-movflags +faststart"
+                ])
+
+                .format("mp4")
+                .save(outputPath)
+
+                .on("end", resolve)
+                .on("error", reject);
+
+        });
+
+        // =========================
+        // SEND DOCUMENT
+        // =========================
+
+        await conn.sendMessage(from, {
+            document: fs.readFileSync(outputPath),
             mimetype: "video/mp4",
-            fileName: title,
+            fileName: fileName,
             caption: caption
         }, {
             quoted: mek
         });
+
+        // =========================
+        // CLEAN FILE
+        // =========================
+
+        if (fs.existsSync(outputPath)) {
+            fs.unlinkSync(outputPath);
+        }
 
         await conn.sendMessage(from, {
             react: {
