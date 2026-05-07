@@ -14,145 +14,142 @@ cmd({
 async (conn, mek, m, { from, q, reply }) => {
     try {
 
-        if (!q) {
-            return reply("❌ Terabox link do");
-        }
+        if (!q) return reply("❌ Please send a Terabox link");
 
         const url = q.trim();
+        let videoData = null;
+        let outputPath = null;
 
-        await conn.sendMessage(from, {
-            react: { text: "⏳", key: mek.key }
-        });
+        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        // ======================
-        // API REQUEST
-        // ======================
+        const tryAPI1 = async () => {
+            const res = await axios.get(
+                `https://jerrycoder.oggyapi.workers.dev/turbo?url=${encodeURIComponent(url)}`,
+                { timeout: 25000, headers: { "User-Agent": "Mozilla/5.0" } }
+            );
+            const d = res.data;
+            if (d.status !== "success" || !d.download) throw new Error("API 1: Invalid response");
+            return {
+                api: 1,
+                fileName: d.title || `terabox_${Date.now()}.mp4`,
+                size: d.size ? (parseInt(d.size) / (1024 * 1024)).toFixed(2) + " MB" : "Unknown",
+                thumbnail: d.thumbnail || "",
+                downloadUrl: d.download
+            };
+        };
 
-        const response = await axios.get(
-            `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
-            { timeout: 30000 }
-        );
+        const tryAPI2 = async () => {
+            const res = await axios.get(
+                `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
+                { timeout: 25000, headers: { "User-Agent": "Mozilla/5.0" } }
+            );
+            const d = res.data;
+            if (!d.status || !d.result?.files?.length) throw new Error("API 2: Invalid response");
+            const file = d.result.files[0];
+            if (!file.download) throw new Error("API 2: No download URL");
+            return {
+                api: 2,
+                fileName: file.file_name || `terabox_${Date.now()}.mp4`,
+                size: file.size_mb || "Unknown",
+                thumbnail: file.thumbnail || "",
+                downloadUrl: file.download
+            };
+        };
 
-        const data = response.data;
+        let api1Error = null;
+        let api2Error = null;
 
-        if (!data.status || !data.result?.files?.length) {
-            return reply("❌ Failed to fetch video info");
+        try {
+            videoData = await tryAPI1();
+        } catch (e) {
+            api1Error = e.message;
+            console.log("API 1 failed:", api1Error);
+            try {
+                videoData = await tryAPI2();
+            } catch (e2) {
+                api2Error = e2.message;
+                console.log("API 2 failed:", api2Error);
+            }
         }
 
-        const file = data.result.files[0];
-
-        // ======================
-        // DIRECT DOWNLOAD URL (NO FFMPEG)
-        // ======================
-
-        const directUrl = file.download;
-
-        if (!directUrl) {
-            return reply("❌ Download URL nahi mili");
+        if (!videoData) {
+            return reply(`❌ Both APIs failed\n\n• API 1: ${api1Error}\n• API 2: ${api2Error}`);
         }
 
-        const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
-        const size = file.size_mb || "Unknown";
-        const thumbnail = file.thumbnail || "";
+        const caption = `🎬 *${videoData.fileName}*\n📦 *Size:* ${videoData.size}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
-        const caption = `🎬 *${fileName}*\n\n📦 Size: ${size}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
-
-        // ======================
-        // THUMBNAIL
-        // ======================
-
-        if (thumbnail) {
+        if (videoData.thumbnail) {
             try {
                 await conn.sendMessage(from, {
-                    image: { url: thumbnail },
+                    image: { url: videoData.thumbnail },
                     caption: caption
                 }, { quoted: mek });
             } catch (e) {
-                console.log("Thumbnail error:", e.message);
+                console.log("Thumbnail send failed:", e.message);
             }
         }
 
-        // ======================
-        // DOWNLOADING
-        // ======================
-
         await conn.sendMessage(from, {
-            text: "⬇️ *Downloading... please wait*"
+            text: `⬇️ *Downloading... Please wait*\n📦 Size: ${videoData.size}`
         }, { quoted: mek });
 
-        const outputPath = path.join(
-            process.cwd(),
-            `terabox_${Date.now()}.mp4`
-        );
+        outputPath = path.join(process.cwd(), `terabox_${Date.now()}.mp4`);
 
-        const writer = fs.createWriteStream(outputPath);
+        const downloadFile = async (downloadUrl) => {
+            const writer = fs.createWriteStream(outputPath);
+            const dlRes = await axios({
+                method: "GET",
+                url: downloadUrl,
+                responseType: "stream",
+                timeout: 600000,
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                    "Referer": "https://www.terabox.com/"
+                }
+            });
+            await new Promise((resolve, reject) => {
+                dlRes.data.pipe(writer);
+                writer.on("finish", resolve);
+                writer.on("error", reject);
+            });
+        };
 
-        const dlResponse = await axios({
-            method: "GET",
-            url: directUrl,
-            responseType: "stream",
-            timeout: 300000, // 5 min
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity,
-            headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                "Referer": "https://www.terabox.com/"
-            }
-        });
-
-        await new Promise((resolve, reject) => {
-            dlResponse.data.pipe(writer);
-            writer.on("finish", resolve);
-            writer.on("error", reject);
-        });
-
-        // ======================
-        // FILE CHECK
-        // ======================
+        try {
+            await downloadFile(videoData.downloadUrl);
+        } catch (dlErr) {
+            console.log("Download failed, retrying...", dlErr.message);
+            if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+            outputPath = path.join(process.cwd(), `terabox_${Date.now()}.mp4`);
+            await downloadFile(videoData.downloadUrl);
+        }
 
         if (!fs.existsSync(outputPath)) {
-            return reply("❌ File download nahi hui");
+            return reply("❌ Download failed - file not created");
         }
 
         const fileSize = fs.statSync(outputPath).size;
-        console.log("File size:", fileSize);
 
         if (fileSize < 10000) {
             fs.unlinkSync(outputPath);
-            return reply("❌ File corrupt hai — dobara try karo");
+            return reply("❌ Downloaded file is corrupted - please try again");
         }
-
-        // ======================
-        // SEND VIDEO
-        // ======================
 
         await conn.sendMessage(from, {
             document: fs.readFileSync(outputPath),
             mimetype: "video/mp4",
-            fileName: fileName,
+            fileName: videoData.fileName,
             caption: caption
         }, { quoted: mek });
 
-        // ======================
-        // CLEANUP
-        // ======================
+        if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
 
-        if (fs.existsSync(outputPath)) {
-            fs.unlinkSync(outputPath);
-        }
-
-        await conn.sendMessage(from, {
-            react: { text: "✅", key: mek.key }
-        });
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
     } catch (e) {
-
         console.log("TERABOX ERROR:", e.message || e);
-
-        await conn.sendMessage(from, {
-            react: { text: "❌", key: mek.key }
-        });
-
-        reply(`❌ Error: ${e.message || "Unknown error"}`);
+        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+        reply(`❌ Error: ${e.message || "Something went wrong, please try again"}`);
     }
 });
