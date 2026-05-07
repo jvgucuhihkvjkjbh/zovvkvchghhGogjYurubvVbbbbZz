@@ -1,76 +1,155 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+const path = require('path');
 
 cmd({
-pattern: "terabox",
-alias: ["tera", "tbx"],
-desc: "Download Terabox video",
-category: "download",
-react: "📦",
-filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
-try {
-if (!q) return reply("❌ Terabox link do\nExample: .terabox https://1024terabox.com/s/xxx")
+    pattern: "terabox",
+    alias: ["tera", "tbx"],
+    desc: "Download Terabox video fast",
+    category: "download",
+    react: "📦",
+    filename: __filename
+},
+async (conn, mek, m, { from, q, reply }) => {
+    try {
 
-const url = q.trim()  
+        if (!q) {
+            return reply("❌ Terabox link do\nExample: .terabox https://terasharefile.com/s/xxxx");
+        }
 
-    const validDomains = [  
-        'terabox.com', '1024terabox.com', 'terasharefile.com',  
-        'teraboxapp.com', 'terabox.app', 'freeterabox.com',  
-        '4funbox.com', 'mirrorbox.com'  
-    ]  
+        const url = q.trim();
 
-    const isValid = validDomains.some(d => url.includes(d))  
-    if (!isValid) return reply("❌ Valid Terabox link do")  
+        const validDomains = [
+            "terabox.com",
+            "1024terabox.com",
+            "terasharefile.com",
+            "teraboxapp.com",
+            "terabox.app",
+            "freeterabox.com",
+            "4funbox.com",
+            "mirrorbox.com",
+            "nephobox.com"
+        ];
 
-    await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } })  
+        const isValid = validDomains.some(d => url.includes(d));
 
-    const res = await axios.get(  
-        `https://jerrycoder.oggyapi.workers.dev/dterabx?url=${encodeURIComponent(url)}`,  
-        { timeout: 30000 }  
-    )  
+        if (!isValid) {
+            return reply("❌ Valid Terabox link do");
+        }
 
-    const data = res.data  
+        await conn.sendMessage(from, {
+            react: { text: "⏳", key: mek.key }
+        });
 
-    if (!data || data.status !== 'success') {  
-        return reply("❌ Download failed. Try again.")  
-    }  
+        const res = await axios.get(
+            `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
+            {
+                timeout: 60000
+            }
+        );
 
-    let videoUrl = data.download?.fast || data.download?.normal  
-    if (!videoUrl) return reply("❌ Video URL not found.")  
+        const data = res.data;
 
-    const thumb = data.thumbnails?.url2 || data.thumbnails?.url1  
-    const filename = data.filename || 'video.mp4'  
-    const sizeMB = data.size ? (data.size / 1024 / 1024).toFixed(2) + ' MB' : ''  
+        if (!data.status || !data.result?.files?.length) {
+            return reply("❌ Download failed");
+        }
 
-    const caption = `🎬 *${filename}*
+        const file = data.result.files[0];
 
-📦 Size: ${sizeMB}
+        const streamUrl =
+            file?.streams?.["720p"] ||
+            file?.streams?.["480p"] ||
+            file?.streams?.["360p"];
 
-> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`
+        if (!streamUrl) {
+            return reply("❌ Stream URL not found");
+        }
 
+        const fileName = file.file_name || `ADEEL-MD_${Date.now()}.mp4`;
 
+        const outputPath = path.join(
+            __dirname,
+            `../temp/${Date.now()}.mp4`
+        );
 
-    if (thumb) {  
-        await conn.sendMessage(from, {  
-            image: { url: thumb },  
-            caption: caption  
-        }, { quoted: mek })  
-    }  
+        const quality =
+            file?.streams?.["720p"] ? "720p" :
+            file?.streams?.["480p"] ? "480p" :
+            "360p";
 
-    await conn.sendMessage(from, {  
-        video: { url: videoUrl },  
-        mimetype: 'video/mp4',  
-        fileName: filename,  
-        caption: caption  
-    }, { quoted: mek })  
+        const size =
+            file?.size ?
+            (file.size / 1024 / 1024).toFixed(2) + " MB" :
+            "Unknown";
 
-    await conn.sendMessage(from, { react: { text: "✅", key: mek.key } })  
+        const caption = `🎬 *${fileName}*
 
-} catch (e) {  
-    console.log("TERABOX ERROR:", e.message)  
-    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } })  
-    reply("❌ Error occurred. Try again.")  
-}
+📦 Size: ${size}
+🎞️ Quality: ${quality}
 
-})
+> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+
+        if (file?.thumb) {
+            await conn.sendMessage(from, {
+                image: { url: file.thumb },
+                caption
+            }, { quoted: mek });
+        }
+
+        await conn.sendMessage(from, {
+            text: "⏳ Converting video..."
+        }, { quoted: mek });
+
+        await new Promise((resolve, reject) => {
+
+            ffmpeg(streamUrl)
+                .inputOptions([
+                    "-protocol_whitelist",
+                    "file,http,https,tcp,tls,crypto",
+                    "-allowed_extensions",
+                    "ALL",
+                    "-user_agent",
+                    "Mozilla/5.0"
+                ])
+                .outputOptions([
+                    "-c:v copy",
+                    "-c:a aac",
+                    "-bsf:a aac_adtstoasc",
+                    "-movflags +faststart"
+                ])
+                .format("mp4")
+                .save(outputPath)
+                .on("end", resolve)
+                .on("error", reject);
+
+        });
+
+        await conn.sendMessage(from, {
+            document: fs.readFileSync(outputPath),
+            mimetype: "video/mp4",
+            fileName,
+            caption
+        }, { quoted: mek });
+
+        if (fs.existsSync(outputPath)) {
+            fs.unlinkSync(outputPath);
+        }
+
+        await conn.sendMessage(from, {
+            react: { text: "✅", key: mek.key }
+        });
+
+    } catch (e) {
+
+        console.log("TERABOX ERROR:", e);
+
+        await conn.sendMessage(from, {
+            react: { text: "❌", key: mek.key }
+        });
+
+        reply("❌ Error occurred while processing Terabox link");
+
+    }
+});
