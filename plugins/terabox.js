@@ -58,8 +58,10 @@ async (conn, mek, m, { from, q, reply }) => {
             file?.streams?.["480p"] ||
             file?.streams?.["360p"];
 
-        if (!streamUrl) {
-            return reply("❌ No playable stream found");
+        const downloadUrl = file?.download;
+
+        if (!streamUrl && !downloadUrl) {
+            return reply("❌ No downloadable video found");
         }
 
         const quality =
@@ -88,42 +90,48 @@ async (conn, mek, m, { from, q, reply }) => {
             } catch {}
         }
 
-        await reply("⏳ Converting video...");
-
         outputPath = tempFile('mp4');
 
-        await new Promise((resolve, reject) => {
+        await reply("⏳ Downloading video...");
 
-            ffmpeg(streamUrl)
-                .inputOptions([
-                    '-protocol_whitelist',
-                    'file,http,https,tcp,tls,crypto',
-                    '-allowed_extensions',
-                    'ALL',
-                    '-headers',
-                    'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
-                ])
-                .outputOptions([
-                    '-c:v copy',
-                    '-c:a aac',
-                    '-bsf:a aac_adtstoasc',
-                    '-movflags +faststart'
-                ])
-                .format('mp4')
-                .on('start', cmd => {
-                    console.log('FFMPEG START:', cmd);
-                })
-                .on('stderr', line => {
-                    console.log('FFMPEG:', line);
-                })
-                .on('end', resolve)
-                .on('error', err => {
-                    console.log('FFMPEG ERROR:', err.message);
-                    reject(err);
-                })
-                .save(outputPath);
+        try {
 
-        });
+            await new Promise((resolve, reject) => {
+
+                ffmpeg(streamUrl)
+                    .inputOptions([
+                        '-protocol_whitelist',
+                        'file,http,https,tcp,tls,crypto',
+                        '-allowed_extensions',
+                        'ALL',
+                        '-headers',
+                        'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
+                    ])
+                    .outputOptions([
+                        '-c:v copy',
+                        '-c:a aac',
+                        '-bsf:a aac_adtstoasc',
+                        '-movflags +faststart'
+                    ])
+                    .format('mp4')
+                    .on('end', resolve)
+                    .on('error', reject)
+                    .save(outputPath);
+
+            });
+
+        } catch {
+
+            const videoBuffer = await axios.get(downloadUrl, {
+                responseType: 'arraybuffer',
+                headers: {
+                    "User-Agent": "Mozilla/5.0"
+                }
+            });
+
+            fs.writeFileSync(outputPath, videoBuffer.data);
+
+        }
 
         if (!fs.existsSync(outputPath)) {
             return reply("❌ Conversion failed");
@@ -157,7 +165,7 @@ async (conn, mek, m, { from, q, reply }) => {
             react: { text: "❌", key: mek.key }
         });
 
-        reply("❌ Error occurred while downloading");
+        reply(`❌ ${e.message}`);
 
     } finally {
 
