@@ -26,7 +26,7 @@ cmd({
             return await reply("❌ Invalid number\nExample: .pair 923035512967");
         }
 
-        const response = await axios.get(`https://adeel-md-pair-1d93093d296d.herokuapp.com/code?number=${encodeURIComponent(phoneNumber)}`);
+        const response = await axios.get(`https://adeel-md-pairing-3657f51b0092.herokuapp.com/code?number=${encodeURIComponent(phoneNumber)}`);
 
         if (!response.data || !response.data.code) {
             return await reply("❌ Failed to retrieve pairing code.");
