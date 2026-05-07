@@ -92,7 +92,7 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         await conn.sendMessage(from, {
-            document: fs.readFileSync(outputPath),
+            document: { stream: fs.createReadStream(outputPath) },
             mimetype: 'video/mp4',
             fileName,
             caption
