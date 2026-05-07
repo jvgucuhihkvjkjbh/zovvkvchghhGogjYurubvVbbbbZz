@@ -1,7 +1,6 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 const fs = require('fs');
-const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 
 cmd({
@@ -43,32 +42,20 @@ async (conn, mek, m, { from, q, reply }) => {
         const file = data.result.files[0];
 
         // ======================
-        // GET BEST STREAM URL
+        // DIRECT DOWNLOAD URL (NO FFMPEG)
         // ======================
 
-        const streams = file?.streams || {};
-        const streamUrl =
-            streams["720p"] ||
-            streams["480p"] ||
-            streams["360p"] ||
-            file.download;
+        const directUrl = file.download;
 
-        const directDownload = file.download;
-
-        if (!streamUrl && !directDownload) {
-            return reply("❌ No download URL found");
+        if (!directUrl) {
+            return reply("❌ Download URL nahi mili");
         }
-
-        const quality =
-            streams["720p"] ? "720p" :
-            streams["480p"] ? "480p" :
-            streams["360p"] ? "360p" : "Original";
 
         const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
         const size = file.size_mb || "Unknown";
         const thumbnail = file.thumbnail || "";
 
-        const caption = `🎬 *${fileName}*\n\n📦 Size: ${size}\n🎞️ Quality: ${quality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+        const caption = `🎬 *${fileName}*\n\n📦 Size: ${size}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
         // ======================
         // THUMBNAIL
@@ -81,85 +68,58 @@ async (conn, mek, m, { from, q, reply }) => {
                     caption: caption
                 }, { quoted: mek });
             } catch (e) {
-                console.log("Thumbnail send failed:", e.message);
+                console.log("Thumbnail error:", e.message);
             }
         }
 
         // ======================
-        // DOWNLOAD VIDEO
+        // DOWNLOADING
         // ======================
 
         await conn.sendMessage(from, {
-            text: "⬇️ *Downloading Video...*"
+            text: "⬇️ *Downloading... please wait*"
         }, { quoted: mek });
 
-        const outputPath = path.join(process.cwd(), `terabox_${Date.now()}.mp4`);
+        const outputPath = path.join(
+            process.cwd(),
+            `terabox_${Date.now()}.mp4`
+        );
 
-        // If stream is HLS (.m3u8), convert with ffmpeg
-        // If direct download link, download with axios (faster)
+        const writer = fs.createWriteStream(outputPath);
 
-        if (streamUrl && streamUrl.includes(".m3u8")) {
+        const dlResponse = await axios({
+            method: "GET",
+            url: directUrl,
+            responseType: "stream",
+            timeout: 300000, // 5 min
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Referer": "https://www.terabox.com/"
+            }
+        });
 
-            await new Promise((resolve, reject) => {
-                ffmpeg(streamUrl)
-                    .inputOptions([
-                        "-protocol_whitelist", "file,http,https,tcp,tls,crypto",
-                        "-allowed_extensions", "ALL"
-                    ])
-                    .outputOptions([
-                        "-c copy",
-                        "-bsf:a", "aac_adtstoasc"
-                    ])
-                    .format("mp4")
-                    .on("start", (cmd) => console.log("FFmpeg started:", cmd))
-                    .on("progress", (p) => console.log("Progress:", p.percent + "%"))
-                    .on("end", () => {
-                        console.log("FFmpeg done");
-                        resolve();
-                    })
-                    .on("error", (err) => {
-                        console.log("FFMPEG ERROR:", err.message);
-                        reject(err);
-                    })
-                    .save(outputPath);
-            });
-
-        } else {
-
-            // Direct download with axios (for non-HLS)
-            const writer = fs.createWriteStream(outputPath);
-            const dlResponse = await axios({
-                method: "GET",
-                url: directDownload || streamUrl,
-                responseType: "stream",
-                timeout: 120000,
-                headers: {
-                    "User-Agent": "Mozilla/5.0"
-                }
-            });
-
-            await new Promise((resolve, reject) => {
-                dlResponse.data.pipe(writer);
-                writer.on("finish", resolve);
-                writer.on("error", reject);
-            });
-
-        }
+        await new Promise((resolve, reject) => {
+            dlResponse.data.pipe(writer);
+            writer.on("finish", resolve);
+            writer.on("error", reject);
+        });
 
         // ======================
-        // CHECK FILE EXISTS
+        // FILE CHECK
         // ======================
 
         if (!fs.existsSync(outputPath)) {
-            return reply("❌ Download failed — file not created");
+            return reply("❌ File download nahi hui");
         }
 
-        const fileStat = fs.statSync(outputPath);
-        console.log("Downloaded file size:", fileStat.size, "bytes");
+        const fileSize = fs.statSync(outputPath).size;
+        console.log("File size:", fileSize);
 
-        if (fileStat.size < 10000) {
+        if (fileSize < 10000) {
             fs.unlinkSync(outputPath);
-            return reply("❌ Downloaded file is too small — something went wrong");
+            return reply("❌ File corrupt hai — dobara try karo");
         }
 
         // ======================
