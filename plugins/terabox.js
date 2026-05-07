@@ -16,30 +16,10 @@ async (conn, mek, m, { from, q, reply }) => {
     try {
 
         if (!q) {
-            return reply("❌ Terabox link do\nExample: .terabox https://terabox.com/s/xxxx");
+            return reply("❌ Terabox link do");
         }
 
         const url = q.trim();
-
-        const validDomains = [
-            "terabox.com",
-            "1024terabox.com",
-            "1024tera.com",
-            "terasharefile.com",
-            "teraboxapp.com",
-            "terabox.app",
-            "freeterabox.com",
-            "4funbox.com",
-            "mirrorbox.com",
-            "mirrobox.com",
-            "nephobox.com"
-        ];
-
-        const isValid = validDomains.some(domain => url.includes(domain));
-
-        if (!isValid) {
-            return reply("❌ Valid Terabox link do");
-        }
 
         await conn.sendMessage(from, {
             react: {
@@ -77,27 +57,23 @@ async (conn, mek, m, { from, q, reply }) => {
         // =========================
 
         const streamUrl =
-            file?.streams?.["360p"] ||
+            file?.streams?.["720p"] ||
             file?.streams?.["480p"] ||
-            file?.streams?.["720p"];
+            file?.streams?.["360p"];
 
         if (!streamUrl) {
             return reply("❌ No playable stream found");
         }
 
-        // =========================
-        // FILE INFO
-        // =========================
+        const quality =
+            file?.streams?.["720p"]
+                ? "720p"
+                : file?.streams?.["480p"]
+                ? "480p"
+                : "360p";
 
         const fileName =
             file.file_name || `terabox_${Date.now()}.mp4`;
-
-        const quality =
-            file?.streams?.["360p"]
-                ? "360p"
-                : file?.streams?.["480p"]
-                ? "480p"
-                : "720p";
 
         const size =
             file.size_mb || "Unknown";
@@ -105,16 +81,16 @@ async (conn, mek, m, { from, q, reply }) => {
         const thumbnail =
             file.thumbnail || null;
 
-        // =========================
-        // THUMBNAIL
-        // =========================
-
         const caption = `🎬 *${fileName}*
 
 📦 Size: ${size}
 🎞️ Quality: ${quality}
 
 > ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+
+        // =========================
+        // THUMBNAIL
+        // =========================
 
         if (thumbnail) {
 
@@ -130,19 +106,27 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         // =========================
-        // CONVERTING
+        // CONVERT MESSAGE
         // =========================
 
         await conn.sendMessage(from, {
-            text: "⏳ *Converting stream to mp4...*"
+            text: "⏳ *Converting m3u8 to mp4...*"
         }, {
             quoted: mek
         });
 
+        // =========================
+        // OUTPUT PATH FIX
+        // =========================
+
         const outputPath = path.join(
-            __dirname,
+            process.cwd(),
             `terabox_${Date.now()}.mp4`
         );
+
+        // =========================
+        // FFMPEG FIX
+        // =========================
 
         await new Promise((resolve, reject) => {
 
@@ -165,19 +149,39 @@ async (conn, mek, m, { from, q, reply }) => {
                 ])
 
                 .format("mp4")
-                .save(outputPath)
 
-                .on("end", resolve)
-                .on("error", reject);
+                .on("start", cmd => {
+                    console.log("FFMPEG START:", cmd);
+                })
+
+                .on("end", () => {
+                    console.log("FFMPEG DONE");
+                    resolve();
+                })
+
+                .on("error", err => {
+                    console.log("FFMPEG ERROR:", err);
+                    reject(err);
+                })
+
+                .save(outputPath);
 
         });
+
+        // =========================
+        // FILE CHECK FIX
+        // =========================
+
+        if (!fs.existsSync(outputPath)) {
+            return reply("❌ Converted file not found");
+        }
 
         // =========================
         // SEND DOCUMENT
         // =========================
 
         await conn.sendMessage(from, {
-            document: fs.readFileSync(outputPath),
+            document: fs.createReadStream(outputPath),
             mimetype: "video/mp4",
             fileName: fileName,
             caption: caption
@@ -186,7 +190,7 @@ async (conn, mek, m, { from, q, reply }) => {
         });
 
         // =========================
-        // CLEAN FILE
+        // DELETE TEMP FILE
         // =========================
 
         if (fs.existsSync(outputPath)) {
