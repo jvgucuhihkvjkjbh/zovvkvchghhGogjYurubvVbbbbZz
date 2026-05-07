@@ -13,6 +13,7 @@ cmd({
     filename: __filename
 },
 async (conn, mek, m, { from, q, reply }) => {
+
     try {
 
         if (!q) {
@@ -43,59 +44,51 @@ async (conn, mek, m, { from, q, reply }) => {
             react: { text: "⏳", key: mek.key }
         });
 
-        const res = await axios.get(
+        const response = await axios.get(
             `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
             {
                 timeout: 60000
             }
         );
 
-        const data = res.data;
+        const data = response.data;
 
-        if (!data.status || !data.result?.files?.length) {
+        if (!data || data.status !== "success") {
             return reply("❌ Download failed");
         }
 
-        const file = data.result.files[0];
-
-        const streamUrl =
-            file?.streams?.["720p"] ||
-            file?.streams?.["480p"] ||
-            file?.streams?.["360p"];
+        const streamUrl = data.stream || data.download;
 
         if (!streamUrl) {
-            return reply("❌ Stream URL not found");
+            return reply("❌ Video stream not found");
         }
 
-        const fileName = file.file_name || `ADEEL-MD_${Date.now()}.mp4`;
+        const fileName = data.title || `ADEEL-MD_${Date.now()}.mp4`;
+
+        const sizeMB = data.size
+            ? (Number(data.size) / 1024 / 1024).toFixed(2) + " MB"
+            : "Unknown";
+
+        const thumb = data.thumbnail || "";
 
         const outputPath = path.join(
             __dirname,
             `../temp/${Date.now()}.mp4`
         );
 
-        const quality =
-            file?.streams?.["720p"] ? "720p" :
-            file?.streams?.["480p"] ? "480p" :
-            "360p";
-
-        const size =
-            file?.size ?
-            (file.size / 1024 / 1024).toFixed(2) + " MB" :
-            "Unknown";
-
         const caption = `🎬 *${fileName}*
 
-📦 Size: ${size}
-🎞️ Quality: ${quality}
+📦 Size: ${sizeMB}
 
 > ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
-        if (file?.thumb) {
+        if (thumb && thumb !== "") {
+
             await conn.sendMessage(from, {
-                image: { url: file.thumb },
+                image: { url: thumb },
                 caption
             }, { quoted: mek });
+
         }
 
         await conn.sendMessage(from, {
