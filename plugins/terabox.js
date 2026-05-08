@@ -6,7 +6,10 @@ const os = require('os');
 const crypto = require('crypto');
 
 const tempFile = (ext) =>
-    path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
+    path.join(
+        os.tmpdir(),
+        `${crypto.randomBytes(6).toString('hex')}.${ext}`
+    );
 
 cmd({
     pattern: "terabox",
@@ -22,58 +25,126 @@ async (conn, mek, m, { from, q, reply }) => {
 
     try {
 
-        if (!q) return reply("❌ Please send a Terabox link");
+        if (!q) {
+            return reply(
+                "❌ Please send a Terabox link\n\nExample:\n.terabox https://terasharefile.com/s/xxxxx"
+            );
+        }
 
         const url = q.trim();
 
-        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+        const validDomains = [
+            'terabox.com',
+            '1024terabox.com',
+            'terasharefile.com',
+            '1024tera.com',
+            'teraboxapp.com',
+            'terabox.app'
+        ];
 
-        // 1. Get Terabox info
+        const isValid = validDomains.some(d => url.includes(d));
+
+        if (!isValid) {
+            return reply("❌ Invalid Terabox link");
+        }
+
+        await conn.sendMessage(from, {
+            react: {
+                text: "⏳",
+                key: mek.key
+            }
+        });
+
         const { data } = await axios.get(
             `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
-            { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
+            {
+                timeout: 30000,
+                headers: {
+                    "User-Agent": "Mozilla/5.0"
+                }
+            }
         );
 
-        if (!data.status || !data.result?.files?.length)
+        if (!data?.status || !data?.result?.files?.length) {
             return reply("❌ Failed to fetch video");
+        }
 
         const file = data.result.files[0];
 
-        // ✅ PRIORITY: 360p only (fallback 480p)
-        const streamUrl =
-            file?.streams?.["360p"] ||
-            file?.streams?.["480p"];
+        const sizeMB = parseFloat(
+            file?.size_mb?.replace(" MB", "") || "0"
+        );
 
-        const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
-        const quality = file?.streams?.["360p"] ? "360p" : "480p";
+        let streamUrl = null;
+        let quality = "360p";
 
-        const caption = `🎬 *${fileName}*\n\n📥 Quality: ${quality}\n\n> ⚡ Powered by Adeel-MD`;
+        // Smart Quality Selection
+        if (sizeMB <= 80 && file?.streams?.["720p"]) {
+            streamUrl = file.streams["720p"];
+            quality = "720p";
+        } else if (sizeMB <= 250 && file?.streams?.["480p"]) {
+            streamUrl = file.streams["480p"];
+            quality = "480p";
+        } else {
+            streamUrl =
+                file?.streams?.["360p"] ||
+                file?.streams?.["480p"] ||
+                file?.streams?.["720p"];
 
-        if (file.thumbnail) {
-            try {
-                await conn.sendMessage(from, {
-                    image: { url: file.thumbnail },
-                    caption
-                }, { quoted: mek });
-            } catch {}
+            quality =
+                file?.streams?.["360p"] ? "360p" :
+                file?.streams?.["480p"] ? "480p" :
+                "720p";
         }
 
-        if (!streamUrl) return reply("❌ No 360p/480p stream found");
+        if (!streamUrl) {
+            return reply("❌ No playable stream found");
+        }
 
-        // 2. Call HF FFmpeg API (NO LOCAL FFmpeg)
-        const api = `https://imjerryco-ffpeg.hf.space/?url=${encodeURIComponent(streamUrl)}`;
+        const fileName =
+            file?.file_name ||
+            `terabox_${Date.now()}.mp4`;
 
-        const apiRes = await axios.get(api, {
-            timeout: 90000,
-            headers: { "User-Agent": "Mozilla/5.0" }
+        const caption = `🎬 *${fileName}*
+
+📦 Size: ${file?.size_mb || "Unknown"}
+📥 Quality: ${quality}
+
+> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+
+        if (file?.thumbnail) {
+            try {
+                await conn.sendMessage(from, {
+                    image: {
+                        url: file.thumbnail
+                    },
+                    caption
+                }, {
+                    quoted: mek
+                });
+            } catch (e) {
+                console.log("Thumbnail Error:", e.message);
+            }
+        }
+
+        await reply("⏳ Converting video...");
+
+        const ffmpegApi =
+            `https://imjerryco-ffpeg.hf.space/?url=${encodeURIComponent(streamUrl)}`;
+
+        const apiRes = await axios.get(ffmpegApi, {
+            timeout: 120000,
+            headers: {
+                "User-Agent": "Mozilla/5.0"
+            }
         });
 
-        if (!apiRes.data?.status || !apiRes.data?.download)
+        if (!apiRes?.data?.status || !apiRes?.data?.download) {
             return reply("❌ FFmpeg API failed");
+        }
 
         const finalVideoUrl = apiRes.data.download;
 
-        // 3. Download processed video as STREAM (important fix)
         outputPath = tempFile("mp4");
 
         const writer = fs.createWriteStream(outputPath);
@@ -83,44 +154,66 @@ async (conn, mek, m, { from, q, reply }) => {
             method: "GET",
             responseType: "stream",
             timeout: 900000,
-            headers: { "User-Agent": "Mozilla/5.0" }
+            headers: {
+                "User-Agent": "Mozilla/5.0"
+            }
         });
 
         await new Promise((resolve, reject) => {
             videoRes.data.pipe(writer);
+
             writer.on("finish", resolve);
             writer.on("error", reject);
         });
 
-        // 4. Validate file
-        const stats = fs.statSync(outputPath);
-        if (stats.size < 10000) {
-            fs.unlinkSync(outputPath);
-            return reply("❌ Invalid video file");
+        if (!fs.existsSync(outputPath)) {
+            return reply("❌ Failed to process video");
         }
 
-        // 5. Send (IMPORTANT FIX: stream-safe send)
-        await new Promise(r => setTimeout(r, 1500));
+        const stats = fs.statSync(outputPath);
+
+        if (stats.size < 10000) {
+            fs.unlinkSync(outputPath);
+            return reply("❌ Invalid video generated");
+        }
 
         await conn.sendMessage(from, {
-            document: { url: outputPath },
+            document: {
+                url: outputPath
+            },
             mimetype: "video/mp4",
             fileName,
             caption
-        }, { quoted: mek });
+        }, {
+            quoted: mek
+        });
 
         await conn.sendMessage(from, {
-            react: { text: "✅", key: mek.key }
+            react: {
+                text: "✅",
+                key: mek.key
+            }
         });
 
     } catch (e) {
+
+        console.log("TERABOX ERROR:", e);
+
         await conn.sendMessage(from, {
-            react: { text: "❌", key: mek.key }
+            react: {
+                text: "❌",
+                key: mek.key
+            }
         });
-        reply(`❌ ${e.message}`);
+
+        reply("❌ Error occurred while downloading");
+
     } finally {
+
         if (outputPath && fs.existsSync(outputPath)) {
             fs.unlinkSync(outputPath);
         }
+
     }
+
 });
