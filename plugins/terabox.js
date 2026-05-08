@@ -73,14 +73,21 @@ async (conn, mek, m, { from, q, reply }) => {
                     .save(outputPath);
             });
         } catch {
-            const res = await axios.get(downloadUrl, {
-                responseType: 'arraybuffer',
-                timeout: 600000,
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
-                headers: { "User-Agent": "Mozilla/5.0" }
-            });
-            fs.writeFileSync(outputPath, res.data);
+            const writer = fs.createWriteStream(outputPath);
+
+const res = await axios({
+    url: downloadUrl,
+    method: 'GET',
+    responseType: 'stream',
+    timeout: 600000,
+    headers: { "User-Agent": "Mozilla/5.0" }
+});
+
+await new Promise((resolve, reject) => {
+    res.data.pipe(writer);
+    writer.on('finish', resolve);
+    writer.on('error', reject);
+});
         }
 
         if (!fs.existsSync(outputPath)) return reply("❌ Download failed");
@@ -92,11 +99,11 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         await conn.sendMessage(from, {
-            document: fs.readFileSync(outputPath),
-            mimetype: 'video/mp4',
-            fileName,
-            caption
-        }, { quoted: mek });
+    document: { url: outputPath },
+    mimetype: 'video/mp4',
+    fileName,
+    caption
+}, { quoted: mek });
 
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
