@@ -78,7 +78,6 @@ async (conn, mek, m, { from, q, reply }) => {
         let streamUrl = null;
         let quality = "360p";
 
-        // Smart Quality Selection
         if (sizeMB <= 80 && file?.streams?.["720p"]) {
             streamUrl = file.streams["720p"];
             quality = "720p";
@@ -126,8 +125,6 @@ async (conn, mek, m, { from, q, reply }) => {
                 console.log("Thumbnail Error:", e.message);
             }
         }
-
-        await reply("⏳ Converting video...");
 
         const ffmpegApi =
             `https://imjerryco-ffpeg.hf.space/?url=${encodeURIComponent(streamUrl)}`;
