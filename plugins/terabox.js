@@ -64,7 +64,7 @@ async (conn, mek, m, { from, q, reply }) => {
         const api = `https://imjerryco-ffpeg.hf.space/?url=${encodeURIComponent(streamUrl)}`;
 
         const apiRes = await axios.get(api, {
-            timeout: 60000,
+            timeout: 90000,
             headers: { "User-Agent": "Mozilla/5.0" }
         });
 
@@ -82,7 +82,7 @@ async (conn, mek, m, { from, q, reply }) => {
             url: finalVideoUrl,
             method: "GET",
             responseType: "stream",
-            timeout: 600000,
+            timeout: 900000,
             headers: { "User-Agent": "Mozilla/5.0" }
         });
 
