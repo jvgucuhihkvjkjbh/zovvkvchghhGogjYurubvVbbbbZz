@@ -36,12 +36,12 @@ async (conn, mek, m, { from, q, reply }) => {
         if (!data.status || !data.result?.files?.length) return reply("❌ Failed to fetch video");
 
         const file = data.result.files[0];
-        const streamUrl = file?.streams?.["720p"] || file?.streams?.["480p"] || file?.streams?.["360p"];
+        const streamUrl = file?.streams?.["360p"] || file?.streams?.["480p"] || file?.streams?.["720p"];
         const downloadUrl = file?.download;
 
         if (!streamUrl && !downloadUrl) return reply("❌ No downloadable video found");
 
-        const quality = file?.streams?.["720p"] ? "720p" : file?.streams?.["480p"] ? "480p" : "360p";
+        const quality = file?.streams?.["360p"] ? "360p" : file?.streams?.["480p"] ? "480p" : "720p";
         const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
         const caption = `🎬 *${fileName}*\n\n📦 Size: ${file.size_mb || "Unknown"}\n📥 Quality: ${quality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
@@ -92,7 +92,7 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         await conn.sendMessage(from, {
-            document: { stream: fs.createReadStream(outputPath) },
+            document: fs.readFileSync(outputPath),
             mimetype: 'video/mp4',
             fileName,
             caption
