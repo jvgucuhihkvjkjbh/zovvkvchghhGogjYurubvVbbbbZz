@@ -1,5 +1,4 @@
 const { cmd } = require('../command');
-const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
 const converter = require('../data/converter');
 
 const COLORS = [
@@ -18,7 +17,7 @@ cmd({
     react:    '📸',
     filename: __filename
 },
-async (conn, mek, m, { from, text, reply, isCreator, isOwner, sender }) => {
+async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
 
     if (!isCreator && !isOwner)
         return reply('❌ Only Owner can use .mystatus!');
@@ -27,6 +26,7 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner, sender }) => {
         const q       = m.quoted || null;
         const caption = text?.trim() || '';
 
+        // Show help
         if (!q && !caption) {
             return reply(
                 `📸 *How to use .mystatus:*\n\n` +
@@ -42,113 +42,138 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner, sender }) => {
         await conn.sendMessage(from, { react: { text: '⏳', key: mek.key } });
 
         let msgContent = {};
+        let postedType = 'Text';
 
         if (q) {
-            const mtype   = q.mtype || '';
-            const msgData = q.msg || q[mtype];
+            const mtype = q.mtype || '';
 
-            // TEXT status
+            // ── TEXT ─────────────────────────────────────────
             if (mtype === 'conversation' || mtype === 'extendedTextMessage') {
                 const finalText = caption || q.text || '';
-                if (!finalText) return reply('❌ No text found!');
+                if (!finalText) return reply('❌ No text found in quoted message!');
                 msgContent = {
                     text:            finalText,
                     backgroundColor: randBg(),
                     font:            randFont()
                 };
+                postedType = 'Text';
             }
 
-            // IMAGE, VIDEO, AUDIO, STICKER - needs mediaKey
-            else {
-                if (!msgData || !msgData.mediaKey) {
-                    return reply('❌ Media key missing! Reply to a fresh/recent message and try again.');
-                }
-
-                const mediaTypeMap = {
-                    imageMessage:   'image',
-                    videoMessage:   'video',
-                    audioMessage:   'audio',
-                    pttMessage:     'audio',
-                    stickerMessage: 'sticker',
-                    documentMessage:'document'
+            // ── IMAGE ────────────────────────────────────────
+            else if (mtype === 'imageMessage') {
+                // m.quoted.download() = conn.downloadMediaMessage(m.quoted)
+                // conn.downloadMediaMessage uses m.quoted directly with mtype
+                const buffer = await q.download();
+                msgContent = {
+                    image:    buffer,
+                    caption:  caption || q.caption || q.text || '',
+                    mimetype: 'image/jpeg'
                 };
+                postedType = 'Image';
+            }
 
-                const dlType = mediaTypeMap[mtype];
-                if (!dlType) return reply(`❌ Unsupported type: ${mtype}`);
+            // ── STICKER → post as image ──────────────────────
+            else if (mtype === 'stickerMessage') {
+                const buffer = await q.download();
+                msgContent = {
+                    image:    buffer,
+                    caption:  caption || '',
+                    mimetype: 'image/webp'
+                };
+                postedType = 'Sticker';
+            }
 
-                // Download using the exact same method as working gstatus
-                const stream = await downloadContentFromMessage(msgData, dlType);
-                let buffer = Buffer.from([]);
-                for await (const chunk of stream) {
-                    buffer = Buffer.concat([buffer, chunk]);
-                }
+            // ── VIDEO ────────────────────────────────────────
+            else if (mtype === 'videoMessage') {
+                const buffer = await q.download();
+                msgContent = {
+                    video:       buffer,
+                    caption:     caption || q.caption || q.text || '',
+                    mimetype:    'video/mp4',
+                    gifPlayback: false
+                };
+                postedType = 'Video';
+            }
 
-                if (mtype === 'imageMessage') {
-                    msgContent = {
-                        image:    buffer,
-                        caption:  caption || msgData.caption || '',
-                        mimetype: 'image/jpeg'
-                    };
-                }
-                else if (mtype === 'stickerMessage') {
-                    msgContent = {
-                        image:    buffer,
-                        caption:  caption || '',
-                        mimetype: 'image/webp'
-                    };
-                }
-                else if (mtype === 'videoMessage') {
-                    msgContent = {
-                        video:       buffer,
-                        caption:     caption || msgData.caption || '',
-                        mimetype:    'video/mp4',
-                        gifPlayback: false
-                    };
-                }
-                else if (mtype === 'audioMessage' || mtype === 'pttMessage') {
-                    if ((msgData.seconds || 0) > 600)
-                        return reply('❌ Audio too long! Max 10 minutes.');
+            // ── AUDIO / PTT ──────────────────────────────────
+            else if (mtype === 'audioMessage' || mtype === 'pttMessage') {
+                const duration = q.seconds || q.duration || 0;
+                if (duration > 600)
+                    return reply('❌ Audio too long! Max 10 minutes.');
 
-                    let ptt;
-                    try { ptt = await converter.toPTT(buffer, 'm4a'); }
-                    catch { ptt = buffer; }
+                const buffer = await q.download();
+                let ptt;
+                try   { ptt = await converter.toPTT(buffer, 'm4a'); }
+                catch { ptt = buffer; }
 
-                    msgContent = {
-                        audio:    ptt,
-                        mimetype: 'audio/ogg; codecs=opus',
-                        ptt:      true
-                    };
-                }
+                msgContent = {
+                    audio:    ptt,
+                    mimetype: 'audio/ogg; codecs=opus',
+                    ptt:      true
+                };
+                postedType = 'Audio';
+            }
+
+            // ── Unknown type ─────────────────────────────────
+            else {
+                return reply(`❌ Unsupported media type: *${mtype}*\nSupported: image, video, audio, sticker, text`);
             }
         }
 
-        // No quoted - plain text status
+        // ── No quoted → plain text status ───────────────────
         else {
             msgContent = {
                 text:            caption,
                 backgroundColor: randBg(),
                 font:            randFont()
             };
+            postedType = 'Text';
         }
 
-        // ✅ POST TO STATUS@BROADCAST
-        await conn.sendMessage(
-            'status@broadcast',
-            msgContent,
-            { statusJidList: [conn.user.id] }
-        );
+        // ── Try Method 1: status@broadcast ───────────────────
+        let posted = false;
+        try {
+            await conn.sendMessage(
+                'status@broadcast',
+                msgContent,
+                { statusJidList: [conn.user.id] }
+            );
+            posted = true;
+        } catch (e1) {
+            console.log('Method 1 failed:', e1.message);
+        }
 
-        await conn.sendMessage(from, { react: { text: '✅', key: mek.key } });
+        // ── Try Method 2: direct if method 1 failed ──────────
+        if (!posted) {
+            try {
+                await conn.sendMessage('status@broadcast', msgContent);
+                posted = true;
+            } catch (e2) {
+                console.log('Method 2 failed:', e2.message);
+            }
+        }
 
-        const type = msgContent.image ? 'Image' :
-                     msgContent.video ? 'Video' :
-                     msgContent.audio ? 'Audio' : 'Text';
+        // ── Try Method 3: updateProfileStatus for text only ──
+        if (!posted && msgContent.text) {
+            try {
+                await conn.updateProfileStatus(msgContent.text);
+                posted = true;
+            } catch (e3) {
+                console.log('Method 3 failed:', e3.message);
+            }
+        }
 
-        return reply(`✅ *${type} posted to your Status successfully!*`);
+        if (posted) {
+            await conn.sendMessage(from, { react: { text: '✅', key: mek.key } });
+            return reply(`✅ *${postedType} posted to your Status successfully!*`);
+        } else {
+            await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
+            return reply(`❌ All methods failed. Make sure bot has status permission in WhatsApp privacy settings.`);
+        }
 
     } catch (err) {
         console.error('mystatus error:', err);
         await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-        return reply(`❌ Failed!\n${err.message}`);
+        return reply(`❌ Error: ${err.message}`);
     }
 });
