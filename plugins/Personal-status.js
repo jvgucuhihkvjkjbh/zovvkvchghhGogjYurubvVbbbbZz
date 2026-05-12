@@ -1,5 +1,32 @@
+const path = require('path');
 const { cmd } = require('../command');
 const converter = require('../data/converter');
+
+// contacts store - same as bot uses internally
+const storeDir = path.join(process.cwd(), 'store');
+const fs = require('fs');
+
+const getStatusJidList = async (conn) => {
+    try {
+        // Get contacts from store/contact.json (same file bot saves contacts in)
+        const filePath = path.join(storeDir, 'contact.json');
+        if (fs.existsSync(filePath)) {
+            const contacts = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            const jids = contacts
+                .map(c => c.jid)
+                .filter(j => j && j.endsWith('@s.whatsapp.net'));
+            if (jids.length > 0) {
+                // always include bot itself
+                if (!jids.includes(conn.user.id)) jids.push(conn.user.id);
+                return jids;
+            }
+        }
+    } catch (e) {
+        console.log('getStatusJidList error:', e.message);
+    }
+    // fallback - bot only
+    return [conn.user.id];
+};
 
 const COLORS = [
     '#000000', '#1a1a2e', '#16213e', '#0f3460',
@@ -26,7 +53,6 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
         const q       = m.quoted || null;
         const caption = text?.trim() || '';
 
-        // Show help
         if (!q && !caption) {
             return reply(
                 `📸 *How to use .mystatus:*\n\n` +
@@ -41,16 +67,19 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
 
         await conn.sendMessage(from, { react: { text: '⏳', key: mek.key } });
 
+        // Get full contacts list for statusJidList
+        const statusJidList = await getStatusJidList(conn);
+
         let msgContent = {};
         let postedType = 'Text';
 
         if (q) {
             const mtype = q.mtype || '';
 
-            // ── TEXT ─────────────────────────────────────────
+            // TEXT
             if (mtype === 'conversation' || mtype === 'extendedTextMessage') {
                 const finalText = caption || q.text || '';
-                if (!finalText) return reply('❌ No text found in quoted message!');
+                if (!finalText) return reply('❌ No text found!');
                 msgContent = {
                     text:            finalText,
                     backgroundColor: randBg(),
@@ -59,10 +88,8 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
                 postedType = 'Text';
             }
 
-            // ── IMAGE ────────────────────────────────────────
+            // IMAGE
             else if (mtype === 'imageMessage') {
-                // m.quoted.download() = conn.downloadMediaMessage(m.quoted)
-                // conn.downloadMediaMessage uses m.quoted directly with mtype
                 const buffer = await q.download();
                 msgContent = {
                     image:    buffer,
@@ -72,7 +99,7 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
                 postedType = 'Image';
             }
 
-            // ── STICKER → post as image ──────────────────────
+            // STICKER → as image
             else if (mtype === 'stickerMessage') {
                 const buffer = await q.download();
                 msgContent = {
@@ -83,7 +110,7 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
                 postedType = 'Sticker';
             }
 
-            // ── VIDEO ────────────────────────────────────────
+            // VIDEO
             else if (mtype === 'videoMessage') {
                 const buffer = await q.download();
                 msgContent = {
@@ -95,17 +122,14 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
                 postedType = 'Video';
             }
 
-            // ── AUDIO / PTT ──────────────────────────────────
+            // AUDIO / PTT
             else if (mtype === 'audioMessage' || mtype === 'pttMessage') {
-                const duration = q.seconds || q.duration || 0;
-                if (duration > 600)
+                if ((q.seconds || q.duration || 0) > 600)
                     return reply('❌ Audio too long! Max 10 minutes.');
-
                 const buffer = await q.download();
                 let ptt;
                 try   { ptt = await converter.toPTT(buffer, 'm4a'); }
                 catch { ptt = buffer; }
-
                 msgContent = {
                     audio:    ptt,
                     mimetype: 'audio/ogg; codecs=opus',
@@ -114,13 +138,12 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
                 postedType = 'Audio';
             }
 
-            // ── Unknown type ─────────────────────────────────
             else {
-                return reply(`❌ Unsupported media type: *${mtype}*\nSupported: image, video, audio, sticker, text`);
+                return reply(`❌ Unsupported type: *${mtype}*`);
             }
         }
 
-        // ── No quoted → plain text status ───────────────────
+        // plain text
         else {
             msgContent = {
                 text:            caption,
@@ -130,46 +153,18 @@ async (conn, mek, m, { from, text, reply, isCreator, isOwner }) => {
             postedType = 'Text';
         }
 
-        // ── Try Method 1: status@broadcast ───────────────────
-        let posted = false;
-        try {
-            await conn.sendMessage(
-                'status@broadcast',
-                msgContent,
-                { statusJidList: [conn.user.id] }
-            );
-            posted = true;
-        } catch (e1) {
-            console.log('Method 1 failed:', e1.message);
-        }
+        // POST TO STATUS with full contacts list
+        await conn.sendMessage(
+            'status@broadcast',
+            msgContent,
+            { statusJidList }
+        );
 
-        // ── Try Method 2: direct if method 1 failed ──────────
-        if (!posted) {
-            try {
-                await conn.sendMessage('status@broadcast', msgContent);
-                posted = true;
-            } catch (e2) {
-                console.log('Method 2 failed:', e2.message);
-            }
-        }
-
-        // ── Try Method 3: updateProfileStatus for text only ──
-        if (!posted && msgContent.text) {
-            try {
-                await conn.updateProfileStatus(msgContent.text);
-                posted = true;
-            } catch (e3) {
-                console.log('Method 3 failed:', e3.message);
-            }
-        }
-
-        if (posted) {
-            await conn.sendMessage(from, { react: { text: '✅', key: mek.key } });
-            return reply(`✅ *${postedType} posted to your Status successfully!*`);
-        } else {
-            await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-            return reply(`❌ All methods failed. Make sure bot has status permission in WhatsApp privacy settings.`);
-        }
+        await conn.sendMessage(from, { react: { text: '✅', key: mek.key } });
+        return reply(
+            `✅ *${postedType} posted to your Status!*\n` +
+            `👥 Visible to ${statusJidList.length} contact(s)`
+        );
 
     } catch (err) {
         console.error('mystatus error:', err);
