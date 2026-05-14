@@ -38,7 +38,7 @@ cmd({
     pattern: "kickall",
     alias: ["removemembers", "endgc"],
     description: "Remove all non-admin members from the group.",
-    react: "🎉",
+    react: "⏳",
     category: "group",
     filename: __filename
 },
@@ -53,26 +53,31 @@ async (conn, mek, m, { from, isGroup, senderNumber, reply, sender, isCreator }) 
         const freshMeta = await conn.groupMetadata(from);
         const participants = freshMeta.participants || [];
 
-        const freshAdmins = participants.filter(p =>
-            p.admin === "admin" || p.admin === "superadmin"
-        ).map(p => p.id);
+        const freshAdmins = participants
+            .filter(p => p.admin === "admin" || p.admin === "superadmin")
+            .map(p => p.id);
 
         const nonAdmins = participants.filter(p => !freshAdmins.includes(p.id));
 
-        if (nonAdmins.length === 0) return reply("✅ No non-admin members to remove.");
-
-        await reply(`⏳ Removing ${nonAdmins.length} members...`);
-
-        for (let member of nonAdmins) {
+        for (let i = 0; i < nonAdmins.length; i += 2) {
             try {
-                await conn.groupParticipantsUpdate(from, [member.id], "remove");
-                await sleep(1500);
+                const batch = nonAdmins
+                    .slice(i, i + 2)
+                    .map(user => user.id);
+
+                await conn.groupParticipantsUpdate(from, batch, "remove");
+
+                if (i + 2 < nonAdmins.length) {
+                    await sleep(1000);
+                }
+
             } catch (err) {
-                console.error(`Failed to remove ${member.id}:`, err);
+                console.error(`Failed to remove members:`, err);
             }
         }
 
-        return reply("✅ Done! All non-admin members removed.");
+        return reply("✅ All members have been removed successfully.");
+
     } catch (e) {
         console.error(e);
         reply("❌ An error occurred. Check console.");
