@@ -69,7 +69,6 @@ cmd({
       return reply("❌ Only image, video, and audio are supported");
     }
 
-    // 🔥 IMPORTANT FIX: always send to sender DM
     const target = m.sender;
 
     await client.sendMessage(target, content, { quoted: m });
