@@ -34,59 +34,70 @@ cmd({
       ? `${text}\n\n${footer}`
       : `${footer}`;
 
-    // 🔥 TWO CHANNEL FORWARD METHODS (TEST MODE)
+    // METHOD A (random style)
     const methodA = {
       newsletterJid: '120363403380688821@newsletter',
       newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃 ⚡",
       serverMessageId: Math.floor(Math.random() * 100000)
     };
 
+    // METHOD B (timestamp style)
     const methodB = {
       newsletterJid: '120363403380688821@newsletter',
       newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
       serverMessageId: Date.now()
     };
 
-    // randomly pick one method
-    const forwardedMethod = Math.random() > 0.5 ? methodA : methodB;
-
-    const contextInfo = {
+    const contextA = {
       forwardingScore: 999,
       isForwarded: true,
-      forwardedNewsletterMessageInfo: forwardedMethod
+      forwardedNewsletterMessageInfo: methodA
+    };
+
+    const contextB = {
+      forwardingScore: 999,
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: methodB
     };
 
     let content = {};
 
-    if (quoted.mtype === "imageMessage") {
-      content = {
-        image: buffer,
-        caption,
-        mimetype: quoted.mimetype || "image/jpeg",
-        contextInfo
-      };
-    } 
-    else if (quoted.mtype === "videoMessage") {
-      content = {
-        video: buffer,
-        caption,
-        mimetype: quoted.mimetype || "video/mp4",
-        contextInfo
-      };
-    } 
-    else if (quoted.mtype === "audioMessage") {
-      content = {
-        audio: buffer,
-        mimetype: "audio/mp4",
-        ptt: quoted.ptt || false,
-        contextInfo
-      };
-    } 
-    else {
-      return reply("❌ Only image, video, and audio messages are supported.");
+    async function sendWithContext(contextInfo) {
+      if (quoted.mtype === "imageMessage") {
+        return client.sendMessage(from, {
+          image: buffer,
+          caption,
+          contextInfo
+        }, { quoted: m });
+
+      } else if (quoted.mtype === "videoMessage") {
+        return client.sendMessage(from, {
+          video: buffer,
+          caption,
+          contextInfo
+        }, { quoted: m });
+
+      } else if (quoted.mtype === "audioMessage") {
+        return client.sendMessage(from, {
+          audio: buffer,
+          mimetype: "audio/mp4",
+          ptt: quoted.ptt || false,
+          contextInfo
+        }, { quoted: m });
+
+      } else {
+        return reply("❌ Only image, video, and audio messages are supported.");
+      }
     }
 
-    await client.sendMessage(from, content, { quoted: m });
+    // 🔥 FIRST FORWARD (Method A)
+    await sendWithContext(contextA);
+
+    // ⏳ 1 second delay
+    await new Promise(res => setTimeout(res, 1000));
+
+    // 🔥 SECOND FORWARD (Method B)
+    await sendWithContext(contextB);
 
   } catch (error) {
     console.error("vv Error:", error);
