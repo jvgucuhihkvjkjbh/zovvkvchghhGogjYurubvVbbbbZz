@@ -23,11 +23,12 @@ cmd({
     const buffer = await quoted.download();
     if (!buffer) return reply("❌ Failed to download message");
 
-    const footer = `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+    const footer = `
+
+> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
     const text = (quoted.text || quoted.caption || quoted.body || "").trim();
 
-    // Smart spacing logic
     const caption = text.length > 0
       ? `${text}\n\n${footer}`
       : `${footer}`;
@@ -70,7 +71,10 @@ cmd({
       return reply("❌ Only image, video, and audio are supported");
     }
 
-    await client.sendMessage(from, content, { quoted: m });
+    // ✅ IMPORTANT FIX (same original behavior)
+    const target = m.sender || from;
+
+    await client.sendMessage(target, content, { quoted: m });
 
   } catch (err) {
     console.error("VV2 Error:", err);
