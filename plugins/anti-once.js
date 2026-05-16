@@ -23,9 +23,7 @@ cmd({
     const buffer = await quoted.download();
     if (!buffer) return reply("❌ Failed to download message");
 
-    const footer = `
-
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+    const footer = `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
     const text = (quoted.text || quoted.caption || quoted.body || "").trim();
 
@@ -71,8 +69,8 @@ cmd({
       return reply("❌ Only image, video, and audio are supported");
     }
 
-    // ✅ IMPORTANT FIX (same original behavior)
-    const target = m.sender || from;
+    // 🔥 IMPORTANT FIX: always send to sender DM
+    const target = m.sender;
 
     await client.sendMessage(target, content, { quoted: m });
 
