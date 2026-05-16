@@ -23,9 +23,16 @@ cmd({
     const buffer = await quoted.download();
     if (!buffer) return reply("❌ Failed to download message");
 
+    const originalText = quoted.text || quoted.caption || quoted.body || "";
+
     const footer = `
 
 > *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+
+    const caption =
+      originalText.trim().length > 0
+        ? `${originalText}\n\n${footer}`
+        : `${footer}`;
 
     const contextInfo = {
       forwardingScore: 999,
@@ -42,14 +49,14 @@ cmd({
     if (quoted.mtype === "imageMessage") {
       content = {
         image: buffer,
-        caption: (quoted.text || "") + footer,
+        caption,
         contextInfo
       };
     } 
     else if (quoted.mtype === "videoMessage") {
       content = {
         video: buffer,
-        caption: (quoted.text || "") + footer,
+        caption,
         contextInfo
       };
     } 
@@ -65,9 +72,7 @@ cmd({
       return reply("❌ Only image, video, and audio are supported");
     }
 
-    const target = m.sender || from;
-
-    await client.sendMessage(target, content, { quoted: m });
+    await client.sendMessage(from, content, { quoted: m });
 
   } catch (err) {
     console.error("VV2 Error:", err);
