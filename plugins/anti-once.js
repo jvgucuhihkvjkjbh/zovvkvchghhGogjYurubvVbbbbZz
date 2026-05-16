@@ -23,16 +23,14 @@ cmd({
     const buffer = await quoted.download();
     if (!buffer) return reply("❌ Failed to download message");
 
-    const originalText = quoted.text || quoted.caption || quoted.body || "";
+    const footer = `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
-    const footer = `
+    const text = (quoted.text || quoted.caption || quoted.body || "").trim();
 
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
-
-    const caption =
-      originalText.trim().length > 0
-        ? `${originalText}\n\n${footer}`
-        : `${footer}`;
+    // Smart spacing logic
+    const caption = text.length > 0
+      ? `${text}\n\n${footer}`
+      : `${footer}`;
 
     const contextInfo = {
       forwardingScore: 999,
