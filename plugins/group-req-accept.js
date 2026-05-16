@@ -14,7 +14,6 @@ cmd({
         if (!isGroup) return reply("⚠️ This command only works in groups.")
         if (!isAdmins && !isCreator) return reply("❌ Access Denied! Only group admins can use this command.")
 
-        // Menu on .accept
         if (
             body.trim().toLowerCase() === ".accept" ||
             body.trim().toLowerCase() === `${config.PREFIX}accept`
@@ -43,11 +42,10 @@ cmd({
 
         let limit
 
-        // .acceptall
         if (body.toLowerCase().startsWith(".acceptall")) {
             limit = pending.length
         } else {
-            // .accept 56
+          
             limit = parseInt(args[0])
 
             if (isNaN(limit) || limit <= 0) {
