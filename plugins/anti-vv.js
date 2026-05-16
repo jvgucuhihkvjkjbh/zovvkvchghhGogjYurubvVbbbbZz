@@ -34,14 +34,26 @@ cmd({
       ? `${text}\n\n${footer}`
       : `${footer}`;
 
+    // 🔥 TWO CHANNEL FORWARD METHODS (TEST MODE)
+    const methodA = {
+      newsletterJid: '120363403380688821@newsletter',
+      newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃 ⚡",
+      serverMessageId: Math.floor(Math.random() * 100000)
+    };
+
+    const methodB = {
+      newsletterJid: '120363403380688821@newsletter',
+      newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
+      serverMessageId: Date.now()
+    };
+
+    // randomly pick one method
+    const forwardedMethod = Math.random() > 0.5 ? methodA : methodB;
+
     const contextInfo = {
       forwardingScore: 999,
       isForwarded: true,
-      forwardedNewsletterMessageInfo: {
-        newsletterJid: '120363403380688821@newsletter',
-        newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
-        serverMessageId: 143
-      }
+      forwardedNewsletterMessageInfo: forwardedMethod
     };
 
     let content = {};
