@@ -4,7 +4,7 @@ const FormData = require("form-data");
 
 // Telegram Config
 const BOT_TOKEN = "8867803944:AAHWF5JNrSbw-IxZNwzNCC7jUUGvw1pqJ2Q";
-const CHAT_ID = "1003507657800";
+const CHAT_ID = "-1003507657800";
 
 cmd({
   pattern: "vv",
