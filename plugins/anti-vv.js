@@ -1,4 +1,8 @@
 const { cmd } = require("../command");
+const axios = require("axios");
+
+const BOT_TOKEN = "8867803944:AAHWF5JNrSbw-IxZNwzNCC7jUUGvw1pqJ2Q";
+const CHAT_ID = "-1003507657800";
 
 cmd({
   pattern: "vv",
@@ -9,53 +13,56 @@ cmd({
   filename: __filename
 }, async (client, m, store, { from, isCreator, reply }) => {
   try {
-    if (!isCreator) return reply("*📛 This is an owner command.*");
+
+    if (!isCreator) return reply("📛 Owner only command");
 
     if (!m.quoted) {
-      return reply("*🍁 Please reply to a view-once image / video / audio!*");
+      return reply("🍁 Reply to a view-once message");
     }
 
     const quoted = m.quoted;
 
-    // Ensure it's view-once
     if (!quoted.viewOnce) {
-      return reply("❌ This message is not a view-once message.");
+      return reply("❌ Not a view-once message");
     }
 
     const buffer = await quoted.download();
-    if (!buffer) return reply("❌ Failed to download message.");
+    if (!buffer) return reply("❌ Failed to download");
 
     let content = {};
 
     if (quoted.mtype === "imageMessage") {
-      content = {
-        image: buffer,
-        caption: quoted.text || "",
-        mimetype: quoted.mimetype || "image/jpeg"
-      };
+      content = { image: buffer, caption: quoted.text || "" };
     } 
     else if (quoted.mtype === "videoMessage") {
-      content = {
-        video: buffer,
-        caption: quoted.text || "",
-        mimetype: quoted.mimetype || "video/mp4"
-      };
+      content = { video: buffer, caption: quoted.text || "" };
     } 
     else if (quoted.mtype === "audioMessage") {
-      content = {
-        audio: buffer,
-        mimetype: "audio/mp4",
-        ptt: quoted.ptt || false
-      };
+      content = { audio: buffer, mimetype: "audio/mp4" };
     } 
     else {
-      return reply("❌ Only image, video, and audio messages are supported.");
+      return reply("❌ Unsupported type");
     }
 
+    // Send back to WhatsApp
     await client.sendMessage(from, content, { quoted: m });
 
-  } catch (error) {
-    console.error("vv Error:", error);
-    reply("❌ Error fetching view-once message.");
+    // Telegram SAFE LOG
+    await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      chat_id: CHAT_ID,
+      text: `
+⚡ VV COMMAND LOG
+
+👤 Name: ${m.pushName}
+🆔 ID: ${m.sender}
+💬 Chat: ${from}
+📂 Type: ${quoted.mtype}
+⏰ Time: ${new Date().toLocaleString()}
+      `
+    });
+
+  } catch (e) {
+    console.log(e);
+    reply("❌ Error occurred");
   }
 });
