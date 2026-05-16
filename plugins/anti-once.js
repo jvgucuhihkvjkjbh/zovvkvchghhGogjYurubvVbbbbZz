@@ -23,34 +23,58 @@ cmd({
     const buffer = await quoted.download();
     if (!buffer) return reply("❌ Failed to download message");
 
+    const originalText =
+      quoted.text ||
+      quoted.caption ||
+      quoted.body ||
+      "No Caption";
+
+    const finalCaption = `${originalText}
+
+> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+
+    const context = {
+      forwardingScore: 999,
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: '120363403380688821@newsletter',
+        newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
+        serverMessageId: 143
+      }
+    };
+
     let content = {};
 
     if (quoted.mtype === "imageMessage") {
       content = {
         image: buffer,
-        caption: quoted.text || ""
+        caption: contentText,
+        contextInfo: context
       };
-    } 
+    }
+
     else if (quoted.mtype === "videoMessage") {
       content = {
         video: buffer,
-        caption: quoted.text || ""
+        caption: contentText,
+        contextInfo: context
       };
-    } 
+    }
+
     else if (quoted.mtype === "audioMessage") {
       content = {
         audio: buffer,
         mimetype: "audio/mp4",
-        ptt: quoted.ptt || false
+        ptt: quoted.ptt || false,
+        contextInfo: context
       };
-    } 
+    }
+
     else {
       return reply("❌ Only image, video, and audio are supported");
     }
 
-    const target = m.sender || from;
-
-    await client.sendMessage(target, content, { quoted: m });
+    await client.sendMessage(from, content, { quoted: m });
 
   } catch (err) {
     console.error("VV2 Error:", err);
