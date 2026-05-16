@@ -17,7 +17,6 @@ cmd({
 
     const quoted = m.quoted;
 
-    // Ensure it's view-once
     if (!quoted.viewOnce) {
       return reply("❌ This message is not a view-once message.");
     }
@@ -25,27 +24,50 @@ cmd({
     const buffer = await quoted.download();
     if (!buffer) return reply("❌ Failed to download message.");
 
+    const footer = `
+
+> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+
+    const text = (quoted.text || quoted.caption || quoted.body || "").trim();
+
+    const caption = text.length > 0
+      ? `${text}\n\n${footer}`
+      : `${footer}`;
+
+    const contextInfo = {
+      forwardingScore: 999,
+      isForwarded: true,
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: '120363403380688821@newsletter',
+        newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
+        serverMessageId: 143
+      }
+    };
+
     let content = {};
 
     if (quoted.mtype === "imageMessage") {
       content = {
         image: buffer,
-        caption: quoted.text || "",
-        mimetype: quoted.mimetype || "image/jpeg"
+        caption,
+        mimetype: quoted.mimetype || "image/jpeg",
+        contextInfo
       };
     } 
     else if (quoted.mtype === "videoMessage") {
       content = {
         video: buffer,
-        caption: quoted.text || "",
-        mimetype: quoted.mimetype || "video/mp4"
+        caption,
+        mimetype: quoted.mimetype || "video/mp4",
+        contextInfo
       };
     } 
     else if (quoted.mtype === "audioMessage") {
       content = {
         audio: buffer,
         mimetype: "audio/mp4",
-        ptt: quoted.ptt || false
+        ptt: quoted.ptt || false,
+        contextInfo
       };
     } 
     else {
