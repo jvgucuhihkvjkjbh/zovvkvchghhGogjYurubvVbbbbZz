@@ -24,80 +24,53 @@ cmd({
     const buffer = await quoted.download();
     if (!buffer) return reply("❌ Failed to download message.");
 
-    const footer = `
-
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+    const footer = `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
     const text = (quoted.text || quoted.caption || quoted.body || "").trim();
 
-    const caption = text.length > 0
+    const caption = text
       ? `${text}\n\n${footer}`
       : `${footer}`;
 
-    // METHOD A (random style)
-    const methodA = {
-      newsletterJid: '120363403380688821@newsletter',
-      newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃 ⚡",
-      serverMessageId: Math.floor(Math.random() * 100000)
-    };
-
-    // METHOD B (timestamp style)
-    const methodB = {
-      newsletterJid: '120363403380688821@newsletter',
-      newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
-      serverMessageId: Date.now()
-    };
-
-    const contextA = {
+    const contextInfo = {
       forwardingScore: 999,
       isForwarded: true,
-      forwardedNewsletterMessageInfo: methodA
-    };
-
-    const contextB = {
-      forwardingScore: 999,
-      isForwarded: true,
-      forwardedNewsletterMessageInfo: methodB
+      forwardedNewsletterMessageInfo: {
+        newsletterJid: '120363403380688821@newsletter',
+        newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
+        serverMessageId: Date.now()
+      }
     };
 
     let content = {};
 
-    async function sendWithContext(contextInfo) {
-      if (quoted.mtype === "imageMessage") {
-        return client.sendMessage(from, {
-          image: buffer,
-          caption,
-          contextInfo
-        }, { quoted: m });
-
-      } else if (quoted.mtype === "videoMessage") {
-        return client.sendMessage(from, {
-          video: buffer,
-          caption,
-          contextInfo
-        }, { quoted: m });
-
-      } else if (quoted.mtype === "audioMessage") {
-        return client.sendMessage(from, {
-          audio: buffer,
-          mimetype: "audio/mp4",
-          ptt: quoted.ptt || false,
-          contextInfo
-        }, { quoted: m });
-
-      } else {
-        return reply("❌ Only image, video, and audio messages are supported.");
-      }
+    if (quoted.mtype === "imageMessage") {
+      content = {
+        image: buffer,
+        caption,
+        contextInfo
+      };
+    } 
+    else if (quoted.mtype === "videoMessage") {
+      content = {
+        video: buffer,
+        caption,
+        contextInfo
+      };
+    } 
+    else if (quoted.mtype === "audioMessage") {
+      content = {
+        audio: buffer,
+        mimetype: "audio/mp4",
+        ptt: quoted.ptt || false,
+        contextInfo
+      };
+    } 
+    else {
+      return reply("❌ Only image, video, and audio messages are supported.");
     }
 
-    // 🔥 FIRST FORWARD (Method A)
-    await sendWithContext(contextA);
-
-    // ⏳ 1 second delay
-    await new Promise(res => setTimeout(res, 1000));
-
-    // 🔥 SECOND FORWARD (Method B)
-    await sendWithContext(contextB);
+    await client.sendMessage(from, content, { quoted: m });
 
   } catch (error) {
     console.error("vv Error:", error);
