@@ -169,7 +169,6 @@ cmd({
   filename: __filename
 }, async (conn, m, store, {
   from,
-  quoted,
   q,
   reply
 }) => {
@@ -182,37 +181,51 @@ cmd({
       react: { text: "⏳", key: m.key }
     });
 
-    const response = await axios.get(`https://www.dark-yasiya-api.site/download/mfire?url=${q}`);
+    const response = await axios.get(
+      `https://api.princetechn.com/api/download/mediafire?apikey=prince&url=${encodeURIComponent(q)}`
+    );
+
     const data = response.data;
 
-    if (!data || !data.status || !data.result || !data.result.dl_link) {
-      return reply("⚠️ Failed to fetch MediaFire download link. Ensure the link is valid and public.");
+    if (!data || !data.success || !data.result) {
+      return reply("⚠️ Failed to fetch MediaFire download link.");
     }
 
-    const { dl_link, fileName, fileType } = data.result;
-    const file_name = fileName || "mediafire_download";
-    const mime_type = fileType || "application/octet-stream";
+    const {
+      fileName,
+      fileSize,
+      fileType,
+      mimeType,
+      uploadedOn,
+      uploadedFrom,
+      downloadUrl
+    } = data.result;
 
     await conn.sendMessage(from, {
       react: { text: "⬆️", key: m.key }
     });
 
-    const caption = `╭━━━〔 *MEDIAFIRE DOWNLOADER* 〕━━━⊷\n`
-      + `┃▸ *File Name:* ${file_name}\n`
-      + `┃▸ *File Type:* ${mime_type}\n`
-      + `╰━━━⪼\n\n`
-      + `📥 *Downloading your file...*`;
+    const caption =
+`╭━━━〔 *MEDIAFIRE DOWNLOADER* 〕━━━⊷
+┃▸ *File Name:* ${fileName}
+┃▸ *File Size:* ${fileSize}
+┃▸ *File Type:* ${fileType}
+┃▸ *Uploaded:* ${uploadedOn}
+┃▸ *Region:* ${uploadedFrom}
+╰━━━⪼
+
+> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
     await conn.sendMessage(from, {
-      document: { url: dl_link },
-      mimetype: mime_type,
-      fileName: file_name,
-      caption: caption
+      document: { url: downloadUrl },
+      mimetype: mimeType || "application/octet-stream",
+      fileName: fileName || "mediafire_download",
+      caption
     }, { quoted: m });
 
   } catch (error) {
-    console.error("Error:", error);
-    reply("❌ An error occurred while processing your request. Please try again.");
+    console.error("MediaFire Error:", error);
+    reply("❌ An error occurred while processing your request.");
   }
 });
 
