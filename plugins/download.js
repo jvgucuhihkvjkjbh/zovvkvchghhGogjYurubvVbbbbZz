@@ -206,7 +206,7 @@ cmd({
     });
 
     const caption =
-`╭━━━〔 *MEDIAFIRE DOWNLOADER* 〕━━━⊷
+`╭━━━〔 *MEDIAFIRE* 〕━━━⊷
 ┃▸ *File Name:* ${fileName}
 ┃▸ *File Size:* ${fileSize}
 ┃▸ *File Type:* ${fileType}
