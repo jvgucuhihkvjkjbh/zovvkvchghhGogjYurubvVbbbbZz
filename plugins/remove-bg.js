@@ -27,7 +27,6 @@ cmd({
 
         if (!buffer) throw new Error("Image download failed");
 
-        // Upload image to tmp service
         const upload = await conn.sendMessage(
             "status@broadcast",
             { image: buffer },
@@ -57,7 +56,6 @@ cmd({
             timeout: 30000
         });
 
-        // Size formatter
         const formatBytes = (bytes) => {
             if (bytes === 0) return "0 Bytes";
             const k = 1024;
