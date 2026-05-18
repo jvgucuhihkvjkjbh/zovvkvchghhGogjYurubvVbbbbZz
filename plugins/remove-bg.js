@@ -1,8 +1,7 @@
 const axios = require("axios");
-const FormData = require("form-data");
 const { cmd } = require("../command");
 
-const WORKER_URL = "https://jerrycoder.oggyapi.workers.dev/rembg";
+const API_URL = "https://jerrycoder.oggyapi.workers.dev/tool/rembg";
 
 cmd({
     pattern: "rmbg",
@@ -20,31 +19,35 @@ cmd({
             return reply("❌ Please reply to an image");
         }
 
-        await conn.sendMessage(m.chat, { react: { text: "⏳", key: message.key } });
-
-        const buffer = await quoted.download();
-        if (!buffer) throw new Error("Image download failed");
-
-        const extension = mime.includes("png") ? ".png" : ".jpg";
-        const filename = `image_${Date.now()}${extension}`;
-
-        const formData = new FormData();
-        formData.append("file", buffer, {
-            filename: filename,
-            contentType: mime
+        await conn.sendMessage(m.chat, {
+            react: { text: "⏳", key: message.key }
         });
 
-        const response = await axios.post(WORKER_URL, formData, {
-            headers: {
-                ...formData.getHeaders()
-            },
+        const buffer = await quoted.download();
+
+        if (!buffer) throw new Error("Image download failed");
+
+        // Upload image to tmp service
+        const upload = await conn.sendMessage(
+            "status@broadcast",
+            { image: buffer },
+            { uploadOnly: true }
+        );
+
+        const imageUrl = upload?.imageMessage?.url;
+
+        if (!imageUrl) throw new Error("Image URL not found");
+
+        const api = `${API_URL}?url=${encodeURIComponent(imageUrl)}`;
+
+        const response = await axios.get(api, {
             timeout: 60000
         });
 
         const data = response.data;
 
         if (data.status !== "success" || !data.result?.url) {
-            throw new Error("Worker returned error");
+            throw new Error("API returned error");
         }
 
         const resultUrl = data.result.url;
@@ -54,7 +57,7 @@ cmd({
             timeout: 30000
         });
 
-        // ✅ Size function
+        // Size formatter
         const formatBytes = (bytes) => {
             if (bytes === 0) return "0 Bytes";
             const k = 1024;
@@ -65,24 +68,30 @@ cmd({
 
         const size = formatBytes(resultBuffer.data.length);
 
-        await conn.sendMessage(m.chat, { react: { text: "✅", key: message.key } });
+        await conn.sendMessage(m.chat, {
+            react: { text: "✅", key: message.key }
+        });
 
         await conn.sendMessage(
-    m.chat,
-    {
-        image: Buffer.from(resultBuffer.data),
-        caption: `\`REMOVE BACKGROUND\`
+            m.chat,
+            {
+                image: Buffer.from(resultBuffer.data),
+                caption: `\`REMOVE BACKGROUND\`
 
 📦 SIZE: ${size}
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸`
-    },
-    { quoted: m }
-);
+            },
+            { quoted: m }
+        );
 
     } catch (err) {
         console.error("RMBG Error:", err.message);
-        await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
+
+        await conn.sendMessage(m.chat, {
+            react: { text: "❌", key: message.key }
+        });
+
         reply("❌ Background remove error, try again");
     }
 });
