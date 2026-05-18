@@ -89,13 +89,32 @@ cmd({
                 }, { quoted: message });
             }
 
-            const { videos } = await yts({ videoId });
-            if (!videos || !videos.length) {
-                return sock.sendMessage(message.chat, {
-                    text: "❌ Invalid YouTube link"
-                }, { quoted: message });
+            try {
+                const search = await yts(videoId);
+                if (search && search.videos && search.videos.length) {
+                    video = search.videos[0];
+                }
+            } catch (e) {}
+
+            if (!video) {
+                try {
+                    const search2 = await yts(`https://www.youtube.com/watch?v=${videoId}`);
+                    if (search2 && search2.videos && search2.videos.length) {
+                        video = search2.videos[0];
+                    }
+                } catch (e) {}
             }
-            video = videos[0];
+
+            if (!video) {
+                video = {
+                    title: 'Unknown Title',
+                    url: `https://www.youtube.com/watch?v=${videoId}`,
+                    thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                    timestamp: 'N/A',
+                    views: 0,
+                    author: { name: 'Unknown' }
+                };
+            }
 
         } else {
 
@@ -110,7 +129,12 @@ cmd({
 
         const footer = "⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ";
 
-        const captionText = `*${video.title}*\n\n🎥 *CHANNEL:* ${video.author.name}\n👁️ *VIEWS:* ${(video.views || 0).toLocaleString()}\n⏳ *DURATION:* ${video.timestamp}\n\n> *${footer}*`;
+        const captionText =
+            `*${video.title}*\n\n` +
+            `🎥 *CHANNEL:* ${video.author.name}\n` +
+            `👁️ *VIEWS:* ${(video.views || 0).toLocaleString()}\n` +
+            `⏳ *DURATION:* ${video.timestamp}\n\n` +
+            `> *${footer}*`;
 
         await sock.sendMessage(message.chat, {
             image: { url: video.thumbnail },
