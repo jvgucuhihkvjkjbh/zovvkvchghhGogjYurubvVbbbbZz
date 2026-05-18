@@ -15,16 +15,15 @@ cmd({
   'filename': __filename
 }, async (client, message, match, { reply }) => {
   try {
- 
     const quotedMsg = message.quoted ? message.quoted : message;
     const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
-    
+
     if (!mimeType) {
       return reply("🍁 Please reply to an image, video, or audio message");
     }
 
     const mediaBuffer = await quotedMsg.download();
-    
+
     if (!mediaBuffer || mediaBuffer.length === 0) {
       throw "Failed to download media";
     }
@@ -39,7 +38,7 @@ cmd({
     else if (mimeType.includes('audio/mp4')) extension = '.m4a';
     else if (mimeType.includes('audio/x-m4a')) extension = '.m4a';
     else if (mimeType.includes('audio/wav')) extension = '.wav';
-    
+
     const tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}${extension}`);
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
@@ -47,16 +46,11 @@ cmd({
     uguuForm.append('files[]', fs.createReadStream(tempFilePath), `file${extension}`);
 
     const uguuResponse = await axios.post('https://uguu.se/upload.php', uguuForm, {
-      headers: {
-        ...uguuForm.getHeaders(),
-        'User-Agent': 'Mozilla/5.0'
-      },
+      headers: { ...uguuForm.getHeaders(), 'User-Agent': 'Mozilla/5.0' },
       timeout: 60000
     });
 
-    if (!uguuResponse.data || !uguuResponse.data.files || !uguuResponse.data.files[0] || !uguuResponse.data.files[0].url) {
-      throw "Failed to upload to Uguu";
-    }
+    if (!uguuResponse.data?.files?.[0]?.url) throw "Failed to upload to Uguu";
 
     const uguuUrl = uguuResponse.data.files[0].url;
 
@@ -65,10 +59,7 @@ cmd({
     catboxForm.append('url', uguuUrl);
 
     const catboxResponse = await axios.post('https://catbox.moe/user/api.php', catboxForm, {
-      headers: {
-        ...catboxForm.getHeaders(),
-        'User-Agent': 'Mozilla/5.0'
-      },
+      headers: { ...catboxForm.getHeaders(), 'User-Agent': 'Mozilla/5.0' },
       timeout: 60000
     });
 
@@ -76,9 +67,7 @@ cmd({
 
     let mediaUrl = catboxResponse.data.trim();
 
-    if (!mediaUrl || mediaUrl.toLowerCase().includes('error')) {
-      throw "Catbox upload failed";
-    }
+    if (!mediaUrl || mediaUrl.toLowerCase().includes('error')) throw "Catbox upload failed";
 
     if (mediaUrl.endsWith('.bin') && extension) {
       mediaUrl = mediaUrl.substring(0, mediaUrl.lastIndexOf('.')) + extension;
@@ -89,12 +78,21 @@ cmd({
     else if (mimeType.includes('video')) mediaType = 'Video';
     else if (mimeType.includes('audio')) mediaType = 'Audio';
 
-    await reply(
-      `*${mediaType} Uploaded Successfully*\n\n` +
-      `*Size:* ${formatBytes(mediaBuffer.length)}\n` +
-      `*URL:* ${mediaUrl}\n\n` +
-      `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
-    );
+    await client.sendMessage(message.key.remoteJid, {
+      text:
+        `*${mediaType} Uploaded Successfully*\n\n` +
+        `*Size:* ${formatBytes(mediaBuffer.length)}\n` +
+        `*URL:* ${mediaUrl}\n\n` +
+        `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
+      buttons: [
+        {
+          buttonId: `copy_${mediaUrl}`,
+          buttonText: { displayText: '📋 Copy URL' },
+          type: 1
+        }
+      ],
+      headerType: 1
+    }, { quoted: message });
 
   } catch (error) {
     console.error(error);
