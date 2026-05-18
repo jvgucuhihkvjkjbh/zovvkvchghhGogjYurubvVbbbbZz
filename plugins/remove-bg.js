@@ -1,7 +1,8 @@
 const axios = require("axios");
+const FormData = require("form-data");
 const { cmd } = require("../command");
 
-const API_URL = "https://jerrycoder.oggyapi.workers.dev/tool/rembg";
+const WORKER_URL = "https://jerrycoder.oggyapi.workers.dev/tool/rembg";
 
 cmd({
     pattern: "rmbg",
@@ -25,28 +26,54 @@ cmd({
 
         const buffer = await quoted.download();
 
-        if (!buffer) throw new Error("Image download failed");
+        if (!buffer) {
+            throw new Error("Image download failed");
+        }
 
-        const upload = await conn.sendMessage(
-            "status@broadcast",
-            { image: buffer },
-            { uploadOnly: true }
+        const extension = mime.includes("png") ? ".png" : ".jpg";
+        const filename = `image_${Date.now()}${extension}`;
+
+        const formData = new FormData();
+
+        formData.append("file", buffer, {
+            filename,
+            contentType: mime
+        });
+
+        // Upload image to temp host
+        const upload = await axios.post(
+            "https://pomf2.lain.la/upload.php",
+            formData,
+            {
+                headers: {
+                    ...formData.getHeaders()
+                },
+                timeout: 60000
+            }
         );
 
-        const imageUrl = upload?.imageMessage?.url;
+        const imageUrl = upload.data?.files?.[0]?.url;
 
-        if (!imageUrl) throw new Error("Image URL not found");
+        if (!imageUrl) {
+            throw new Error("Image upload failed");
+        }
 
-        const api = `${API_URL}?url=${encodeURIComponent(imageUrl)}`;
-
-        const response = await axios.get(api, {
-            timeout: 60000
-        });
+        // New API Response
+        const response = await axios.get(
+            `${WORKER_URL}?url=${encodeURIComponent(imageUrl)}`,
+            {
+                timeout: 60000
+            }
+        );
 
         const data = response.data;
 
-        if (data.status !== "success" || !data.result?.url) {
-            throw new Error("API returned error");
+        if (
+            data.status !== "success" ||
+            !data.result ||
+            !data.result.url
+        ) {
+            throw new Error("Worker returned error");
         }
 
         const resultUrl = data.result.url;
@@ -56,12 +83,19 @@ cmd({
             timeout: 30000
         });
 
+        // Size formatter
         const formatBytes = (bytes) => {
             if (bytes === 0) return "0 Bytes";
+
             const k = 1024;
-            const sizes = ["Bytes", "KB", "MB"];
+            const sizes = ["Bytes", "KB", "MB", "GB"];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+
+            return (
+                parseFloat((bytes / Math.pow(k, i)).toFixed(2)) +
+                " " +
+                sizes[i]
+            );
         };
 
         const size = formatBytes(resultBuffer.data.length);
@@ -78,13 +112,15 @@ cmd({
 
 📦 SIZE: ${size}
 
+🌐 SERVER: ${data.result.server}
+
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸`
             },
             { quoted: m }
         );
 
     } catch (err) {
-        console.error("RMBG Error:", err.message);
+        console.error("RMBG Error:", err);
 
         await conn.sendMessage(m.chat, {
             react: { text: "❌", key: message.key }
