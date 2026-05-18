@@ -78,21 +78,25 @@ cmd({
     else if (mimeType.includes('video')) mediaType = 'Video';
     else if (mimeType.includes('audio')) mediaType = 'Audio';
 
+    const interactiveButtons = [
+      {
+        name: "cta_copy",
+        buttonParamsJson: JSON.stringify({
+          display_text: "📋 Copy URL",
+          id: "copy_url",
+          copy_code: mediaUrl
+        })
+      }
+    ];
+
     await client.sendMessage(message.key.remoteJid, {
       text:
         `*${mediaType} Uploaded Successfully*\n\n` +
         `*Size:* ${formatBytes(mediaBuffer.length)}\n` +
         `*URL:* ${mediaUrl}\n\n` +
         `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
-      buttons: [
-        {
-          buttonId: 'copy_url',
-          buttonText: { displayText: '📋 Copy URL' },
-          type: 1
-        }
-      ],
-      footer: mediaUrl,
-      headerType: 1
+      footer: '',
+      interactiveButtons
     }, { quoted: message });
 
   } catch (error) {
