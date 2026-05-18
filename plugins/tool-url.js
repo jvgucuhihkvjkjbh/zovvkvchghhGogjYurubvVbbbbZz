@@ -86,11 +86,12 @@ cmd({
         `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
       buttons: [
         {
-          buttonId: `copy_${mediaUrl}`,
+          buttonId: 'copy_url',
           buttonText: { displayText: '📋 Copy URL' },
           type: 1
         }
       ],
+      footer: mediaUrl,
       headerType: 1
     }, { quoted: message });
 
