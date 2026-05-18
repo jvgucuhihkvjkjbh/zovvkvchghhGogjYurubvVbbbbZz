@@ -23,10 +23,7 @@ cmd({
     }
 
     const mediaBuffer = await quotedMsg.download();
-
-    if (!mediaBuffer || mediaBuffer.length === 0) {
-      throw "Failed to download media";
-    }
+    if (!mediaBuffer || mediaBuffer.length === 0) throw "Failed to download media";
 
     let extension = '';
     if (mimeType.includes('image/jpeg')) extension = '.jpg';
@@ -44,20 +41,17 @@ cmd({
 
     const uguuForm = new FormData();
     uguuForm.append('files[]', fs.createReadStream(tempFilePath), `file${extension}`);
-
     const uguuResponse = await axios.post('https://uguu.se/upload.php', uguuForm, {
       headers: { ...uguuForm.getHeaders(), 'User-Agent': 'Mozilla/5.0' },
       timeout: 60000
     });
 
     if (!uguuResponse.data?.files?.[0]?.url) throw "Failed to upload to Uguu";
-
     const uguuUrl = uguuResponse.data.files[0].url;
 
     const catboxForm = new FormData();
     catboxForm.append('reqtype', 'urlupload');
     catboxForm.append('url', uguuUrl);
-
     const catboxResponse = await axios.post('https://catbox.moe/user/api.php', catboxForm, {
       headers: { ...catboxForm.getHeaders(), 'User-Agent': 'Mozilla/5.0' },
       timeout: 60000
@@ -66,9 +60,7 @@ cmd({
     fs.unlinkSync(tempFilePath);
 
     let mediaUrl = catboxResponse.data.trim();
-
     if (!mediaUrl || mediaUrl.toLowerCase().includes('error')) throw "Catbox upload failed";
-
     if (mediaUrl.endsWith('.bin') && extension) {
       mediaUrl = mediaUrl.substring(0, mediaUrl.lastIndexOf('.')) + extension;
     }
@@ -78,25 +70,21 @@ cmd({
     else if (mimeType.includes('video')) mediaType = 'Video';
     else if (mimeType.includes('audio')) mediaType = 'Audio';
 
-    const interactiveButtons = [
-      {
-        name: "cta_copy",
-        buttonParamsJson: JSON.stringify({
-          display_text: "📋 Copy URL",
-          id: "copy_url",
-          copy_code: mediaUrl
-        })
-      }
-    ];
-
     await client.sendMessage(message.key.remoteJid, {
       text:
         `*${mediaType} Uploaded Successfully*\n\n` +
         `*Size:* ${formatBytes(mediaBuffer.length)}\n` +
         `*URL:* ${mediaUrl}\n\n` +
         `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
-      footer: '',
-      interactiveButtons
+      interactiveButtons: [
+        {
+          name: "quick_reply",
+          buttonParamsJson: JSON.stringify({
+            display_text: "📋 Copy URL",
+            id: mediaUrl
+          })
+        }
+      ]
     }, { quoted: message });
 
   } catch (error) {
