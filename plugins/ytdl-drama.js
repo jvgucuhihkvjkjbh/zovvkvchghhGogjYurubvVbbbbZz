@@ -91,6 +91,8 @@ ${customName}`;
 
             if (!["1","2"].includes(selectedText)) return;
 
+            sock.ev.off("messages.upsert", listener);
+
             await sock.sendMessage(message.chat, { 
                 react: { text: "⏳", key: msg.key } 
             });
@@ -100,22 +102,21 @@ ${customName}`;
                 await sock.sendMessage(message.chat, { 
                     react: { text: "❌", key: msg.key } 
                 });
-                return reply("❌ All download servers are currently unavailable. Please try again later.");
+                return sock.sendMessage(message.chat, {
+                    text: "❌ All download servers are currently unavailable. Please try again later."
+                }, { quoted: msg });
             }
-
-            const response = await axios.get(dlUrl, { responseType: "arraybuffer", timeout: 120000 });
-            const buffer = Buffer.from(response.data);
 
             if (selectedText === "1") {
                 await sock.sendMessage(message.chat, {
-                    document: buffer,
+                    document: { url: dlUrl },
                     mimetype: "video/mp4",
                     fileName: `${videoTitle}.mp4`,
                     caption: `*${videoTitle}*`
                 }, { quoted: msg });
             } else if (selectedText === "2") {
                 await sock.sendMessage(message.chat, {
-                    video: buffer,
+                    video: { url: dlUrl },
                     mimetype: "video/mp4",
                     caption: `*${videoTitle}*\n\n${customName}`
                 }, { quoted: msg });
@@ -124,8 +125,6 @@ ${customName}`;
             await sock.sendMessage(message.chat, { 
                 react: { text: "✅", key: msg.key } 
             });
-
-            sock.ev.off("messages.upsert", listener);
         };
 
         sock.ev.on("messages.upsert", listener);
