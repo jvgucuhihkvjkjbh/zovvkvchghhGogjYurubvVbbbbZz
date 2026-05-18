@@ -38,26 +38,26 @@ commands.forEach(pattern => {
 
                 if (!videoId) return reply("❌ Invalid YouTube link");
 
+                const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
                 try {
-                    const search = await yts(videoId);
-                    if (search && search.videos && search.videos.length) {
-                        vid = search.videos[0];
+                    const search = await yts({ videoId: videoId });
+                    if (search && search.title) {
+                        vid = {
+                            title: search.title,
+                            url: ytUrl,
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                            timestamp: search.duration?.timestamp || search.timestamp || 'N/A',
+                            views: search.views || 0,
+                            author: { name: search.author?.name || search.channel?.name || 'Unknown' }
+                        };
                     }
                 } catch (e) {}
 
                 if (!vid) {
-                    try {
-                        const search2 = await yts(`https://www.youtube.com/watch?v=${videoId}`);
-                        if (search2 && search2.videos && search2.videos.length) {
-                            vid = search2.videos[0];
-                        }
-                    } catch (e) {}
-                }
-
-                if (!vid) {
                     vid = {
                         title: 'Unknown Title',
-                        url: `https://www.youtube.com/watch?v=${videoId}`,
+                        url: ytUrl,
                         thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
                         timestamp: 'N/A',
                         views: 0,
