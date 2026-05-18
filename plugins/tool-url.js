@@ -1,26 +1,33 @@
 const axios = require("axios");
-const FormData = require('form-data');
-const fs = require('fs');
-const os = require('os');
+const FormData = require("form-data");
+const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { cmd } = require("../command");
 
 cmd({
   pattern: "tourl",
   alias: ["imgtourl", "imgurl", "url", "geturl", "upload"],
-  react: '🖇',
+  react: "🖇",
   desc: "Convert media to Catbox URL",
   category: "utility",
   use: ".tourl [reply to media]",
   filename: __filename
 }, async (client, message, match, { reply, from }) => {
+
   try {
 
-    const quotedMsg = message.quoted ? message.quoted : message;
-    const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
+    const quotedMsg = message.quoted
+      ? message.quoted
+      : message;
+
+    const mimeType =
+      (quotedMsg.msg || quotedMsg).mimetype || "";
 
     if (!mimeType) {
-      return reply("🍁 Please reply to an image, video, or audio message");
+      return reply(
+        "🍁 Please reply to an image, video, or audio message"
+      );
     }
 
     const mediaBuffer = await quotedMsg.download();
@@ -29,17 +36,17 @@ cmd({
       throw "Failed to download media";
     }
 
-    let extension = '';
+    let extension = "";
 
-    if (mimeType.includes('image/jpeg')) extension = '.jpg';
-    else if (mimeType.includes('image/png')) extension = '.png';
-    else if (mimeType.includes('image/webp')) extension = '.webp';
-    else if (mimeType.includes('video/mp4')) extension = '.mp4';
-    else if (mimeType.includes('audio/mpeg')) extension = '.mp3';
-    else if (mimeType.includes('audio/ogg')) extension = '.ogg';
-    else if (mimeType.includes('audio/mp4')) extension = '.m4a';
-    else if (mimeType.includes('audio/x-m4a')) extension = '.m4a';
-    else if (mimeType.includes('audio/wav')) extension = '.wav';
+    if (mimeType.includes("image/jpeg")) extension = ".jpg";
+    else if (mimeType.includes("image/png")) extension = ".png";
+    else if (mimeType.includes("image/webp")) extension = ".webp";
+    else if (mimeType.includes("video/mp4")) extension = ".mp4";
+    else if (mimeType.includes("audio/mpeg")) extension = ".mp3";
+    else if (mimeType.includes("audio/ogg")) extension = ".ogg";
+    else if (mimeType.includes("audio/mp4")) extension = ".m4a";
+    else if (mimeType.includes("audio/x-m4a")) extension = ".m4a";
+    else if (mimeType.includes("audio/wav")) extension = ".wav";
 
     const tempFilePath = path.join(
       os.tmpdir(),
@@ -48,20 +55,22 @@ cmd({
 
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
+    // UPLOAD TO UGUU
     const uguuForm = new FormData();
+
     uguuForm.append(
-      'files[]',
+      "files[]",
       fs.createReadStream(tempFilePath),
       `file${extension}`
     );
 
     const uguuResponse = await axios.post(
-      'https://uguu.se/upload.php',
+      "https://uguu.se/upload.php",
       uguuForm,
       {
         headers: {
           ...uguuForm.getHeaders(),
-          'User-Agent': 'Mozilla/5.0'
+          "User-Agent": "Mozilla/5.0"
         },
         timeout: 60000
       }
@@ -76,19 +85,22 @@ cmd({
       throw "Failed to upload to Uguu";
     }
 
-    const uguuUrl = uguuResponse.data.files[0].url;
+    const uguuUrl =
+      uguuResponse.data.files[0].url;
 
+    // UPLOAD TO CATBOX
     const catboxForm = new FormData();
-    catboxForm.append('reqtype', 'urlupload');
-    catboxForm.append('url', uguuUrl);
+
+    catboxForm.append("reqtype", "urlupload");
+    catboxForm.append("url", uguuUrl);
 
     const catboxResponse = await axios.post(
-      'https://catbox.moe/user/api.php',
+      "https://catbox.moe/user/api.php",
       catboxForm,
       {
         headers: {
           ...catboxForm.getHeaders(),
-          'User-Agent': 'Mozilla/5.0'
+          "User-Agent": "Mozilla/5.0"
         },
         timeout: 60000
       }
@@ -98,24 +110,39 @@ cmd({
 
     let mediaUrl = catboxResponse.data.trim();
 
-    if (!mediaUrl || mediaUrl.toLowerCase().includes('error')) {
+    if (
+      !mediaUrl ||
+      mediaUrl.toLowerCase().includes("error")
+    ) {
       throw "Catbox upload failed";
     }
 
-    if (mediaUrl.endsWith('.bin') && extension) {
+    if (
+      mediaUrl.endsWith(".bin") &&
+      extension
+    ) {
       mediaUrl =
-        mediaUrl.substring(0, mediaUrl.lastIndexOf('.')) + extension;
+        mediaUrl.substring(
+          0,
+          mediaUrl.lastIndexOf(".")
+        ) + extension;
     }
 
-    let mediaType = 'File';
+    let mediaType = "File";
 
-    if (mimeType.includes('image')) mediaType = 'Image';
-    else if (mimeType.includes('video')) mediaType = 'Video';
-    else if (mimeType.includes('audio')) mediaType = 'Audio';
+    if (mimeType.includes("image")) {
+      mediaType = "Image";
+    } else if (mimeType.includes("video")) {
+      mediaType = "Video";
+    } else if (mimeType.includes("audio")) {
+      mediaType = "Audio";
+    }
 
-    // BUTTON MESSAGE
-    await client.sendMessage(from, {
-      text:
+    // SEND BUTTON MESSAGE
+    await client.sendMessage(
+      from,
+      {
+        text:
 `📁 *TYPE:* ${mediaType}
 
 📄 *FILE:* file${extension}
@@ -126,37 +153,56 @@ cmd({
 
 > *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
 
-      footer: "Click button below to copy URL",
+        footer: "Click button below to copy URL",
 
-      buttons: [
-        {
-          buttonId: mediaUrl,
-          buttonText: {
-            displayText: "📋 Copy URL"
-          },
-          type: 1
-        }
-      ],
+        interactiveButtons: [
+          {
+            name: "cta_copy",
+            buttonParamsJson: JSON.stringify({
+              display_text: "📋 Copy URL",
+              copy_code: mediaUrl
+            })
+          }
+        ]
 
-      headerType: 1
-
-    }, { quoted: message });
+      },
+      { quoted: message }
+    );
 
   } catch (error) {
+
     console.error(error);
-    await reply(`❌ Error: ${error.message || error}`);
+
+    await reply(
+      `❌ Error: ${error.message || error}`
+    );
   }
 });
 
 function formatBytes(bytes) {
-  if (bytes === 0) return '0 Bytes';
+
+  if (bytes === 0) {
+    return "0 Bytes";
+  }
 
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
 
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const sizes = [
+    "Bytes",
+    "KB",
+    "MB",
+    "GB"
+  ];
 
-  return parseFloat(
-    (bytes / Math.pow(k, i)).toFixed(2)
-  ) + ' ' + sizes[i];
+  const i = Math.floor(
+    Math.log(bytes) / Math.log(k)
+  );
+
+  return (
+    parseFloat(
+      (bytes / Math.pow(k, i)).toFixed(2)
+    ) +
+    " " +
+    sizes[i]
+  );
 }
