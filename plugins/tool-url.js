@@ -1,216 +1,111 @@
 const axios = require("axios");
-const FormData = require("form-data");
-const fs = require("fs");
-const os = require("os");
+const FormData = require('form-data');
+const fs = require('fs');
+const os = require('os');
 const path = require("path");
 const { cmd } = require("../command");
 
-// TEMP URL STORAGE
-global.mediaUrlStore = global.mediaUrlStore || {};
-
 cmd({
-  pattern: "tourl",
-  alias: ["imgtourl", "imgurl", "url", "geturl", "upload"],
-  react: "🖇",
-  desc: "Convert media to Catbox URL",
-  category: "utility",
-  use: ".tourl [reply to media]",
-  filename: __filename
-}, async (conn, m, match, { reply, from, sender }) => {
-
+  'pattern': "tourl",
+  'alias': ["imgtourl", "imgurl", "url", "geturl", "upload"],
+  'react': '🖇',
+  'desc': "Convert media to Catbox URL",
+  'category': "utility",
+  'use': ".tourl [reply to media]",
+  'filename': __filename
+}, async (client, message, match, { reply }) => {
   try {
-
-    const quoted = m.quoted ? m.quoted : m;
-
-    const mime =
-      (quoted.msg || quoted).mimetype || "";
-
-    if (!mime) {
-      return reply(
-        "🍁 Please reply to image/video/audio"
-      );
+ 
+    const quotedMsg = message.quoted ? message.quoted : message;
+    const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
+    
+    if (!mimeType) {
+      return reply("🍁 Please reply to an image, video, or audio message");
     }
 
-    const buffer = await quoted.download();
-
-    if (!buffer || !buffer.length) {
+    const mediaBuffer = await quotedMsg.download();
+    
+    if (!mediaBuffer || mediaBuffer.length === 0) {
       throw "Failed to download media";
     }
 
-    let ext = "";
+    let extension = '';
+    if (mimeType.includes('image/jpeg')) extension = '.jpg';
+    else if (mimeType.includes('image/png')) extension = '.png';
+    else if (mimeType.includes('image/webp')) extension = '.webp';
+    else if (mimeType.includes('video/mp4')) extension = '.mp4';
+    else if (mimeType.includes('audio/mpeg')) extension = '.mp3';
+    else if (mimeType.includes('audio/ogg')) extension = '.ogg';
+    else if (mimeType.includes('audio/mp4')) extension = '.m4a';
+    else if (mimeType.includes('audio/x-m4a')) extension = '.m4a';
+    else if (mimeType.includes('audio/wav')) extension = '.wav';
+    
+    const tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}${extension}`);
+    fs.writeFileSync(tempFilePath, mediaBuffer);
 
-    if (mime.includes("image/jpeg")) ext = ".jpg";
-    else if (mime.includes("image/png")) ext = ".png";
-    else if (mime.includes("image/webp")) ext = ".webp";
-    else if (mime.includes("video/mp4")) ext = ".mp4";
-    else if (mime.includes("audio/mpeg")) ext = ".mp3";
-    else if (mime.includes("audio/ogg")) ext = ".ogg";
-    else if (mime.includes("audio/mp4")) ext = ".m4a";
-
-    const tempPath = path.join(
-      os.tmpdir(),
-      `upload_${Date.now()}${ext}`
-    );
-
-    fs.writeFileSync(tempPath, buffer);
-
-    // UGUU UPLOAD
     const uguuForm = new FormData();
+    uguuForm.append('files[]', fs.createReadStream(tempFilePath), `file${extension}`);
 
-    uguuForm.append(
-      "files[]",
-      fs.createReadStream(tempPath)
-    );
+    const uguuResponse = await axios.post('https://uguu.se/upload.php', uguuForm, {
+      headers: {
+        ...uguuForm.getHeaders(),
+        'User-Agent': 'Mozilla/5.0'
+      },
+      timeout: 60000
+    });
 
-    const uguuRes = await axios.post(
-      "https://uguu.se/upload.php",
-      uguuForm,
-      {
-        headers: {
-          ...uguuForm.getHeaders()
-        }
-      }
-    );
+    if (!uguuResponse.data || !uguuResponse.data.files || !uguuResponse.data.files[0] || !uguuResponse.data.files[0].url) {
+      throw "Failed to upload to Uguu";
+    }
 
-    const uguuUrl =
-      uguuRes.data.files[0].url;
+    const uguuUrl = uguuResponse.data.files[0].url;
 
-    // CATBOX UPLOAD
     const catboxForm = new FormData();
+    catboxForm.append('reqtype', 'urlupload');
+    catboxForm.append('url', uguuUrl);
 
-    catboxForm.append(
-      "reqtype",
-      "urlupload"
-    );
+    const catboxResponse = await axios.post('https://catbox.moe/user/api.php', catboxForm, {
+      headers: {
+        ...catboxForm.getHeaders(),
+        'User-Agent': 'Mozilla/5.0'
+      },
+      timeout: 60000
+    });
 
-    catboxForm.append(
-      "url",
-      uguuUrl
-    );
+    fs.unlinkSync(tempFilePath);
 
-    const catboxRes = await axios.post(
-      "https://catbox.moe/user/api.php",
-      catboxForm,
-      {
-        headers: {
-          ...catboxForm.getHeaders()
-        }
-      }
-    );
+    let mediaUrl = catboxResponse.data.trim();
 
-    fs.unlinkSync(tempPath);
-
-    const mediaUrl =
-      catboxRes.data.trim();
-
-    // SAVE USER URL
-    global.mediaUrlStore[sender] = mediaUrl;
-
-    let mediaType = "File";
-
-    if (mime.includes("image")) {
-      mediaType = "Image";
-    } else if (mime.includes("video")) {
-      mediaType = "Video";
-    } else if (mime.includes("audio")) {
-      mediaType = "Audio";
+    if (!mediaUrl || mediaUrl.toLowerCase().includes('error')) {
+      throw "Catbox upload failed";
     }
 
-    // BUTTON MESSAGE
-    await conn.sendMessage(from, {
-      text:
-`📁 *TYPE:* ${mediaType}
-
-💾 *SIZE:* ${formatBytes(buffer.length)}
-
-✅ *UPLOAD SUCCESSFUL*
-
-> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
-
-      footer: "Click button below to get URL",
-
-      buttons: [
-        {
-          buttonId: "get_uploaded_url",
-          buttonText: {
-            displayText: "📋 COPY URL"
-          },
-          type: 1
-        }
-      ],
-
-      headerType: 1
-
-    }, { quoted: m });
-
-  } catch (e) {
-
-    console.error(e);
-
-    reply(
-      `❌ Error: ${e.message || e}`
-    );
-  }
-});
-
-// BUTTON RESPONSE HANDLER
-cmd({
-  on: "body"
-}, async (conn, m, store, { from, sender }) => {
-
-  try {
-
-    const selected =
-      m.message?.buttonsResponseMessage
-        ?.selectedButtonId;
-
-    if (selected === "get_uploaded_url") {
-
-      const savedUrl =
-        global.mediaUrlStore[sender];
-
-      if (!savedUrl) return;
-
-      await conn.sendMessage(from, {
-        text:
-`📋 *YOUR URL*
-
-${savedUrl}
-
-> *© ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
-      }, { quoted: m });
-
+    if (mediaUrl.endsWith('.bin') && extension) {
+      mediaUrl = mediaUrl.substring(0, mediaUrl.lastIndexOf('.')) + extension;
     }
 
-  } catch (err) {
-    console.error(err);
+    let mediaType = 'File';
+    if (mimeType.includes('image')) mediaType = 'Image';
+    else if (mimeType.includes('video')) mediaType = 'Video';
+    else if (mimeType.includes('audio')) mediaType = 'Audio';
+
+    await reply(
+      `*${mediaType} Uploaded Successfully*\n\n` +
+      `*Size:* ${formatBytes(mediaBuffer.length)}\n` +
+      `*URL:* ${mediaUrl}\n\n` +
+      `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
+    );
+
+  } catch (error) {
+    console.error(error);
+    await reply(`❌ Error: ${error.message || error}`);
   }
 });
 
 function formatBytes(bytes) {
-
-  if (bytes === 0) {
-    return "0 Bytes";
-  }
-
+  if (bytes === 0) return '0 Bytes';
   const k = 1024;
-
-  const sizes = [
-    "Bytes",
-    "KB",
-    "MB",
-    "GB"
-  ];
-
-  const i = Math.floor(
-    Math.log(bytes) / Math.log(k)
-  );
-
-  return (
-    parseFloat(
-      (bytes / Math.pow(k, i)).toFixed(2)
-    ) +
-    " " +
-    sizes[i]
-  );
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
