@@ -76,13 +76,14 @@ cmd({
         `*Size:* ${formatBytes(mediaBuffer.length)}\n` +
         `*URL:* ${mediaUrl}\n\n` +
         `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
-      interactiveButtons: [
+      footer: '© ADEEL-MD',
+      templateButtons: [
         {
-          name: "quick_reply",
-          buttonParamsJson: JSON.stringify({
-            display_text: "📋 Copy URL",
+          index: 1,
+          quickReplyButton: {
+            displayText: '📋 Copy URL',
             id: mediaUrl
-          })
+          }
         }
       ]
     }, { quoted: message });
