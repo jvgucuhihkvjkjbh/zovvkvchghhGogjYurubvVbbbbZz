@@ -89,26 +89,22 @@ cmd({
                 }, { quoted: message });
             }
 
-            const search = await yts({ videoId });
-
-            if (!search || !search.title) {
+            const { videos } = await yts({ videoId });
+            if (!videos || !videos.length) {
                 return sock.sendMessage(message.chat, {
                     text: "❌ Invalid YouTube link"
                 }, { quoted: message });
             }
-
-            video = search;
+            video = videos[0];
 
         } else {
 
             const search = await yts(query);
-
             if (!search.videos.length) {
                 return sock.sendMessage(message.chat, {
                     text: "❌ No video results found"
                 }, { quoted: message });
             }
-
             video = search.videos[0];
         }
 
