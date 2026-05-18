@@ -38,9 +38,32 @@ commands.forEach(pattern => {
 
                 if (!videoId) return reply("❌ Invalid YouTube link");
 
-                const { videos } = await yts({ videoId });
-                if (!videos || !videos.length) return reply("❌ Invalid YouTube link");
-                vid = videos[0];
+                try {
+                    const search = await yts(videoId);
+                    if (search && search.videos && search.videos.length) {
+                        vid = search.videos[0];
+                    }
+                } catch (e) {}
+
+                if (!vid) {
+                    try {
+                        const search2 = await yts(`https://www.youtube.com/watch?v=${videoId}`);
+                        if (search2 && search2.videos && search2.videos.length) {
+                            vid = search2.videos[0];
+                        }
+                    } catch (e) {}
+                }
+
+                if (!vid) {
+                    vid = {
+                        title: 'Unknown Title',
+                        url: `https://www.youtube.com/watch?v=${videoId}`,
+                        thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                        timestamp: 'N/A',
+                        views: 0,
+                        author: { name: 'Unknown' }
+                    };
+                }
 
             } else {
 
@@ -51,7 +74,12 @@ commands.forEach(pattern => {
 
             await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-            const caption = `*${vid.title}*\n\n👤 *Channel:* ${vid.author.name}\n⏱ *Duration:* ${vid.timestamp}\n👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n> ⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ⚡`;
+            const caption =
+                `*${vid.title}*\n\n` +
+                `👤 *Channel:* ${vid.author.name}\n` +
+                `⏱ *Duration:* ${vid.timestamp}\n` +
+                `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
+                `> ⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ⚡`;
 
             await conn.sendMessage(from, {
                 image: { url: vid.thumbnail },
