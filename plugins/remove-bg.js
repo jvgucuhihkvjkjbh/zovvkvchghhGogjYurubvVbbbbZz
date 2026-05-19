@@ -4,7 +4,6 @@ const { cmd } = require("../command");
 
 const API_URL = "https://jerrycoder.oggyapi.workers.dev/tool/rembg";
 
-// Upload image to tmpfiles.org
 async function uploadImage(buffer) {
     try {
         const form = new FormData();
@@ -56,14 +55,12 @@ cmd({
             return reply("❌ Failed to download image");
         }
 
-        // Upload image first
         const uploadedUrl = await uploadImage(buffer);
 
         if (!uploadedUrl) {
             return reply("❌ Image upload failed");
         }
 
-        // API request
         const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
 
         const response = await axios.get(api, {
@@ -80,7 +77,6 @@ cmd({
             return reply("❌ Failed to remove background");
         }
 
-        // Download result image
         const result = await axios.get(data.result.url, {
             responseType: "arraybuffer",
             timeout: 60000
@@ -88,7 +84,6 @@ cmd({
 
         const resultBuffer = Buffer.from(result.data);
 
-        // Size formatter
         const formatBytes = (bytes) => {
             if (bytes === 0) return "0 Bytes";
 
@@ -116,7 +111,7 @@ cmd({
 
 📦 SIZE: ${size}
 
-> ⚡ɪᴍᴛɪʏᴀᴢ-ʀᴀᴊᴘᴜᴛ⚡`
+> ⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸`
             },
             { quoted: m }
         );
