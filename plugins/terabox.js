@@ -1,6 +1,35 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 
+const TERABOX_DOMAINS = [
+  'terabox.com',
+  '1024terabox.com',
+  'terasharefile.com',
+  'terasharelink.com',
+  '1024tera.com',
+  'nephobox.com',
+  '4funbox.com',
+  'mirrobox.com',
+  'momerybox.com',
+  'teraboxapp.com',
+  'gibibox.com',
+  'mdisk.me'
+];
+
+function isTeraboxLink(url) {
+  return TERABOX_DOMAINS.some(domain => url.includes(domain));
+}
+
+function normalizeTeraboxUrl(url) {
+  try {
+    const urlObj = new URL(url);
+    const shard = urlObj.pathname + urlObj.search;
+    return `https://1024terabox.com${shard}`;
+  } catch {
+    return url;
+  }
+}
+
 cmd({
   pattern: "terabox",
   alias: ["tera", "tbx", "terabox2"],
@@ -16,6 +45,12 @@ async (conn, mek, m, { from, q, reply }) => {
 
     const url = q.trim();
 
+    if (!isTeraboxLink(url)) {
+      return reply("❌ Invalid Terabox link. Supported: terabox.com, terasharefile.com, 1024terabox.com and other mirrors");
+    }
+
+    const normalizedUrl = normalizeTeraboxUrl(url);
+
     await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
     let fileName, sizeMB, thumbnail, downloadUrl;
@@ -24,7 +59,7 @@ async (conn, mek, m, { from, q, reply }) => {
     if (!success) {
       try {
         const { data } = await axios.get(
-          `https://jerrycoder.oggyapi.workers.dev/down/terabx?url=${encodeURIComponent(url)}`,
+          `https://jerrycoder.oggyapi.workers.dev/down/terabx?url=${encodeURIComponent(normalizedUrl)}`,
           { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
         );
         if (data.status === "success" && data.download) {
@@ -42,7 +77,7 @@ async (conn, mek, m, { from, q, reply }) => {
     if (!success) {
       try {
         const { data } = await axios.get(
-          `https://jerrycoder.oggyapi.workers.dev/down/terabx-v1?url=${encodeURIComponent(url)}`,
+          `https://jerrycoder.oggyapi.workers.dev/down/terabx-v1?url=${encodeURIComponent(normalizedUrl)}`,
           { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
         );
         if (data.status === "success" && data.download) {
