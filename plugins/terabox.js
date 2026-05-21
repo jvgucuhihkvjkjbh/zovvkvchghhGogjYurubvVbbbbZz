@@ -27,7 +27,6 @@ async (conn, mek, m, { from, q, reply }) => {
           `https://jerrycoder.oggyapi.workers.dev/down/terabx?url=${encodeURIComponent(url)}`,
           { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
         );
-
         if (data.status === "success" && data.download) {
           fileName = data.filename || `terabox_${Date.now()}.mp4`;
           sizeMB = data.size ? (data.size / (1024 * 1024)).toFixed(2) + " MB" : "Unknown";
@@ -46,7 +45,6 @@ async (conn, mek, m, { from, q, reply }) => {
           `https://jerrycoder.oggyapi.workers.dev/down/terabx-v1?url=${encodeURIComponent(url)}`,
           { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
         );
-
         if (data.status === "success" && data.download) {
           fileName = data.title || `terabox_${Date.now()}.mp4`;
           sizeMB = data.size ? (parseInt(data.size) / (1024 * 1024)).toFixed(2) + " MB" : "Unknown";
@@ -78,8 +76,21 @@ async (conn, mek, m, { from, q, reply }) => {
       } catch {}
     }
 
+    const videoRes = await axios.get(downloadUrl, {
+      responseType: "arraybuffer",
+      timeout: 120000,
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+      headers: {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://terabox.com/"
+      }
+    });
+
+    const buffer = Buffer.from(videoRes.data);
+
     await conn.sendMessage(from, {
-      document: { url: downloadUrl },
+      document: buffer,
       mimetype: "video/mp4",
       fileName,
       caption
