@@ -30,6 +30,19 @@ function normalizeTeraboxUrl(url) {
   }
 }
 
+function formatBytes(bytes) {
+  if (!bytes || isNaN(bytes)) return "Unknown";
+
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+
+  return (
+    parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) +
+    ' ' +
+    sizes[i]
+  );
+}
+
 cmd({
   pattern: "terabox",
   alias: ["tera", "tbx", "terabox2"],
@@ -58,10 +71,10 @@ async (conn, mek, m, { from, q, reply }) => {
       react: { text: "⏳", key: mek.key }
     });
 
-    let fileName;
-    let sizeMB;
-    let thumbnail;
-    let downloadUrl;
+    let fileName = "Unknown.mp4";
+    let size = "Unknown";
+    let thumbnail = null;
+    let downloadUrl = null;
     let success = false;
 
     // API 1
@@ -78,37 +91,36 @@ async (conn, mek, m, { from, q, reply }) => {
           }
         );
 
-        if (data.status === "success" && data.download) {
+        if (
+          data?.status === "success" &&
+          data?.download
+        ) {
 
           fileName =
             data.filename ||
             `terabox_${Date.now()}.mp4`;
 
-          sizeMB =
-            data.size
-              ? (data.size / (1024 * 1024)).toFixed(2) + " MB"
-              : "Unknown";
+          size = formatBytes(Number(data.size));
 
           thumbnail =
-            data.thumbnails?.url2 ||
-            data.thumbnails?.url1 ||
-            data.thumbnails?.icon ||
+            data?.thumbnails?.url2 ||
+            data?.thumbnails?.url1 ||
+            data?.thumbnails?.url3 ||
             null;
 
-          // FIXED
           downloadUrl =
-            data.download.normal ||
-            data.download.fast;
+            data?.download?.fast ||
+            data?.download?.normal;
 
           success = true;
         }
 
       } catch (e) {
-        console.log("Terabox API 1 Error:", e.message);
+        console.log("API 1 Error:", e.message);
       }
     }
 
-    // API 2 Backup
+    // API 2
     if (!success) {
       try {
 
@@ -122,28 +134,33 @@ async (conn, mek, m, { from, q, reply }) => {
           }
         );
 
-        if (data.status === "success") {
+        if (
+          data?.status === "success" &&
+          (data?.download || data?.stream)
+        ) {
 
           fileName =
             data.title ||
+            data.raw?.result?.file_name ||
             `terabox_${Date.now()}.mp4`;
 
-          sizeMB =
-            data.size
-              ? (parseInt(data.size) / (1024 * 1024)).toFixed(2) + " MB"
-              : "Unknown";
+          size = formatBytes(Number(data.size));
 
-          thumbnail = data.thumbnail || null;
+          thumbnail =
+            data.thumbnail ||
+            data.raw?.result?.thumb_url ||
+            null;
 
           downloadUrl =
             data.download ||
-            data.stream;
+            data.stream ||
+            data.raw?.result?.data?.[0]?.stream_url;
 
           success = true;
         }
 
       } catch (e) {
-        console.log("Terabox API 2 Error:", e.message);
+        console.log("API 2 Error:", e.message);
       }
     }
 
@@ -153,31 +170,29 @@ async (conn, mek, m, { from, q, reply }) => {
         react: { text: "❌", key: mek.key }
       });
 
-      return reply("❌ All download servers are unavailable");
+      return reply(
+        "❌ All download servers are currently unavailable. Please try again later."
+      );
     }
 
     const caption =
       `🎬 *${fileName}*\n\n` +
-      `📦 *Size:* ${sizeMB}\n\n` +
-      `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`;
+      `📦 *Size:* ${size}\n\n` +
+      `> ⚡ *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ* ⚡`;
 
-    // Thumbnail
     if (thumbnail) {
       try {
 
-        await conn.sendMessage(
-          from,
-          {
-            image: { url: thumbnail },
-            caption
-          },
-          { quoted: mek }
-        );
+        await conn.sendMessage(from, {
+          image: { url: thumbnail },
+          caption
+        }, { quoted: mek });
 
-      } catch {}
+      } catch (e) {
+        console.log("Thumbnail Error:", e.message);
+      }
     }
 
-    // Download Video
     const videoRes = await axios.get(downloadUrl, {
       responseType: "arraybuffer",
       timeout: 300000,
@@ -185,37 +200,28 @@ async (conn, mek, m, { from, q, reply }) => {
       maxBodyLength: Infinity,
       headers: {
         "User-Agent": "Mozilla/5.0",
-        "Referer": "https://1024terabox.com/"
+        "Referer": "https://terabox.com/"
       }
     });
 
-    // FIX HTML ERROR
-    const contentType = videoRes.headers['content-type'] || "";
-
-    if (
-      contentType.includes("text/html") ||
-      contentType.includes("application/json")
-    ) {
-      throw new Error("Invalid video response");
-    }
-
     const buffer = Buffer.from(videoRes.data);
 
-    // FIX SMALL FILE ERROR
-    if (buffer.length < 50000) {
-      throw new Error("Corrupted video file");
+    // Fix invalid response issue
+    if (!buffer || buffer.length < 10000) {
+
+      await conn.sendMessage(from, {
+        react: { text: "❌", key: mek.key }
+      });
+
+      return reply("❌ Invalid video response");
     }
 
-    await conn.sendMessage(
-      from,
-      {
-        document: buffer,
-        mimetype: "video/mp4",
-        fileName,
-        caption
-      },
-      { quoted: mek }
-    );
+    await conn.sendMessage(from, {
+      document: buffer,
+      mimetype: "video/mp4",
+      fileName,
+      caption
+    }, { quoted: mek });
 
     await conn.sendMessage(from, {
       react: { text: "✅", key: mek.key }
@@ -223,7 +229,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
   } catch (e) {
 
-    console.log("Terabox Command Error:", e);
+    console.log("Terabox Error:", e);
 
     await conn.sendMessage(from, {
       react: { text: "❌", key: mek.key }
