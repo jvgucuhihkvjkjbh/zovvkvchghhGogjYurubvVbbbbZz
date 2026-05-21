@@ -1,5 +1,9 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const crypto = require('crypto');
 
 const TERABOX_DOMAINS = [
   'terabox.com',
@@ -43,6 +47,12 @@ function formatBytes(bytes) {
   );
 }
 
+const tempFile = (ext) =>
+  path.join(
+    os.tmpdir(),
+    `${crypto.randomBytes(6).toString('hex')}.${ext}`
+  );
+
 cmd({
   pattern: "terabox",
   alias: ["tera", "tbx", "terabox2"],
@@ -52,6 +62,8 @@ cmd({
   filename: __filename
 },
 async (conn, mek, m, { from, q, reply }) => {
+
+  let outputPath;
 
   try {
 
@@ -171,7 +183,7 @@ async (conn, mek, m, { from, q, reply }) => {
       });
 
       return reply(
-        "❌ All download servers are currently unavailable. Please try again later."
+        "❌ All download servers are currently unavailable."
       );
     }
 
@@ -193,9 +205,14 @@ async (conn, mek, m, { from, q, reply }) => {
       }
     }
 
-    const videoRes = await axios.get(downloadUrl, {
-      responseType: "arraybuffer",
-      timeout: 300000,
+    // FIXED DOWNLOAD SYSTEM
+    outputPath = tempFile('mp4');
+
+    const response = await axios({
+      url: downloadUrl,
+      method: 'GET',
+      responseType: 'stream',
+      timeout: 0,
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
       headers: {
@@ -204,21 +221,33 @@ async (conn, mek, m, { from, q, reply }) => {
       }
     });
 
-    const buffer = Buffer.from(videoRes.data);
+    const writer = fs.createWriteStream(outputPath);
 
-    // Fix invalid response issue
-    if (!buffer || buffer.length < 10000) {
+    response.data.pipe(writer);
 
-      await conn.sendMessage(from, {
-        react: { text: "❌", key: mek.key }
-      });
+    await new Promise((resolve, reject) => {
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+
+    // CHECK FILE
+    if (!fs.existsSync(outputPath)) {
+      return reply("❌ Video download failed");
+    }
+
+    const stats = fs.statSync(outputPath);
+
+    // 100KB se kam ho to invalid
+    if (stats.size < 100000) {
+
+      fs.unlinkSync(outputPath);
 
       return reply("❌ Invalid video response");
     }
 
     await conn.sendMessage(from, {
-      document: buffer,
-      mimetype: "video/mp4",
+      document: fs.readFileSync(outputPath),
+      mimetype: 'video/mp4',
       fileName,
       caption
     }, { quoted: mek });
@@ -236,5 +265,11 @@ async (conn, mek, m, { from, q, reply }) => {
     });
 
     reply(`❌ ${e.message}`);
+
+  } finally {
+
+    if (outputPath && fs.existsSync(outputPath)) {
+      fs.unlinkSync(outputPath);
+    }
   }
 });
