@@ -39,102 +39,196 @@ cmd({
   filename: __filename
 },
 async (conn, mek, m, { from, q, reply }) => {
+
   try {
 
-    if (!q) return reply("❌ Please send a Terabox link");
+    if (!q) {
+      return reply("❌ Please send a Terabox link");
+    }
 
     const url = q.trim();
 
     if (!isTeraboxLink(url)) {
-      return reply("❌ Invalid Terabox link. Supported: terabox.com, terasharefile.com, 1024terabox.com and other mirrors");
+      return reply("❌ Invalid Terabox link");
     }
 
     const normalizedUrl = normalizeTeraboxUrl(url);
 
-    await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+    await conn.sendMessage(from, {
+      react: { text: "⏳", key: mek.key }
+    });
 
-    let fileName, sizeMB, thumbnail, downloadUrl;
+    let fileName;
+    let sizeMB;
+    let thumbnail;
+    let downloadUrl;
     let success = false;
 
+    // API 1
     if (!success) {
       try {
+
         const { data } = await axios.get(
           `https://jerrycoder.oggyapi.workers.dev/down/terabx?url=${encodeURIComponent(normalizedUrl)}`,
-          { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
+          {
+            timeout: 60000,
+            headers: {
+              "User-Agent": "Mozilla/5.0"
+            }
+          }
         );
+
         if (data.status === "success" && data.download) {
-          fileName = data.filename || `terabox_${Date.now()}.mp4`;
-          sizeMB = data.size ? (data.size / (1024 * 1024)).toFixed(2) + " MB" : "Unknown";
-          thumbnail = data.thumbnails?.url2 || data.thumbnails?.url1 || null;
-          downloadUrl = data.download.fast || data.download.normal;
+
+          fileName =
+            data.filename ||
+            `terabox_${Date.now()}.mp4`;
+
+          sizeMB =
+            data.size
+              ? (data.size / (1024 * 1024)).toFixed(2) + " MB"
+              : "Unknown";
+
+          thumbnail =
+            data.thumbnails?.url2 ||
+            data.thumbnails?.url1 ||
+            data.thumbnails?.icon ||
+            null;
+
+          // FIXED
+          downloadUrl =
+            data.download.normal ||
+            data.download.fast;
+
           success = true;
         }
+
       } catch (e) {
         console.log("Terabox API 1 Error:", e.message);
       }
     }
 
+    // API 2 Backup
     if (!success) {
       try {
+
         const { data } = await axios.get(
           `https://jerrycoder.oggyapi.workers.dev/down/terabx-v1?url=${encodeURIComponent(normalizedUrl)}`,
-          { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
+          {
+            timeout: 60000,
+            headers: {
+              "User-Agent": "Mozilla/5.0"
+            }
+          }
         );
-        if (data.status === "success" && data.download) {
-          fileName = data.title || `terabox_${Date.now()}.mp4`;
-          sizeMB = data.size ? (parseInt(data.size) / (1024 * 1024)).toFixed(2) + " MB" : "Unknown";
+
+        if (data.status === "success") {
+
+          fileName =
+            data.title ||
+            `terabox_${Date.now()}.mp4`;
+
+          sizeMB =
+            data.size
+              ? (parseInt(data.size) / (1024 * 1024)).toFixed(2) + " MB"
+              : "Unknown";
+
           thumbnail = data.thumbnail || null;
-          downloadUrl = data.download || data.stream;
+
+          downloadUrl =
+            data.download ||
+            data.stream;
+
           success = true;
         }
+
       } catch (e) {
         console.log("Terabox API 2 Error:", e.message);
       }
     }
 
     if (!success || !downloadUrl) {
-      await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-      return reply("❌ All download servers are currently unavailable. Please try again later.");
+
+      await conn.sendMessage(from, {
+        react: { text: "❌", key: mek.key }
+      });
+
+      return reply("❌ All download servers are unavailable");
     }
 
     const caption =
       `🎬 *${fileName}*\n\n` +
       `📦 *Size:* ${sizeMB}\n\n` +
-      `> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+      `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`;
 
+    // Thumbnail
     if (thumbnail) {
       try {
-        await conn.sendMessage(from, {
-          image: { url: thumbnail },
-          caption
-        }, { quoted: mek });
+
+        await conn.sendMessage(
+          from,
+          {
+            image: { url: thumbnail },
+            caption
+          },
+          { quoted: mek }
+        );
+
       } catch {}
     }
 
+    // Download Video
     const videoRes = await axios.get(downloadUrl, {
       responseType: "arraybuffer",
-      timeout: 120000,
+      timeout: 300000,
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
       headers: {
         "User-Agent": "Mozilla/5.0",
-        "Referer": "https://terabox.com/"
+        "Referer": "https://1024terabox.com/"
       }
     });
 
+    // FIX HTML ERROR
+    const contentType = videoRes.headers['content-type'] || "";
+
+    if (
+      contentType.includes("text/html") ||
+      contentType.includes("application/json")
+    ) {
+      throw new Error("Invalid video response");
+    }
+
     const buffer = Buffer.from(videoRes.data);
 
-    await conn.sendMessage(from, {
-      document: buffer,
-      mimetype: "video/mp4",
-      fileName,
-      caption
-    }, { quoted: mek });
+    // FIX SMALL FILE ERROR
+    if (buffer.length < 50000) {
+      throw new Error("Corrupted video file");
+    }
 
-    await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+    await conn.sendMessage(
+      from,
+      {
+        document: buffer,
+        mimetype: "video/mp4",
+        fileName,
+        caption
+      },
+      { quoted: mek }
+    );
+
+    await conn.sendMessage(from, {
+      react: { text: "✅", key: mek.key }
+    });
 
   } catch (e) {
-    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+
+    console.log("Terabox Command Error:", e);
+
+    await conn.sendMessage(from, {
+      react: { text: "❌", key: mek.key }
+    });
+
     reply(`❌ ${e.message}`);
   }
 });
