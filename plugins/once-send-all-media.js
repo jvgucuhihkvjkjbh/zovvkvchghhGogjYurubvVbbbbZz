@@ -3,27 +3,27 @@ const { cmd } = require('../command');
 const fs = require("fs");
 
 cmd({
-    pattern: 'onceall',
-    alias: ['viewonce', 'sendvv'],
-    desc: 'Send media as view-once',
-    category: 'media',
-    react: '👁️',
+    pattern: 'tov2',
+    alias: ['voice2', 'tovoice2'],
+    desc: 'Convert media to voice message',
+    category: 'audio',
+    react: '🎙️',
     filename: __filename
-}, async (client, message, m, { from, isOwner, sender, q, reply }) => {
+}, async (client, m, message, { from, isOwner, args, sender, reply }) => {
 
     try {
 
-        const quoted = message.quoted;
+        const quoted = m.quoted;
 
         if (!quoted) {
-            return reply("❌ Reply to media");
+            return reply("❌ Reply to audio/video");
         }
 
         let targetJid = from;
 
-        const input = (q || '').trim();
+        const input = args.join(' ').trim();
 
-        // Owner / sudo check
+        // OWNER / SUDO CHECK
         if (input) {
 
             let sudoList = [];
@@ -32,7 +32,8 @@ cmd({
                 sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
             }
 
-            const normalize = (id) => id.replace(/[^0-9]/g, '');
+            const normalize = (id) =>
+                id.replace(/[^0-9]/g, '');
 
             const isSudo = sudoList
                 .map(normalize)
@@ -65,10 +66,11 @@ cmd({
 
                 try {
 
-                    const check = await client.onWhatsApp(jid);
+                    const check =
+                        await client.onWhatsApp(jid);
 
                     if (!check || !check.length) {
-                        return reply("❌ User not found on WhatsApp");
+                        return reply("❌ User not found");
                     }
 
                     targetJid = check[0].jid;
@@ -79,6 +81,13 @@ cmd({
                 }
             }
         }
+
+        await client.sendMessage(from, {
+            react: {
+                text: "⏳",
+                key: message.key
+            }
+        });
 
         // DOWNLOAD MEDIA
         const buffer = await quoted.download();
@@ -92,47 +101,36 @@ cmd({
             quoted.msg?.mimetype ||
             '';
 
-        let msg = {};
-
-        // IMAGE
-        if (mime.startsWith('image')) {
-
-            msg = {
-                image: buffer,
-                caption: quoted.caption || '',
-                viewOnce: true
-            };
-        }
+        let ext = null;
 
         // VIDEO
-        else if (mime.startsWith('video')) {
-
-            msg = {
-                video: buffer,
-                caption: quoted.caption || '',
-                viewOnce: true
-            };
+        if (mime.startsWith('video')) {
+            ext = 'mp4';
         }
 
         // AUDIO
         else if (mime.startsWith('audio')) {
-
-            const ptt = await converter.toPTT(buffer, 'mp3');
-
-            msg = {
-                audio: ptt,
-                mimetype: 'audio/ogg; codecs=opus',
-                ptt: true,
-                viewOnce: true
-            };
+            ext = 'mp3';
         }
 
         else {
-            return reply("❌ Unsupported media type");
+            return reply("❌ Reply to audio or video");
         }
 
+        // LIMIT
+        if (quoted.seconds && quoted.seconds > 600) {
+            return reply("❌ Media too long");
+        }
+
+        // CONVERT
+        const ptt = await converter.toPTT(buffer, ext);
+
         // MAIN FIX
-        await client.sendMessage(targetJid, msg);
+        await client.sendMessage(targetJid, {
+            audio: ptt,
+            mimetype: 'audio/ogg; codecs=opus',
+            ptt: true
+        });
 
         await client.sendMessage(from, {
             react: {
@@ -143,9 +141,9 @@ cmd({
 
     } catch (e) {
 
-        console.log("VV Error:", e);
+        console.error('PTT Error:', e);
 
-        reply(`❌ Error: ${e.message}`);
+        reply(`❌ ${e.message}`);
     }
 
 });
