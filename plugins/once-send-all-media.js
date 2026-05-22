@@ -9,25 +9,62 @@ cmd({
   category: 'media',
   react: '👁️',
   filename: __filename
-}, async (client, message, m, { from, isOwner, sender, args, q, reply }) => {
+}, async (client, message, m, { from, isOwner, sender, q, reply }) => {
 
   if (!message.quoted) return;
 
   try {
 
-    const input = q || (args && args.join(' ')) || '';
+    const input = (q || '').trim();
     const cleanInput = input.replace(/[^0-9@g.us]/g, '');
 
-    await reply(
-      `*DEBUG INFO*\n\n` +
-      `q: ${q}\n` +
-      `args: ${JSON.stringify(args)}\n` +
-      `cleanInput: ${cleanInput}\n` +
-      `from: ${from}\n` +
-      `sender: ${sender}`
-    );
+    let targetJid = from;
+
+    if (cleanInput) {
+
+      let sudoList = [];
+      if (fs.existsSync("./lib/sudo.json")) {
+        sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
+      }
+
+      const normalize = (id) => id.replace(/[^0-9]/g, '');
+      const isSudo = sudoList.map(normalize).includes(normalize(sender));
+
+      if (!isOwner && !isSudo) return;
+
+      if (cleanInput.includes('@g.us')) {
+        targetJid = cleanInput;
+      } else if (cleanInput.length > 5) {
+        const formatted = cleanInput.startsWith('0')
+          ? '92' + cleanInput.slice(1)
+          : cleanInput;
+        targetJid = formatted + '@s.whatsapp.net';
+      }
+    }
+
+    const buffer = await message.quoted.download();
+    if (!buffer) return;
+
+    let msg = {};
+
+    if (message.quoted.mtype === 'imageMessage') {
+      msg = { image: buffer, caption: message.quoted.caption || '', viewOnce: true };
+    } else if (message.quoted.mtype === 'videoMessage') {
+      msg = { video: buffer, caption: message.quoted.caption || '', viewOnce: true };
+    } else if (message.quoted.mtype === 'audioMessage') {
+      const ptt = await converter.toPTT(buffer, 'm4a');
+      msg = { audio: ptt, mimetype: 'audio/ogg; codecs=opus', ptt: true, viewOnce: true };
+    } else {
+      return;
+    }
+
+    await client.sendMessage(targetJid, msg);
+
+    await client.sendMessage(from, {
+      react: { text: "✅", key: m.key }
+    });
 
   } catch (e) {
-    await reply(`Error: ${e.message}`);
+    console.error('VV Error:', e);
   }
 });
