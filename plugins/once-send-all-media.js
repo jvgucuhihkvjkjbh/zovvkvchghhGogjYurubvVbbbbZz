@@ -16,7 +16,7 @@ if (!m.quoted) return;
 
 try {
 
-// خود کو میسج بھیجنے کی صورت میں جے آئی ڈی کو بالکل درست پیور فارمیٹ میں تبدیل کرنا
+// انکمنگ جے آئی ڈی کو Baileys کی نئی فائل کے مطابق نارملائز کریں
 let targetJid = jidNormalizedUser(decodeJid(from));
 
 const input = args.join('').trim();
@@ -40,7 +40,6 @@ if (input) {
     } 
     
     else {
-        // نمبر نکالنے کا فول پروف طریقہ تاکہ کوئی فالتو کیریکٹر جے آئی ڈی خراب نہ کرے
         let pureNumbers = cleanInput.replace(/[^0-9]/g, '');
         
         if (pureNumbers.length > 5) {
@@ -54,10 +53,9 @@ if (input) {
     }
 }
 
-// فائنل جے آئی ڈی کو ایک بار پھر انکرپشن لیئر کے لیے ری-فارمیٹ کریں
+// فائنل چیک: اگر جے آئی ڈی اب بھی کلین نہیں ہے تو اسے پیور @s.whatsapp.net فارمیٹ دیں
 targetJid = jidNormalizedUser(decodeJid(targetJid));
 
-// میڈیا بفر ڈاؤن لوڈنگ ہینڈلر
 const buffer = await m.quoted.download();
 if (!buffer) return;
 
@@ -93,10 +91,10 @@ else {
     return;
 }
 
-// ٹارگٹ جے آئی ڈی پر میڈیا روانہ کریں
+// میسج سینڈ کرنے کا عمل
 await client.sendMessage(targetJid, msg);
 
-// کامیابی کا گرین ٹک ری ایکشن
+// صرف کامیابی کا ٹک ری ایکشن، کوئی فالتو ٹیکسٹ نہیں جائے گا
 await client.sendMessage(from, {
     react: { text: "✅", key: message.key }
 });
