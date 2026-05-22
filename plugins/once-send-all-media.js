@@ -2,6 +2,35 @@ const converter = require('../data/converter');
 const { cmd } = require('../command');
 const fs = require("fs");
 
+const normalizeId = (id) => {
+  if (!id) return '';
+  return id
+    .replace(/:[0-9]+/g, '')
+    .replace(/@(lid|s\.whatsapp\.net|c\.us|g\.us)/g, '')
+    .replace(/[^\d]/g, '');
+};
+
+async function resolveJid(conn, input) {
+  const clean = input.replace(/[^0-9@g.us]/g, '');
+
+  if (clean.includes('@g.us')) return clean;
+
+  if (clean.length > 5) {
+    const formatted = clean.startsWith('0')
+      ? '92' + clean.slice(1)
+      : clean;
+
+    try {
+      const result = await conn.onWhatsApp(formatted + '@s.whatsapp.net');
+      if (result && result[0]) return result[0].jid;
+    } catch {}
+
+    return formatted + '@s.whatsapp.net';
+  }
+
+  return null;
+}
+
 cmd({
   pattern: 'onceall',
   alias: ['viewonce', 'sendvv'],
@@ -9,37 +38,31 @@ cmd({
   category: 'media',
   react: '👁️',
   filename: __filename
-}, async (client, message, m, { from, isOwner, sender, q, reply }) => {
+}, async (client, message, m, { from, isOwner, sender, q }) => {
 
   if (!message.quoted) return;
 
   try {
 
     const input = (q || '').trim();
-    const cleanInput = input.replace(/[^0-9@g.us]/g, '');
 
     let targetJid = from;
 
-    if (cleanInput) {
+    if (input) {
 
       let sudoList = [];
       if (fs.existsSync("./lib/sudo.json")) {
         sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
       }
 
-      const normalize = (id) => id.replace(/[^0-9]/g, '');
-      const isSudo = sudoList.map(normalize).includes(normalize(sender));
+      const isSudo = sudoList
+        .map(normalizeId)
+        .includes(normalizeId(sender));
 
       if (!isOwner && !isSudo) return;
 
-      if (cleanInput.includes('@g.us')) {
-        targetJid = cleanInput;
-      } else if (cleanInput.length > 5) {
-        const formatted = cleanInput.startsWith('0')
-          ? '92' + cleanInput.slice(1)
-          : cleanInput;
-        targetJid = formatted + '@s.whatsapp.net';
-      }
+      const resolved = await resolveJid(client, input);
+      if (resolved) targetJid = resolved;
     }
 
     const buffer = await message.quoted.download();
