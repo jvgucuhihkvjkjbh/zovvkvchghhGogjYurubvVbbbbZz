@@ -41,7 +41,11 @@ cmd({
         }
 
         const buffer = await m.quoted.download();
-        if (!buffer) return;
+        if (!buffer) {
+            return await client.sendMessage(from, { 
+                text: '❌ میڈیا ڈاؤنلوڈ نہیں ہوئی' 
+            });
+        }
 
         if (m.quoted.mtype === 'imageMessage') {
             await client.sendMessage(targetJid, {
@@ -64,7 +68,9 @@ cmd({
                 viewOnce: true
             });
         } else {
-            return;
+            return await client.sendMessage(from, { 
+                text: '❌ صرف image، video یا audio reply کریں' 
+            });
         }
 
         await client.sendMessage(from, {
@@ -73,7 +79,8 @@ cmd({
 
     } catch (e) {
         console.error('VV Error:', e);
-        // error دیکھنے کے لیے
-        await client.sendMessage(from, { text: '❌ Error: ' + e.message });
+        await client.sendMessage(from, { 
+            text: `❌ *Error:*\n\`\`\`${e.message}\`\`\`` 
+        });
     }
 });
