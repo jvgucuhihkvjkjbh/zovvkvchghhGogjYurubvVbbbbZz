@@ -1,6 +1,5 @@
 const converter = require('../data/converter');
 const { cmd } = require('../command');
-const { jidNormalizedUser } = require('@whiskeysockets/baileys');
 const fs = require("fs");
 
 cmd({
@@ -15,7 +14,6 @@ cmd({
     if (!m.quoted) return;
 
     try {
-
         let targetJid = from;
 
         const input = args.join('').trim();
@@ -30,30 +28,20 @@ cmd({
         const isSudo = sudoList.map(normalize).includes(normalize(sender));
 
         if (cleanInput) {
-
             if (!isOwner && !isSudo) return;
 
             if (cleanInput.includes('@g.us')) {
                 targetJid = cleanInput;
             } else if (cleanInput.length > 5) {
-                const formatted =
-                    cleanInput.startsWith('0')
-                        ? '92' + cleanInput.slice(1)
-                        : cleanInput;
-
-                targetJid = jidNormalizedUser(formatted + '@s.whatsapp.net');
+                let formatted = cleanInput.startsWith('0')
+                    ? '92' + cleanInput.slice(1)
+                    : cleanInput;
+                targetJid = formatted + '@s.whatsapp.net';
             }
         }
 
         const buffer = await m.quoted.download();
         if (!buffer) return;
-
-        // RC10: پہلے session assert کریں
-        try {
-            await client.assertSessions([targetJid], false);
-        } catch (e) {
-            console.log('Session assert skipped:', e.message);
-        }
 
         if (m.quoted.mtype === 'imageMessage') {
             await client.sendMessage(targetJid, {
@@ -61,15 +49,13 @@ cmd({
                 caption: m.quoted.caption || '',
                 viewOnce: true
             });
-        }
-        else if (m.quoted.mtype === 'videoMessage') {
+        } else if (m.quoted.mtype === 'videoMessage') {
             await client.sendMessage(targetJid, {
                 video: buffer,
                 caption: m.quoted.caption || '',
                 viewOnce: true
             });
-        }
-        else if (m.quoted.mtype === 'audioMessage') {
+        } else if (m.quoted.mtype === 'audioMessage') {
             const ptt = await converter.toPTT(buffer, 'm4a');
             await client.sendMessage(targetJid, {
                 audio: ptt,
@@ -77,8 +63,7 @@ cmd({
                 ptt: true,
                 viewOnce: true
             });
-        }
-        else {
+        } else {
             return;
         }
 
@@ -88,6 +73,7 @@ cmd({
 
     } catch (e) {
         console.error('VV Error:', e);
+        // error دیکھنے کے لیے
+        await client.sendMessage(from, { text: '❌ Error: ' + e.message });
     }
-
 });
