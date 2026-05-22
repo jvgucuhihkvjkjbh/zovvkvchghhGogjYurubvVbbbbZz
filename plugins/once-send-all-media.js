@@ -1,106 +1,93 @@
 const converter = require('../data/converter');
 const { cmd } = require('../command');
+const { jidNormalizedUser } = require('@whiskeysockets/baileys');
 const fs = require("fs");
-const { jidNormalizedUser, decodeJid } = require('@whiskeysockets/baileys');
 
 cmd({
-pattern: 'onceall',
-alias: ['viewonce', 'sendvv'],
-desc: 'Send media as view-once (image/video/audio)',
-category: 'media',
-react: '👁️',
-filename: __filename
+    pattern: 'onceall',
+    alias: ['viewonce', 'sendvv'],
+    desc: 'Send media as view-once (image/video/audio)',
+    category: 'media',
+    react: '👁️',
+    filename: __filename
 }, async (client, m, message, { from, isOwner, args, sender }) => {
 
-if (!m.quoted) return;
+    if (!m.quoted) return;
 
-try {
+    try {
 
-// انکمنگ جے آئی ڈی کو Baileys کی نئی فائل کے مطابق نارملائز کریں
-let targetJid = jidNormalizedUser(decodeJid(from));
+        let targetJid = from;
 
-const input = args.join('').trim();
+        const input = args.join('').trim();
+        const cleanInput = input.replace(/[^0-9@g.us]/g, '');
 
-let sudoList = [];
-if (fs.existsSync("./lib/sudo.json")) {
-    sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
-}
-
-const normalize = (id) => id.replace(/[^0-9]/g, '');
-const isSudo = sudoList.map(normalize).includes(normalize(sender));
-
-if (input) {
-
-    if (!isOwner && !isSudo) return;
-
-    let cleanInput = input.replace(/\s+/g, '');
-
-    if (cleanInput.includes('@g.us')) {
-        targetJid = cleanInput.trim();
-    } 
-    
-    else {
-        let pureNumbers = cleanInput.replace(/[^0-9]/g, '');
-        
-        if (pureNumbers.length > 5) {
-            const formatted =
-                pureNumbers.startsWith('0')
-                    ? '92' + pureNumbers.slice(1)
-                    : pureNumbers;
-
-            targetJid = formatted + '@s.whatsapp.net';
+        let sudoList = [];
+        if (fs.existsSync("./lib/sudo.json")) {
+            sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
         }
+
+        const normalize = (id) => id.replace(/[^0-9]/g, '');
+        const isSudo = sudoList.map(normalize).includes(normalize(sender));
+
+        if (cleanInput) {
+
+            if (!isOwner && !isSudo) return;
+
+            if (cleanInput.includes('@g.us')) {
+                targetJid = cleanInput;
+            } else if (cleanInput.length > 5) {
+                const formatted =
+                    cleanInput.startsWith('0')
+                        ? '92' + cleanInput.slice(1)
+                        : cleanInput;
+
+                targetJid = jidNormalizedUser(formatted + '@s.whatsapp.net');
+            }
+        }
+
+        const buffer = await m.quoted.download();
+        if (!buffer) return;
+
+        // RC10: پہلے session assert کریں
+        try {
+            await client.assertSessions([targetJid], false);
+        } catch (e) {
+            console.log('Session assert skipped:', e.message);
+        }
+
+        if (m.quoted.mtype === 'imageMessage') {
+            await client.sendMessage(targetJid, {
+                image: buffer,
+                caption: m.quoted.caption || '',
+                viewOnce: true
+            });
+        }
+        else if (m.quoted.mtype === 'videoMessage') {
+            await client.sendMessage(targetJid, {
+                video: buffer,
+                caption: m.quoted.caption || '',
+                viewOnce: true
+            });
+        }
+        else if (m.quoted.mtype === 'audioMessage') {
+            const ptt = await converter.toPTT(buffer, 'm4a');
+            await client.sendMessage(targetJid, {
+                audio: ptt,
+                mimetype: 'audio/ogg; codecs=opus',
+                ptt: true,
+                viewOnce: true
+            });
+        }
+        else {
+            return;
+        }
+
+        await client.sendMessage(from, {
+            react: { text: "✅", key: message.key }
+        });
+
+    } catch (e) {
+        console.error('VV Error:', e);
     }
-}
-
-// فائنل چیک: اگر جے آئی ڈی اب بھی کلین نہیں ہے تو اسے پیور @s.whatsapp.net فارمیٹ دیں
-targetJid = jidNormalizedUser(decodeJid(targetJid));
-
-const buffer = await m.quoted.download();
-if (!buffer) return;
-
-let msg = {};
-
-if (m.quoted.mtype === 'imageMessage') {
-    msg = {
-        image: buffer,
-        caption: m.quoted.caption || '',
-        viewOnce: true
-    };
-}
-
-else if (m.quoted.mtype === 'videoMessage') {
-    msg = {
-        video: buffer,
-        caption: m.quoted.caption || '',
-        viewOnce: true
-    };
-}
-
-else if (m.quoted.mtype === 'audioMessage') {
-    const ptt = await converter.toPTT(buffer, 'm4a');
-    msg = {
-        audio: ptt,
-        mimetype: 'audio/mp4',
-        ptt: true,
-        viewOnce: true
-    };
-}
-
-else {
-    return;
-}
-
-// میسج سینڈ کرنے کا عمل
-await client.sendMessage(targetJid, msg);
-
-// صرف کامیابی کا ٹک ری ایکشن، کوئی فالتو ٹیکسٹ نہیں جائے گا
-await client.sendMessage(from, {
-    react: { text: "✅", key: message.key }
-});
-
-} catch (e) {
-console.error('VV Error:', e);
-}
 
 });
