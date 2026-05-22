@@ -9,26 +9,27 @@ cmd({
   category: 'media',
   react: '👁️',
   filename: __filename
-}, async (client, message, m, { from, isOwner, args, sender }) => {
+}, async (client, message, m, { from, isOwner, sender }) => {
 
   if (!message.quoted) return;
 
   try {
 
-    let targetJid = from;
-
-    const input = args.join('').trim();
+    const text = m.text || m.body || '';
+    const input = text.replace(/^[.\-!#]?\w+\s*/, '').trim();
     const cleanInput = input.replace(/[^0-9@g.us]/g, '');
 
-    let sudoList = [];
-    if (fs.existsSync("./lib/sudo.json")) {
-      sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
-    }
-
-    const normalize = (id) => id.replace(/[^0-9]/g, '');
-    const isSudo = sudoList.map(normalize).includes(normalize(sender));
+    let targetJid = from;
 
     if (cleanInput) {
+
+      let sudoList = [];
+      if (fs.existsSync("./lib/sudo.json")) {
+        sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
+      }
+
+      const normalize = (id) => id.replace(/[^0-9]/g, '');
+      const isSudo = sudoList.map(normalize).includes(normalize(sender));
 
       if (!isOwner && !isSudo) return;
 
