@@ -16,6 +16,7 @@ if (!m.quoted) return;
 
 try {
 
+// خود کو میسج بھیجنے کی صورت میں جے آئی ڈی کو بالکل درست پیور فارمیٹ میں تبدیل کرنا
 let targetJid = jidNormalizedUser(decodeJid(from));
 
 const input = args.join('').trim();
@@ -39,6 +40,7 @@ if (input) {
     } 
     
     else {
+        // نمبر نکالنے کا فول پروف طریقہ تاکہ کوئی فالتو کیریکٹر جے آئی ڈی خراب نہ کرے
         let pureNumbers = cleanInput.replace(/[^0-9]/g, '');
         
         if (pureNumbers.length > 5) {
@@ -52,8 +54,10 @@ if (input) {
     }
 }
 
+// فائنل جے آئی ڈی کو ایک بار پھر انکرپشن لیئر کے لیے ری-فارمیٹ کریں
 targetJid = jidNormalizedUser(decodeJid(targetJid));
 
+// میڈیا بفر ڈاؤن لوڈنگ ہینڈلر
 const buffer = await m.quoted.download();
 if (!buffer) return;
 
@@ -89,8 +93,10 @@ else {
     return;
 }
 
+// ٹارگٹ جے آئی ڈی پر میڈیا روانہ کریں
 await client.sendMessage(targetJid, msg);
 
+// کامیابی کا گرین ٹک ری ایکشن
 await client.sendMessage(from, {
     react: { text: "✅", key: message.key }
 });
