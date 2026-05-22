@@ -16,41 +16,36 @@ cmd({
   try {
 
     const input = (q || '').trim();
-
-    let resolvedJid = from;
+    let targetJid = from;
 
     if (input) {
+
+      let sudoList = [];
+      if (fs.existsSync("./lib/sudo.json")) {
+        sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
+      }
+
+      const normalize = (id) => id.replace(/[^0-9]/g, '');
+      const isSudo = sudoList.map(normalize).includes(normalize(sender));
+      if (!isOwner && !isSudo) return;
+
       const clean = input.replace(/[^0-9@g.us]/g, '');
 
       if (clean.includes('@g.us')) {
-        resolvedJid = clean;
+        targetJid = clean;
       } else if (clean.length > 5) {
         const formatted = clean.startsWith('0') ? '92' + clean.slice(1) : clean;
-
         try {
           const check = await client.onWhatsApp(formatted + '@s.whatsapp.net');
-          await reply(`onWhatsApp result: ${JSON.stringify(check)}`);
-          if (check && check[0]?.jid) {
-            resolvedJid = check[0].jid;
-          } else {
-            resolvedJid = formatted + '@s.whatsapp.net';
-          }
-        } catch (e) {
-          await reply(`onWhatsApp error: ${e.message}`);
-          resolvedJid = formatted + '@s.whatsapp.net';
+          targetJid = (check && check[0]?.jid) ? check[0].jid : formatted + '@s.whatsapp.net';
+        } catch {
+          targetJid = formatted + '@s.whatsapp.net';
         }
       }
     }
 
-    await reply(
-      `targetJid: ${resolvedJid}\n` +
-      `from: ${from}\n` +
-      `sender: ${sender}\n` +
-      `input: ${input}`
-    );
-
     const buffer = await message.quoted.download();
-    if (!buffer) return await reply("buffer failed");
+    if (!buffer) return;
 
     let msg = {};
 
@@ -62,17 +57,17 @@ cmd({
       const ptt = await converter.toPTT(buffer, 'm4a');
       msg = { audio: ptt, mimetype: 'audio/ogg; codecs=opus', ptt: true, viewOnce: true };
     } else {
-      return await reply("unsupported media type: " + message.quoted.mtype);
+      return;
     }
 
-    try {
-      await client.sendMessage(resolvedJid, msg);
-      await reply(`✅ Sent to: ${resolvedJid}`);
-    } catch (sendErr) {
-      await reply(`❌ Send failed: ${sendErr.message}`);
-    }
+    await client.sendMessage(targetJid, msg, { quoted: message });
+
+    await client.sendMessage(from, {
+      react: { text: "✅", key: m.key }
+    });
 
   } catch (e) {
+    console.error('VV Error:', e);
     await reply(`❌ Error: ${e.message}`);
   }
 });
