@@ -16,21 +16,23 @@ async (conn, mek, m, { from, q, reply }) => {
     try {
 
         if (!q) {
-            return reply("❌ Please send Apple Music song link");
+            return reply("❌ Please send Apple Music link");
         }
 
         await conn.sendMessage(from, {
             react: { text: "⏳", key: mek.key }
         });
 
-        const api = `${API}?url=${encodeURIComponent(q)}`;
+        const apiUrl = `${API}?url=${encodeURIComponent(q)}`;
 
-        const { data } = await axios.get(api, {
+        const { data } = await axios.get(apiUrl, {
             timeout: 60000,
             headers: {
                 "User-Agent": "Mozilla/5.0"
             }
         });
+
+        console.log(data);
 
         if (
             data.status !== "success" ||
