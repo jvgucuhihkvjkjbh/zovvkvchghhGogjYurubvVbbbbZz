@@ -1,12 +1,10 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 
-const API = "https://jerrycoder.oggyapi.workers.dev/down/applem";
-
 cmd({
     pattern: "applemusic",
-    alias: ["amusic", "applemp3"],
-    desc: "Download Apple Music song",
+    alias: ["applem", "amsong"],
+    desc: "Search and download Apple Music songs",
     category: "download",
     react: "🎵",
     filename: __filename
@@ -16,58 +14,79 @@ async (conn, mek, m, { from, q, reply }) => {
     try {
 
         if (!q) {
-            return reply("❌ Please send Apple Music link");
+            return reply("❌ Please provide a song name");
         }
 
         await conn.sendMessage(from, {
             react: { text: "⏳", key: mek.key }
         });
 
-        const apiUrl = `${API}?url=${encodeURIComponent(q)}`;
+        // Search API
+        const searchApi = `https://jerrycoder.oggyapi.workers.dev/search/applem?q=${encodeURIComponent(q)}&limit=1`;
 
-        const { data } = await axios.get(apiUrl, {
-            timeout: 60000,
+        const searchRes = await axios.get(searchApi, {
+            timeout: 30000,
             headers: {
                 "User-Agent": "Mozilla/5.0"
             }
         });
 
-        console.log(data);
+        const searchData = searchRes.data;
 
         if (
-            data.status !== "success" ||
-            !data.result ||
-            !data.result.download
+            searchData.status !== "success" ||
+            !searchData.results ||
+            !searchData.results.length
         ) {
-            await conn.sendMessage(from, {
-                react: { text: "❌", key: mek.key }
-            });
-
-            return reply("❌ Failed to fetch song");
+            return reply("❌ Song not found");
         }
 
-        const song = data.result;
+        const song = searchData.results[0];
+
+        // Download API
+        const downloadApi =
+            `https://jerrycoder.oggyapi.workers.dev/down/applem?url=${encodeURIComponent(song.url)}`;
+
+        const downloadRes = await axios.get(downloadApi, {
+            timeout: 30000,
+            headers: {
+                "User-Agent": "Mozilla/5.0"
+            }
+        });
+
+        const downloadData = downloadRes.data;
+
+        if (
+            downloadData.status !== "success" ||
+            !downloadData.result ||
+            !downloadData.result.download
+        ) {
+            return reply("❌ Download failed, try again");
+        }
+
+        const audioUrl = downloadData.result.download;
 
         const caption =
-`🎵 *APPLE MUSIC DOWNLOADER*
+`🎵 *${song.title}*
 
-📌 *TITLE:* ${song.title}
-👤 *ARTIST:* ${song.artist}
+👤 *Artist:* ${song.artist}
+💽 *Album:* ${song.album}
+🎼 *Genre:* ${song.genre}
+⏱️ *Duration:* ${Math.floor(song.duration / 60)}:${String(song.duration % 60).padStart(2, '0')}
 
-> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+> *⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
-        if (song.thumbnail) {
-            await conn.sendMessage(from, {
-                image: { url: song.thumbnail },
-                caption
-            }, { quoted: mek });
-        }
-
+        // Thumbnail
         await conn.sendMessage(from, {
-            audio: { url: song.download },
+            image: { url: song.thumbnail },
+            caption
+        }, { quoted: mek });
+
+        // Audio
+        await conn.sendMessage(from, {
+            audio: { url: audioUrl },
             mimetype: "audio/mpeg",
-            fileName: `${song.title}.mp3`,
-            ptt: false
+            fileName: `${song.title}.mp3`
         }, { quoted: mek });
 
         await conn.sendMessage(from, {
@@ -82,6 +101,6 @@ async (conn, mek, m, { from, q, reply }) => {
             react: { text: "❌", key: mek.key }
         });
 
-        reply("❌ Download failed, try again");
+        reply("❌ Error occurred while processing request");
     }
 });
