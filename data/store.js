@@ -3,12 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const storeDir = path.join(process.cwd(), 'store');
 
-// Sync میں directory بنائیں
 if (!fs.existsSync(storeDir)) {
     fs.mkdirSync(storeDir, { recursive: true });
 }
 
-// In-memory cache - تیز رفتار access کے لیے
 const cache = {
     contacts: null,
     messages: null,
@@ -16,7 +14,6 @@ const cache = {
     metadata: null
 };
 
-// Cache load timings
 const cacheLoaded = {
     contacts: false,
     messages: false,
@@ -26,7 +23,6 @@ const cacheLoaded = {
 
 const filePath = (file) => path.join(storeDir, file);
 
-// Sync read - تیز
 const readJSON = (file) => {
     try {
         const fp = filePath(file);
@@ -37,7 +33,6 @@ const readJSON = (file) => {
     }
 };
 
-// Async write - background میں
 const writeJSON = (file, data) => {
     try {
         fs.writeFileSync(filePath(file), JSON.stringify(data));
@@ -46,7 +41,6 @@ const writeJSON = (file, data) => {
     }
 };
 
-// Cache initialize
 const initCache = () => {
     if (!cacheLoaded.contacts) { cache.contacts = readJSON('contact.json'); cacheLoaded.contacts = true; }
     if (!cacheLoaded.messages) { cache.messages = readJSON('message.json'); cacheLoaded.messages = true; }
@@ -56,7 +50,6 @@ const initCache = () => {
 
 initCache();
 
-// Debounce - بار بار write نہ ہو
 const saveTimers = {};
 const debouncedWrite = (file, data, delay = 3000) => {
     if (saveTimers[file]) clearTimeout(saveTimers[file]);
@@ -69,7 +62,7 @@ const saveContact = (jid, name) => {
     if (!jid || !name || isJidGroup(jid) || isJidBroadcast(jid) || isJidNewsletter(jid)) return;
     const index = cache.contacts.findIndex(c => c.jid === jid);
     if (index > -1) {
-        if (cache.contacts[index].name === name) return; // کوئی تبدیلی نہیں
+        if (cache.contacts[index].name === name) return;
         cache.contacts[index].name = name;
     } else {
         cache.contacts.push({ jid, name });
@@ -92,16 +85,14 @@ const saveMessage = (message) => {
         cache.messages[index].timestamp = timestamp;
     } else {
         cache.messages.push({ id, jid, message, timestamp });
-        // صرف آخری 500 messages رکھیں memory میں
+       
         if (cache.messages.length > 500) {
             cache.messages = cache.messages.slice(-500);
         }
     }
 
-    // جلدی save - 2 سیکنڈ debounce
     debouncedWrite('message.json', cache.messages, 2000);
 
-    // message count بھی update کریں
     saveMessageCount(message);
 };
 
@@ -212,23 +203,20 @@ const getChatSummary = () => {
     }).sort((a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp);
 };
 
-// ہر 1 گھنٹے بعد clean
 const autoClean = () => {
     setInterval(() => {
         try {
-            // Cache reset
+           
             cache.contacts = [];
             cache.messages = [];
             cache.messageCounts = [];
             cache.metadata = [];
 
-            // Files reset
             const files = ['contact.json', 'message.json', 'message_count.json', 'metadata.json'];
             for (const file of files) {
                 writeJSON(file, []);
             }
 
-            // Participants files
             const allFiles = fs.readdirSync(storeDir);
             allFiles.filter(f => f.endsWith('_participants.json'))
                     .forEach(f => writeJSON(f, []));
@@ -237,7 +225,7 @@ const autoClean = () => {
         } catch (error) {
             console.error('❌ Auto clean error:', error);
         }
-    }, 60 * 60 * 1000); // 1 گھنٹہ
+    }, 60 * 60 * 1000);
 };
 
 autoClean();
@@ -254,5 +242,3 @@ module.exports = {
     getGroupMembersMessageCount,
     saveMessage,
 };
-
-// ADEEL-MD
