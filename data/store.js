@@ -1,240 +1,258 @@
 const { isJidBroadcast, isJidGroup, isJidNewsletter } = require('@whiskeysockets/baileys');
-const fs = require('fs/promises');
+const fs = require('fs');
 const path = require('path');
 const storeDir = path.join(process.cwd(), 'store');
 
-const readJSON = async (file) => {
-  try {
-    const filePath = path.join(storeDir, file);
-    const data = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
+// Sync میں directory بنائیں
+if (!fs.existsSync(storeDir)) {
+    fs.mkdirSync(storeDir, { recursive: true });
+}
+
+// In-memory cache - تیز رفتار access کے لیے
+const cache = {
+    contacts: null,
+    messages: null,
+    messageCounts: null,
+    metadata: null
 };
 
-const writeJSON = async (file, data) => {
-  const filePath = path.join(storeDir, file);
-  await fs.mkdir(storeDir, { recursive: true });
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+// Cache load timings
+const cacheLoaded = {
+    contacts: false,
+    messages: false,
+    messageCounts: false,
+    metadata: false
 };
 
-const saveContact = async (jid, name) => {
-  if (!jid || !name || isJidGroup(jid) || isJidBroadcast(jid) || isJidNewsletter(jid)) return;
-  const contacts = await readJSON('contact.json');
-  const index = contacts.findIndex((contact) => contact.jid === jid);
-  if (index > -1) {
-    contacts[index].name = name;
-  } else {
-    contacts.push({ jid, name });
-  }
-  await writeJSON('contact.json', contacts);
+const filePath = (file) => path.join(storeDir, file);
+
+// Sync read - تیز
+const readJSON = (file) => {
+    try {
+        const fp = filePath(file);
+        if (!fs.existsSync(fp)) return [];
+        return JSON.parse(fs.readFileSync(fp, 'utf8'));
+    } catch {
+        return [];
+    }
 };
 
-const getContacts = async () => {
-  try {
-    return await readJSON('contact.json');
-  } catch {
-    return [];
-  }
+// Async write - background میں
+const writeJSON = (file, data) => {
+    try {
+        fs.writeFileSync(filePath(file), JSON.stringify(data));
+    } catch (e) {
+        console.error('Write error:', e.message);
+    }
 };
 
-const saveMessage = async (message) => {
-  const jid = message.key.remoteJid;
-  const id = message.key.id;
-  if (!id || !jid || !message) return;
-  await saveContact(message.sender, message.pushName);
-  const messages = await readJSON('message.json');
-  const index = messages.findIndex((msg) => msg.id === id && msg.jid === jid);
-  const timestamp = message.messageTimestamp ? message.messageTimestamp * 1000 : Date.now();
-  if (index > -1) {
-    messages[index].message = message;
-    messages[index].timestamp = timestamp;
-  } else {
-    messages.push({ id, jid, message, timestamp });
-  }
-  await writeJSON('message.json', messages);
+// Cache initialize
+const initCache = () => {
+    if (!cacheLoaded.contacts) { cache.contacts = readJSON('contact.json'); cacheLoaded.contacts = true; }
+    if (!cacheLoaded.messages) { cache.messages = readJSON('message.json'); cacheLoaded.messages = true; }
+    if (!cacheLoaded.messageCounts) { cache.messageCounts = readJSON('message_count.json'); cacheLoaded.messageCounts = true; }
+    if (!cacheLoaded.metadata) { cache.metadata = readJSON('metadata.json'); cacheLoaded.metadata = true; }
 };
 
-const loadMessage = async (id) => {
-  if (!id) return null;
-  const messages = await readJSON('message.json');
-  return messages.find((msg) => msg.id === id) || null;
+initCache();
+
+// Debounce - بار بار write نہ ہو
+const saveTimers = {};
+const debouncedWrite = (file, data, delay = 3000) => {
+    if (saveTimers[file]) clearTimeout(saveTimers[file]);
+    saveTimers[file] = setTimeout(() => {
+        writeJSON(file, data);
+    }, delay);
 };
 
-const getName = async (jid) => {
-  const contacts = await readJSON('contact.json');
-  const contact = contacts.find((contact) => contact.jid === jid);
-  return contact ? contact.name : jid.split('@')[0].replace(/_/g, ' ');
+const saveContact = (jid, name) => {
+    if (!jid || !name || isJidGroup(jid) || isJidBroadcast(jid) || isJidNewsletter(jid)) return;
+    const index = cache.contacts.findIndex(c => c.jid === jid);
+    if (index > -1) {
+        if (cache.contacts[index].name === name) return; // کوئی تبدیلی نہیں
+        cache.contacts[index].name = name;
+    } else {
+        cache.contacts.push({ jid, name });
+    }
+    debouncedWrite('contact.json', cache.contacts);
+};
+
+const saveMessage = (message) => {
+    const jid = message.key?.remoteJid;
+    const id = message.key?.id;
+    if (!id || !jid || !message) return;
+
+    saveContact(message.sender, message.pushName);
+
+    const timestamp = message.messageTimestamp ? message.messageTimestamp * 1000 : Date.now();
+    const index = cache.messages.findIndex(m => m.id === id && m.jid === jid);
+
+    if (index > -1) {
+        cache.messages[index].message = message;
+        cache.messages[index].timestamp = timestamp;
+    } else {
+        cache.messages.push({ id, jid, message, timestamp });
+        // صرف آخری 500 messages رکھیں memory میں
+        if (cache.messages.length > 500) {
+            cache.messages = cache.messages.slice(-500);
+        }
+    }
+
+    // جلدی save - 2 سیکنڈ debounce
+    debouncedWrite('message.json', cache.messages, 2000);
+
+    // message count بھی update کریں
+    saveMessageCount(message);
+};
+
+const loadMessage = (id) => {
+    if (!id) return null;
+    return cache.messages.find(m => m.id === id) || null;
+};
+
+const getName = (jid) => {
+    const contact = cache.contacts.find(c => c.jid === jid);
+    return contact ? contact.name : jid.split('@')[0].replace(/_/g, ' ');
 };
 
 const saveGroupMetadata = async (jid, client) => {
-  if (!isJidGroup(jid)) return;
-  const groupMetadata = await client.groupMetadata(jid);
-  const metadata = {
-    jid: groupMetadata.id,
-    subject: groupMetadata.subject,
-    subjectOwner: groupMetadata.subjectOwner,
-    subjectTime: groupMetadata.subjectTime
-      ? new Date(groupMetadata.subjectTime * 1000).toISOString()
-      : null,
-    size: groupMetadata.size,
-    creation: groupMetadata.creation
-      ? new Date(groupMetadata.creation * 1000).toISOString()
-      : null,
-    owner: groupMetadata.owner,
-    desc: groupMetadata.desc,
-    descId: groupMetadata.descId,
-    linkedParent: groupMetadata.linkedParent,
-    restrict: groupMetadata.restrict,
-    announce: groupMetadata.announce,
-    isCommunity: groupMetadata.isCommunity,
-    isCommunityAnnounce: groupMetadata.isCommunityAnnounce,
-    joinApprovalMode: groupMetadata.joinApprovalMode,
-    memberAddMode: groupMetadata.memberAddMode,
-    ephemeralDuration: groupMetadata.ephemeralDuration,
-  };
+    if (!isJidGroup(jid)) return;
+    try {
+        const groupMetadata = await client.groupMetadata(jid);
+        const metadata = {
+            jid: groupMetadata.id,
+            subject: groupMetadata.subject,
+            subjectOwner: groupMetadata.subjectOwner,
+            subjectTime: groupMetadata.subjectTime ? new Date(groupMetadata.subjectTime * 1000).toISOString() : null,
+            size: groupMetadata.size,
+            creation: groupMetadata.creation ? new Date(groupMetadata.creation * 1000).toISOString() : null,
+            owner: groupMetadata.owner,
+            desc: groupMetadata.desc,
+            descId: groupMetadata.descId,
+            restrict: groupMetadata.restrict,
+            announce: groupMetadata.announce,
+            ephemeralDuration: groupMetadata.ephemeralDuration,
+        };
 
-  const metadataList = await readJSON('metadata.json');
-  const index = metadataList.findIndex((meta) => meta.jid === jid);
-  if (index > -1) {
-    metadataList[index] = metadata;
-  } else {
-    metadataList.push(metadata);
-  }
-  await writeJSON('metadata.json', metadataList);
+        const index = cache.metadata.findIndex(m => m.jid === jid);
+        if (index > -1) {
+            cache.metadata[index] = metadata;
+        } else {
+            cache.metadata.push(metadata);
+        }
+        debouncedWrite('metadata.json', cache.metadata);
 
-  const participants = groupMetadata.participants.map((participant) => ({
-    jid,
-    participantId: participant.id,
-    admin: participant.admin,
-  }));
-  await writeJSON(`${jid}_participants.json`, participants);
+        const participants = groupMetadata.participants.map(p => ({
+            jid, participantId: p.id, admin: p.admin
+        }));
+        writeJSON(`${jid}_participants.json`, participants);
+    } catch (e) {
+        console.error('Group metadata error:', e.message);
+    }
 };
 
-const getGroupMetadata = async (jid) => {
-  if (!isJidGroup(jid)) return null;
-  const metadataList = await readJSON('metadata.json');
-  const metadata = metadataList.find((meta) => meta.jid === jid);
-  if (!metadata) return null;
-  const participants = await readJSON(`${jid}_participants.json`);
-  return { ...metadata, participants };
+const getGroupMetadata = (jid) => {
+    if (!isJidGroup(jid)) return null;
+    const metadata = cache.metadata.find(m => m.jid === jid);
+    if (!metadata) return null;
+    const participants = readJSON(`${jid}_participants.json`);
+    return { ...metadata, participants };
 };
 
-const saveMessageCount = async (message) => {
-  if (!message) return;
-  const jid = message.key.remoteJid;
-  const sender = message.key.participant || message.sender;
-  if (!jid || !sender || !isJidGroup(jid)) return;
+const saveMessageCount = (message) => {
+    if (!message) return;
+    const jid = message.key?.remoteJid;
+    const sender = message.key?.participant || message.sender;
+    if (!jid || !sender || !isJidGroup(jid)) return;
 
-  const messageCounts = await readJSON('message_count.json');
-  const index = messageCounts.findIndex(
-    (record) => record.jid === jid && record.sender === sender
-  );
-
-  if (index > -1) {
-    messageCounts[index].count += 1;
-  } else {
-    messageCounts.push({ jid, sender, count: 1 });
-  }
-  await writeJSON('message_count.json', messageCounts);
+    const index = cache.messageCounts.findIndex(r => r.jid === jid && r.sender === sender);
+    if (index > -1) {
+        cache.messageCounts[index].count += 1;
+    } else {
+        cache.messageCounts.push({ jid, sender, count: 1 });
+    }
+    debouncedWrite('message_count.json', cache.messageCounts, 5000);
 };
 
-const getInactiveGroupMembers = async (jid) => {
-  if (!isJidGroup(jid)) return [];
-  const groupMetadata = await getGroupMetadata(jid);
-  if (!groupMetadata) return [];
-
-  const messageCounts = await readJSON('message_count.json');
-  const inactiveMembers = groupMetadata.participants.filter((participant) => {
-    const record = messageCounts.find(
-      (msg) => msg.jid === jid && msg.sender === participant.id
-    );
-    return !record || record.count === 0;
-  });
-  return inactiveMembers.map((member) => member.id);
+const getInactiveGroupMembers = (jid) => {
+    if (!isJidGroup(jid)) return [];
+    const metadata = getGroupMetadata(jid);
+    if (!metadata) return [];
+    return metadata.participants
+        .filter(p => {
+            const record = cache.messageCounts.find(m => m.jid === jid && m.sender === p.id);
+            return !record || record.count === 0;
+        })
+        .map(m => m.id);
 };
 
 const getGroupMembersMessageCount = async (jid) => {
-  if (!isJidGroup(jid)) return [];
-  const messageCounts = await readJSON('message_count.json');
-  const groupCounts = messageCounts
-    .filter((record) => record.jid === jid && record.count > 0)
-    .sort((a, b) => b.count - a.count);
-
-  return Promise.all(
-    groupCounts.map(async (record) => ({
-      sender: record.sender,
-      name: await getName(record.sender),
-      messageCount: record.count,
-    }))
-  );
+    if (!isJidGroup(jid)) return [];
+    return cache.messageCounts
+        .filter(r => r.jid === jid && r.count > 0)
+        .sort((a, b) => b.count - a.count)
+        .map(r => ({
+            sender: r.sender,
+            name: getName(r.sender),
+            messageCount: r.count
+        }));
 };
 
-const getChatSummary = async () => {
-  const messages = await readJSON('message.json');
-  const distinctJids = [...new Set(messages.map((msg) => msg.jid))];
-
-  const summaries = await Promise.all(
-    distinctJids.map(async (jid) => {
-      const chatMessages = messages.filter((msg) => msg.jid === jid);
-      const messageCount = chatMessages.length;
-      const lastMessage = chatMessages.sort(
-        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
-      )[0];
-      const chatName = isJidGroup(jid) ? jid : await getName(jid);
-      return {
-        jid,
-        name: chatName,
-        messageCount,
-        lastMessageTimestamp: lastMessage ? lastMessage.timestamp : null,
-      };
-    })
-  );
-
-  return summaries.sort(
-    (a, b) => new Date(b.lastMessageTimestamp) - new Date(a.lastMessageTimestamp)
-  );
+const getChatSummary = () => {
+    const distinctJids = [...new Set(cache.messages.map(m => m.jid))];
+    return distinctJids.map(jid => {
+        const msgs = cache.messages.filter(m => m.jid === jid);
+        const last = msgs.sort((a, b) => b.timestamp - a.timestamp)[0];
+        return {
+            jid,
+            name: isJidGroup(jid) ? jid : getName(jid),
+            messageCount: msgs.length,
+            lastMessageTimestamp: last ? last.timestamp : null
+        };
+    }).sort((a, b) => b.lastMessageTimestamp - a.lastMessageTimestamp);
 };
 
-// Auto clean -20 minute 
+// ہر 1 گھنٹے بعد clean
 const autoClean = () => {
-  setInterval(async () => {
-    try {
-      const files = ['contact.json', 'message.json', 'message_count.json', 'metadata.json'];
-      for (const file of files) {
-        await writeJSON(file, []);
-      }
-      const allFiles = await fs.readdir(storeDir);
-      const participantFiles = allFiles.filter((f) => f.endsWith('_participants.json'));
-      for (const file of participantFiles) {
-        await writeJSON(file, []);
-      }
-      console.log('✅ Store cleaned at:', new Date().toLocaleTimeString());
-    } catch (error) {
-      console.error('❌ Auto clean error:', error);
-    }
-  }, 20 * 60 * 1000);
+    setInterval(() => {
+        try {
+            // Cache reset
+            cache.contacts = [];
+            cache.messages = [];
+            cache.messageCounts = [];
+            cache.metadata = [];
+
+            // Files reset
+            const files = ['contact.json', 'message.json', 'message_count.json', 'metadata.json'];
+            for (const file of files) {
+                writeJSON(file, []);
+            }
+
+            // Participants files
+            const allFiles = fs.readdirSync(storeDir);
+            allFiles.filter(f => f.endsWith('_participants.json'))
+                    .forEach(f => writeJSON(f, []));
+
+            console.log('✅ Store cleaned at:', new Date().toLocaleTimeString());
+        } catch (error) {
+            console.error('❌ Auto clean error:', error);
+        }
+    }, 60 * 60 * 1000); // 1 گھنٹہ
 };
 
 autoClean();
 
-const saveMessageV1 = saveMessage;
-const saveMessageV2 = (message) => {
-  return Promise.all([saveMessageV1(message), saveMessageCount(message)]);
-};
-
 module.exports = {
-  saveContact,
-  loadMessage,
-  getName,
-  getChatSummary,
-  saveGroupMetadata,
-  getGroupMetadata,
-  saveMessageCount,
-  getInactiveGroupMembers,
-  getGroupMembersMessageCount,
-  saveMessage: saveMessageV2,
+    saveContact,
+    loadMessage,
+    getName,
+    getChatSummary,
+    saveGroupMetadata,
+    getGroupMetadata,
+    saveMessageCount,
+    getInactiveGroupMembers,
+    getGroupMembersMessageCount,
+    saveMessage,
 };
 
 // ADEEL-MD
