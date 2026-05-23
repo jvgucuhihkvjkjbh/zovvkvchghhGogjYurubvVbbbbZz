@@ -28,10 +28,8 @@ return reply("❌ Only owner can use this command.")
 }
 
 if (!args[0]) return reply("*❌ Give video name or link*") 
-
 await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } }) 
 const input = args.join(" ") 
-
 let videoUrl = "" 
 let title = "Video" 
 let info = "" 
@@ -39,52 +37,39 @@ let info = ""
 if (input.includes("http")) { 
     const res = await fetch("https://jerrycoder.oggyapi.workers.dev/down/xnxx?url=" + encodeURIComponent(input)) 
     if (!res.ok) return reply("*❌ API request failed. Try again.*") 
-    
     const data = await res.json() 
     if (data.status !== "success") return reply("*❌ Failed to fetch video.*") 
-    
     title = data.video_title || "Video" 
     videoUrl = data.downloads && (data.downloads.high_quality || data.downloads.direct_download || data.downloads.low_quality) 
-} 
-
-else { 
+} else { 
     const search = await fetch("https://jerrycoder.oggyapi.workers.dev/search/xnxx?q=" + encodeURIComponent(input)) 
     if (!search.ok) return reply("*❌ Search API failed. Try again.*") 
-    
     const sdata = await search.json() 
     if (sdata.status !== "success" || !sdata.results || !sdata.results.length) return reply("*❌ No results found.*") 
-    
     const first = sdata.results[0] 
     title = first.title || "Video" 
-    info = `⏱️ Duration: ${first.duration || 'N/A'} | 👀 Views: ${first.views || 'N/A'}` 
-    
+    info = `Duration: ${first.duration || ''} | Views: ${first.views || ''}`
     const videoLink = first.url 
     if (!videoLink) return reply("*❌ No download link found.*") 
-    
     const res = await fetch("https://jerrycoder.oggyapi.workers.dev/down/xnxx?url=" + encodeURIComponent(videoLink)) 
     if (!res.ok) return reply("*❌ Download API failed. Try again.*") 
-    
     const data = await res.json() 
     if (data.status !== "success") return reply("*❌ Download failed.*") 
-    
     videoUrl = data.downloads && (data.downloads.high_quality || data.downloads.direct_download || data.downloads.low_quality) 
 } 
 
 if (!videoUrl) return reply("*❌ No video URL found. Try again.*") 
-
 const cleanTitle = title.length > 100 ? title.substring(0, 100) + "..." : title 
 const captionText = "*🎬 TITLE:* " + cleanTitle + "\n" + (info ? "📊 *STATS:* " + info + "\n\n" : "\n") + "> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*" 
-
 await conn.sendMessage(from, { video: { url: videoUrl }, caption: captionText }, { quoted: mek }) 
-
 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } }) 
-
 } catch (err) { 
 console.log("XV ERROR:", err.message) 
 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } }) 
 reply("*❌ Error occurred. Please try again.*") 
 } 
 });
+
 
 cmd({
     pattern: "rvideo",
