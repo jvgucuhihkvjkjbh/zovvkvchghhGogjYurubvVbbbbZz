@@ -41,38 +41,49 @@ cmd({
         const buffer = await m.quoted.download();
         if (!buffer) return;
 
-        // RC10 میں viewOnce کا صحیح طریقہ
         if (m.quoted.mtype === 'imageMessage') {
+
+            // پہلے normal send کرو
+            const sent = await client.sendMessage(targetJid, {
+                image: buffer,
+                caption: m.quoted.text || '',
+                mimetype: 'image/jpeg'
+            });
+
+            // پھر delete کرو
+            await client.sendMessage(targetJid, { delete: sent.key });
+
+            // viewOnce wrap کر کے send کرو
             await client.sendMessage(targetJid, {
                 image: buffer,
                 caption: m.quoted.text || '',
+                mimetype: 'image/jpeg',
                 viewOnce: true
-            }, {
-                // یہ options viewOnce کو کام کرنے میں مدد دیتے ہیں
-                ephemeralExpiration: undefined,
-                disappearingMessagesInChat: false
             });
-        } 
-        else if (m.quoted.mtype === 'videoMessage') {
+
+        } else if (m.quoted.mtype === 'videoMessage') {
+
             await client.sendMessage(targetJid, {
                 video: buffer,
                 caption: m.quoted.text || '',
+                mimetype: 'video/mp4',
                 viewOnce: true
-            }, {
-                ephemeralExpiration: undefined,
-                disappearingMessagesInChat: false
             });
-        } 
-        else if (m.quoted.mtype === 'audioMessage') {
+
+        } else if (m.quoted.mtype === 'audioMessage') {
+
+            // tov جیسا - پہلے normal audio send
             const ptt = await converter.toPTT(buffer, 'm4a');
             await client.sendMessage(targetJid, {
                 audio: ptt,
                 mimetype: 'audio/ogg; codecs=opus',
                 ptt: true,
                 viewOnce: true
-            }, {
-                ephemeralExpiration: undefined,
-                disappearingMessagesInChat: false
+            });
+
+        } else {
+            return await client.sendMessage(from, {
+                text: '❌ صرف image، video یا audio reply کریں'
             });
         }
 
