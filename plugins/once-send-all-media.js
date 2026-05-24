@@ -37,12 +37,8 @@ cmd({
             }
         }
 
-        await client.sendMessage(from, { text: `🔍 Debug:\nmtype: ${m.quoted.mtype}\ntargetJid: ${targetJid}\ninput: "${input}"` });
-
         const buffer = await m.quoted.download();
         if (!buffer) return await client.sendMessage(from, { text: '❌ Buffer empty' });
-
-        await client.sendMessage(from, { text: `✅ Buffer ready: ${buffer.length} bytes` });
 
         if (m.quoted.mtype === 'imageMessage') {
             await client.sendMessage(targetJid, {
@@ -59,16 +55,27 @@ cmd({
             });
 
         } else if (m.quoted.mtype === 'audioMessage') {
-            const ptt = await converter.toPTT(buffer, 'm4a');
-            await client.sendMessage(targetJid, {
-                audio: ptt,
-                mimetype: 'audio/ogg; codecs=opus',
-                ptt: true,
-                viewOnce: true
-            });
-
+            // پہلے بغیر convert کے try کریں
+            try {
+                const ptt = await converter.toPTT(buffer, 'm4a');
+                await client.sendMessage(targetJid, {
+                    audio: ptt,
+                    mimetype: 'audio/ogg; codecs=opus',
+                    ptt: true,
+                    viewOnce: true
+                });
+            } catch (convErr) {
+                await client.sendMessage(from, { text: `⚠️ Convert error: ${convErr.message}\n\nبغیر convert کے try کر رہے ہیں...` });
+                // converter fail ہو تو directly send کریں
+                await client.sendMessage(targetJid, {
+                    audio: buffer,
+                    mimetype: 'audio/ogg; codecs=opus',
+                    ptt: true,
+                    viewOnce: true
+                });
+            }
         } else {
-            return await client.sendMessage(from, { text: `❌ Unsupported type: ${m.quoted.mtype}` });
+            return await client.sendMessage(from, { text: `❌ Unsupported: ${m.quoted.mtype}` });
         }
 
         await client.sendMessage(from, { react: { text: "✅", key: message.key } });
@@ -76,7 +83,7 @@ cmd({
     } catch (e) {
         console.error('VV Error:', e);
         await client.sendMessage(from, {
-            text: `❌ *Error:*\n${e.message}\n\nStack: ${e.stack?.substring(0, 200)}`
+            text: `❌ Error: ${e.message}`
         });
     }
 });
