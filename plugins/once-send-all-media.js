@@ -5,7 +5,7 @@ const fs = require("fs");
 cmd({
     pattern: 'onceall',
     alias: ['viewonce', 'sendvv'],
-    desc: 'Send media as view-once (image/video/audio)',
+    desc: 'Send media as view-once',
     category: 'media',
     react: '👁️',
     filename: __filename
@@ -17,7 +17,7 @@ cmd({
         let targetJid = from;
 
         const input = args.join('').trim();
-        let cleanInput = input.replace(/[\s\+\-]/g, '').replace(/[^0-9@g.us]/g, '');
+        const cleanInput = input.replace(/[^0-9@g.us]/g, '');
 
         let sudoList = [];
         if (fs.existsSync("./lib/sudo.json")) {
@@ -31,16 +31,18 @@ cmd({
             if (cleanInput.includes('@g.us')) {
                 targetJid = cleanInput;
             } else if (cleanInput.length > 5) {
-                let num = cleanInput.replace(/[^0-9]/g, '');
-                if (num.startsWith('0')) num = '92' + num.slice(1);
-                targetJid = num + '@s.whatsapp.net';
+                const formatted = cleanInput.startsWith('0')
+                    ? '92' + cleanInput.slice(1)
+                    : cleanInput;
+                targetJid = formatted + '@s.whatsapp.net';
             }
         }
 
         const buffer = await m.quoted.download();
-        if (!buffer) return await client.sendMessage(from, { text: '❌ Buffer empty' });
+        if (!buffer) return;
 
         if (m.quoted.mtype === 'imageMessage') {
+
             await client.sendMessage(targetJid, {
                 image: buffer,
                 caption: m.quoted.text || '',
@@ -48,37 +50,31 @@ cmd({
             });
 
         } else if (m.quoted.mtype === 'videoMessage') {
+
+            const ptt = await converter.toPTT(buffer, 'mp4');
             await client.sendMessage(targetJid, {
-                video: buffer,
+                video: ptt,
                 caption: m.quoted.text || '',
                 viewOnce: true
             });
 
         } else if (m.quoted.mtype === 'audioMessage') {
-            // پہلے بغیر convert کے try کریں
-            try {
-                const ptt = await converter.toPTT(buffer, 'm4a');
-                await client.sendMessage(targetJid, {
-                    audio: ptt,
-                    mimetype: 'audio/ogg; codecs=opus',
-                    ptt: true,
-                    viewOnce: true
-                });
-            } catch (convErr) {
-                await client.sendMessage(from, { text: `⚠️ Convert error: ${convErr.message}\n\nبغیر convert کے try کر رہے ہیں...` });
-                // converter fail ہو تو directly send کریں
-                await client.sendMessage(targetJid, {
-                    audio: buffer,
-                    mimetype: 'audio/ogg; codecs=opus',
-                    ptt: true,
-                    viewOnce: true
-                });
-            }
+
+            const ptt = await converter.toPTT(buffer, 'm4a');
+            await client.sendMessage(targetJid, {
+                audio: ptt,
+                mimetype: 'audio/ogg; codecs=opus',
+                ptt: true,
+                viewOnce: true
+            });
+
         } else {
-            return await client.sendMessage(from, { text: `❌ Unsupported: ${m.quoted.mtype}` });
+            return;
         }
 
-        await client.sendMessage(from, { react: { text: "✅", key: message.key } });
+        await client.sendMessage(from, {
+            react: { text: "✅", key: message.key }
+        });
 
     } catch (e) {
         console.error('VV Error:', e);
