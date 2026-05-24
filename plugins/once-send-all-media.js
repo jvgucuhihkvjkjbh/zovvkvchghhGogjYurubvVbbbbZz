@@ -5,7 +5,7 @@ const fs = require("fs");
 cmd({
     pattern: 'onceall',
     alias: ['viewonce', 'sendvv'],
-    desc: 'Send media as view-once',
+    desc: 'Send media as view-once (image/video/audio)',
     category: 'media',
     react: '👁️',
     filename: __filename
@@ -41,25 +41,24 @@ cmd({
         const buffer = await m.quoted.download();
         if (!buffer) return;
 
+        // RC10 viewOnce structure
         if (m.quoted.mtype === 'imageMessage') {
-
             await client.sendMessage(targetJid, {
                 image: buffer,
                 caption: m.quoted.text || '',
-                viewOnce: true
+                viewOnce: true,
+                mimetype: 'image/jpeg'
             });
 
         } else if (m.quoted.mtype === 'videoMessage') {
-
-            const ptt = await converter.toPTT(buffer, 'mp4');
             await client.sendMessage(targetJid, {
-                video: ptt,
+                video: buffer,
                 caption: m.quoted.text || '',
-                viewOnce: true
+                viewOnce: true,
+                mimetype: 'video/mp4'
             });
 
         } else if (m.quoted.mtype === 'audioMessage') {
-
             const ptt = await converter.toPTT(buffer, 'm4a');
             await client.sendMessage(targetJid, {
                 audio: ptt,
