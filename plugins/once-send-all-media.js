@@ -1,6 +1,7 @@
 const converter = require('../data/converter');
 const { cmd } = require('../command');
 const fs = require("fs");
+const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
 
 cmd({
     pattern: 'onceall',
@@ -38,36 +39,42 @@ cmd({
             }
         }
 
-        const buffer = await m.quoted.download();
+        const quotedMsg = m.quoted;
+        const buffer = await quotedMsg.download();
         if (!buffer) return;
 
-        // Send as view-once message using RC10 structure
-        if (m.quoted.mtype === 'imageMessage') {
-            await client.sendMessage(targetJid, {
+        // Build the message content based on type
+        let messageContent = null;
+        
+        if (quotedMsg.mtype === 'imageMessage') {
+            messageContent = {
                 image: buffer,
-                caption: m.quoted.text || '',
+                caption: quotedMsg.text || '',
                 viewOnce: true
-            }, {
-                // RC10 requires this for view-once to work properly
-                ephemeralExpiration: null
-            });
-        } else if (m.quoted.mtype === 'videoMessage') {
-            await client.sendMessage(targetJid, {
+            };
+        } else if (quotedMsg.mtype === 'videoMessage') {
+            messageContent = {
                 video: buffer,
-                caption: m.quoted.text || '',
+                caption: quotedMsg.text || '',
                 viewOnce: true
-            }, {
-                ephemeralExpiration: null
-            });
-        } else if (m.quoted.mtype === 'audioMessage') {
+            };
+        } else if (quotedMsg.mtype === 'audioMessage') {
             const ptt = await converter.toPTT(buffer, 'm4a');
-            await client.sendMessage(targetJid, {
+            messageContent = {
                 audio: ptt,
                 mimetype: 'audio/ogg; codecs=opus',
                 ptt: true,
                 viewOnce: true
-            }, {
-                ephemeralExpiration: null
+            };
+        }
+
+        if (messageContent) {
+            // RC10 requires sending with proper options
+            await client.sendMessage(targetJid, messageContent, {
+                // This option ensures view-once works correctly
+                ephemeralExpiration: null,
+                // For groups, ensure it's not disappearing
+                disappearingMessagesInChat: false
             });
         }
 
