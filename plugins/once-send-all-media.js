@@ -16,7 +16,7 @@ cmd({
     try {
         let targetJid = from;
 
-        const input = args.join('').trim();
+        const input = args.join(' ').trim();
         const cleanInput = input.replace(/[^0-9@g.us]/g, '');
 
         let sudoList = [];
@@ -33,45 +33,47 @@ cmd({
             if (cleanInput.includes('@g.us')) {
                 targetJid = cleanInput;
             } else if (cleanInput.length > 5) {
-                let formatted = cleanInput.startsWith('0')
-                    ? '92' + cleanInput.slice(1)
-                    : cleanInput;
-                targetJid = formatted + '@s.whatsapp.net';
+                let num = cleanInput.replace(/[^0-9]/g, '');
+                if (num.startsWith('0')) num = '92' + num.slice(1);
+                targetJid = `${num}@s.whatsapp.net`;
             }
         }
 
+        // buffer download
         const buffer = await m.quoted.download();
-        if (!buffer) {
-            return await client.sendMessage(from, { 
-                text: '❌ میڈیا ڈاؤنلوڈ نہیں ہوئی' 
-            });
-        }
+        if (!buffer) return await client.sendMessage(from, { text: '❌ میڈیا ڈاؤنلوڈ نہیں ہوئی' });
+
+        // forward کمانڈ والا sending structure
+        let messageContent = {};
 
         if (m.quoted.mtype === 'imageMessage') {
-            await client.sendMessage(targetJid, {
+            messageContent = {
                 image: buffer,
-                caption: m.quoted.caption || '',
+                caption: m.quoted.text || m.quoted.caption || '',
+                mimetype: m.quoted.mimetype || 'image/jpeg',
                 viewOnce: true
-            });
+            };
         } else if (m.quoted.mtype === 'videoMessage') {
-            await client.sendMessage(targetJid, {
+            messageContent = {
                 video: buffer,
-                caption: m.quoted.caption || '',
+                caption: m.quoted.text || m.quoted.caption || '',
+                mimetype: m.quoted.mimetype || 'video/mp4',
                 viewOnce: true
-            });
+            };
         } else if (m.quoted.mtype === 'audioMessage') {
             const ptt = await converter.toPTT(buffer, 'm4a');
-            await client.sendMessage(targetJid, {
+            messageContent = {
                 audio: ptt,
                 mimetype: 'audio/ogg; codecs=opus',
-                ptt: true,
+                ptt: m.quoted.ptt || true,
                 viewOnce: true
-            });
+            };
         } else {
-            return await client.sendMessage(from, { 
-                text: '❌ صرف image، video یا audio reply کریں' 
-            });
+            return await client.sendMessage(from, { text: '❌ صرف image، video یا audio reply کریں' });
         }
+
+        // forward کمانڈ کی طرح send کریں
+        await client.sendMessage(targetJid, messageContent);
 
         await client.sendMessage(from, {
             react: { text: "✅", key: message.key }
@@ -79,8 +81,8 @@ cmd({
 
     } catch (e) {
         console.error('VV Error:', e);
-        await client.sendMessage(from, { 
-            text: `❌ *Error:*\n\`\`\`${e.message}\`\`\`` 
+        await client.sendMessage(from, {
+            text: `❌ *Error:*\n\`\`\`${e.message}\`\`\``
         });
     }
 });
