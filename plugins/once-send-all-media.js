@@ -41,23 +41,24 @@ cmd({
         const buffer = await m.quoted.download();
         if (!buffer) return;
 
-        // RC10 viewOnce structure
+        // Send as view-once message using RC10 structure
         if (m.quoted.mtype === 'imageMessage') {
             await client.sendMessage(targetJid, {
                 image: buffer,
                 caption: m.quoted.text || '',
-                viewOnce: true,
-                mimetype: 'image/jpeg'
+                viewOnce: true
+            }, {
+                // RC10 requires this for view-once to work properly
+                ephemeralExpiration: null
             });
-
         } else if (m.quoted.mtype === 'videoMessage') {
             await client.sendMessage(targetJid, {
                 video: buffer,
                 caption: m.quoted.text || '',
-                viewOnce: true,
-                mimetype: 'video/mp4'
+                viewOnce: true
+            }, {
+                ephemeralExpiration: null
             });
-
         } else if (m.quoted.mtype === 'audioMessage') {
             const ptt = await converter.toPTT(buffer, 'm4a');
             await client.sendMessage(targetJid, {
@@ -65,10 +66,9 @@ cmd({
                 mimetype: 'audio/ogg; codecs=opus',
                 ptt: true,
                 viewOnce: true
+            }, {
+                ephemeralExpiration: null
             });
-
-        } else {
-            return;
         }
 
         await client.sendMessage(from, {
