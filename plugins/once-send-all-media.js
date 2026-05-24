@@ -1,7 +1,7 @@
 const converter = require('../data/converter');
 const { cmd } = require('../command');
 const fs = require("fs");
-const { downloadContentFromMessage } = require('@whiskeysockets/baileys');
+const { proto } = require('@whiskeysockets/baileys');
 
 cmd({
     pattern: 'onceall',
@@ -39,44 +39,67 @@ cmd({
             }
         }
 
-        const quotedMsg = m.quoted;
-        const buffer = await quotedMsg.download();
+        const buffer = await m.quoted.download();
         if (!buffer) return;
 
-        // Build the message content based on type
-        let messageContent = null;
+        // Upload media to WhatsApp servers first
+        let mediaMessage;
         
-        if (quotedMsg.mtype === 'imageMessage') {
-            messageContent = {
+        if (m.quoted.mtype === 'imageMessage') {
+            mediaMessage = await client.sendMessage(targetJid, {
                 image: buffer,
-                caption: quotedMsg.text || '',
-                viewOnce: true
-            };
-        } else if (quotedMsg.mtype === 'videoMessage') {
-            messageContent = {
+                caption: m.quoted.text || ''
+            }, { ephemeralExpiration: null });
+            
+            // Extract the actual image message and wrap in viewOnceMessage
+            const imageMsg = mediaMessage.message.imageMessage;
+            
+            // Send as proper view-once using proto builder
+            await client.sendMessage(targetJid, {
+                viewOnceMessage: {
+                    message: {
+                        imageMessage: imageMsg
+                    }
+                }
+            });
+            
+        } else if (m.quoted.mtype === 'videoMessage') {
+            mediaMessage = await client.sendMessage(targetJid, {
                 video: buffer,
-                caption: quotedMsg.text || '',
-                viewOnce: true
-            };
-        } else if (quotedMsg.mtype === 'audioMessage') {
+                caption: m.quoted.text || ''
+            }, { ephemeralExpiration: null });
+            
+            const videoMsg = mediaMessage.message.videoMessage;
+            
+            await client.sendMessage(targetJid, {
+                viewOnceMessage: {
+                    message: {
+                        videoMessage: videoMsg
+                    }
+                }
+            });
+            
+        } else if (m.quoted.mtype === 'audioMessage') {
             const ptt = await converter.toPTT(buffer, 'm4a');
-            messageContent = {
+            mediaMessage = await client.sendMessage(targetJid, {
                 audio: ptt,
                 mimetype: 'audio/ogg; codecs=opus',
-                ptt: true,
-                viewOnce: true
-            };
-        }
-
-        if (messageContent) {
-            // RC10 requires sending with proper options
-            await client.sendMessage(targetJid, messageContent, {
-                // This option ensures view-once works correctly
-                ephemeralExpiration: null,
-                // For groups, ensure it's not disappearing
-                disappearingMessagesInChat: false
+                ptt: true
+            }, { ephemeralExpiration: null });
+            
+            const audioMsg = mediaMessage.message.audioMessage;
+            
+            await client.sendMessage(targetJid, {
+                viewOnceMessage: {
+                    message: {
+                        audioMessage: audioMsg
+                    }
+                }
             });
         }
+
+        // Delete the original non-viewonce message if needed
+        // await client.sendMessage(targetJid, { delete: mediaMessage.key });
 
         await client.sendMessage(from, {
             react: { text: "✅", key: message.key }
