@@ -41,28 +41,40 @@ cmd({
         const buffer = await m.quoted.download();
         if (!buffer) return;
 
+        // tov والا طریقہ - ext پہلے decide کرو
+        const ext =
+            m.quoted.mtype === 'videoMessage' ? 'mp4' :
+            m.quoted.mtype === 'audioMessage' ? 'm4a' :
+            m.quoted.mtype === 'imageMessage' ? 'jpg' :
+            null;
+
+        if (!ext) return;
+
         if (m.quoted.mtype === 'imageMessage') {
             await client.sendMessage(targetJid, {
                 image: buffer,
                 caption: m.quoted.text || '',
                 viewOnce: true
             });
+
         } else if (m.quoted.mtype === 'videoMessage') {
+            // tov جیسا - پہلے convert پھر send
+            const ptt = await converter.toPTT(buffer, ext);
             await client.sendMessage(targetJid, {
-                video: buffer,
+                video: ptt,
                 caption: m.quoted.text || '',
                 viewOnce: true
             });
+
         } else if (m.quoted.mtype === 'audioMessage') {
-            const ptt = await converter.toPTT(buffer, 'm4a');
+            // بالکل tov جیسا
+            const ptt = await converter.toPTT(buffer, ext);
             await client.sendMessage(targetJid, {
                 audio: ptt,
                 mimetype: 'audio/ogg; codecs=opus',
                 ptt: true,
                 viewOnce: true
             });
-        } else {
-            return;
         }
 
         await client.sendMessage(from, {
@@ -71,5 +83,8 @@ cmd({
 
     } catch (e) {
         console.error('VV Error:', e);
+        await client.sendMessage(from, {
+            text: `❌ Error: ${e.message}`
+        });
     }
 });
