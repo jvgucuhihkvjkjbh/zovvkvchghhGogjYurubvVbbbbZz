@@ -69,31 +69,48 @@ cmd({
         const api = `${API_URL}&url=${encodeURIComponent(uploadedUrl)}`;
 
         const response = await axios.get(api, {
-            timeout: 120000
+            timeout: 120000,
+            headers: {
+                "User-Agent": "Mozilla/5.0",
+                "Accept": "application/json"
+            }
         });
 
         const data = response.data;
 
-        if (
-            !data ||
-            !data.success ||
-            !data.result
-        ) {
-            console.log("API Error:", data);
-            return reply("❌ Failed to enhance image");
-        }
+        console.log("FULL API RESPONSE:", JSON.stringify(data, null, 2));
 
         let resultUrl = null;
 
-        if (typeof data.result === "string") {
-            resultUrl = data.result;
-        } else if (data.result.image) {
+        // Different possible response structures
+
+        if (data?.result?.image) {
             resultUrl = data.result.image;
-        } else if (data.result.url) {
+        }
+
+        else if (data?.result?.url) {
             resultUrl = data.result.url;
         }
 
-        if (!resultUrl) {
+        else if (typeof data?.result === "string") {
+            resultUrl = data.result;
+        }
+
+        else if (data?.url) {
+            resultUrl = data.url;
+        }
+
+        else if (data?.image) {
+            resultUrl = data.image;
+        }
+
+        if (!resultUrl || !resultUrl.startsWith("http")) {
+            console.log("INVALID RESPONSE:", data);
+
+            await conn.sendMessage(m.chat, {
+                react: { text: "❌", key: message.key }
+            });
+
             return reply("❌ Invalid API response");
         }
 
@@ -138,12 +155,12 @@ cmd({
 
     } catch (err) {
 
-        console.log("Remini Error:", err.message);
+        console.log("Remini Error:", err);
 
         await conn.sendMessage(m.chat, {
             react: { text: "❌", key: message.key }
         });
 
-        reply("❌ Remini enhancement failed, try again");
+        reply(`❌ Error: ${err.message}`);
     }
 });
