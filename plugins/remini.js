@@ -9,62 +9,119 @@ cmd({
   pattern: "remini",
   alias: ["enhance", "hd"],
   react: '✨',
-  desc: "Enhance photo quality using Edith Remini API (Catbox upload)",
+  desc: "Enhance photo quality",
   category: "tools",
   filename: __filename
 }, async (client, message, { reply, quoted }) => {
+
   try {
+
     const quotedMsg = quoted || message;
     const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
 
-    if (!mimeType || !mimeType.startsWith('image/')) {
-      return reply("📸 Please reply to an image.");
+    if (!mimeType.startsWith('image/')) {
+      return reply("📸 Please reply to an image");
     }
+
+    await client.sendMessage(message.chat, {
+      react: { text: "⏳", key: message.key }
+    });
 
     // Download image
     const mediaBuffer = await quotedMsg.download();
+
+    if (!mediaBuffer) {
+      return reply("❌ Failed to download image");
+    }
+
     const extension = mimeType.includes('png') ? '.png' : '.jpg';
-    const inputPath = path.join(os.tmpdir(), `input_${Date.now()}${extension}`);
-    fs.writeFileSync(inputPath, mediaBuffer);
+    const tempPath = path.join(
+      os.tmpdir(),
+      `remini_${Date.now()}${extension}`
+    );
 
-    // Upload to Catbox
+    fs.writeFileSync(tempPath, mediaBuffer);
+
+    // Upload image
     const form = new FormData();
+    form.append('fileToUpload', fs.createReadStream(tempPath));
     form.append('reqtype', 'fileupload');
-    form.append('fileToUpload', fs.createReadStream(inputPath));
 
-    const catboxRes = await axios.post('https://catbox.moe/user/api.php', form, {
-      headers: form.getHeaders(),
+    const uploadRes = await axios.post(
+      'https://catbox.moe/user/api.php',
+      form,
+      {
+        headers: form.getHeaders(),
+        timeout: 60000
+      }
+    );
+
+    fs.unlinkSync(tempPath);
+
+    const uploadedUrl = uploadRes.data.trim();
+
+    if (!uploadedUrl.startsWith('https://')) {
+      return reply("❌ Image upload failed");
+    }
+
+    // New API
+    const api =
+      `https://api.princetechn.com/api/tools/remini?apikey=prince&url=${encodeURIComponent(uploadedUrl)}`;
+
+    const { data } = await axios.get(api, {
+      timeout: 120000,
+      headers: {
+        "User-Agent": "Mozilla/5.0"
+      }
     });
 
-    fs.unlinkSync(inputPath); // cleanup
-
-    const uploadedImage = catboxRes.data.trim();
-    if (!uploadedImage.startsWith('https://')) {
-      return reply("❌ Failed to upload image to Catbox.");
+    if (
+      !data ||
+      data.status !== 200 ||
+      !data.success ||
+      !data.result
+    ) {
+      console.log("API RESPONSE:", data);
+      return reply("❌ Failed to enhance image");
     }
 
-    // Call Edith API
-    const apiUrl = `https://edith-apis.vercel.app/imagecreator/remini?url=${encodeURIComponent(uploadedImage)}`;
-    const apiRes = await axios.get(apiUrl, { timeout: 60000 });
+    // Handle result URL
+    let resultUrl = null;
 
-    const data = apiRes.data;
-
-    if (!data || !data.status || !data.result) {
-      console.log("API Response:", data);
-      return reply("❌ Failed to enhance the image. Try again later.");
+    if (typeof data.result === "string") {
+      resultUrl = data.result;
+    } else if (data.result.image) {
+      resultUrl = data.result.image;
+    } else if (data.result.url) {
+      resultUrl = data.result.url;
     }
 
-    // Send enhanced photo
+    if (!resultUrl) {
+      console.log("INVALID RESULT:", data.result);
+      return reply("❌ Invalid API response");
+    }
+
+    // Send enhanced image
     await client.sendMessage(message.chat, {
-      image: { url: data.result },
-      caption: "⚡ REMINI ENHANCEMENT COMPLETED SUCCESSFULLY! 💎\n✨ _Powered by ADEEL-MD_"
+      image: { url: resultUrl },
+      caption:
+`✨ *REMINI ENHANCEMENT COMPLETED*
+
+> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
     }, { quoted: message });
 
-    // Add ✅ reaction separately
-    await client.sendMessage(message.chat, { react: { text: "✅", key: message.key } });
+    await client.sendMessage(message.chat, {
+      react: { text: "✅", key: message.key }
+    });
 
   } catch (err) {
-    console.error("Remini Error:", err);
-    await reply(`❌ Error: ${err.message || "Failed to enhance the image."}`);
+
+    console.log("REMINI ERROR:", err.message);
+
+    await client.sendMessage(message.chat, {
+      react: { text: "❌", key: message.key }
+    });
+
+    reply(`❌ ${err.message}`);
   }
 });
