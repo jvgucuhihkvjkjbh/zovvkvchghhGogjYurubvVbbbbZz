@@ -43,6 +43,7 @@ const TERABOX_DOMAINS = [
     "tibibox.com",
     "momerybox.com",
     "terafileshare.com",
+    "terasharefile.com",
     "terasharelink.com",
     "teraboxapp.com",
     "teraboxlink.com",
