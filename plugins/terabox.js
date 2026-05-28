@@ -32,9 +32,29 @@ async function getTeraboxVideo(url) {
     }
 }
 
+const TERABOX_DOMAINS = [
+    "terabox.com",
+    "1024tera.com",
+    "1024terabox.com",
+    "4funbox.com",
+    "4funbox.co",
+    "mirrorbox.com",
+    "nephobox.com",
+    "tibibox.com",
+    "momerybox.com",
+    "terafileshare.com",
+    "terasharelink.com",
+    "teraboxapp.com",
+    "teraboxlink.com",
+    "terabox.app",
+    "freeterabox.com",
+    "www.terabox.com",
+    "dl.terabox.com"
+];
+
 cmd({
     pattern: "terabox",
-    alias: ["tera", "tbdl"],
+    alias: ["tera", "tbdl", "teradl"],
     react: "📦",
     desc: "Download Terabox videos",
     category: "download",
@@ -44,10 +64,15 @@ cmd({
     try {
         const url = args[0];
 
-        if (!url) return reply("⚠️ Terabox link دیں\nمثال: .terabox https://terabox.com/xxx");
+        if (!url) return reply(
+            "⚠️ *Terabox link دیں*\n\n" +
+            "*مثال:*\n" +
+            ".terabox https://terabox.com/xxx\n" +
+            ".terabox https://1024tera.com/xxx"
+        );
 
-        const validDomains = ["terabox.com", "1024tera", "4funbox", "mirrorbox", "nephobox", "terafileshare"];
-        if (!validDomains.some(d => url.includes(d))) {
+        const isValid = TERABOX_DOMAINS.some(d => url.includes(d));
+        if (!isValid) {
             return reply("⚠️ Valid Terabox link دیں");
         }
 
