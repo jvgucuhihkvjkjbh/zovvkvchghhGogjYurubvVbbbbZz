@@ -51,7 +51,7 @@ async (conn, mek, m, { from, q, reply }) => {
             `📊 *Select Quality:*\n` +
             `*1* → 360p\n` +
             `*2* → 480p\n` +
-            `*3* → 720p _(up to ${totalSize})_\n\n` +
+            `*3* → 720p\n\n` +
             `⚠️ *Reply to this thumbnail with 1, 2 or 3*\n\n` +
             `> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
@@ -85,23 +85,24 @@ async (conn, mek, m, { from, q, reply }) => {
 
             conn.ev.off("messages.upsert", listener);
 
+            // ⏳ react on user's reply message
+            await conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
+
             const qualityMap = { "1": "360p", "2": "480p", "3": "720p" };
             const selectedQuality = qualityMap[selectedText];
-            const streamUrl = streams[selectedQuality];
+
+            // Exact selected quality only — no fallback
+            const streamUrl = streams[selectedQuality] || null;
 
             const caption = `🎬 *${fileName}*\n\n📦 Size: ${totalSize}\n📥 Quality: ${selectedQuality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
-
-            await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
             outputPath = tempFile('mp4');
             let downloadSuccess = false;
 
-            const activeStream = streamUrl || streams["480p"] || streams["360p"];
-
-            if (activeStream) {
+            if (streamUrl) {
                 try {
                     await new Promise((res, rej) => {
-                        ffmpeg(activeStream)
+                        ffmpeg(streamUrl)
                             .inputOptions([
                                 '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
                                 '-allowed_extensions', 'ALL',
@@ -126,6 +127,7 @@ async (conn, mek, m, { from, q, reply }) => {
                 }
             }
 
+            // Fallback to direct download only if selected stream not available
             if (!downloadSuccess && downloadUrl) {
                 const writer = fs.createWriteStream(outputPath);
                 const response = await axios({
@@ -147,14 +149,14 @@ async (conn, mek, m, { from, q, reply }) => {
             }
 
             if (!fs.existsSync(outputPath)) {
-                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                await conn.sendMessage(from, { react: { text: "❌", key: msg.key } });
                 return conn.sendMessage(from, { text: "❌ Download failed from all sources" }, { quoted: msg });
             }
 
             const stats = fs.statSync(outputPath);
             if (stats.size < 10000) {
                 fs.unlinkSync(outputPath);
-                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                await conn.sendMessage(from, { react: { text: "❌", key: msg.key } });
                 return conn.sendMessage(from, { text: "❌ Invalid video file downloaded" }, { quoted: msg });
             }
 
@@ -165,7 +167,7 @@ async (conn, mek, m, { from, q, reply }) => {
                 caption
             }, { quoted: msg });
 
-            await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            await conn.sendMessage(from, { react: { text: "✅", key: msg.key } });
 
             if (outputPath && fs.existsSync(outputPath)) {
                 try { fs.unlinkSync(outputPath); } catch {}
