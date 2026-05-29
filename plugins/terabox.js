@@ -8,6 +8,11 @@ const ffmpeg = require('fluent-ffmpeg');
 
 const tempFile = (ext) => path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
 
+const formatSize = (bytes) => {
+    const mb = parseInt(bytes) / (1024 * 1024);
+    return mb.toFixed(2) + " MB";
+};
+
 cmd({
     pattern: "terabox",
     alias: ["tera", "tbx", "terabox2"],
@@ -28,37 +33,47 @@ async (conn, mek, m, { from, q, reply }) => {
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        const { data } = await axios.get(
-            `https://jerryproxy.vercel.app/api/download?url=${encodeURIComponent(url)}`,
-            { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
-        );
+        let data;
+        try {
+            const res = await axios.get(
+                `https://jerrycoder.oggyapi.workers.dev/down/terabx?url=${encodeURIComponent(url)}`,
+                { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
+            );
+            data = res.data;
+        } catch (err) {
+            return reply(`❌ API request failed: ${err.message}`);
+        }
 
-        if (!data.status || !data.result?.files?.length) return reply("❌ Failed to fetch video");
+        if (!data || data.status !== "success") return reply("❌ Failed to fetch video");
 
-        const file = data.result.files[0];
-        const streams = file?.streams || {};
-        const downloadUrl = file?.download;
+        const fileName = data.filename || `terabox_${Date.now()}.mp4`;
+        const totalSize = data.size ? formatSize(data.size) : "Unknown";
+        const normalUrl = data.download?.normal;
+        const fastUrl = data.download?.fast;
+        const thumbnail = data.thumbnails?.url2 || data.thumbnails?.url1 || null;
 
-        if (!streams["720p"] && !streams["480p"] && !streams["360p"] && !downloadUrl)
-            return reply("❌ No downloadable video found");
+        if (!normalUrl && !fastUrl) return reply("❌ No downloadable video found");
 
-        const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
-        const totalSize = file.size_mb || "Unknown";
+        // Size estimate per quality
+        const rawBytes = parseInt(data.size) || 0;
+        const size360 = rawBytes ? formatSize(rawBytes * 0.30) : "~Low";
+        const size480 = rawBytes ? formatSize(rawBytes * 0.55) : "~Medium";
+        const size720 = rawBytes ? totalSize : "~Full";
 
         const selectorCaption =
             `🎬 *${fileName}*\n\n` +
             `📦 Total Size: ${totalSize}\n\n` +
             `📊 *Select Quality:*\n` +
-            `*1* → 360p\n` +
-            `*2* → 480p\n` +
-            `*3* → 720p\n\n` +
+            `*1* → 360p  _(~${size360})_\n` +
+            `*2* → 480p  _(~${size480})_\n` +
+            `*3* → 720p  _(~${size720})_\n\n` +
             `⚠️ *Reply to this thumbnail with 1, 2 or 3*\n\n` +
             `> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
         let sentMsg;
-        if (file.thumbnail) {
+        if (thumbnail) {
             sentMsg = await conn.sendMessage(from, {
-                image: { url: file.thumbnail },
+                image: { url: thumbnail },
                 caption: selectorCaption
             }, { quoted: mek });
         } else {
@@ -85,24 +100,27 @@ async (conn, mek, m, { from, q, reply }) => {
 
             conn.ev.off("messages.upsert", listener);
 
-            // ⏳ react on user's reply message
+            // ⏳ react on user's reply
             await conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
 
             const qualityMap = { "1": "360p", "2": "480p", "3": "720p" };
+            const sizeMap = { "1": size360, "2": size480, "3": size720 };
             const selectedQuality = qualityMap[selectedText];
+            const selectedSize = sizeMap[selectedText];
 
-            // Exact selected quality only — no fallback
-            const streamUrl = streams[selectedQuality] || null;
+            // URL selection: 1=normal, 2=normal, 3=fast
+            const selectedUrl = selectedText === "3" ? (fastUrl || normalUrl) : normalUrl;
 
-            const caption = `🎬 *${fileName}*\n\n📦 Size: ${totalSize}\n📥 Quality: ${selectedQuality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+            const caption = `🎬 *${fileName}*\n\n📦 Size: ~${selectedSize}\n📥 Quality: ${selectedQuality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
             outputPath = tempFile('mp4');
             let downloadSuccess = false;
 
-            if (streamUrl) {
+            // 720p: ffmpeg se stream karo
+            if (selectedText === "3" && selectedUrl) {
                 try {
                     await new Promise((res, rej) => {
-                        ffmpeg(streamUrl)
+                        ffmpeg(selectedUrl)
                             .inputOptions([
                                 '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
                                 '-allowed_extensions', 'ALL',
@@ -127,28 +145,34 @@ async (conn, mek, m, { from, q, reply }) => {
                 }
             }
 
-            // Fallback to direct download only if selected stream not available
-            if (!downloadSuccess && downloadUrl) {
-                const writer = fs.createWriteStream(outputPath);
-                const response = await axios({
-                    method: 'get',
-                    url: downloadUrl,
-                    responseType: 'stream',
-                    timeout: 1200000,
-                    maxContentLength: Infinity,
-                    maxBodyLength: Infinity,
-                    headers: { "User-Agent": "Mozilla/5.0" }
-                });
+            // 360p / 480p: direct axios download
+            if (!downloadSuccess && selectedUrl) {
+                try {
+                    const writer = fs.createWriteStream(outputPath);
+                    const response = await axios({
+                        method: 'get',
+                        url: selectedUrl,
+                        responseType: 'stream',
+                        timeout: 1200000,
+                        maxContentLength: Infinity,
+                        maxBodyLength: Infinity,
+                        headers: { "User-Agent": "Mozilla/5.0" }
+                    });
 
-                response.data.pipe(writer);
+                    response.data.pipe(writer);
 
-                await new Promise((res, rej) => {
-                    writer.on('finish', res);
-                    writer.on('error', rej);
-                });
+                    await new Promise((res, rej) => {
+                        writer.on('finish', res);
+                        writer.on('error', rej);
+                    });
+
+                    downloadSuccess = true;
+                } catch {
+                    downloadSuccess = false;
+                }
             }
 
-            if (!fs.existsSync(outputPath)) {
+            if (!fs.existsSync(outputPath) || !downloadSuccess) {
                 await conn.sendMessage(from, { react: { text: "❌", key: msg.key } });
                 return conn.sendMessage(from, { text: "❌ Download failed from all sources" }, { quoted: msg });
             }
