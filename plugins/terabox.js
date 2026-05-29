@@ -43,7 +43,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
         const quality = file?.streams?.["720p"] ? "720p" : file?.streams?.["480p"] ? "480p" : "360p";
         const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
-        const caption = `🎬 *${fileName}*\n\n📦 Size: ${file.size_mb || "Unknown"}\n📥 Quality: ${quality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+        const caption = `🎬 *${fileName}*\n\n📦 Size: ${file.size_mb || "Unknown"}\n📥 Quality: ${quality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇڈ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
         if (file.thumbnail) {
             try {
@@ -52,46 +52,67 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         outputPath = tempFile('mp4');
+        let downloadSuccess = false;
 
-        try {
-            await new Promise((resolve, reject) => {
-                ffmpeg(streamUrl)
-                    .inputOptions([
-                        '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
-                        '-allowed_extensions', 'ALL',
-                        '-headers', 'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
-                    ])
-                    .outputOptions([
-                        '-c:v copy',
-                        '-c:a aac',
-                        '-bsf:a aac_adtstoasc',
-                        '-movflags +faststart'
-                    ])
-                    .format('mp4')
-                    .on('end', resolve)
-                    .on('error', reject)
-                    .save(outputPath);
-            });
-        } catch {
-            if (!downloadUrl) throw new Error("FFmpeg failed and no backup download link available");
-            const res = await axios.get(downloadUrl, {
-                responseType: 'arraybuffer',
-                timeout: 600000,
+        // ٹرائے 1: FFmpeg اسٹریم پائپ لائن
+        if (streamUrl) {
+            try {
+                await new Promise((resolve, reject) => {
+                    ffmpeg(streamUrl)
+                        .inputOptions([
+                            '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
+                            '-allowed_extensions', 'ALL',
+                            '-headers', 'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
+                        ])
+                        .outputOptions([
+                            '-c:v copy',
+                            '-c:a aac',
+                            '-bsf:a aac_adtstoasc',
+                            '-movflags +faststart'
+                        ])
+                        .format('mp4')
+                        .on('end', () => {
+                            downloadSuccess = true;
+                            resolve();
+                        })
+                        .on('error', reject)
+                        .save(outputPath);
+                });
+            } catch {
+                downloadSuccess = false;
+            }
+        }
+
+        // ٹرائے 2: اگر پہلا طریقہ فیل ہو جائے تو اسمارٹ اسٹریم ڈاؤنلوڈر (بڑی فائل پروٹیکشن)
+        if (!downloadSuccess && downloadUrl) {
+            const writer = fs.createWriteStream(outputPath);
+            const response = await axios({
+                method: 'get',
+                url: downloadUrl,
+                responseType: 'stream',
+                timeout: 1200000, // 20 منٹ ٹائم آؤٹ بڑی فائلز کے لیے
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
                 headers: { "User-Agent": "Mozilla/5.0" }
             });
-            fs.writeFileSync(outputPath, res.data);
+
+            response.data.pipe(writer);
+
+            await new Promise((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
         }
 
-        if (!fs.existsSync(outputPath)) return reply("❌ Download failed");
+        if (!fs.existsSync(outputPath)) return reply("❌ Download failed from all sources");
 
         const stats = fs.statSync(outputPath);
         if (stats.size < 10000) {
             fs.unlinkSync(outputPath);
-            return reply("❌ Invalid video file");
+            return reply("❌ Invalid video file downloaded");
         }
 
+        // Baileys پاتھ اسٹریم میڈیا سینڈنگ (0% ریم لوڈ)
         await conn.sendMessage(from, {
             document: { url: outputPath },
             mimetype: 'video/mp4',
@@ -109,5 +130,4 @@ async (conn, mek, m, { from, q, reply }) => {
             try { fs.unlinkSync(outputPath); } catch {}
         }
     }
-
 });
