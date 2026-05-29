@@ -73,6 +73,7 @@ async (conn, mek, m, { from, q, reply }) => {
                     .save(outputPath);
             });
         } catch {
+            if (!downloadUrl) throw new Error("FFmpeg failed and no backup download link available");
             const res = await axios.get(downloadUrl, {
                 responseType: 'arraybuffer',
                 timeout: 600000,
@@ -92,10 +93,10 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         await conn.sendMessage(from, {
-            document: fs.readFileSync(outputPath),
+            document: { url: outputPath },
             mimetype: 'video/mp4',
             fileName,
-            caption
+            caption: file.thumbnail ? "" : caption
         }, { quoted: mek });
 
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
@@ -104,7 +105,9 @@ async (conn, mek, m, { from, q, reply }) => {
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
         reply(`❌ ${e.message}`);
     } finally {
-        if (outputPath && fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+        if (outputPath && fs.existsSync(outputPath)) {
+            try { fs.unlinkSync(outputPath); } catch {}
+        }
     }
 
 });
