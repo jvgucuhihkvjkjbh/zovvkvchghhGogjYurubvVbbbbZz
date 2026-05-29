@@ -16,7 +16,7 @@ cmd({
     react: "📦",
     filename: __filename
 },
-async (conn, mek, m, { from, q, reply }) => {
+async (conn, mek, m, { from, q, reply, sender }) => {
 
     let outputPath;
 
@@ -36,91 +36,174 @@ async (conn, mek, m, { from, q, reply }) => {
         if (!data.status || !data.result?.files?.length) return reply("❌ Failed to fetch video");
 
         const file = data.result.files[0];
-        const streamUrl = file?.streams?.["720p"] || file?.streams?.["480p"] || file?.streams?.["360p"];
+        const streams = file?.streams || {};
         const downloadUrl = file?.download;
 
-        if (!streamUrl && !downloadUrl) return reply("❌ No downloadable video found");
+        if (!streams["720p"] && !streams["480p"] && !streams["360p"] && !downloadUrl)
+            return reply("❌ No downloadable video found");
 
-        const quality = file?.streams?.["720p"] ? "720p" : file?.streams?.["480p"] ? "480p" : "360p";
         const fileName = file.file_name || `terabox_${Date.now()}.mp4`;
-        const caption = `🎬 *${fileName}*\n\n📦 Size: ${file.size_mb || "Unknown"}\n📥 Quality: ${quality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇڈ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
+        const selectorCaption =
+            `🎬 *${fileName}*\n` +
+            `📦 Size: ${file.size_mb || "Unknown"}\n\n` +
+            `📊 *Select Quality - Reply with number:*\n` +
+            `*1* → 360p\n` +
+            `*2* → 480p\n` +
+            `*3* → 720p\n\n` +
+            `> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+
+        let sentMsg;
         if (file.thumbnail) {
-            try {
-                await conn.sendMessage(from, { image: { url: file.thumbnail }, caption }, { quoted: mek });
-            } catch {}
+            sentMsg = await conn.sendMessage(from, {
+                image: { url: file.thumbnail },
+                caption: selectorCaption
+            }, { quoted: mek });
+        } else {
+            sentMsg = await conn.sendMessage(from, {
+                text: selectorCaption
+            }, { quoted: mek });
         }
 
-        outputPath = tempFile('mp4');
-        let downloadSuccess = false;
+        const sentMsgId = sentMsg?.key?.id;
 
-        // ٹرائے 1: FFmpeg اسٹریم پائپ لائن
-        if (streamUrl) {
-            try {
-                await new Promise((resolve, reject) => {
-                    ffmpeg(streamUrl)
-                        .inputOptions([
-                            '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
-                            '-allowed_extensions', 'ALL',
-                            '-headers', 'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
-                        ])
-                        .outputOptions([
-                            '-c:v copy',
-                            '-c:a aac',
-                            '-bsf:a aac_adtstoasc',
-                            '-movflags +faststart'
-                        ])
-                        .format('mp4')
-                        .on('end', () => {
-                            downloadSuccess = true;
-                            resolve();
-                        })
-                        .on('error', reject)
-                        .save(outputPath);
-                });
-            } catch {
-                downloadSuccess = false;
-            }
-        }
+        await new Promise((resolve) => {
 
-        // ٹرائے 2: اگر پہلا طریقہ فیل ہو جائے تو اسمارٹ اسٹریم ڈاؤنلوڈر (بڑی فائل پروٹیکشن)
-        if (!downloadSuccess && downloadUrl) {
-            const writer = fs.createWriteStream(outputPath);
-            const response = await axios({
-                method: 'get',
-                url: downloadUrl,
-                responseType: 'stream',
-                timeout: 1200000, // 20 منٹ ٹائم آؤٹ بڑی فائلز کے لیے
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
-                headers: { "User-Agent": "Mozilla/5.0" }
-            });
+            const timeout = setTimeout(async () => {
+                conn.ev.off('messages.upsert', handler);
+                // Timeout: صرف 
+                try {
+                    await conn.sendMessage(from, {
+                        react: { text: "⏰", key: sentMsg.key }
+                    });
+                } catch {}
+                resolve();
+            }, 60000);
 
-            response.data.pipe(writer);
+            const handler = async ({ messages }) => {
+                for (const msg of messages) {
+                    if (!msg.message) continue;
 
-            await new Promise((resolve, reject) => {
-                writer.on('finish', resolve);
-                writer.on('error', reject);
-            });
-        }
+                    // Check: reply to our thumbnail message only
+                    const quotedId = msg.message?.extendedTextMessage?.contextInfo?.stanzaId;
+                    if (quotedId !== sentMsgId) continue;
 
-        if (!fs.existsSync(outputPath)) return reply("❌ Download failed from all sources");
+                    // Check: same user who ran the command
+                    const replySender = msg.key?.participant || msg.key?.remoteJid;
+                    if (replySender !== sender) continue;
 
-        const stats = fs.statSync(outputPath);
-        if (stats.size < 10000) {
-            fs.unlinkSync(outputPath);
-            return reply("❌ Invalid video file downloaded");
-        }
+                    const choice = (
+                        msg.message?.extendedTextMessage?.text?.trim() ||
+                        msg.message?.conversation?.trim()
+                    );
 
-        // Baileys پاتھ اسٹریم میڈیا سینڈنگ (0% ریم لوڈ)
-        await conn.sendMessage(from, {
-            document: { url: outputPath },
-            mimetype: 'video/mp4',
-            fileName,
-            caption: file.thumbnail ? "" : caption
-        }, { quoted: mek });
+                    if (!["1", "2", "3"].includes(choice)) {
+                        await conn.sendMessage(from, {
+                            text: "❌ Please reply with *1*, *2* or *3* only"
+                        }, { quoted: msg });
+                        continue;
+                    }
 
-        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+                    clearTimeout(timeout);
+                    conn.ev.off('messages.upsert', handler);
+
+                    const qualityMap = { "1": "360p", "2": "480p", "3": "720p" };
+                    const selectedQuality = qualityMap[choice];
+                    const streamUrl = streams[selectedQuality];
+
+                    const caption = `🎬 *${fileName}*\n\n📦 Size: ${file.size_mb || "Unknown"}\n📥 Quality: ${selectedQuality}\n\n> ⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
+
+                    await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+
+                    outputPath = tempFile('mp4');
+                    let downloadSuccess = false;
+
+                    const activeStream = streamUrl || streams["480p"] || streams["360p"];
+
+                    if (activeStream) {
+                        try {
+                            await new Promise((res, rej) => {
+                                ffmpeg(activeStream)
+                                    .inputOptions([
+                                        '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
+                                        '-allowed_extensions', 'ALL',
+                                        '-headers', 'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
+                                    ])
+                                    .outputOptions([
+                                        '-c:v copy',
+                                        '-c:a aac',
+                                        '-bsf:a aac_adtstoasc',
+                                        '-movflags +faststart'
+                                    ])
+                                    .format('mp4')
+                                    .on('end', () => {
+                                        downloadSuccess = true;
+                                        res();
+                                    })
+                                    .on('error', rej)
+                                    .save(outputPath);
+                            });
+                        } catch {
+                            downloadSuccess = false;
+                        }
+                    }
+
+                    if (!downloadSuccess && downloadUrl) {
+                        const writer = fs.createWriteStream(outputPath);
+                        const response = await axios({
+                            method: 'get',
+                            url: downloadUrl,
+                            responseType: 'stream',
+                            timeout: 1200000,
+                            maxContentLength: Infinity,
+                            maxBodyLength: Infinity,
+                            headers: { "User-Agent": "Mozilla/5.0" }
+                        });
+
+                        response.data.pipe(writer);
+
+                        await new Promise((res, rej) => {
+                            writer.on('finish', res);
+                            writer.on('error', rej);
+                        });
+                    }
+
+                    if (!fs.existsSync(outputPath)) {
+                        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                        await conn.sendMessage(from, { text: "❌ Download failed from all sources" }, { quoted: msg });
+                        resolve();
+                        return;
+                    }
+
+                    const stats = fs.statSync(outputPath);
+                    if (stats.size < 10000) {
+                        fs.unlinkSync(outputPath);
+                        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                        await conn.sendMessage(from, { text: "❌ Invalid video file downloaded" }, { quoted: msg });
+                        resolve();
+                        return;
+                    }
+
+                    await conn.sendMessage(from, {
+                        document: { url: outputPath },
+                        mimetype: 'video/mp4',
+                        fileName,
+                        caption
+                    }, { quoted: msg });
+
+                    await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+
+                    if (outputPath && fs.existsSync(outputPath)) {
+                        try { fs.unlinkSync(outputPath); } catch {}
+                    }
+
+                    resolve();
+                    return;
+                }
+            };
+
+            conn.ev.on('messages.upsert', handler);
+        });
 
     } catch (e) {
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
