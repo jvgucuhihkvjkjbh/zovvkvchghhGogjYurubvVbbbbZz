@@ -14,52 +14,45 @@ cmd({
   reply
 }) => {
   if (!args[0]) {
-    return reply("🌸 What do you want to search on TikTok?\n\n*Usage Example:*\n.tiktoksearch <query>");
+    return reply("*❌ Give video name or query*");
   }
 
   const query = args.join(" ");
   await store.react('⌛');
 
   try {
-    reply(`🔎 Searching TikTok for: *${query}*`);
-    
     const response = await fetch(`https://apis-starlights-team.koyeb.app/starlight/tiktoksearch?text=${encodeURIComponent(query)}`);
+    if (!response.ok) return reply("*❌ Search API failed. Try again.*");
+    
     const data = await response.json();
-
     if (!data || !data.data || data.data.length === 0) {
       await store.react('❌');
-      return reply("❌ No results found for your query. Please try with a different keyword.");
+      return reply("*❌ No results found.*");
     }
 
-    // Get up to 7 random results
-    const results = data.data.slice(0, 7).sort(() => Math.random() - 0.5);
+    // پریسائس آؤٹ پٹ کے لیے رینڈم 5 رزلٹس سلیکٹ کیے گئے ہیں
+    const results = data.data.slice(0, 5).sort(() => Math.random() - 0.5);
 
     for (const video of results) {
-      const message = `‎*_ᴛɪᴋᴛᴏᴋ ᴠɪᴅᴇᴏ ʀᴇsᴜʟᴛ_* 🔎
-‎╭───────────────━┈⊷
-‎│▸ℹ️ *ᴛɪᴛʟᴇ:* ${video.title}
-‎│▸👤 *ᴀᴜᴛʜᴏʀ:* ${video.author || 'Unknown'}
-‎│▸🕘 *ᴅᴜʀᴀᴛɪᴏɴ:* ${video.duration || "Unknown"}
-‎│▸🔗 *ᴜʀʟ:* ${video.link}
-‎╰───────────────━┈⊷
-‎*╭───────◉◉◉────━┈៚*
-‎┋      *_𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 ᴀᴅᴇᴇʟ-ᴍᴅ_* 
-‎*╰───────◉◉◉────━┈៚*`;
+      const cleanTitle = video.title.length > 100 ? video.title.substring(0, 100) + "..." : video.title;
+      
+      const message = `*🎬 TITLE:* ${cleanTitle}\n` +
+                      `👤 *AUTHOR:* ${video.author || 'Unknown'}\n` +
+                      `📊 *STATS:* ${video.duration || "Unknown"}\n\n` +
+                      `> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
       if (video.nowm) {
         await conn.sendMessage(from, {
           video: { url: video.nowm },
           caption: message
         }, { quoted: m });
-      } else {
-        reply(`❌ Failed to retrieve video for *"${video.title}"*.`);
       }
     }
 
     await store.react('✅');
   } catch (error) {
-    console.error("Error in TikTokSearch command:", error);
+    console.error("TikTokSearch Error:", error.message);
     await store.react('❌');
-    reply("❌ An error occurred while searching TikTok. Please try again later.");
+    reply("*❌ Error occurred. Please try again.*");
   }
 });
