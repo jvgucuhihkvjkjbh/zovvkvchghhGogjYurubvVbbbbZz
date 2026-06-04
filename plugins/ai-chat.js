@@ -27,7 +27,6 @@ async function connectDB() {
         const client = new MongoClient(MONGO_URI);
         await client.connect();
         db = client.db(DB_NAME);
-        console.log("AI Memory DB Connected");
         return db;
     } catch (e) {
         console.log("DB Connection Error:", e.message);
@@ -44,9 +43,7 @@ async function saveFullHistoryToDB(userId, history) {
             { $set: { userId, history, updatedAt: new Date() } },
             { upsert: true }
         );
-    } catch (e) {
-        console.log("DB backup error:", e.message);
-    }
+    } catch (e) {}
 }
 
 const startSessionTimer = (userId) => {
@@ -63,7 +60,6 @@ const startSessionTimer = (userId) => {
         }
         localMemory.delete(userId);
         userTimers.delete(userId);
-        console.log(`AI Session Expired & Cleared for: ${userId}`);
     }, SESSION_TIMEOUT);
 
     userTimers.set(userId, timer);
@@ -81,13 +77,11 @@ CRITICAL RULES FOR LANGUAGE:
 - If user writes in Urdu script (اردو) -> strictly reply in proper Urdu script (پاکستان والی اصل اردو)
 - If user writes in Roman Urdu (e.g., 'kya hal hai') -> reply in Roman Urdu
 - If user writes in English -> reply in English
-- Always match the user's language script perfectly. Never reply in English if user writes in Urdu script.
+- Always match the user's language script perfectly.
 
 GENERAL RULES:
 - Remember the conversation context and be consistent
-- If asked to write code or commands, write them properly
-- Be helpful, friendly and concise
-- Never switch languages randomly${conversation}
+- Be helpful, friendly and concise${conversation}
 
 User message: ${q}`;
 };
@@ -99,28 +93,8 @@ const aiRequest = async (prompt) => {
             extract: d => d?.reply?.message
         },
         {
-            url: `https://jerrycoder.oggyapi.workers.dev/ai/gpt4?prompt=${encodeURIComponent(prompt)}&model=5.6`,
-            extract: d => d?.reply?.message
-        },
-        {
-            url: `https://jerrycoder.oggyapi.workers.dev/ai/gpt4?prompt=${encodeURIComponent(prompt)}&model=4.3`,
-            extract: d => d?.reply?.message
-        },
-        {
             url: `https://jerrycoder.oggyapi.workers.dev/ai/gemini?prompt=${encodeURIComponent(prompt)}`,
             extract: d => d?.reply
-        },
-        {
-            url: `https://jerrycoder.oggyapi.workers.dev/ai/gpt?q=${encodeURIComponent(prompt)}`,
-            extract: d => d?.reply
-        },
-        {
-            url: `https://lance-frank-asta.onrender.com/api/gpt?q=${encodeURIComponent(prompt)}`,
-            extract: d => d?.message
-        },
-        {
-            url: `https://vapis.my.id/api/openai?q=${encodeURIComponent(prompt)}`,
-            extract: d => d?.result
         },
         {
             url: `https://api.ryzendesu.vip/api/ai/deepseek?text=${encodeURIComponent(prompt)}`,
@@ -140,8 +114,8 @@ const aiRequest = async (prompt) => {
 
 cmd({
     pattern: "ai",
-    alias: ["gpt", "gpt4", "chatgpt", "deepseek", "openai"],
-    desc: "Chat with AI in any language",
+    alias: ["gpt", "chatgpt", "deepseek"],
+    desc: "Chat with AI",
     category: "ai",
     react: "🤖",
     filename: __filename
@@ -163,7 +137,7 @@ cmd({
 
         if (!answer) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ AI ne jawab nahi diya. Try again.");
+            return reply("❌ AI ne jawab nahi diya.");
         }
 
         history.push({ role: "user", content: q });
@@ -175,56 +149,68 @@ cmd({
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
         startSessionTimer(normalizedUser);
+        
+        await conn.sendMessage(from, { text: `⚡ [DEBUG] Session Active: YES | Timeout: 60 sec` });
 
     } catch (e) {
         console.log("AI ERROR:", e.message);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply("❌ Error occurred. Try again.");
+        reply("❌ Error occurred.");
     }
 });
 
 cmd({
     on: "body"
-}, async (conn, m, store, { from, body, sender, isGroup }) => {
+}, async (conn, m, store, { from, body, sender }) => {
     try {
         if (!body || m.key.fromMe) return;
         
         const normalizedUser = normalizeId(sender || from);
-        
         const botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net';
         
         let isReplyToBot = false;
+        let isSessionActive = activeSessions.has(normalizedUser);
         
-        try {
-            if (m.message?.extendedTextMessage?.contextInfo) {
-                const contextInfo = m.message.extendedTextMessage.contextInfo;
+        await conn.sendMessage(from, { text: `🔍 [DEBUG] Session Active: ${isSessionActive ? 'YES' : 'NO'}` });
+        
+        if (m.message?.extendedTextMessage?.contextInfo) {
+            const contextInfo = m.message.extendedTextMessage.contextInfo;
+            const participant = contextInfo.participant;
+            const quotedMsg = contextInfo.quotedMessage;
+            
+            await conn.sendMessage(from, { text: `🔗 [DEBUG] Checking reply...` });
+            
+            if (participant === botNumber) {
+                isReplyToBot = true;
+                await conn.sendMessage(from, { text: `✅ [DEBUG] Reply detected! Participant match` });
+            }
+            
+            if (quotedMsg) {
+                let quotedText = '';
+                if (quotedMsg.conversation) quotedText = quotedMsg.conversation;
+                if (quotedMsg.extendedTextMessage?.text) quotedText = quotedMsg.extendedTextMessage.text;
                 
-                const participant = contextInfo.participant;
-                const remoteJid = contextInfo.remoteJid;
-                const quotedMsg = contextInfo.quotedMessage;
-                
-                if (participant === botNumber || remoteJid === botNumber) {
+                if (quotedText.includes('🤖')) {
                     isReplyToBot = true;
-                }
-                
-                if (quotedMsg) {
-                    let quotedText = '';
-                    if (quotedMsg.conversation) quotedText = quotedMsg.conversation;
-                    if (quotedMsg.extendedTextMessage?.text) quotedText = quotedMsg.extendedTextMessage.text;
-                    
-                    if (quotedText.includes('🤖')) {
-                        isReplyToBot = true;
-                    }
+                    await conn.sendMessage(from, { text: `✅ [DEBUG] Reply detected! 🤖 emoji found` });
                 }
             }
-        } catch (err) {}
+        } else {
+            await conn.sendMessage(from, { text: `❌ [DEBUG] No reply/quote detected` });
+        }
         
-        if (!activeSessions.has(normalizedUser) && !isReplyToBot) return;
+        if (!isSessionActive && !isReplyToBot) {
+            await conn.sendMessage(from, { text: `⏭️ [DEBUG] SKIP - No session & not a reply` });
+            return;
+        }
         
         let userText = body.trim();
-        if (!userText) return;
+        if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) {
+            await conn.sendMessage(from, { text: `⏭️ [DEBUG] SKIP - Command detected` });
+            return;
+        }
         
-        if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) return;
+        await conn.sendMessage(from, { text: `🔄 [DEBUG] Processing your message...` });
         
         startSessionTimer(normalizedUser);
         
@@ -236,6 +222,7 @@ cmd({
         
         if (!nextAnswer) {
             await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
+            await conn.sendMessage(from, { text: `❌ [DEBUG] No AI response` });
             return;
         }
         
@@ -247,7 +234,10 @@ cmd({
         await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
         await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
         
+        await conn.sendMessage(from, { text: `✅ [DEBUG] Auto-reply sent! Session extended 60 sec` });
+        
     } catch (err) {
-        console.log("AI Auto-Reply Error:", err.message);
+        console.log("Error:", err.message);
+        await conn.sendMessage(from, { text: `❌ [DEBUG] Error: ${err.message}` });
     }
 });
