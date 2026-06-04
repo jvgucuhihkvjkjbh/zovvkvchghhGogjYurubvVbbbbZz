@@ -1,1 +1,169 @@
-const {cmd}=require('../command'),axios=require('axios'),yts=require('yt-search'),commands=['play','song','mp3'];commands['forEach'](a=>{cmd({'pattern':a,'desc':'Download\x20YouTube\x20audio','category':'download','react':'🎶','filename':__filename},async(b,c,d,{from:f,q:g,reply:h})=>{try{if(!g)return h('❌\x20Please\x20provide\x20a\x20song\x20name\x20or\x20YouTube\x20link');let i;const j=/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i['test'](g);if(j){let o='';try{const r=new URL(g);r['hostname']==='youtu.be'?o=r['pathname']['slice'](0x1):o=r['searchParams']['get']('v');}catch{o=g['split']('/')['pop']()['split']('?')[0x0];}if(!o)return h('❌\x20Invalid\x20YouTube\x20link');const p='https://www.youtube.com/watch?v='+o;try{const s=await yts({'videoId':o});s&&s['title']&&(i={'title':s['title'],'url':p,'thumbnail':'https://img.youtube.com/vi/'+o+'/hqdefault.jpg','timestamp':s['duration']?.['timestamp']||s['timestamp']||'N/A','views':s['views']||0x0,'author':{'name':s['author']?.['name']||s['channel']?.['name']||'Unknown'}});}catch(t){}!i&&(i={'title':'Unknown\x20Title','url':p,'thumbnail':'https://img.youtube.com/vi/'+o+'/hqdefault.jpg','timestamp':'N/A','views':0x0,'author':{'name':'Unknown'}});}else{const {videos:u}=await yts(g);if(!u['length'])return h('❌\x20No\x20song\x20results\x20found');i=u[0x0];}await b['sendMessage'](f,{'react':{'text':'⏳','key':c['key']}});const k='*'+i['title']+'*\x0a\x0a'+('👤\x20*Channel:*\x20'+i['author']['name']+'\x0a')+('⏱\x20*Duration:*\x20'+i['timestamp']+'\x0a')+('👁\x20*Views:*\x20'+(i['views']||0x0)['toLocaleString']()+'\x0a\x0a')+'>\x20⚡ᴘᴏᴡᴇʀᴇᴅ\x20ʙʏ\x20ᴀᴅᴇᴇʟ-ᴍᴅ⚡';await b['sendMessage'](f,{'image':{'url':i['thumbnail']},'caption':k},{'quoted':c});let l=null,n=![];if(!n)try{const v=await axios['get']('https://jerrycoder.oggyapi.workers.dev/down/ytmp3?url='+encodeURIComponent(i['url']),{'timeout':0x7530});if(v['data']?.['status']==='success'&&v['data']?.['url']){const w=await axios['get'](v['data']['url'],{'responseType':'arraybuffer','timeout':0xea60});l=Buffer['from'](w['data']),n=!![];}}catch(x){console['log']('Jerry\x20API\x20Error:',x['message']);}if(!n)try{const y=await axios['get']('https://eliteprotech-apis.zone.id/ytmp3?url='+encodeURIComponent(i['url']),{'timeout':0x7530});if(y['data']?.['status']&&y['data']?.['result']?.['download']){const z=await axios['get'](y['data']['result']['download'],{'responseType':'arraybuffer','timeout':0xea60});l=Buffer['from'](z['data']),n=!![];}}catch(A){console['log']('Elite\x20API\x20Error:',A['message']);}if(!n)try{const B=await axios['get']('https://api.giftedtech.co.ke/api/download/ytmp3v2?apikey=gifted&url='+encodeURIComponent(i['url'])+'&quality=128',{'timeout':0x7530}),C=B['data']['result']||B['data']['results']||B['data'],D=C['download_url']||C['downloadUrl']||C['url']||C['audio']||C['link'];if(D){const E=await axios['get'](D,{'responseType':'arraybuffer','timeout':0xea60});l=Buffer['from'](E['data']),n=!![];}}catch(F){console['log']('Gifted\x20API\x20Error:',F['message']);}if(n&&l)await b['sendMessage'](f,{'audio':l,'mimetype':'audio/mpeg','fileName':i['title']+'.mp3'},{'quoted':c}),await b['sendMessage'](f,{'react':{'text':'✅','key':c['key']}});else return await b['sendMessage'](f,{'react':{'text':'❌','key':c['key']}}),h('❌\x20Failed\x20to\x20download\x20audio.\x20Please\x20try\x20again\x20later.');}catch(G){console['log']('Play\x20Command\x20Error:',G),await b['sendMessage'](f,{'react':{'text':'❌','key':c['key']}}),h('❌\x20An\x20unexpected\x20error\x20occurred\x20while\x20processing\x20your\x20request.');}});});
+const { cmd } = require('../command');
+const axios = require('axios');
+const yts = require('yt-search');
+
+const commands = ["play", "song", "mp3"];
+
+const downloadAudio = async (videoUrl) => {
+    const apis = [
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://api.princetechn.com/api/download/ytmp3?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.result?.download_url;
+                if (!url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.url;
+                if (res.data?.status !== "success" || !url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://eliteprotech-apis.zone.id/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.result?.download;
+                if (!url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://api.giftedtech.co.ke/api/download/ytmp3v2?apikey=gifted&url=${encodeURIComponent(videoUrl)}&quality=128`,
+                    { timeout: 30000 }
+                );
+                const result = res.data.result || res.data.results || res.data;
+                const url = result.download_url || result.downloadUrl || result.url || result.audio || result.link;
+                if (!url) throw new Error("No URL");
+                return url;
+            }
+        }
+    ];
+
+    for (const api of apis) {
+        try {
+            const downloadUrl = await api.fetch();
+            const audioRes = await axios.get(downloadUrl, { responseType: "arraybuffer", timeout: 60000 });
+            const buffer = Buffer.from(audioRes.data);
+            if (buffer.length > 0) return buffer;
+        } catch (e) {
+            continue;
+        }
+    }
+    return null;
+};
+
+commands.forEach(pattern => {
+    cmd({
+        pattern: pattern,
+        desc: "Download YouTube audio",
+        category: "download",
+        react: "🎶",
+        filename: __filename
+    }, async (conn, mek, m, { from, q, reply }) => {
+        try {
+
+            if (!q) {
+                return reply("❌ Please provide a song name or YouTube link");
+            }
+
+            let vid;
+
+            const isYT = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(q);
+
+            if (isYT) {
+                let videoId = '';
+                try {
+                    const urlObj = new URL(q);
+                    if (urlObj.hostname === 'youtu.be') {
+                        videoId = urlObj.pathname.slice(1);
+                    } else {
+                        videoId = urlObj.searchParams.get('v');
+                    }
+                } catch {
+                    videoId = q.split('/').pop().split('?')[0];
+                }
+
+                if (!videoId) return reply("❌ Invalid YouTube link");
+
+                const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+                try {
+                    const search = await yts({ videoId: videoId });
+                    if (search && search.title) {
+                        vid = {
+                            title: search.title,
+                            url: ytUrl,
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                            timestamp: search.duration?.timestamp || search.timestamp || 'N/A',
+                            views: search.views || 0,
+                            author: { name: search.author?.name || search.channel?.name || 'Unknown' }
+                        };
+                    }
+                } catch (e) {}
+
+                if (!vid) {
+                    vid = {
+                        title: 'Unknown Title',
+                        url: ytUrl,
+                        thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                        timestamp: 'N/A',
+                        views: 0,
+                        author: { name: 'Unknown' }
+                    };
+                }
+
+            } else {
+                const { videos } = await yts(q);
+                if (!videos.length) return reply("❌ No song results found");
+                vid = videos[0];
+            }
+
+            await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+
+            const caption =
+                `*${vid.title}*\n\n` +
+                `👤 *Channel:* ${vid.author.name}\n` +
+                `⏱ *Duration:* ${vid.timestamp}\n` +
+                `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
+                `> ⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ⚡`;
+
+            await conn.sendMessage(from, {
+                image: { url: vid.thumbnail },
+                caption: caption
+            }, { quoted: mek });
+
+            const audioBuffer = await downloadAudio(vid.url);
+
+            if (audioBuffer) {
+                await conn.sendMessage(from, {
+                    audio: audioBuffer,
+                    mimetype: "audio/mpeg",
+                    fileName: `${vid.title}.mp3`
+                }, { quoted: mek });
+                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            } else {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                return reply("❌ Failed to download audio. Please try again later.");
+            }
+
+        } catch (e) {
+            console.log("Play Command Error:", e);
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            reply("❌ An unexpected error occurred while processing your request.");
+        }
+    });
+});
