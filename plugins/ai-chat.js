@@ -140,18 +140,24 @@ cmd({
         if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
         localMemory.set(userId, history);
 
-        const sentMsg = await reply(`🤖 ${answer}`);
+        const sentMsg = await conn.sendMessage(from, { text: `🤖 ${answer}` }, { quoted: m });
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
-        let sessionTimer = setTimeout(async () => {
-            conn.ev.off("messages.upsert", replyListener);
-            const finalHistory = localMemory.get(userId) || [];
-            if (finalHistory.length > 0) {
-                await saveFullHistoryToDB(userId, finalHistory);
-            }
-            localMemory.delete(userId);
-            console.log(`AI Session Expired for: ${userId}`);
-        }, SESSION_TIMEOUT);
+        let currentTargetId = sentMsg.key.id;
+        let sessionTimer;
+
+        const startTimer = () => {
+            if (sessionTimer) clearTimeout(sessionTimer);
+            sessionTimer = setTimeout(async () => {
+                conn.ev.off("messages.upsert", replyListener);
+                const finalHistory = localMemory.get(userId) || [];
+                if (finalHistory.length > 0) {
+                    await saveFullHistoryToDB(userId, finalHistory);
+                }
+                localMemory.delete(userId);
+                console.log(`AI Session Expired for: ${userId}`);
+            }, SESSION_TIMEOUT);
+        };
 
         const replyListener = async (chatUpdate) => {
             try {
@@ -163,16 +169,14 @@ cmd({
                 if (!extendedText) return;
 
                 const context = extendedText.contextInfo;
-                const isReplyToBot = context && context.stanzaId === sentMsg.key.id;
-                if (!isReplyToBot) return;
+                if (!context || context.stanzaId !== currentTargetId) return;
 
                 const userText = extendedText.text?.trim();
                 if (!userText) return;
 
                 if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) return;
 
-                clearTimeout(sessionTimer);
-                conn.ev.off("messages.upsert", replyListener);
+                startTimer();
 
                 await conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
 
@@ -196,25 +200,14 @@ cmd({
 
                 await conn.sendMessage(from, { react: { text: "✅", key: msg.key } });
 
-                sentMsg.key.id = nextSentMsg.key.id;
-
-                sessionTimer = setTimeout(async () => {
-                    conn.ev.off("messages.upsert", replyListener);
-                    const finalHistory = localMemory.get(userId) || [];
-                    if (finalHistory.length > 0) {
-                        await saveFullHistoryToDB(userId, finalHistory);
-                    }
-                    localMemory.delete(userId);
-                    console.log(`AI Session Expired for: ${userId}`);
-                }, SESSION_TIMEOUT);
-
-                conn.ev.on("messages.upsert", replyListener);
+                currentTargetId = nextSentMsg.key.id;
 
             } catch (err) {
                 console.log("Listener Error:", err.message);
             }
         };
 
+        startTimer();
         conn.ev.on("messages.upsert", replyListener);
 
     } catch (e) {
