@@ -4,12 +4,18 @@ const axios = require('axios');
 const MOVIE_API = "https://movieapi.giftedtech.co.ke";
 
 async function searchMovie(query) {
-    const res = await axios.get(`${MOVIE_API}/api/search/${encodeURIComponent(query)}`, { timeout: 15000 });
+    const res = await axios.get(
+        `${MOVIE_API}/api/search/${encodeURIComponent(query)}`,
+        { timeout: 15000 }
+    );
     return res.data;
 }
 
 async function getMovieSources(subjectId) {
-    const res = await axios.get(`${MOVIE_API}/api/sources/${subjectId}`, { timeout: 15000 });
+    const res = await axios.get(
+        `${MOVIE_API}/api/sources/${subjectId}`,
+        { timeout: 15000 }
+    );
     return res.data;
 }
 
@@ -31,30 +37,34 @@ cmd({
         try {
             searchData = await searchMovie(q);
         } catch (e) {
+            console.log("Movie Search Error:", e.message);
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Search failed. Try again.");
         }
 
-        const subject = searchData?.results?.subject;
-        if (!subject) {
+        // results.items[] array hai
+        const items = searchData?.results?.items;
+        if (!items || items.length === 0) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply(`❌ Koi movie nahi mili: *${q}*`);
         }
 
-        const subjectId = subject.subjectId;
-        const title = subject.title || "Unknown";
-        const year = subject.releaseDate?.split("-")[0] || "N/A";
-        const rating = subject.imdbRatingValue || "N/A";
-        const genre = subject.genre || "N/A";
-        const description = subject.description || "";
-        const thumbnail = subject.cover?.url || subject.thumbnail || "";
-        const duration = subject.duration ? `${Math.floor(subject.duration / 60)}min` : "N/A";
+        const movie = items[0];
+        const subjectId = movie.subjectId;
+        const title = movie.title || "Unknown";
+        const year = movie.releaseDate?.split("-")[0] || "N/A";
+        const rating = movie.imdbRatingValue || "N/A";
+        const genre = movie.genre || "N/A";
+        const description = movie.description || "";
+        const thumbnail = movie.cover?.url || movie.thumbnail || "";
+        const duration = movie.duration ? `${Math.floor(movie.duration / 60)}min` : "N/A";
 
         // Step 2 — Get download sources
         let sourcesData;
         try {
             sourcesData = await getMovieSources(subjectId);
         } catch (e) {
+            console.log("Movie Sources Error:", e.message);
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Download sources nahi mile.");
         }
@@ -72,14 +82,16 @@ cmd({
 
         const downloadUrl = preferred?.download_url;
         const quality = preferred?.quality || "N/A";
-        const sizeMB = preferred?.size ? `${(parseInt(preferred.size) / (1024 * 1024)).toFixed(0)}MB` : "N/A";
+        const sizeMB = preferred?.size
+            ? `${(parseInt(preferred.size) / (1024 * 1024)).toFixed(0)}MB`
+            : "N/A";
 
         if (!downloadUrl) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Download URL nahi mili.");
         }
 
-        // Step 3 — Send info + thumbnail
+        // Step 3 — Send thumbnail + info
         const caption =
             `🎬 *${title}*\n\n` +
             `📅 *Year:* ${year}\n` +
