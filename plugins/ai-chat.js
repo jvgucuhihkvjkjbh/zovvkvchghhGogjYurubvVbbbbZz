@@ -1,238 +1,79 @@
 const { cmd } = require('../command');
 const axios = require('axios');
-const { MongoClient } = require('mongodb');
-
-const MONGO_URI = "mongodb+srv://iqra1587505_db_user:Adeel5512985@adeel678.g81ct9s.mongodb.net/";
-const DB_NAME = "adeel_ai";
-const COLLECTION = "ai_memory";
-
-let db = null;
-const localMemory = new Map();
-const activeSessions = new Map();
-const userTimers = new Map();
-const MAX_HISTORY = 10;
-const SESSION_TIMEOUT = 60 * 1000;
-
-const normalizeId = (id) => {
-    if (!id) return '';
-    return id
-        .replace(/:[0-9]+/g, '')
-        .replace(/@(lid|s.whatsapp.net|c.us|g.us)/g, '')
-        .replace(/[^\d]/g, '');
-};
-
-async function connectDB() {
-    if (db) return db;
-    try {
-        const client = new MongoClient(MONGO_URI);
-        await client.connect();
-        db = client.db(DB_NAME);
-        return db;
-    } catch (e) {
-        return null;
-    }
-}
-
-async function saveFullHistoryToDB(userId, history) {
-    try {
-        const database = await connectDB();
-        if (!database) return;
-        await database.collection(COLLECTION).updateOne(
-            { userId },
-            { $set: { userId, history, updatedAt: new Date() } },
-            { upsert: true }
-        );
-    } catch (e) {}
-}
-
-const startSessionTimer = (userId) => {
-    if (userTimers.has(userId)) {
-        clearTimeout(userTimers.get(userId));
-        userTimers.delete(userId);
-    }
-    
-    const timer = setTimeout(async () => {
-        activeSessions.delete(userId);
-        const finalHistory = localMemory.get(userId) || [];
-        if (finalHistory.length > 0) {
-            await saveFullHistoryToDB(userId, finalHistory);
-        }
-        localMemory.delete(userId);
-        userTimers.delete(userId);
-        console.log(`Session expired for ${userId}`);
-    }, SESSION_TIMEOUT);
-
-    userTimers.set(userId, timer);
-    activeSessions.set(userId, true);
-};
-
-const buildPrompt = (q, history) => {
-    let conversation = "";
-    if (history.length > 0) {
-        conversation = "\n\nPrevious conversation:\n" +
-            history.map(h => `${h.role === "user" ? "User" : "AI"}: ${h.content}`).join("\n");
-    }
-    return `You are a helpful AI assistant named ADEEL-AI.
-CRITICAL RULES FOR LANGUAGE:
-- If user writes in Urdu script (اردو) -> strictly reply in proper Urdu script
-- If user writes in Roman Urdu (e.g., 'kya hal hai') -> reply in Roman Urdu
-- If user writes in English -> reply in English
-
-User message: ${q}${conversation}`;
-};
 
 const aiRequest = async (prompt) => {
     const apis = [
+       
         {
-            url: `https://jerrycoder.oggyapi.workers.dev/ai/gpt4?prompt=${encodeURIComponent(prompt)}&model=8.8`,
+            url: `https://jerrycoder.oggyapi.workers.dev/ai/gpt4?prompt=${encodeURIComponent(prompt)}`,
             extract: d => d?.reply?.message
+        },
+        {
+            url: `https://lance-frank-asta.onrender.com/api/gpt?q=${encodeURIComponent(prompt)}`,
+            extract: d => d?.message
+        },
+        {
+            url: `https://vapis.my.id/api/openai?q=${encodeURIComponent(prompt)}`,
+            extract: d => d?.result
         },
         {
             url: `https://api.ryzendesu.vip/api/ai/deepseek?text=${encodeURIComponent(prompt)}`,
             extract: d => d?.answer
         }
-    ];
+    ]
 
     for (const api of apis) {
         try {
-            const res = await axios.get(api.url, { timeout: 5000 });
-            const reply = api.extract(res.data);
-            if (reply && reply.trim()) return reply.trim();
-        } catch { continue; }
+            const res = await axios.get(api.url, { timeout: 12000 })
+            const reply = api.extract(res.data)
+            if (reply && reply.trim()) return reply.trim()
+        } catch { continue }
     }
-    return null;
-};
+    return null
+}
+
+const buildPrompt = (q) => {
+    return `You are a helpful AI assistant. 
+IMPORTANT RULES:
+- Detect the language of the user's message automatically
+- Always reply in the EXACT same language the user wrote in
+- If user writes in Urdu script → reply in Urdu script
+- If user writes in Roman Urdu (Urdu words in English letters) → reply in Roman Urdu
+- If user writes in English → reply in English
+- If user writes in any other language → reply in that same language
+- Be helpful, friendly and concise
+- Never switch languages
+
+User message: ${q}`
+}
 
 cmd({
     pattern: "ai",
-    alias: ["gpt", "chatgpt", "deepseek"],
-    desc: "Chat with AI",
+    alias: ["gpt", "gpt4", "gpt5", "chatgpt", "deepseek", "openai", "adeel", "dj"],
+    desc: "Chat with AI in any language",
     category: "ai",
     react: "🤖",
     filename: __filename
-}, async (conn, mek, m, { from, q, reply, sender }) => {
+}, async (conn, mek, m, { from, q, reply }) => {
     try {
-        if (!q) return reply("⚠️ Kuch likho\nMisal: .ai Salam kya hal hai");
+        if (!q) return reply("⚠️ Kuch likho\nMisal: .ai Salam kya hal hai")
 
-        const normalizedUser = normalizeId(sender || from);
-        
-        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } })
 
-        if (!localMemory.has(normalizedUser)) {
-            localMemory.set(normalizedUser, []);
-        }
-        let history = localMemory.get(normalizedUser);
-
-        const prompt = buildPrompt(q, history);
-        const answer = await aiRequest(prompt);
+        const prompt = buildPrompt(q)
+        const answer = await aiRequest(prompt)
 
         if (!answer) {
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ AI ne jawab nahi diya.");
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } })
+            return reply("❌ AI ne jawab nahi diya. Try again.")
         }
 
-        history.push({ role: "user", content: q });
-        history.push({ role: "ai", content: answer });
-        if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
-        localMemory.set(normalizedUser, history);
-
-        await conn.sendMessage(from, { text: `🤖 ${answer}` }, { quoted: m });
-        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-
-        startSessionTimer(normalizedUser);
-        
-        await conn.sendMessage(from, { text: `✅ Session active! Ab mere message ko reply karke likho` });
+        await reply(`🤖 ${answer}`)
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } })
 
     } catch (e) {
-        console.log("AI ERROR:", e.message);
-        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply("❌ Error occurred.");
+        console.log("AI ERROR:", e.message)
+        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } })
+        reply("❌ Error occurred. Try again.")
     }
-});
-
-cmd({
-    on: "message"
-}, async (conn, m, store, { from, body, sender, isGroup }) => {
-    try {
-        if (m.key.fromMe) return;
-        
-        let messageText = '';
-        let isQuotedReply = false;
-        let quotedMessageSender = '';
-        let quotedMessageText = '';
-        
-        if (m.message?.conversation) {
-            messageText = m.message.conversation;
-        } else if (m.message?.extendedTextMessage) {
-            messageText = m.message.extendedTextMessage.text || '';
-            const contextInfo = m.message.extendedTextMessage.contextInfo;
-            if (contextInfo && contextInfo.quotedMessage) {
-                isQuotedReply = true;
-                quotedMessageSender = contextInfo.participant || contextInfo.remoteJid || '';
-                if (contextInfo.quotedMessage.conversation) {
-                    quotedMessageText = contextInfo.quotedMessage.conversation;
-                } else if (contextInfo.quotedMessage.extendedTextMessage?.text) {
-                    quotedMessageText = contextInfo.quotedMessage.extendedTextMessage.text;
-                }
-            }
-        }
-        
-        if (!messageText) return;
-        
-        if (messageText.startsWith(".") || messageText.startsWith("/") || messageText.startsWith("!")) return;
-        
-        const normalizedUser = normalizeId(sender || from);
-        const botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net';
-        
-        const isSessionActive = activeSessions.has(normalizedUser);
-        const isReplyingToBot = isQuotedReply && (quotedMessageSender === botNumber || (quotedMessageText && quotedMessageText.includes('🤖')));
-        
-        if (!isSessionActive && !isReplyingToBot) return;
-        
-        if (isReplyingToBot) {
-            console.log(`Reply detected from ${normalizedUser}: ${messageText}`);
-            await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
-            
-            startSessionTimer(normalizedUser);
-            
-            let currentHistory = localMemory.get(normalizedUser) || [];
-            const nextPrompt = buildPrompt(messageText, currentHistory);
-            const nextAnswer = await aiRequest(nextPrompt);
-            
-            if (nextAnswer) {
-                currentHistory.push({ role: "user", content: messageText });
-                currentHistory.push({ role: "ai", content: nextAnswer });
-                if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
-                localMemory.set(normalizedUser, currentHistory);
-                
-                await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
-                await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
-            } else {
-                await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
-            }
-        } else if (isSessionActive) {
-            await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
-            
-            startSessionTimer(normalizedUser);
-            
-            let currentHistory = localMemory.get(normalizedUser) || [];
-            const nextPrompt = buildPrompt(messageText, currentHistory);
-            const nextAnswer = await aiRequest(nextPrompt);
-            
-            if (nextAnswer) {
-                currentHistory.push({ role: "user", content: messageText });
-                currentHistory.push({ role: "ai", content: nextAnswer });
-                if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
-                localMemory.set(normalizedUser, currentHistory);
-                
-                await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
-                await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
-            } else {
-                await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
-            }
-        }
-        
-    } catch (err) {
-        console.log("AI Error:", err.message);
-    }
-});
+})
