@@ -12,6 +12,14 @@ const activeSessions = new Map();
 const MAX_HISTORY = 10;
 const SESSION_TIMEOUT = 60 * 1000;
 
+const normalizeId = (id) => {
+    if (!id) return '';
+    return id
+        .replace(/:[0-9]+/g, '')
+        .replace(/@(lid|s.whatsapp.net|c.us|g.us)/g, '')
+        .replace(/[^\d]/g, '');
+};
+
 async function connectDB() {
     if (db) return db;
     try {
@@ -41,7 +49,7 @@ async function saveFullHistoryToDB(userId, history) {
     }
 }
 
-const startSessionTimer = (userId, conn) => {
+const startSessionTimer = (userId) => {
     if (activeSessions.has(userId)) clearTimeout(activeSessions.get(userId));
     
     const timer = setTimeout(async () => {
@@ -51,7 +59,7 @@ const startSessionTimer = (userId, conn) => {
             await saveFullHistoryToDB(userId, finalHistory);
         }
         localMemory.delete(userId);
-        console.log(`AI Session Expired for: ${userId}`);
+        console.log(`AI Session Expired & Cleared for: ${userId}`);
     }, SESSION_TIMEOUT);
 
     activeSessions.set(userId, timer);
@@ -64,16 +72,17 @@ const buildPrompt = (q, history) => {
             history.map(h => `${h.role === "user" ? "User" : "AI"}: ${h.content}`).join("\n");
     }
     return `You are a helpful AI assistant named ADEEL-AI.
-IMPORTANT RULES:
-- Detect the language of the user's message automatically
-- Always reply in the EXACT same language the user wrote in
-- If user writes in Urdu script → reply in Urdu script
-- If user writes in Roman Urdu → reply in Roman Urdu
-- If user writes in English → reply in English
+CRITICAL RULES FOR LANGUAGE:
+- If user writes in Urdu script (اردو) -> strictly reply in proper Urdu script (پاکستان والی اصل اردو)
+- If user writes in Roman Urdu (e.g., 'kya hal hai') -> reply in Roman Urdu
+- If user writes in English -> reply in English
+- Always match the user's language script perfectly. Never reply in English if user writes in Urdu script.
+
+GENERAL RULES:
 - Remember the conversation context and be consistent
 - If asked to write code or commands, write them properly
 - Be helpful, friendly and concise
-- Never switch languages${conversation}
+- Never switch languages randomly${conversation}
 
 User message: ${q}`;
 };
@@ -135,14 +144,14 @@ cmd({
     try {
         if (!q) return reply("⚠️ Kuch likho\nMisal: .ai Salam kya hal hai");
 
-        const userId = m.sender || from;
+        const normalizedUser = normalizeId(m.sender || from);
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        if (!localMemory.has(userId)) {
-            localMemory.set(userId, []);
+        if (!localMemory.has(normalizedUser)) {
+            localMemory.set(normalizedUser, []);
         }
-        let history = localMemory.get(userId);
+        let history = localMemory.get(normalizedUser);
 
         const prompt = buildPrompt(q, history);
         const answer = await aiRequest(prompt);
@@ -155,67 +164,57 @@ cmd({
         history.push({ role: "user", content: q });
         history.push({ role: "ai", content: answer });
         if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
-        localMemory.set(userId, history);
+        localMemory.set(normalizedUser, history);
 
         await conn.sendMessage(from, { text: `🤖 ${answer}` }, { quoted: m });
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
-        startSessionTimer(userId, conn);
-
-        if (!global.aiUpsertRegistered) {
-            global.aiUpsertRegistered = true;
-            conn.ev.on("messages.upsert", async (chatUpdate) => {
-                try {
-                    const msg = chatUpdate.messages[0];
-                    if (!msg.message || msg.key.fromMe) return;
-
-                    const fromJid = msg.key.remoteJid;
-                    const senderJid = msg.key.participant || msg.key.remoteJid;
-                    const sessionUser = senderJid;
-
-                    if (!activeSessions.has(sessionUser)) return;
-
-                    let userText = msg.message.conversation || 
-                                   msg.message.extendedTextMessage?.text || "";
-                    
-                    userText = userText.trim();
-                    if (!userText) return;
-
-                    if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) return;
-
-                    startSessionTimer(sessionUser, conn);
-
-                    await conn.sendMessage(fromJid, { react: { text: "⏳", key: msg.key } });
-
-                    let currentHistory = localMemory.get(sessionUser) || [];
-                    const nextPrompt = buildPrompt(userText, currentHistory);
-                    const nextAnswer = await aiRequest(nextPrompt);
-
-                    if (!nextAnswer) {
-                        await conn.sendMessage(fromJid, { react: { text: "❌", key: msg.key } });
-                        return;
-                    }
-
-                    currentHistory.push({ role: "user", content: userText });
-                    currentHistory.push({ role: "ai", content: nextAnswer });
-                    if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
-                    localMemory.set(sessionUser, currentHistory);
-
-                    await conn.sendMessage(fromJid, {
-                        text: `🤖 ${nextAnswer}`
-                    }, { quoted: msg });
-
-                    await conn.sendMessage(fromJid, { react: { text: "✅", key: msg.key } });
-
-                } catch (err) {
-                    console.log("Global JID AI Listener Error:", err.message);
-                }
-            });
-        }
+        startSessionTimer(normalizedUser);
 
     } catch (e) {
         console.log("AI ERROR:", e.message);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
         reply("❌ Error occurred. Try again.");
+    }
+});
+
+cmd({
+    on: "body"
+}, async (conn, m, store, { from, body, sender, isGroup }) => {
+    try {
+        if (!body || m.key.fromMe) return;
+
+        const normalizedUser = normalizeId(sender || from);
+
+        if (!activeSessions.has(normalizedUser)) return;
+
+        let userText = body.trim();
+        if (!userText) return;
+
+        if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) return;
+
+        startSessionTimer(normalizedUser);
+
+        await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
+
+        let currentHistory = localMemory.get(normalizedUser) || [];
+        const nextPrompt = buildPrompt(userText, currentHistory);
+        const nextAnswer = await aiRequest(nextPrompt);
+
+        if (!nextAnswer) {
+            await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
+            return;
+        }
+
+        currentHistory.push({ role: "user", content: userText });
+        currentHistory.push({ role: "ai", content: nextAnswer });
+        if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
+        localMemory.set(normalizedUser, currentHistory);
+
+        await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
+        await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
+
+    } catch (err) {
+        console.log("AI Auto-Reply OnBody Error:", err.message);
     }
 });
