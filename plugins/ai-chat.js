@@ -132,7 +132,7 @@ const aiRequest = async (prompt) => {
 
     for (const api of apis) {
         try {
-            const res = await axios.get(api.url, { timeout: 12000 });
+            const res = await axios.get(api.url, { timeout: 3000 });
             const reply = api.extract(res.data);
             if (reply && reply.trim()) return reply.trim();
         } catch { continue; }
