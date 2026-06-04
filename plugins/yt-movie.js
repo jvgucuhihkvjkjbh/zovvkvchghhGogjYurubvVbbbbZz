@@ -8,13 +8,8 @@ async function searchMovie(query) {
     return res.data;
 }
 
-async function getMovieInfo(movieId) {
-    const res = await axios.get(`${MOVIE_API}/api/info/${movieId}`, { timeout: 15000 });
-    return res.data;
-}
-
-async function getDownloadSources(movieId) {
-    const res = await axios.get(`${MOVIE_API}/api/sources/${movieId}`, { timeout: 15000 });
+async function getMovieSources(subjectId) {
+    const res = await axios.get(`${MOVIE_API}/api/sources/${subjectId}`, { timeout: 15000 });
     return res.data;
 }
 
@@ -40,56 +35,58 @@ cmd({
             return reply("❌ Search failed. Try again.");
         }
 
-        const results = searchData?.results;
-        if (!results || !results.length) {
+        const subject = searchData?.results?.subject;
+        if (!subject) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ Koi movie nahi mili: *" + q + "*");
+            return reply(`❌ Koi movie nahi mili: *${q}*`);
         }
 
-        // Pehli movie lo
-        const movie = results[0];
-        const movieId = movie.subjectId || movie.id;
-        const title = movie.title || "Unknown";
-        const year = movie.releaseDate?.split("-")[0] || "N/A";
-        const rating = movie.imdbRatingValue || "N/A";
-        const genre = movie.genre || "N/A";
-        const description = movie.description || "";
-        const thumbnail = movie.cover?.url || movie.thumbnail || "";
+        const subjectId = subject.subjectId;
+        const title = subject.title || "Unknown";
+        const year = subject.releaseDate?.split("-")[0] || "N/A";
+        const rating = subject.imdbRatingValue || "N/A";
+        const genre = subject.genre || "N/A";
+        const description = subject.description || "";
+        const thumbnail = subject.cover?.url || subject.thumbnail || "";
+        const duration = subject.duration ? `${Math.floor(subject.duration / 60)}min` : "N/A";
 
         // Step 2 — Get download sources
         let sourcesData;
         try {
-            sourcesData = await getDownloadSources(movieId);
+            sourcesData = await getMovieSources(subjectId);
         } catch (e) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Download sources nahi mile.");
         }
 
-        const sources = sourcesData?.results?.sources || sourcesData?.results || [];
-
+        const sources = sourcesData?.results;
         if (!sources || sources.length === 0) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Is movie ka download link available nahi hai.");
         }
 
-        // Best quality lo — 480p prefer karo, nahi to jo mile
-        const preferred = sources.find(s => s.quality === 480 || s.resolution === 480)
-            || sources.find(s => s.quality === 360 || s.resolution === 360)
+        // 480p prefer, phir 360p, phir jo mile
+        const preferred = sources.find(s => s.quality === "480p")
+            || sources.find(s => s.quality === "360p")
             || sources[0];
 
-        const downloadUrl = preferred?.url || preferred?.videoUrl || preferred?.link;
+        const downloadUrl = preferred?.download_url;
+        const quality = preferred?.quality || "N/A";
+        const sizeMB = preferred?.size ? `${(parseInt(preferred.size) / (1024 * 1024)).toFixed(0)}MB` : "N/A";
 
         if (!downloadUrl) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Download URL nahi mili.");
         }
 
-        // Step 3 — Send thumbnail + info
+        // Step 3 — Send info + thumbnail
         const caption =
             `🎬 *${title}*\n\n` +
             `📅 *Year:* ${year}\n` +
+            `⏳ *Duration:* ${duration}\n` +
             `⭐ *Rating:* ${rating}\n` +
             `🎭 *Genre:* ${genre}\n` +
+            `📦 *Quality:* ${quality} • ${sizeMB}\n` +
             `📝 *Overview:* ${description.slice(0, 200)}${description.length > 200 ? "..." : ""}\n\n` +
             `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
@@ -106,7 +103,7 @@ cmd({
         await conn.sendMessage(from, {
             video: { url: downloadUrl },
             mimetype: "video/mp4",
-            caption: `*${title}* (${year})\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
+            caption: `*${title}* (${year}) • ${quality}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
         }, { quoted: mek });
 
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
