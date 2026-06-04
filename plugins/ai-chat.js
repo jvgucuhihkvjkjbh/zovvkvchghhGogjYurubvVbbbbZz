@@ -11,7 +11,6 @@ const localMemory = new Map();
 const activeSessions = new Map();
 const MAX_HISTORY = 10;
 const SESSION_TIMEOUT = 60 * 1000;
-const BOT_SECRET_MARKER = "\u200B\u200B#ADEEL_AI_BOT_SECRET\u200B\u200B";
 
 async function connectDB() {
     if (db) return db;
@@ -158,7 +157,7 @@ cmd({
         if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
         localMemory.set(userId, history);
 
-        await conn.sendMessage(from, { text: `🤖 ${answer}${BOT_SECRET_MARKER}` }, { quoted: m });
+        await conn.sendMessage(from, { text: `🤖 ${answer}` }, { quoted: m });
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
         startSessionTimer(userId, conn);
@@ -170,29 +169,21 @@ cmd({
                     const msg = chatUpdate.messages[0];
                     if (!msg.message || msg.key.fromMe) return;
 
-                    const extendedText = msg.message?.extendedTextMessage;
-                    if (!extendedText) return;
-
-                    const context = extendedText.contextInfo;
-                    if (!context || !context.quotedMessage) return;
-
-                    const quotedText = context.quotedMessage.conversation || 
-                                       context.quotedMessage.extendedTextMessage?.text || "";
-
-                    if (!quotedText.includes(BOT_SECRET_MARKER)) return;
-
                     const fromJid = msg.key.remoteJid;
                     const senderJid = msg.key.participant || msg.key.remoteJid;
                     const sessionUser = senderJid;
 
-                    if (!localMemory.has(sessionUser)) {
-                        localMemory.set(sessionUser, []);
-                    }
+                    if (!activeSessions.has(sessionUser)) return;
 
-                    const userText = extendedText.text?.trim();
+                    let userText = msg.message.conversation || 
+                                   msg.message.extendedTextMessage?.text || "";
+                    
+                    userText = userText.trim();
                     if (!userText) return;
 
                     if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) return;
+
+                    startSessionTimer(sessionUser, conn);
 
                     await conn.sendMessage(fromJid, { react: { text: "⏳", key: msg.key } });
 
@@ -211,15 +202,13 @@ cmd({
                     localMemory.set(sessionUser, currentHistory);
 
                     await conn.sendMessage(fromJid, {
-                        text: `🤖 ${nextAnswer}${BOT_SECRET_MARKER}`
+                        text: `🤖 ${nextAnswer}`
                     }, { quoted: msg });
 
                     await conn.sendMessage(fromJid, { react: { text: "✅", key: msg.key } });
 
-                    startSessionTimer(sessionUser, conn);
-
                 } catch (err) {
-                    console.log("Global Marker AI Listener Error:", err.message);
+                    console.log("Global JID AI Listener Error:", err.message);
                 }
             });
         }
