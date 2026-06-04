@@ -59,6 +59,7 @@ const startSessionTimer = (userId) => {
         }
         localMemory.delete(userId);
         userTimers.delete(userId);
+        console.log(`Session expired for ${userId}`);
     }, SESSION_TIMEOUT);
 
     userTimers.set(userId, timer);
@@ -76,13 +77,8 @@ CRITICAL RULES FOR LANGUAGE:
 - If user writes in Urdu script (اردو) -> strictly reply in proper Urdu script
 - If user writes in Roman Urdu (e.g., 'kya hal hai') -> reply in Roman Urdu
 - If user writes in English -> reply in English
-- Always match the user's language script perfectly.
 
-GENERAL RULES:
-- Remember the conversation context and be consistent
-- Be helpful, friendly and concise${conversation}
-
-User message: ${q}`;
+User message: ${q}${conversation}`;
 };
 
 const aiRequest = async (prompt) => {
@@ -90,10 +86,6 @@ const aiRequest = async (prompt) => {
         {
             url: `https://jerrycoder.oggyapi.workers.dev/ai/gpt4?prompt=${encodeURIComponent(prompt)}&model=8.8`,
             extract: d => d?.reply?.message
-        },
-        {
-            url: `https://jerrycoder.oggyapi.workers.dev/ai/gemini?prompt=${encodeURIComponent(prompt)}`,
-            extract: d => d?.reply
         },
         {
             url: `https://api.ryzendesu.vip/api/ai/deepseek?text=${encodeURIComponent(prompt)}`,
@@ -149,7 +141,7 @@ cmd({
 
         startSessionTimer(normalizedUser);
         
-        await conn.sendMessage(from, { text: `✅ Session Active for 60 sec - Now reply to my message` });
+        await conn.sendMessage(from, { text: `✅ Session active! Ab mere message ko reply karke likho` });
 
     } catch (e) {
         console.log("AI ERROR:", e.message);
@@ -160,68 +152,85 @@ cmd({
 
 cmd({
     on: "message"
-}, async (conn, m, store, { from, body, sender }) => {
+}, async (conn, m, store, { from, body, sender, isGroup }) => {
     try {
-        if (!m.message) return;
+        if (m.key.fromMe) return;
         
-        let messageBody = '';
-        let isQuoted = false;
-        let quotedParticipant = '';
+        let messageText = '';
+        let isQuotedReply = false;
+        let quotedMessageSender = '';
+        let quotedMessageText = '';
         
-        if (m.message.conversation) {
-            messageBody = m.message.conversation;
-        } else if (m.message.extendedTextMessage) {
-            messageBody = m.message.extendedTextMessage.text || '';
-            if (m.message.extendedTextMessage.contextInfo) {
-                const ctx = m.message.extendedTextMessage.contextInfo;
-                if (ctx.quotedMessage) {
-                    isQuoted = true;
-                    quotedParticipant = ctx.participant || ctx.remoteJid || '';
+        if (m.message?.conversation) {
+            messageText = m.message.conversation;
+        } else if (m.message?.extendedTextMessage) {
+            messageText = m.message.extendedTextMessage.text || '';
+            const contextInfo = m.message.extendedTextMessage.contextInfo;
+            if (contextInfo && contextInfo.quotedMessage) {
+                isQuotedReply = true;
+                quotedMessageSender = contextInfo.participant || contextInfo.remoteJid || '';
+                if (contextInfo.quotedMessage.conversation) {
+                    quotedMessageText = contextInfo.quotedMessage.conversation;
+                } else if (contextInfo.quotedMessage.extendedTextMessage?.text) {
+                    quotedMessageText = contextInfo.quotedMessage.extendedTextMessage.text;
                 }
             }
         }
         
-        if (!messageBody) return;
-        if (m.key.fromMe) return;
+        if (!messageText) return;
+        
+        if (messageText.startsWith(".") || messageText.startsWith("/") || messageText.startsWith("!")) return;
         
         const normalizedUser = normalizeId(sender || from);
         const botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net';
         
-        let isReplyingToBot = false;
-        if (isQuoted && quotedParticipant === botNumber) {
-            isReplyingToBot = true;
-        }
-        
         const isSessionActive = activeSessions.has(normalizedUser);
+        const isReplyingToBot = isQuotedReply && (quotedMessageSender === botNumber || (quotedMessageText && quotedMessageText.includes('🤖')));
         
         if (!isSessionActive && !isReplyingToBot) return;
         
-        if (messageBody.startsWith(".") || messageBody.startsWith("/") || messageBody.startsWith("!")) return;
-        
         if (isReplyingToBot) {
+            console.log(`Reply detected from ${normalizedUser}: ${messageText}`);
+            await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
+            
             startSessionTimer(normalizedUser);
-        } else if (!isSessionActive) {
-            return;
+            
+            let currentHistory = localMemory.get(normalizedUser) || [];
+            const nextPrompt = buildPrompt(messageText, currentHistory);
+            const nextAnswer = await aiRequest(nextPrompt);
+            
+            if (nextAnswer) {
+                currentHistory.push({ role: "user", content: messageText });
+                currentHistory.push({ role: "ai", content: nextAnswer });
+                if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
+                localMemory.set(normalizedUser, currentHistory);
+                
+                await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
+                await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
+            } else {
+                await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
+            }
+        } else if (isSessionActive) {
+            await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
+            
+            startSessionTimer(normalizedUser);
+            
+            let currentHistory = localMemory.get(normalizedUser) || [];
+            const nextPrompt = buildPrompt(messageText, currentHistory);
+            const nextAnswer = await aiRequest(nextPrompt);
+            
+            if (nextAnswer) {
+                currentHistory.push({ role: "user", content: messageText });
+                currentHistory.push({ role: "ai", content: nextAnswer });
+                if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
+                localMemory.set(normalizedUser, currentHistory);
+                
+                await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
+                await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
+            } else {
+                await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
+            }
         }
-        
-        await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
-        
-        let currentHistory = localMemory.get(normalizedUser) || [];
-        const nextPrompt = buildPrompt(messageBody, currentHistory);
-        const nextAnswer = await aiRequest(nextPrompt);
-        
-        if (!nextAnswer) {
-            await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
-            return;
-        }
-        
-        currentHistory.push({ role: "user", content: messageBody });
-        currentHistory.push({ role: "ai", content: nextAnswer });
-        if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
-        localMemory.set(normalizedUser, currentHistory);
-        
-        await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
-        await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
         
     } catch (err) {
         console.log("AI Error:", err.message);
