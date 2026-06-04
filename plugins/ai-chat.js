@@ -156,14 +156,31 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
-        if (!q) return reply("⚠️ Kuch likho\nMisal: .ai Salam kya hal hai");
-
         const userId = m.sender || from;
+        let userText = q ? q.trim() : "";
+
+        // اگر صارف نے ڈائریکٹ کمانڈ نہیں لگائی بلکہ بوٹ کے میسج پر ریپلائی کیا ہے
+        if (!userText && m.quoted) {
+            const botJid = conn.user?.id?.split(":")[0] + "@s.whatsapp.net";
+            const quotedParticipant = m.quoted.sender || m.quoted.participant || m.quoted.remoteJid;
+            
+            // چیک کریں کہ ریپلائی بوٹ کے اپنے ہی میسج پر ہے یا نہیں
+            if (quotedParticipant === botJid) {
+                userText = m.quoted.text || m.body || "";
+            }
+        }
+
+        if (!userText) return reply("⚠️ Kuch likho\nMisal: .ai Salam kya hal hai");
+
+        // اگر پہلے سے سیشن موجود ہے اور وہ صرف ریپلائی کر رہا ہے
+        if (m.quoted && hasSession(userId)) {
+            userText = m.body || q || "";
+        }
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
         const history = await getHistory(userId);
-        const prompt = buildPrompt(q, history);
+        const prompt = buildPrompt(userText, history);
         const answer = await aiRequest(prompt);
 
         if (!answer) {
@@ -171,7 +188,7 @@ cmd({
             return reply("❌ AI ne jawab nahi diya. Try again.");
         }
 
-        await saveHistory(userId, "user", q);
+        await saveHistory(userId, "user", userText);
         await saveHistory(userId, "ai", answer);
 
         setSession(userId);
@@ -183,59 +200,5 @@ cmd({
         console.log("AI ERROR:", e.message);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
         reply("❌ Error occurred. Try again.");
-    }
-});
-
-// ── Reply detection
-conn.ev.on("messages.upsert", async ({ messages }) => {
-    for (const msg of messages) {
-        try {
-            if (!msg.message) continue;
-            if (msg.key.fromMe) continue;
-
-            const from = msg.key.remoteJid;
-            const sender = msg.key.participant || msg.key.remoteJid;
-
-            const contextInfo = msg.message?.extendedTextMessage?.contextInfo;
-            if (!contextInfo?.quotedMessage) continue;
-
-            const quotedParticipant = contextInfo.participant || contextInfo.remoteJid;
-            const botJid = conn.user?.id?.split(":")[0] + "@s.whatsapp.net";
-            if (quotedParticipant !== botJid) continue;
-
-            const userText = msg.message?.extendedTextMessage?.text?.trim();
-            if (!userText) continue;
-
-            if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) continue;
-
-            const userId = sender;
-
-            if (!hasSession(userId)) continue;
-
-            await conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
-
-            const history = await getHistory(userId);
-            const prompt = buildPrompt(userText, history);
-            const answer = await aiRequest(prompt);
-
-            if (!answer) {
-                await conn.sendMessage(from, { react: { text: "❌", key: msg.key } });
-                continue;
-            }
-
-            await saveHistory(userId, "user", userText);
-            await saveHistory(userId, "ai", answer);
-
-            setSession(userId);
-
-            await conn.sendMessage(from, {
-                text: `🤖 ${answer}`
-            }, { quoted: msg });
-
-            await conn.sendMessage(from, { react: { text: "✅", key: msg.key } });
-
-        } catch (e) {
-            console.log("AI Reply Error:", e.message);
-        }
     }
 });
