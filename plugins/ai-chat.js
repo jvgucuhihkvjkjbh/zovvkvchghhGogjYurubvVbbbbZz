@@ -140,7 +140,7 @@ const aiRequest = async (prompt) => {
 
 cmd({
     pattern: "ai",
-    alias: ["gpt", "gpt4", "gpt5", "chatgpt", "deepseek", "openai", "adeel", "dj"],
+    alias: ["gpt", "gpt4", "chatgpt", "deepseek", "openai"],
     desc: "Chat with AI in any language",
     category: "ai",
     react: "🤖",
@@ -194,55 +194,59 @@ cmd({
         const botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net';
         
         let isReplyToBot = false;
+        
         try {
             if (m.message?.extendedTextMessage?.contextInfo) {
                 const contextInfo = m.message.extendedTextMessage.contextInfo;
-                const quotedMessage = contextInfo.quotedMessage;
-                const quotedParticipant = contextInfo.participant;
-                const quotedSender = contextInfo.remoteJid;
                 
-                if (quotedMessage) {
-                    if (quotedParticipant === botNumber || quotedSender === botNumber) {
-                        isReplyToBot = true;
-                    }
-                    if (quotedMessage.conversation && quotedMessage.conversation.includes('🤖')) {
-                        isReplyToBot = true;
-                    }
-                    if (quotedMessage.extendedTextMessage?.text && quotedMessage.extendedTextMessage.text.includes('🤖')) {
+                const participant = contextInfo.participant;
+                const remoteJid = contextInfo.remoteJid;
+                const quotedMsg = contextInfo.quotedMessage;
+                
+                if (participant === botNumber || remoteJid === botNumber) {
+                    isReplyToBot = true;
+                }
+                
+                if (quotedMsg) {
+                    let quotedText = '';
+                    if (quotedMsg.conversation) quotedText = quotedMsg.conversation;
+                    if (quotedMsg.extendedTextMessage?.text) quotedText = quotedMsg.extendedTextMessage.text;
+                    
+                    if (quotedText.includes('🤖')) {
                         isReplyToBot = true;
                     }
                 }
             }
-        } catch (e) {}
+        } catch (err) {}
         
         if (!activeSessions.has(normalizedUser) && !isReplyToBot) return;
-
+        
         let userText = body.trim();
         if (!userText) return;
-
+        
         if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) return;
-
+        
         startSessionTimer(normalizedUser);
-
+        
         await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
-
+        
         let currentHistory = localMemory.get(normalizedUser) || [];
         const nextPrompt = buildPrompt(userText, currentHistory);
         const nextAnswer = await aiRequest(nextPrompt);
-
+        
         if (!nextAnswer) {
             await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
             return;
         }
-
+        
         currentHistory.push({ role: "user", content: userText });
         currentHistory.push({ role: "ai", content: nextAnswer });
         if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
         localMemory.set(normalizedUser, currentHistory);
-
+        
         await conn.sendMessage(from, { text: `🤖 ${nextAnswer}` }, { quoted: m });
         await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
-
+        
     } catch (err) {
         console.log("AI Auto-Reply Error:", err.message);
     }
