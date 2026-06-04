@@ -7,57 +7,37 @@ const DB_NAME = "adeel_ai";
 const COLLECTION = "ai_memory";
 
 let db = null;
-
-async function connectDB() {
-    if (db) return db;
-    const client = new MongoClient(MONGO_URI);
-    await client.connect();
-    db = client.db(DB_NAME);
-    console.log("AI Memory DB Connected");
-    return db;
-}
-
+const localMemory = new Map();
+const activeSessions = new Map();
 const MAX_HISTORY = 10;
 const SESSION_TIMEOUT = 60 * 1000;
 
-const activeSessions = new Map();
-
-async function getHistory(userId) {
+async function connectDB() {
+    if (db) return db;
     try {
-        const database = await connectDB();
-        const doc = await database.collection(COLLECTION).findOne({ userId });
-        return doc?.history || [];
+        const client = new MongoClient(MONGO_URI);
+        await client.connect();
+        db = client.db(DB_NAME);
+        console.log("AI Memory DB Connected");
+        return db;
     } catch (e) {
-        console.log("DB getHistory Error:", e.message);
-        return [];
+        console.log("DB Connection Error:", e.message);
+        return null;
     }
 }
 
-async function saveHistory(userId, role, content) {
+async function saveFullHistoryToDB(userId, history) {
     try {
         const database = await connectDB();
-        const doc = await database.collection(COLLECTION).findOne({ userId });
-        let history = doc?.history || [];
-
-        history.push({ role, content });
-        if (history.length > MAX_HISTORY) history.splice(0, 1);
-
+        if (!database) return;
         await database.collection(COLLECTION).updateOne(
             { userId },
             { $set: { userId, history, updatedAt: new Date() } },
             { upsert: true }
         );
+        console.log(`History successfully backed up to MongoDB for: ${userId}`);
     } catch (e) {
-        console.log("DB saveHistory Error:", e.message);
-    }
-}
-
-async function clearHistory(userId) {
-    try {
-        const database = await connectDB();
-        await database.collection(COLLECTION).deleteOne({ userId });
-    } catch (e) {
-        console.log("DB clearHistory Error:", e.message);
+        console.log("DB backup error:", e.message);
     }
 }
 
@@ -65,7 +45,11 @@ const setSession = (userId) => {
     if (activeSessions.has(userId)) clearTimeout(activeSessions.get(userId));
     const timer = setTimeout(async () => {
         activeSessions.delete(userId);
-        await clearHistory(userId);
+        const finalHistory = localMemory.get(userId) || [];
+        if (finalHistory.length > 0) {
+            await saveFullHistoryToDB(userId, finalHistory);
+        }
+        localMemory.delete(userId);
         console.log(`Session expired + memory cleared: ${userId}`);
     }, SESSION_TIMEOUT);
     activeSessions.set(userId, timer);
@@ -155,7 +139,11 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        const history = await getHistory(userId);
+        if (!localMemory.has(userId)) {
+            localMemory.set(userId, []);
+        }
+        const history = localMemory.get(userId);
+
         const prompt = buildPrompt(q, history);
         const answer = await aiRequest(prompt);
 
@@ -164,9 +152,11 @@ cmd({
             return reply("❌ AI ne jawab nahi diya. Try again.");
         }
 
-        await saveHistory(userId, "user", q);
-        await saveHistory(userId, "ai", answer);
+        history.push({ role: "user", content: q });
+        history.push({ role: "ai", content: answer });
+        if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
 
+        localMemory.set(userId, history);
         setSession(userId);
 
         await reply(`🤖 ${answer}`);
@@ -212,7 +202,7 @@ setTimeout(() => {
 
                 await global.conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
 
-                const history = await getHistory(userId);
+                const history = localMemory.get(userId) || [];
                 const prompt = buildPrompt(userText, history);
                 const answer = await aiRequest(prompt);
 
@@ -221,9 +211,11 @@ setTimeout(() => {
                     continue;
                 }
 
-                await saveHistory(userId, "user", userText);
-                await saveHistory(userId, "ai", answer);
+                history.push({ role: "user", content: userText });
+                history.push({ role: "ai", content: answer });
+                if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
 
+                localMemory.set(userId, history);
                 setSession(userId);
 
                 await global.conn.sendMessage(from, {
