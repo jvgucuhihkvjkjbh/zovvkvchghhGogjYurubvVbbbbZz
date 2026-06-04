@@ -13,7 +13,8 @@ cmd({
 async(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
 try{
     if(!q) return reply("Need some text.")
-    
+
+    // Try Prince API first
     try {
         const res = await axios.get(
             `https://api.princetechn.com/api/ai/tts?apikey=prince&text=${encodeURIComponent(q)}&voice=en_us_female`,
@@ -21,18 +22,27 @@ try{
         );
         const audioUrl = res.data?.result?.download_url || res.data?.result?.url || res.data?.url;
         if (audioUrl) {
-            return await conn.sendMessage(from, { audio: { url: audioUrl }, mimetype: 'audio/mpeg', ptt: true }, { quoted: mek });
+            return await conn.sendMessage(from, { 
+                audio: { url: audioUrl }, 
+                mimetype: 'audio/mp4',
+                ptt: false
+            }, { quoted: mek });
         }
     } catch (e) {
         console.log("Prince TTS Error:", e.message);
     }
 
+    // Fallback — Google TTS
     const url = googleTTS.getAudioUrl(q, {
         lang: 'hi-IN',
         slow: false,
         host: 'https://translate.google.com',
     });
-    await conn.sendMessage(from, { audio: { url: url }, mimetype: 'audio/mpeg', ptt: true }, { quoted: mek });
+    await conn.sendMessage(from, { 
+        audio: { url: url }, 
+        mimetype: 'audio/mp4',
+        ptt: false
+    }, { quoted: mek });
 
 } catch(a) {
     reply(`${a}`)
