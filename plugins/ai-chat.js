@@ -11,6 +11,7 @@ const localMemory = new Map();
 const activeSessions = new Map();
 const MAX_HISTORY = 10;
 const SESSION_TIMEOUT = 60 * 1000;
+const BOT_SECRET_MARKER = "\u200B\u200B#ADEEL_AI_BOT_SECRET\u200B\u200B";
 
 async function connectDB() {
     if (db) return db;
@@ -42,7 +43,7 @@ async function saveFullHistoryToDB(userId, history) {
 }
 
 const startSessionTimer = (userId, conn) => {
-    if (activeSessions.has(userId)) clearTimeout(activeSessions.get(userId).timer);
+    if (activeSessions.has(userId)) clearTimeout(activeSessions.get(userId));
     
     const timer = setTimeout(async () => {
         activeSessions.delete(userId);
@@ -54,7 +55,7 @@ const startSessionTimer = (userId, conn) => {
         console.log(`AI Session Expired for: ${userId}`);
     }, SESSION_TIMEOUT);
 
-    activeSessions.set(userId, { timer, lastMsgId: activeSessions.get(userId)?.lastMsgId || "" });
+    activeSessions.set(userId, timer);
 };
 
 const buildPrompt = (q, history) => {
@@ -157,13 +158,10 @@ cmd({
         if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
         localMemory.set(userId, history);
 
-        const sentMsg = await conn.sendMessage(from, { text: `🤖 ${answer}` }, { quoted: m });
+        await conn.sendMessage(from, { text: `🤖 ${answer}${BOT_SECRET_MARKER}` }, { quoted: m });
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
 
         startSessionTimer(userId, conn);
-        if (activeSessions.has(userId)) {
-            activeSessions.get(userId).lastMsgId = sentMsg.key.id;
-        }
 
         if (!global.aiUpsertRegistered) {
             global.aiUpsertRegistered = true;
@@ -176,16 +174,20 @@ cmd({
                     if (!extendedText) return;
 
                     const context = extendedText.contextInfo;
-                    if (!context || !context.stanzaId) return;
+                    if (!context || !context.quotedMessage) return;
+
+                    const quotedText = context.quotedMessage.conversation || 
+                                       context.quotedMessage.extendedTextMessage?.text || "";
+
+                    if (!quotedText.includes(BOT_SECRET_MARKER)) return;
 
                     const fromJid = msg.key.remoteJid;
                     const senderJid = msg.key.participant || msg.key.remoteJid;
                     const sessionUser = senderJid;
 
-                    if (!activeSessions.has(sessionUser)) return;
-                    
-                    const sessionData = activeSessions.get(sessionUser);
-                    if (context.stanzaId !== sessionData.lastMsgId) return;
+                    if (!localMemory.has(sessionUser)) {
+                        localMemory.set(sessionUser, []);
+                    }
 
                     const userText = extendedText.text?.trim();
                     if (!userText) return;
@@ -208,17 +210,16 @@ cmd({
                     if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
                     localMemory.set(sessionUser, currentHistory);
 
-                    const nextSentMsg = await conn.sendMessage(fromJid, {
-                        text: `🤖 ${nextAnswer}`
+                    await conn.sendMessage(fromJid, {
+                        text: `🤖 ${nextAnswer}${BOT_SECRET_MARKER}`
                     }, { quoted: msg });
 
                     await conn.sendMessage(fromJid, { react: { text: "✅", key: msg.key } });
 
                     startSessionTimer(sessionUser, conn);
-                    sessionData.lastMsgId = nextSentMsg.key.id;
 
                 } catch (err) {
-                    console.log("Global AI Listener Error:", err.message);
+                    console.log("Global Marker AI Listener Error:", err.message);
                 }
             });
         }
