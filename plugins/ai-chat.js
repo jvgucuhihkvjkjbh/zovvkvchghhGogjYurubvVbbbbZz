@@ -183,22 +183,24 @@ setTimeout(() => {
 
                 const from = msg.key.remoteJid;
                 const sender = msg.key.participant || msg.key.remoteJid;
-
-                const contextInfo = msg.message?.extendedTextMessage?.contextInfo;
-                if (!contextInfo?.quotedMessage) continue;
-
-                const quotedParticipant = contextInfo.participant || contextInfo.remoteJid;
-                const botJid = global.conn.user?.id?.split(":")[0] + "@s.whatsapp.net";
-                if (quotedParticipant !== botJid) continue;
-
-                const userText = msg.message?.extendedTextMessage?.text?.trim();
-                if (!userText) continue;
-
-                if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) continue;
-
                 const userId = sender;
 
                 if (!hasSession(userId)) continue;
+
+                const extendedText = msg.message?.extendedTextMessage;
+                if (!extendedText) continue;
+
+                const contextInfo = extendedText.contextInfo;
+                if (!contextInfo || !contextInfo.quotedMessage) continue;
+
+                const quotedParticipant = contextInfo.participant || contextInfo.remoteJid;
+                const botJid = global.conn.user?.id?.split(":")[0] + "@s.whatsapp.net";
+                if (!quotedParticipant.includes(botJid.split("@")[0])) continue;
+
+                const userText = extendedText.text?.trim();
+                if (!userText) continue;
+
+                if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) continue;
 
                 await global.conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
 
