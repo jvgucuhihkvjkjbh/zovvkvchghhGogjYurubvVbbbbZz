@@ -53,7 +53,6 @@
     "api-dylux": "1.8.5",
     "@mrnima/tiktok-downloader": "1.0.0",
     "@mrnima/facebook-downloader": "1.0.0",
-    "mrnima-moviedl": "1.0.0",
-    "mongodb": "^6.5.0"
+    "mrnima-moviedl": "1.0.0"
   }
 }
