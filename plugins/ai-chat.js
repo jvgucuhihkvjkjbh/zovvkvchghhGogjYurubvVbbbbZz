@@ -130,30 +130,12 @@ const aiRequest = async (prompt) => {
 
     for (const api of apis) {
         try {
-            const res = await axios.get(api.url, { timeout: 3000 });
+            const res = await axios.get(api.url, { timeout: 5000 });
             const reply = api.extract(res.data);
             if (reply && reply.trim()) return reply.trim();
         } catch { continue; }
     }
     return null;
-};
-
-const isQuotingBotMessage = (m, botNumber) => {
-    try {
-        if (!m.message?.extendedTextMessage?.contextInfo) return false;
-        const contextInfo = m.message.extendedTextMessage.contextInfo;
-        const quotedMsg = contextInfo.quotedMessage;
-        const participant = contextInfo.participant;
-        
-        if (!quotedMsg) return false;
-        
-        const quotedText = quotedMsg.conversation || quotedMsg.extendedTextMessage?.text || '';
-        const isFromBot = participant === botNumber || contextInfo.remoteJid === botNumber;
-        
-        return isFromBot && quotedText.includes('🤖');
-    } catch (e) {
-        return false;
-    }
 };
 
 cmd({
@@ -210,7 +192,28 @@ cmd({
         const normalizedUser = normalizeId(sender || from);
         
         const botNumber = conn.user.id.split(':')[0] + '@s.whatsapp.net';
-        const isReplyToBot = isQuotingBotMessage(m, botNumber);
+        
+        let isReplyToBot = false;
+        try {
+            if (m.message?.extendedTextMessage?.contextInfo) {
+                const contextInfo = m.message.extendedTextMessage.contextInfo;
+                const quotedMessage = contextInfo.quotedMessage;
+                const quotedParticipant = contextInfo.participant;
+                const quotedSender = contextInfo.remoteJid;
+                
+                if (quotedMessage) {
+                    if (quotedParticipant === botNumber || quotedSender === botNumber) {
+                        isReplyToBot = true;
+                    }
+                    if (quotedMessage.conversation && quotedMessage.conversation.includes('🤖')) {
+                        isReplyToBot = true;
+                    }
+                    if (quotedMessage.extendedTextMessage?.text && quotedMessage.extendedTextMessage.text.includes('🤖')) {
+                        isReplyToBot = true;
+                    }
+                }
+            }
+        } catch (e) {}
         
         if (!activeSessions.has(normalizedUser) && !isReplyToBot) return;
 
@@ -241,6 +244,6 @@ cmd({
         await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (err) {
-        console.log("AI Auto-Reply OnBody Error:", err.message);
+        console.log("AI Auto-Reply Error:", err.message);
     }
 });
