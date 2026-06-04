@@ -1,31 +1,83 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const { MongoClient } = require('mongodb');
 
-const userMemory = new Map();
+const MONGO_URI = "mongodb+srv://iqra1587505_db_user:Adeel5512985@adeel678.g81ct9s.mongodb.net/";
+const DB_NAME = "adeel_ai";
+const COLLECTION = "ai_memory";
+
+let db = null;
+
+async function connectDB() {
+    if (db) return db;
+    const client = new MongoClient(MONGO_URI);
+    await client.connect();
+    db = client.db(DB_NAME);
+    console.log("AI Memory DB Connected");
+    return db;
+}
+
 const MAX_HISTORY = 10;
-
-const activeSessions = new Map();
 const SESSION_TIMEOUT = 60 * 1000;
 
-const getHistory = (userId) => userMemory.get(userId) || [];
+const activeSessions = new Map();
 
-const saveHistory = (userId, role, content) => {
-    const history = getHistory(userId);
-    history.push({ role, content });
-    if (history.length > MAX_HISTORY) history.splice(0, 1);
-    userMemory.set(userId, history);
-};
+// ── Get history from MongoDB
+async function getHistory(userId) {
+    try {
+        const database = await connectDB();
+        const doc = await database.collection(COLLECTION).findOne({ userId });
+        return doc?.history || [];
+    } catch (e) {
+        console.log("DB getHistory Error:", e.message);
+        return [];
+    }
+}
 
+// ── Save history to MongoDB
+async function saveHistory(userId, role, content) {
+    try {
+        const database = await connectDB();
+        const doc = await database.collection(COLLECTION).findOne({ userId });
+        let history = doc?.history || [];
+
+        history.push({ role, content });
+        if (history.length > MAX_HISTORY) history.splice(0, 1);
+
+        await database.collection(COLLECTION).updateOne(
+            { userId },
+            { $set: { userId, history, updatedAt: new Date() } },
+            { upsert: true }
+        );
+    } catch (e) {
+        console.log("DB saveHistory Error:", e.message);
+    }
+}
+
+// ── Clear history from MongoDB
+async function clearHistory(userId) {
+    try {
+        const database = await connectDB();
+        await database.collection(COLLECTION).deleteOne({ userId });
+    } catch (e) {
+        console.log("DB clearHistory Error:", e.message);
+    }
+}
+
+// ── Session management
 const setSession = (userId) => {
     if (activeSessions.has(userId)) clearTimeout(activeSessions.get(userId));
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
         activeSessions.delete(userId);
+        await clearHistory(userId);
+        console.log(`Session expired + memory cleared: ${userId}`);
     }, SESSION_TIMEOUT);
     activeSessions.set(userId, timer);
 };
 
 const hasSession = (userId) => activeSessions.has(userId);
 
+// ── Build prompt with history
 const buildPrompt = (q, history) => {
     let conversation = "";
     if (history.length > 0) {
@@ -47,6 +99,7 @@ IMPORTANT RULES:
 User message: ${q}`;
 };
 
+// ── API fallback system
 const aiRequest = async (prompt) => {
     const apis = [
         {
@@ -93,6 +146,7 @@ const aiRequest = async (prompt) => {
     return null;
 };
 
+// ── Main AI command
 cmd({
     pattern: "ai",
     alias: ["gpt", "gpt4", "gpt5", "chatgpt", "deepseek", "openai", "adeel", "dj"],
@@ -108,7 +162,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        const history = getHistory(userId);
+        const history = await getHistory(userId);
         const prompt = buildPrompt(q, history);
         const answer = await aiRequest(prompt);
 
@@ -117,8 +171,8 @@ cmd({
             return reply("❌ AI ne jawab nahi diya. Try again.");
         }
 
-        saveHistory(userId, "user", q);
-        saveHistory(userId, "ai", answer);
+        await saveHistory(userId, "user", q);
+        await saveHistory(userId, "ai", answer);
 
         setSession(userId);
 
@@ -132,6 +186,7 @@ cmd({
     }
 });
 
+// ── Reply detection
 conn.ev.on("messages.upsert", async ({ messages }) => {
     for (const msg of messages) {
         try {
@@ -159,7 +214,7 @@ conn.ev.on("messages.upsert", async ({ messages }) => {
 
             await conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
 
-            const history = getHistory(userId);
+            const history = await getHistory(userId);
             const prompt = buildPrompt(userText, history);
             const answer = await aiRequest(prompt);
 
@@ -168,8 +223,8 @@ conn.ev.on("messages.upsert", async ({ messages }) => {
                 continue;
             }
 
-            saveHistory(userId, "user", userText);
-            saveHistory(userId, "ai", answer);
+            await saveHistory(userId, "user", userText);
+            await saveHistory(userId, "ai", answer);
 
             setSession(userId);
 
