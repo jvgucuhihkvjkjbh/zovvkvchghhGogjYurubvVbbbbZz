@@ -8,7 +8,6 @@ const COLLECTION = "ai_memory";
 
 let db = null;
 const localMemory = new Map();
-const activeSessions = new Map();
 const MAX_HISTORY = 10;
 const SESSION_TIMEOUT = 60 * 1000;
 
@@ -40,22 +39,6 @@ async function saveFullHistoryToDB(userId, history) {
         console.log("DB backup error:", e.message);
     }
 }
-
-const setSession = (userId) => {
-    if (activeSessions.has(userId)) clearTimeout(activeSessions.get(userId));
-    const timer = setTimeout(async () => {
-        activeSessions.delete(userId);
-        const finalHistory = localMemory.get(userId) || [];
-        if (finalHistory.length > 0) {
-            await saveFullHistoryToDB(userId, finalHistory);
-        }
-        localMemory.delete(userId);
-        console.log(`Session expired + memory cleared: ${userId}`);
-    }, SESSION_TIMEOUT);
-    activeSessions.set(userId, timer);
-};
-
-const hasSession = (userId) => activeSessions.has(userId);
 
 const buildPrompt = (q, history) => {
     let conversation = "";
@@ -142,7 +125,7 @@ cmd({
         if (!localMemory.has(userId)) {
             localMemory.set(userId, []);
         }
-        const history = localMemory.get(userId);
+        let history = localMemory.get(userId);
 
         const prompt = buildPrompt(q, history);
         const answer = await aiRequest(prompt);
@@ -155,12 +138,84 @@ cmd({
         history.push({ role: "user", content: q });
         history.push({ role: "ai", content: answer });
         if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
-
         localMemory.set(userId, history);
-        setSession(userId);
 
-        await reply(`🤖 ${answer}`);
+        const sentMsg = await reply(`🤖 ${answer}`);
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+
+        let sessionTimer = setTimeout(async () => {
+            conn.ev.off("messages.upsert", replyListener);
+            const finalHistory = localMemory.get(userId) || [];
+            if (finalHistory.length > 0) {
+                await saveFullHistoryToDB(userId, finalHistory);
+            }
+            localMemory.delete(userId);
+            console.log(`AI Session Expired for: ${userId}`);
+        }, SESSION_TIMEOUT);
+
+        const replyListener = async (chatUpdate) => {
+            try {
+                const msg = chatUpdate.messages[0];
+                if (!msg.message) return;
+                if (msg.key.fromMe) return;
+
+                const extendedText = msg.message?.extendedTextMessage;
+                if (!extendedText) return;
+
+                const context = extendedText.contextInfo;
+                const isReplyToBot = context && context.stanzaId === sentMsg.key.id;
+                if (!isReplyToBot) return;
+
+                const userText = extendedText.text?.trim();
+                if (!userText) return;
+
+                if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) return;
+
+                clearTimeout(sessionTimer);
+                conn.ev.off("messages.upsert", replyListener);
+
+                await conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
+
+                let currentHistory = localMemory.get(userId) || [];
+                const nextPrompt = buildPrompt(userText, currentHistory);
+                const nextAnswer = await aiRequest(nextPrompt);
+
+                if (!nextAnswer) {
+                    await conn.sendMessage(from, { react: { text: "❌", key: msg.key } });
+                    return;
+                }
+
+                currentHistory.push({ role: "user", content: userText });
+                currentHistory.push({ role: "ai", content: nextAnswer });
+                if (currentHistory.length > MAX_HISTORY * 2) currentHistory.splice(0, 2);
+                localMemory.set(userId, currentHistory);
+
+                const nextSentMsg = await conn.sendMessage(from, {
+                    text: `🤖 ${nextAnswer}`
+                }, { quoted: msg });
+
+                await conn.sendMessage(from, { react: { text: "✅", key: msg.key } });
+
+                sentMsg.key.id = nextSentMsg.key.id;
+
+                sessionTimer = setTimeout(async () => {
+                    conn.ev.off("messages.upsert", replyListener);
+                    const finalHistory = localMemory.get(userId) || [];
+                    if (finalHistory.length > 0) {
+                        await saveFullHistoryToDB(userId, finalHistory);
+                    }
+                    localMemory.delete(userId);
+                    console.log(`AI Session Expired for: ${userId}`);
+                }, SESSION_TIMEOUT);
+
+                conn.ev.on("messages.upsert", replyListener);
+
+            } catch (err) {
+                console.log("Listener Error:", err.message);
+            }
+        };
+
+        conn.ev.on("messages.upsert", replyListener);
 
     } catch (e) {
         console.log("AI ERROR:", e.message);
@@ -168,67 +223,3 @@ cmd({
         reply("❌ Error occurred. Try again.");
     }
 });
-
-setTimeout(() => {
-    if (global.aiReplyRegistered) return;
-    global.aiReplyRegistered = true;
-
-    if (!global.conn) return;
-
-    global.conn.ev.on("messages.upsert", async ({ messages }) => {
-        for (const msg of messages) {
-            try {
-                if (!msg.message) continue;
-                if (msg.key.fromMe) continue;
-
-                const from = msg.key.remoteJid;
-                const sender = msg.key.participant || msg.key.remoteJid;
-                const userId = sender;
-
-                if (!hasSession(userId)) continue;
-
-                const extendedText = msg.message?.extendedTextMessage;
-                if (!extendedText) continue;
-
-                const contextInfo = extendedText.contextInfo;
-                if (!contextInfo || !contextInfo.quotedMessage) continue;
-
-                const quotedParticipant = contextInfo.participant || contextInfo.remoteJid;
-                const botJid = global.conn.user?.id?.split(":")[0] + "@s.whatsapp.net";
-                if (!quotedParticipant.includes(botJid.split("@")[0])) continue;
-
-                const userText = extendedText.text?.trim();
-                if (!userText) continue;
-
-                if (userText.startsWith(".") || userText.startsWith("/") || userText.startsWith("!")) continue;
-
-                await global.conn.sendMessage(from, { react: { text: "⏳", key: msg.key } });
-
-                const history = localMemory.get(userId) || [];
-                const prompt = buildPrompt(userText, history);
-                const answer = await aiRequest(prompt);
-
-                if (!answer) {
-                    await global.conn.sendMessage(from, { react: { text: "❌", key: msg.key } });
-                    continue;
-                }
-
-                history.push({ role: "user", content: userText });
-                history.push({ role: "ai", content: answer });
-                if (history.length > MAX_HISTORY * 2) history.splice(0, 2);
-
-                localMemory.set(userId, history);
-                setSession(userId);
-
-                await global.conn.sendMessage(from, {
-                    text: `🤖 ${answer}`
-                }, { quoted: msg });
-
-                await global.conn.sendMessage(from, { react: { text: "✅", key: msg.key } });
-
-            } catch (e) {
-                console.log("AI Reply Error:", e.message);
-            }
-        }
-    });
-}, 5000);
