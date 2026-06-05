@@ -1,49 +1,53 @@
 const { cmd } = require('../command');
-const fetch = require('node-fetch');
+const axios = require('axios');
 
 cmd({
-pattern: "snap",
-alias: ["snapchat", "ssdown"],
-desc: "Download Snapchat Spotlight Videos",
-category: "downloader",
-react: "👻",
-filename: __filename
-}, async (conn, mek, m, { from, args, reply, isCreator, sender }) => {
-try {
-if (!isAuthorized(sender, isCreator)) {
-return reply("❌ Only owner can use this command.")
-}
+    pattern: "snap",
+    alias: ["snapchat", "ssdown"],
+    desc: "Download Snapchat Spotlight Videos",
+    category: "downloader",
+    react: "👻",
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
 
-if (!args[0]) return reply("*❌ Please provide a Snapchat link.*") 
-if (!args[0].includes("snapchat.com")) return reply("*❌ Invalid Snapchat URL. Please provide a valid link.*")
+        if (!q) {
+            return reply("❌ Please provide a Snapchat link.");
+        }
 
-await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } }) 
-const inputUrl = args[0]
+        if (!q.includes("snapchat.com")) {
+            return reply("❌ Invalid Snapchat URL. Please provide a valid link.");
+        }
 
-const res = await fetch("https://jerrycoder.oggyapi.workers.dev/down/snap?url=" + encodeURIComponent(inputUrl)) 
-if (!res.ok) return reply("*❌ API request failed. Please try again later.*") 
+        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-const data = await res.json() 
-if (data.status !== "success" || !data.medias || !data.medias.length) {
-    return reply("*❌ Failed to fetch video or no video media found.*")
-}
+        const res = await axios.get(`https://jerrycoder.oggyapi.workers.dev/down/snap?url=${encodeURIComponent(q)}`, { timeout: 30000 });
+        const data = res.data;
 
-const videoTitle = data.title || "Snapchat Video"
-const durationMs = data.duration ? parseInt(data.duration) : 0
-const durationSec = durationMs ? Math.floor(durationMs / 1000) : "N/A"
+        if (data.status !== "success" || !data.medias || !data.medias.length) {
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            return reply("❌ Failed to fetch video or no video media found.");
+        }
 
-const videoUrl = data.medias[0].url
-if (!videoUrl) return reply("*❌ Download link not found in the response.*")
+        const videoTitle = data.title || "Snapchat Video";
+        const durationMs = data.duration ? parseInt(data.duration) : 0;
+        const durationSec = durationMs ? Math.floor(durationMs / 1000) : "N/A";
 
-const cleanTitle = videoTitle.length > 100 ? videoTitle.substring(0, 100) + "..." : videoTitle 
-const captionText = "*🎬 TITLE:* " + cleanTitle + "\n⏱️ *DURATION:* " + durationSec + "s\n\n" + `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+        const videoUrl = data.medias[0].url;
+        if (!videoUrl) {
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            return reply("❌ Download link not found in the response.");
+        }
 
-await conn.sendMessage(from, { video: { url: videoUrl }, caption: captionText }, { quoted: mek }) 
-await conn.sendMessage(from, { react: { text: "✅", key: mek.key } }) 
+        const cleanTitle = videoTitle.length > 100 ? videoTitle.substring(0, 100) + "..." : videoTitle;
+        const captionText = `*🎬 TITLE:* ${cleanTitle}\n⏱️ *DURATION:* ${durationSec}s\n\n` + `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
-} catch (err) { 
-console.log("SNAP DOWNLOAD ERROR:", err.message) 
-await conn.sendMessage(from, { react: { text: "❌", key: mek.key } }) 
-reply("*❌ An error occurred while processing your request.*") 
-} 
+        await conn.sendMessage(from, { video: { url: videoUrl }, caption: captionText }, { quoted: mek });
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+
+    } catch (err) {
+        console.log("SNAP DOWNLOAD ERROR:", err.message);
+        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+        reply("❌ An unexpected error occurred while processing your request.");
+    }
 });
