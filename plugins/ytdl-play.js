@@ -4,6 +4,17 @@ const yts = require('yt-search');
 
 const commands = ["play", "song", "mp3"];
 
+// ── Queue system
+const queue = new Map();
+
+const addToQueue = (userId, task) => {
+    if (!queue.has(userId)) queue.set(userId, Promise.resolve());
+    const current = queue.get(userId);
+    const next = current.then(() => task());
+    queue.set(userId, next.catch(() => {}));
+    return next;
+};
+
 const downloadAudio = async (videoUrl) => {
     const apis = [
         async () => {
@@ -15,7 +26,7 @@ const downloadAudio = async (videoUrl) => {
             if (!url) throw new Error("No URL");
             const audioRes = await axios.get(url, { responseType: "arraybuffer", timeout: 60000 });
             const buffer = Buffer.from(audioRes.data);
-            if (buffer.length === 0) throw new Error("Empty buffer");
+            if (buffer.length < 50000) throw new Error("File too small");
             return buffer;
         },
         async () => {
@@ -27,7 +38,7 @@ const downloadAudio = async (videoUrl) => {
             if (res.data?.status !== "success" || !url) throw new Error("No URL");
             const audioRes = await axios.get(url, { responseType: "arraybuffer", timeout: 60000 });
             const buffer = Buffer.from(audioRes.data);
-            if (buffer.length === 0) throw new Error("Empty buffer");
+            if (buffer.length < 50000) throw new Error("File too small");
             return buffer;
         },
         async () => {
@@ -39,7 +50,7 @@ const downloadAudio = async (videoUrl) => {
             if (!url) throw new Error("No URL");
             const audioRes = await axios.get(url, { responseType: "arraybuffer", timeout: 60000 });
             const buffer = Buffer.from(audioRes.data);
-            if (buffer.length === 0) throw new Error("Empty buffer");
+            if (buffer.length < 50000) throw new Error("File too small");
             return buffer;
         },
         async () => {
@@ -52,12 +63,11 @@ const downloadAudio = async (videoUrl) => {
             if (!url) throw new Error("No URL");
             const audioRes = await axios.get(url, { responseType: "arraybuffer", timeout: 60000 });
             const buffer = Buffer.from(audioRes.data);
-            if (buffer.length === 0) throw new Error("Empty buffer");
+            if (buffer.length < 50000) throw new Error("File too small");
             return buffer;
         }
     ];
 
-    // Har request ke liye fresh independent try — ek fail to agla
     for (let i = 0; i < apis.length; i++) {
         try {
             const buffer = await apis[i]();
@@ -78,96 +88,97 @@ commands.forEach(pattern => {
         react: "🎶",
         filename: __filename
     }, async (conn, mek, m, { from, q, reply }) => {
-        try {
 
-            if (!q) {
-                return reply("❌ Please provide a song name or YouTube link");
-            }
+        const userId = m.sender || from;
 
-            let vid;
+        addToQueue(userId, async () => {
+            try {
+                if (!q) return reply("❌ Please provide a song name or YouTube link");
 
-            const isYT = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(q);
+                let vid;
+                const isYT = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(q);
 
-            if (isYT) {
-                let videoId = '';
-                try {
-                    const urlObj = new URL(q);
-                    if (urlObj.hostname === 'youtu.be') {
-                        videoId = urlObj.pathname.slice(1);
-                    } else {
-                        videoId = urlObj.searchParams.get('v');
+                if (isYT) {
+                    let videoId = '';
+                    try {
+                        const urlObj = new URL(q);
+                        if (urlObj.hostname === 'youtu.be') {
+                            videoId = urlObj.pathname.slice(1);
+                        } else {
+                            videoId = urlObj.searchParams.get('v');
+                        }
+                    } catch {
+                        videoId = q.split('/').pop().split('?')[0];
                     }
-                } catch {
-                    videoId = q.split('/').pop().split('?')[0];
-                }
 
-                if (!videoId) return reply("❌ Invalid YouTube link");
+                    if (!videoId) return reply("❌ Invalid YouTube link");
 
-                const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
+                    const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-                try {
-                    const search = await yts({ videoId: videoId });
-                    if (search && search.title) {
+                    try {
+                        const search = await yts({ videoId: videoId });
+                        if (search && search.title) {
+                            vid = {
+                                title: search.title,
+                                url: ytUrl,
+                                thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                                timestamp: search.duration?.timestamp || search.timestamp || 'N/A',
+                                views: search.views || 0,
+                                author: { name: search.author?.name || search.channel?.name || 'Unknown' }
+                            };
+                        }
+                    } catch (e) {}
+
+                    if (!vid) {
                         vid = {
-                            title: search.title,
+                            title: 'Unknown Title',
                             url: ytUrl,
                             thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-                            timestamp: search.duration?.timestamp || search.timestamp || 'N/A',
-                            views: search.views || 0,
-                            author: { name: search.author?.name || search.channel?.name || 'Unknown' }
+                            timestamp: 'N/A',
+                            views: 0,
+                            author: { name: 'Unknown' }
                         };
                     }
-                } catch (e) {}
 
-                if (!vid) {
-                    vid = {
-                        title: 'Unknown Title',
-                        url: ytUrl,
-                        thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-                        timestamp: 'N/A',
-                        views: 0,
-                        author: { name: 'Unknown' }
-                    };
+                } else {
+                    const { videos } = await yts(q);
+                    if (!videos.length) return reply("❌ No song results found");
+                    vid = videos[0];
                 }
 
-            } else {
-                const { videos } = await yts(q);
-                if (!videos.length) return reply("❌ No song results found");
-                vid = videos[0];
-            }
+                await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-            await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+                const caption =
+                    `*${vid.title}*\n\n` +
+                    `👤 *Channel:* ${vid.author.name}\n` +
+                    `⏱ *Duration:* ${vid.timestamp}\n` +
+                    `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
+                    `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
-            const caption =
-                `*${vid.title}*\n\n` +
-                `👤 *Channel:* ${vid.author.name}\n` +
-                `⏱ *Duration:* ${vid.timestamp}\n` +
-                `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
-                `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
-
-            await conn.sendMessage(from, {
-                image: { url: vid.thumbnail },
-                caption: caption
-            }, { quoted: mek });
-
-            const audioBuffer = await downloadAudio(vid.url);
-
-            if (audioBuffer) {
                 await conn.sendMessage(from, {
-                    audio: audioBuffer,
-                    mimetype: "audio/mpeg",
-                    fileName: `${vid.title}.mp3`
+                    image: { url: vid.thumbnail },
+                    caption: caption
                 }, { quoted: mek });
-                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-            } else {
-                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("❌ Failed to download audio. Please try again later.");
-            }
 
-        } catch (e) {
-            console.log("Play Command Error:", e);
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            reply("❌ An unexpected error occurred while processing your request.");
-        }
+                const audioBuffer = await downloadAudio(vid.url);
+
+                if (audioBuffer) {
+                    await conn.sendMessage(from, {
+                        audio: audioBuffer,
+                        mimetype: "audio/mpeg",
+                        fileName: `${vid.title}.mp3`
+                    }, { quoted: mek });
+                    await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+                } else {
+                    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                    return reply("❌ Failed to download audio. Please try again later.");
+                }
+
+            } catch (e) {
+                console.log("Play Command Error:", e);
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                reply("❌ An unexpected error occurred while processing your request.");
+            }
+        });
     });
 });
