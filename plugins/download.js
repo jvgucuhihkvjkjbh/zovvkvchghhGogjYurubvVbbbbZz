@@ -164,7 +164,7 @@ cmd({
   pattern: "mediafire",
   alias: ["mfire"],
   desc: "To download MediaFire files.",
-  react: "🎥",
+  react: "📥",
   category: "download",
   filename: __filename
 }, async (conn, m, store, {
@@ -290,7 +290,7 @@ cmd({
 
 cmd({
     pattern: "gdrive",
-    desc: "Download Google Drive files using Nekolabs API",
+    desc: "Download Google Drive files",
     react: "🌐",
     category: "download",
     filename: __filename
@@ -300,25 +300,26 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⬇️", key: m.key } });
 
-        const apiUrl = `https://api.nekolabs.web.id/downloader/google-drive?url=${encodeURIComponent(q)}`;
-        const response = await axios.get(apiUrl);
+        const apiUrl = `https://api.princetechn.com/api/download/gdrivedl?apikey=prince&url=${encodeURIComponent(q)}`;
+        const response = await axios.get(apiUrl, { timeout: 30000 });
 
-        const data = response.data.result;
-        if (!data || !data.downloadUrl) return reply("⚠️ No download URL found.");
+        const result = response.data?.result;
+        if (!result || !result.download_url) return reply("⚠️ No download URL found.");
 
-        const details = data.details || {};
-        const downloadUrl = data.directDownload || data.downloadUrl;
+        const fileName = result.name || "file";
+        const downloadUrl = result.download_url;
 
         await conn.sendMessage(from, {
             document: { url: downloadUrl },
-            fileName: details.name || "file",
-            mimetype: details.mimeType || "application/octet-stream",
-            caption: `📄 Name: ${details.name || "file"}\n📦 Size: ${details.size || "Unknown"}\n\nᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🤍`
+            fileName: fileName,
+            mimetype: "application/octet-stream",
+            caption: `📄 *Name:* ${fileName}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
         }, { quoted: m });
 
         await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (e) {
+        console.log("GDrive Error:", e.message);
         reply("❌ Error fetching the file. Please try again.");
     }
 });
