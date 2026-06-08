@@ -300,13 +300,17 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⬇️", key: m.key } });
 
-        const apiUrl = `https://api.princetechn.com/api/download/gdrivedl?apikey=prince&url=${encodeURIComponent(q)}`;
-        const response = await axios.get(apiUrl, { timeout: 30000 });
+        const encodedUrl = encodeURIComponent(q.trim());
+        const apiUrl = `https://api.princetechn.com/api/download/gdrivedl?apikey=prince&url=${encodedUrl}`;
+        const response = await axios.get(apiUrl, { 
+            timeout: 30000,
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
 
         const result = response.data?.result;
         if (!result || !result.download_url) return reply("⚠️ No download URL found.");
 
-        const fileName = result.name || "file";
+        const fileName = result.name || "gdrive_file";
         const downloadUrl = result.download_url;
 
         await conn.sendMessage(from, {
