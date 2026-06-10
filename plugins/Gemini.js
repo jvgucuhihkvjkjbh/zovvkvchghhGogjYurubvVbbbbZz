@@ -1,5 +1,6 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const FormData = require('form-data');
 
 const translateToEnglish = async (text) => {
     try {
@@ -13,7 +14,25 @@ const translateToEnglish = async (text) => {
     }
 };
 
-const getImageUrl = async (prompt) => {
+const uploadToCatbox = async (imageBuffer, filename = 'image.jpg') => {
+    try {
+        const form = new FormData();
+        form.append('reqtype', 'fileupload');
+        form.append('fileToUpload', imageBuffer, {
+            filename,
+            contentType: 'image/jpeg'
+        });
+        const res = await axios.post('https://catbox.moe/user.php', form, {
+            headers: form.getHeaders(),
+            timeout: 20000
+        });
+        return res.data?.startsWith('https') ? res.data.trim() : null;
+    } catch (e) {
+        return null;
+    }
+};
+
+const getImageBuffer = async (prompt) => {
     const encoded = encodeURIComponent(prompt);
     const apis = [
         `https://jerrycoder.oggyapi.workers.dev/ai/poll?prompt=${encoded}`,
@@ -26,10 +45,12 @@ const getImageUrl = async (prompt) => {
             if (url.includes('oggyapi')) {
                 const res = await axios.get(url, { timeout: 15000 });
                 if (res.data?.status === "success" && res.data?.image) {
-                    return res.data.image;
+                    const imgRes = await axios.get(res.data.image, { responseType: 'arraybuffer', timeout: 20000 });
+                    return Buffer.from(imgRes.data);
                 }
             } else {
-                return url;
+                const imgRes = await axios.get(url, { responseType: 'arraybuffer', timeout: 20000 });
+                return Buffer.from(imgRes.data);
             }
         } catch (e) {
             continue;
@@ -52,15 +73,21 @@ cmd({
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
         const englishPrompt = await translateToEnglish(q);
-        const imageUrl = await getImageUrl(englishPrompt);
 
-        if (!imageUrl) {
+        const imageBuffer = await getImageBuffer(englishPrompt);
+        if (!imageBuffer) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Image generate nahi hui. Dobara try karo.");
         }
 
+        const catboxUrl = await uploadToCatbox(imageBuffer);
+        if (!catboxUrl) {
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            return reply("❌ Image upload nahi hui. Dobara try karo.");
+        }
+
         await conn.sendMessage(from, {
-            image: { url: imageUrl },
+            image: { url: catboxUrl },
             caption: `🖼️ *AI Image Generated!*\n\n📝 *Prompt:* ${q}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
         }, { quoted: mek });
 
