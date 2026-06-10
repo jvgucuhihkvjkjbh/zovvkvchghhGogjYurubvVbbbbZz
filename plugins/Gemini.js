@@ -29,7 +29,6 @@ const getImageUrl = async (prompt) => {
                     return res.data.image;
                 }
             } else {
-                await axios.head(url, { timeout: 15000 });
                 return url;
             }
         } catch (e) {
