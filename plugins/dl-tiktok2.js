@@ -1,1 +1,174 @@
-const _0x59ab40=_0xd034;function _0xd9c4(){const _0x1b4392=['SxZnP','jmRaa','tt2','json','download','or:','status','6AtIpqO','error','e\x20video.','tle:*\x20','No\x20Title','❌\x20Could\x20no','author','QpFoB','❌\x20Please\x20p','rovide\x20a\x20T','rGuRC','\x0a\x0a✨\x20*ᴘᴏᴡᴇʀ','ZBXGr','sendMessag','cel.app/ap','tiktok2','🎬\x20*TIKTOK\x20','Tok\x20Video\x20','tiktok.mp4','\x0a👤\x20*Author','595680gDCFAG','WCmWv','EIIwI','PxpRz','ikTok\x20URL.','\x20later.','links','https://dr','g\x20went\x20wro','LmoXS','976680VefDgC','TikTok\x20Err','12263cBMecb','wzAfI','XdRmF',':*\x20','122825xCLsiu','2ZbVQUM','ACpCO','ttdl2','❌\x20Invalid\x20','API\x20Connec','tion\x20Faile','XJQJn','788732iWawCJ','396549hoLqTk','Downloader','/tiktok?ur','DOWNLOADER','PEIDk','Unknown','ʟ-ᴍᴅ*','Direct\x20Tik','video/mp4','1905310uwlydi','BkDpM','TikTok\x20lin','includes','t\x20fetch\x20th','data','title','18pgMMXT','ᴇᴅ\x20ʙʏ\x20ᴀᴅᴇᴇ','node-fetch','i/download','\x20try\x20again','*\x20🎬\x0a\x0a📌\x20*Ti','EzZie','❌\x20Somethin','ng.\x20Please','kamran.ver','../command','tiktok.com'];_0xd9c4=function(){return _0x1b4392;};return _0xd9c4();}function _0xd034(_0x3cb82a,_0x5752bc){_0x3cb82a=_0x3cb82a-(-0x2279+-0x521+0x28ef);const _0xa4e0d=_0xd9c4();let _0x17e3cb=_0xa4e0d[_0x3cb82a];return _0x17e3cb;}(function(_0x634aa,_0x4e07ab){const _0x2cee82=_0xd034,_0xf83f90=_0x634aa();while(!![]){try{const _0x58e719=-parseInt(_0x2cee82(0x195))/(0x8e4+-0x5c3+-0x5*0xa0)*(parseInt(_0x2cee82(0x19a))/(0x1b96+-0x145*0xa+0x771*-0x2))+-parseInt(_0x2cee82(0x1a2))/(0x1eff+0x125c+-0x3158)+-parseInt(_0x2cee82(0x189))/(0x5*0x6d1+-0x4*0x8a5+0x83)+-parseInt(_0x2cee82(0x199))/(-0x17d2+-0xcf+0x5*0x4ee)*(-parseInt(_0x2cee82(0x175))/(-0x111b+0x236a+0x1f*-0x97))+-parseInt(_0x2cee82(0x1a1))/(-0x554+-0x726+-0xb*-0x123)+parseInt(_0x2cee82(0x193))/(0x21a6+0x14da*-0x1+-0xcc4)+parseInt(_0x2cee82(0x162))/(-0x1c63+-0x167*-0x1+-0x1b05*-0x1)*(parseInt(_0x2cee82(0x15b))/(-0x550+-0x2*0xddf+0x2118));if(_0x58e719===_0x4e07ab)break;else _0xf83f90['push'](_0xf83f90['shift']());}catch(_0x4f033a){_0xf83f90['push'](_0xf83f90['shift']());}}}(_0xd9c4,-0x1bedd+-0x15a78*-0x2+-0x2dd7*-0x5));const fetch=require(_0x59ab40(0x164)),{cmd}=require(_0x59ab40(0x16c));cmd({'pattern':_0x59ab40(0x170),'alias':[_0x59ab40(0x184),_0x59ab40(0x19c)],'desc':_0x59ab40(0x159)+_0x59ab40(0x186)+_0x59ab40(0x1a3),'react':'📥','category':_0x59ab40(0x172),'filename':__filename},async(_0x43bee5,_0x337f3b,_0x23f632,{from:_0x2ace43,args:_0x1ac2e5,reply:_0xdaaf73,react:_0x3a636b})=>{const _0x3c6fa9=_0x59ab40,_0x563e1f={'BkDpM':function(_0x297035,_0x498fd3){return _0x297035(_0x498fd3);},'XdRmF':_0x3c6fa9(0x17d)+_0x3c6fa9(0x17e)+_0x3c6fa9(0x18d),'ACpCO':_0x3c6fa9(0x16d),'WCmWv':_0x3c6fa9(0x19d)+_0x3c6fa9(0x15d)+'k.','EzZie':function(_0x33f81a,_0x43a516,_0x413ba5){return _0x33f81a(_0x43a516,_0x413ba5);},'XJQJn':function(_0x1887d9,_0x527483,_0x2bb57c){return _0x1887d9(_0x527483,_0x2bb57c);},'QpFoB':_0x3c6fa9(0x19e)+_0x3c6fa9(0x19f)+'d','rGuRC':function(_0x5cc107,_0x2f44db,_0x8afd64){return _0x5cc107(_0x2f44db,_0x8afd64);},'wzAfI':_0x3c6fa9(0x17a)+_0x3c6fa9(0x15f)+_0x3c6fa9(0x177),'PxpRz':_0x3c6fa9(0x179),'LmoXS':_0x3c6fa9(0x157),'PEIDk':_0x3c6fa9(0x15a),'jmRaa':function(_0x5655bc,_0x36abe9,_0x68b3ae){return _0x5655bc(_0x36abe9,_0x68b3ae);},'ZBXGr':_0x3c6fa9(0x194)+_0x3c6fa9(0x173),'EIIwI':function(_0x2dbec6,_0x5a7078){return _0x2dbec6(_0x5a7078);},'SxZnP':_0x3c6fa9(0x169)+_0x3c6fa9(0x191)+_0x3c6fa9(0x16a)+_0x3c6fa9(0x166)+_0x3c6fa9(0x18e)};try{const _0x1bbec2=_0x1ac2e5[0x4d6+-0x1112+-0xc*-0x105];if(!_0x1bbec2)return _0x563e1f[_0x3c6fa9(0x15c)](_0xdaaf73,_0x563e1f[_0x3c6fa9(0x197)]);if(!_0x1bbec2[_0x3c6fa9(0x15e)](_0x563e1f[_0x3c6fa9(0x19b)]))return _0x563e1f[_0x3c6fa9(0x15c)](_0xdaaf73,_0x563e1f[_0x3c6fa9(0x18a)]);if(_0x3a636b)await _0x563e1f[_0x3c6fa9(0x168)](_0x3a636b,_0x337f3b,'⏳');const _0x3ceff6=await _0x563e1f[_0x3c6fa9(0x15c)](fetch,_0x3c6fa9(0x190)+_0x3c6fa9(0x16b)+_0x3c6fa9(0x183)+_0x3c6fa9(0x165)+_0x3c6fa9(0x1a4)+'l='+_0x563e1f[_0x3c6fa9(0x15c)](encodeURIComponent,_0x1bbec2));if(!_0x3ceff6['ok']){if(_0x3a636b)await _0x563e1f[_0x3c6fa9(0x1a0)](_0x3a636b,_0x337f3b,'❌');throw new Error(_0x563e1f[_0x3c6fa9(0x17c)]);}const _0x14ead3=await _0x3ceff6[_0x3c6fa9(0x171)]();if(!_0x14ead3[_0x3c6fa9(0x174)]||!_0x14ead3[_0x3c6fa9(0x160)]){if(_0x3a636b)await _0x563e1f[_0x3c6fa9(0x17f)](_0x3a636b,_0x337f3b,'❌');return _0x563e1f[_0x3c6fa9(0x15c)](_0xdaaf73,_0x563e1f[_0x3c6fa9(0x196)]);}const _0x5c15ec=_0x14ead3[_0x3c6fa9(0x160)],_0x14104f=_0x5c15ec[_0x3c6fa9(0x18f)][-0x106*0xd+-0x197*0x2+0x107c],_0x2b180c=_0x3c6fa9(0x185)+_0x3c6fa9(0x155)+_0x3c6fa9(0x167)+_0x3c6fa9(0x178)+(_0x5c15ec[_0x3c6fa9(0x161)]||_0x563e1f[_0x3c6fa9(0x18c)])+(_0x3c6fa9(0x188)+_0x3c6fa9(0x198))+(_0x5c15ec[_0x3c6fa9(0x17b)]||_0x563e1f[_0x3c6fa9(0x192)])+(_0x3c6fa9(0x180)+_0x3c6fa9(0x163)+_0x3c6fa9(0x158));await _0x43bee5[_0x3c6fa9(0x182)+'e'](_0x2ace43,{'video':{'url':_0x14104f},'caption':_0x2b180c,'mimetype':_0x563e1f[_0x3c6fa9(0x156)],'fileName':_0x3c6fa9(0x187)},{'quoted':_0x337f3b});if(_0x3a636b)await _0x563e1f[_0x3c6fa9(0x16f)](_0x3a636b,_0x337f3b,'✅');}catch(_0x57f6eb){console[_0x3c6fa9(0x176)](_0x563e1f[_0x3c6fa9(0x181)],_0x57f6eb);if(_0x3a636b)await _0x563e1f[_0x3c6fa9(0x17f)](_0x3a636b,_0x337f3b,'❌');_0x563e1f[_0x3c6fa9(0x18b)](_0xdaaf73,_0x563e1f[_0x3c6fa9(0x16e)]);}});
+const axios = require('axios');
+const { cmd } = require("../command");
+
+const fetchTikTok = async (url) => {
+    const encoded = encodeURIComponent(url);
+    const apis = [
+        {
+            url: `https://jerrycoder.oggyapi.workers.dev/down/tiktok?url=${encoded}`,
+            extract: (d) => {
+                const data = d?.result?.data;
+                if (!data) return null;
+                return {
+                    title: data.title,
+                    author: data.author?.unique_id || data.author?.nickname,
+                    video: data.play,
+                    video_hd: data.hdplay,
+                    music: data.music,
+                    cover: data.cover,
+                    duration: data.duration,
+                    likes: data.digg_count,
+                    comments: data.comment_count,
+                    shares: data.share_count
+                };
+            }
+        },
+        {
+            url: `https://drkamran.vercel.app/api/download/tiktok?url=${encoded}`,
+            extract: (d) => {
+                const r = d?.data;
+                if (!r?.links?.[0]) return null;
+                return {
+                    title: r.title,
+                    author: r.author,
+                    video: r.links[0]
+                };
+            }
+        },
+        {
+            url: `https://api.princetechn.com/api/download/tiktokdlv2?apikey=prince&url=${encoded}`,
+            extract: (d) => {
+                const r = d?.result;
+                if (!r) return null;
+                return {
+                    title: r.title,
+                    author: r.author?.name,
+                    video: r.video,
+                    video_hd: r.video_hd,
+                    music: r.music,
+                    cover: r.cover,
+                    duration: r.duration
+                };
+            }
+        },
+        {
+            url: `https://api.princetechn.com/api/download/tiktokdlv3?apikey=prince&url=${encoded}`,
+            extract: (d) => {
+                const r = d?.result;
+                if (!r) return null;
+                return {
+                    title: r.title,
+                    author: r.author?.name,
+                    video: r.video,
+                    video_hd: r.video_hd,
+                    music: r.music,
+                    cover: r.cover,
+                    duration: r.duration
+                };
+            }
+        },
+        {
+            url: `https://api.princetechn.com/api/download/tiktok?apikey=prince&url=${encoded}`,
+            extract: (d) => {
+                const r = d?.result;
+                if (!r) return null;
+                return {
+                    title: r.title,
+                    author: r.author?.name,
+                    video: r.video,
+                    music: r.music,
+                    cover: r.cover,
+                    duration: r.duration
+                };
+            }
+        },
+        {
+            url: `https://api.princetechn.com/api/download/tiktokdlv4?apikey=prince&url=${encoded}`,
+            extract: (d) => {
+                const r = d?.result;
+                if (!r) return null;
+                return {
+                    title: r.title,
+                    author: r.username,
+                    video: r.videoUrl,
+                    music: r.audioUrl,
+                    cover: r.thumbnailUrl
+                };
+            }
+        }
+    ];
+
+    for (const api of apis) {
+        try {
+            console.log(`TikTok trying: ${api.url}`);
+            const res = await axios.get(api.url, { timeout: 15000 });
+            const data = api.extract(res.data);
+            if (data?.video) {
+                console.log(`TikTok success: ${api.url}`);
+                return data;
+            }
+        } catch (e) {
+            console.log(`TikTok API failed: ${api.url} — ${e.message}`);
+            continue;
+        }
+    }
+    return null;
+};
+
+const formatNum = (n) => {
+    if (!n) return '0';
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return n.toString();
+};
+
+cmd({
+  pattern: "tt2",
+  alias: ["tiktok2", "ttdl2"],
+  desc: "Direct TikTok Video Downloader",
+  react: "📥",
+  category: "download",
+  filename: __filename
+}, async (conn, mek, m, { from, args, reply }) => {
+  try {
+    const url = args[0];
+    if (!url) return reply("❌ Please provide a TikTok URL.");
+    if (!url.includes("tiktok.com")) return reply("❌ Invalid TikTok link.");
+
+    await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+
+    const data = await fetchTikTok(url);
+
+    if (!data) {
+      await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+      return reply("❌ Could not fetch the video. Try again.");
+    }
+
+    const videoUrl = data.video_hd || data.video;
+    const caption =
+`🎬 *TIKTOK DOWNLOADER* 🎬
+📌 *TITLE:* ${data.title || 'No Title'}
+👤 *AUTHOR:* ${data.author || 'Unknown'}
+⏱️ *DURATION:* ${data.duration ? data.duration + ' SEC' : 'N/A'}
+━━━━━━━━━━━━━━━━━━━━
+❤️ *LIKES:* ${formatNum(data.likes)}
+💬 *COMMENTS:* ${formatNum(data.comments)}
+🔗 *SHARES:* ${formatNum(data.shares)}
+
+> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+
+    await conn.sendMessage(from, {
+      video: { url: videoUrl },
+      caption,
+      mimetype: "video/mp4",
+      fileName: "tiktok.mp4"
+    }, { quoted: mek });
+
+    await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+
+  } catch (e) {
+    console.error("TikTok Error:", e.message);
+    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+    reply("❌ Something went wrong. Please try again later.");
+  }
+});
