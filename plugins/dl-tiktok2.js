@@ -146,11 +146,10 @@ cmd({
 
     const videoUrl = data.video_hd || data.video;
     const caption =
-`🎬 *TIKTOK DOWNLOADER* 🎬
+`🎬 *TIKTOK DOWNLOADER*
 📌 *TITLE:* ${data.title || 'No Title'}
 👤 *AUTHOR:* ${data.author || 'Unknown'}
 ⏱️ *DURATION:* ${data.duration ? data.duration + ' SEC' : 'N/A'}
-━━━━━━━━━━━━━━━━━━━━
 ❤️ *LIKES:* ${formatNum(data.likes)}
 💬 *COMMENTS:* ${formatNum(data.comments)}
 🔗 *SHARES:* ${formatNum(data.shares)}
