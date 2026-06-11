@@ -14,17 +14,72 @@ cmd({
         if (!isGroup) return reply("⚠️ This command only works in groups.")
         if (!isAdmins && !isCreator) return reply("❌ Access Denied! Only group admins can use this command.")
 
-        const metadata = await conn.groupMetadata(from)
-        const participants = metadata.participants || []
+        if (
+            body.trim().toLowerCase() === ".accept" ||
+            body.trim().toLowerCase() === `${config.PREFIX}accept`
+        ) {
+            return reply(`
+╭━━〔 ACCEPT MENU 〕━━⬣
+┃
+┃ ◈ .acceptall
+┃ ➜ Accept all pending requests
+┃
+┃ ◈ .accept 15
+┃ ➜ Accept only 15 requests
+┃
+╰━━━━━━━━━━━━━━⬣
+`)
+        }
 
-        return reply(
-            "Bot ID: " + conn.user?.id +
-            "\nBot LID: " + (conn.user?.lid || 'none') +
-            "\n\nParticipants:\n" +
-            participants.map(p => `${p.id} | lid: ${p.lid || 'none'} | admin: ${p.admin || 'no'}`).join('\n')
-        )
+        let pending = await conn.groupRequestParticipantsList(from)
+
+        if (!pending || pending.length === 0) {
+            return reply("❌ No pending join requests found.")
+        }
+
+        const metadata = await conn.groupMetadata(from)
+        const availableSlots = 1024 - metadata.participants.length
+
+        let limit
+
+        if (body.toLowerCase().startsWith(".acceptall")) {
+            limit = pending.length
+        } else {
+          
+            limit = parseInt(args[0])
+
+            if (isNaN(limit) || limit <= 0) {
+                return reply("❌ Please provide a valid number.")
+            }
+        }
+
+        let toAccept = pending.slice(0, Math.min(limit, availableSlots))
+
+        if (toAccept.length === 0) {
+            return reply("❌ Group is full or no requests to process.")
+        }
+
+        let approved = 0
+
+        for (const user of toAccept) {
+            try {
+                const jid = user.jid || user.id
+
+                await conn.groupRequestParticipantsUpdate(from, [jid], "approve")
+
+                approved++
+
+                await sleep(2000)
+
+            } catch (err) {
+                await sleep(3000)
+            }
+        }
+
+        return reply(`✅ Successfully approved ${approved} join requests.`)
 
     } catch (e) {
-        return reply("❌ Error: " + e.message)
+        console.log("ACCEPT ERROR:", e)
+        return reply("❌ Failed to accept join requests.")
     }
 })
