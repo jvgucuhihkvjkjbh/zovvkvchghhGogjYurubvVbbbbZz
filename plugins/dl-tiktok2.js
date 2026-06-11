@@ -134,7 +134,13 @@ const downloadAndCompress = async (videoUrl, outputPath) => {
     return new Promise((resolve, reject) => {
         writer.on('finish', async () => {
             try {
-                execSync(`ffmpeg -i "${tempInput}" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k "${outputPath}" -y`, { stdio: 'pipe' });
+                execSync(`ffmpeg -i "${tempInput}" -c:v libx264 -preset fast -crf 25 -c:a aac -b:a 128k -vf "scale=720:-1" "${outputPath}" -y 2>/dev/null`, { stdio: 'pipe' });
+                
+                const fileSize = fs.statSync(outputPath).size;
+                
+                if (fileSize > 25 * 1024 * 1024) {
+                    execSync(`ffmpeg -i "${tempInput}" -c:v libx264 -preset veryfast -crf 27 -c:a aac -b:a 128k -vf "scale=720:-1" "${outputPath}" -y 2>/dev/null`, { stdio: 'pipe' });
+                }
                 
                 if (fs.existsSync(tempInput)) {
                     fs.unlinkSync(tempInput);
