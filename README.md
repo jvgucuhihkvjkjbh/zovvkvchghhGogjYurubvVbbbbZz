@@ -61,7 +61,7 @@
     <tr>
       <td align="center" style="padding:15px;">
         <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
-          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="150"/>
+          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="75"/>
         </a>
       </td>
       <td align="center" style="padding:15px;">
