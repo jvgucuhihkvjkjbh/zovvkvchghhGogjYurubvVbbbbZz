@@ -60,13 +60,12 @@
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
----
-
+----
 ## 🔐 GET SESSION ID — PAIR CODE
 
 <p align="center">
   <a href="https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/" target="_blank">
-    <img src="https://img.shields.io/badge/🔑_GET_PAIR_CODE-CLICK_HERE-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320"/>
+    <img src="https://img.shields.io/badge/🔑_GET_PAIR_CODE-CLICK_HERE-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" width="300"/>
   </a>
 </p>
 
@@ -83,7 +82,7 @@
     <tr>
       <td align="center" style="padding:15px;">
         <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
-          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" height="105"/>
+          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" height="250"/>
         </a>
       </td>
       <td align="center" style="padding:15px;">
