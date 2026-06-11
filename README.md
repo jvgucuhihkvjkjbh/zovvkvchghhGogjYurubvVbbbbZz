@@ -10,6 +10,7 @@
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/network/members"><img title="Forks" src="https://img.shields.io/github/forks/Adeel-Xtech/ADEEL-MD?color=C8860A&style=flat-square&logo=github"/></a>
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/"><img title="Size" src="https://img.shields.io/github/repo-size/Adeel-Xtech/ADEEL-MD?style=flat-square&color=8B4513"/></a>
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/graphs/commit-activity"><img height="20" src="https://img.shields.io/badge/Maintained%3F-yes-F5A623.svg"/></a>
+  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/fork"><img title="Forks" src="https://img.shields.io/github/forks/Adeel-Xtech/ADEEL-MD?label=Fork&style=flat-square&color=F5A623"/></a>
 </p>
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
