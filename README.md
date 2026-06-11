@@ -78,17 +78,22 @@
 
 ## 🚀 DEPLOYMENT OPTIONS
 
-<p align="center">
-  <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
-    <img src="https://img.shields.io/badge/━━━━━━━━━━%20🟣%20DEPLOY%20ON%20HEROKU%20━━━━━━━━━━-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" height="45"/>
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://adeel-md-vps.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/━━━━━━━━━━%20🖥️%20DEPLOY%20ON%20VPS%20━━━━━━━━━━-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" height="45"/>
-  </a>
-</p>
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" style="padding:12px;">
+        <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
+          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" height="45"/>
+        </a>
+      </td>
+      <td align="center" style="padding:12px;">
+        <a href="https://adeel-md-vps.vercel.app/" target="_blank">
+          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" height="45"/>
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
