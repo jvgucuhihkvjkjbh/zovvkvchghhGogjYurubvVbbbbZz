@@ -6,11 +6,10 @@
 
 <!-- BADGES -->
 <p align="center">
-  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/Adeel-Xtech/ADEEL-MD?color=F5A623&style=flat-square&logo=github"/></a>
-  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/network/members"><img title="Forks" src="https://img.shields.io/github/forks/Adeel-Xtech/ADEEL-MD?color=C8860A&style=flat-square&logo=github"/></a>
-  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/"><img title="Size" src="https://img.shields.io/github/repo-size/Adeel-Xtech/ADEEL-MD?style=flat-square&color=8B4513"/></a>
+  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/stargazers/"><img title="Stars" src="https://img.shields.io/github/stars/Adeel-Xtech/ADEEL-MD?color=F5A623&style=flat-square&logo=github&cacheSeconds=3600"/></a>
+  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/network/members"><img title="Forks" src="https://img.shields.io/github/forks/Adeel-Xtech/ADEEL-MD?color=C8860A&style=flat-square&logo=github&cacheSeconds=3600"/></a>
+  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/"><img title="Size" src="https://img.shields.io/github/repo-size/Adeel-Xtech/ADEEL-MD?style=flat-square&color=8B4513&cacheSeconds=3600"/></a>
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/graphs/commit-activity"><img height="20" src="https://img.shields.io/badge/Maintained%3F-yes-F5A623.svg"/></a>
-  <a href="https://github.com/Adeel-Xtech/ADEEL-MD/fork"><img title="Forks" src="https://img.shields.io/github/forks/Adeel-Xtech/ADEEL-MD?label=Fork&style=flat-square&color=F5A623"/></a>
 </p>
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
@@ -118,10 +117,6 @@
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
 ---
-
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=15&duration=3000&pause=1000&color=F5A623&background=00000000&center=true&vCenter=true&width=500&lines=THANKS+TO+ALL+CONTRIBUTORS+🙏;SPECIAL+THANKS+TO+OUR+STAR+SUPPORTERS+⭐;KEEP+SUPPORTING+ADEEL-MD+💛" alt="Contributors"/>
-</p>
 
 <!-- STARGAZERS -->
 <p align="center">
