@@ -66,7 +66,7 @@
       </td>
       <td align="center" style="padding:15px;">
         <a href="https://adeel-md-vps.vercel.app/" target="_blank">
-          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="45"/>
+          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="75"/>
         </a>
       </td>
     </tr>
