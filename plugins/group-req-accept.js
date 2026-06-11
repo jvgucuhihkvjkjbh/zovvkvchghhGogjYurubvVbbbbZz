@@ -33,7 +33,20 @@ cmd({
 
         let pending
         try {
-            pending = await conn.groupRequestParticipantsList(from)
+            const result = await conn.query({
+                tag: "iq",
+                attrs: {
+                    id: conn.generateMessageTag(),
+                    type: "get",
+                    xmlns: "w:g2",
+                    to: from,
+                },
+                content: [{ tag: "membership_approval_requests", attrs: {} }]
+            })
+
+            const requests = result?.content?.[0]?.content || []
+            pending = requests.map(r => ({ jid: r.attrs?.jid || r.attrs?.id })).filter(r => r.jid)
+
         } catch (listErr) {
             return reply("❌ List Error: " + listErr.message)
         }
