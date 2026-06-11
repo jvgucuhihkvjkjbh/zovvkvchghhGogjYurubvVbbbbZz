@@ -2,6 +2,29 @@ const config = require('../config')
 const { cmd, commands } = require('../command')
 const { sleep } = require('../lib/functions')
 
+const normalizeId = (id) => {
+    if (!id) return '';
+    return id
+        .replace(/:[0-9]+/g, '')
+        .replace(/@(lid|s.whatsapp.net|c.us|g.us)/g, '')
+        .replace(/[^\d]/g, '');
+};
+
+async function isBotAdmin(conn, chatId) {
+    const metadata = await conn.groupMetadata(chatId);
+    const participants = metadata.participants || [];
+    const botId = normalizeId(conn.user?.id || '');
+    const botLid = normalizeId(conn.user?.lid || '');
+    return participants.some(p => {
+        if (!(p.admin === "admin" || p.admin === "superadmin")) return false;
+        const ids = [p.id, p.lid, p.phoneNumber].filter(Boolean);
+        return ids.some(id => {
+            const n = normalizeId(id);
+            return n === botId || n === botLid;
+        });
+    });
+}
+
 cmd({
     pattern: "accept",
     alias: ["acceptall"],
@@ -31,72 +54,21 @@ cmd({
 `)
         }
 
-        const metadata = await conn.groupMetadata(from)
+        const botAdmin = await isBotAdmin(conn, from)
+        if (!botAdmin) return reply("❌ Bot must be a group admin.")
 
-        const botData = metadata.participants.find(p => p.id === conn.user.id)
-        if (!botData?.admin) {
-            return reply("❌ Bot must be a group admin.")
-        }
-
-        // ━━━ PENDING LIST - Multiple Fallback Methods ━━━
-        let pending = null
-
-        // Method 1 - Standard
+        let pending
         try {
             pending = await conn.groupRequestParticipantsList(from)
-            if (pending && pending.length >= 0) {
-                // Method 1 کام کر گیا
-            }
-        } catch (e1) {
-            pending = null
-        }
-
-        // Method 2 - Raw Query (RC10+)
-        if (!pending) {
-            try {
-                const result = await conn.query({
-                    tag: "iq",
-                    attrs: {
-                        id: conn.generateMessageTag(),
-                        type: "get",
-                        xmlns: "w:g2",
-                        to: from,
-                    },
-                    content: [{ tag: "membership_approval_requests", attrs: {} }]
-                })
-                const requests = result?.content?.[0]?.content || []
-                pending = requests.map(r => ({
-                    jid: r.attrs?.jid || r.attrs?.id
-                })).filter(r => r.jid)
-            } catch (e2) {
-                pending = null
-            }
-        }
-
-        // Method 3 - groupFetchAllParticipants
-        if (!pending) {
-            try {
-                const all = await conn.groupFetchAllParticipants(from)
-                pending = all?.filter(p => p?.pending === true) || []
-            } catch (e3) {
-                pending = null
-            }
-        }
-
-        // Method 4 - groupMetadata pending
-        if (!pending) {
-            try {
-                const meta = await conn.groupMetadata(from)
-                pending = meta?.pendingParticipants || []
-            } catch (e4) {
-                pending = null
-            }
+        } catch (listErr) {
+            return reply("❌ List Error: " + listErr.message)
         }
 
         if (!pending || pending.length === 0) {
             return reply("❌ No pending join requests found.")
         }
 
+        const metadata = await conn.groupMetadata(from)
         const availableSlots = 1024 - metadata.participants.length
 
         let limit
@@ -123,58 +95,16 @@ cmd({
             try {
                 const jid = user.jid || user.id
                 if (!jid) continue
-
-                // Approve Method 1 - Standard
-                let done = false
-                try {
-                    await conn.groupRequestParticipantsUpdate(from, [jid], "approve")
-                    done = true
-                } catch (a1) {}
-
-                // Approve Method 2 - Raw Query
-                if (!done) {
-                    try {
-                        await conn.query({
-                            tag: "iq",
-                            attrs: {
-                                id: conn.generateMessageTag(),
-                                type: "set",
-                                xmlns: "w:g2",
-                                to: from,
-                            },
-                            content: [{
-                                tag: "membership_requests_action",
-                                attrs: {},
-                                content: [{
-                                    tag: "approve",
-                                    attrs: {},
-                                    content: [{
-                                        tag: "participant",
-                                        attrs: { jid: jid }
-                                    }]
-                                }]
-                            }]
-                        })
-                        done = true
-                    } catch (a2) {}
-                }
-
-                if (done) {
-                    approved++
-                } else {
-                    failed++
-                }
-
+                await conn.groupRequestParticipantsUpdate(from, [jid], "approve")
+                approved++
                 await sleep(2000)
-
             } catch (err) {
                 failed++
                 await sleep(3000)
             }
         }
 
-        let resultMsg = `✅ Approved: ${approved}\n❌ Failed: ${failed}`
-        return reply(resultMsg)
+        return reply(`✅ Approved: ${approved}\n❌ Failed: ${failed}`)
 
     } catch (e) {
         return reply("❌ Error: " + e.message)
