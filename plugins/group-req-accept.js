@@ -31,7 +31,12 @@ cmd({
 `)
         }
 
-        let pending = await conn.groupRequestParticipantsList(from)
+        let pending
+        try {
+            pending = await conn.groupRequestParticipantsList(from)
+        } catch (listErr) {
+            return reply("❌ List Error: " + listErr.message)
+        }
 
         if (!pending || pending.length === 0) {
             return reply("❌ No pending join requests found.")
@@ -45,9 +50,7 @@ cmd({
         if (body.toLowerCase().startsWith(".acceptall")) {
             limit = pending.length
         } else {
-          
             limit = parseInt(args[0])
-
             if (isNaN(limit) || limit <= 0) {
                 return reply("❌ Please provide a valid number.")
             }
@@ -60,26 +63,30 @@ cmd({
         }
 
         let approved = 0
+        let failed = 0
+        let failedErrors = []
 
         for (const user of toAccept) {
             try {
                 const jid = user.jid || user.id
-
                 await conn.groupRequestParticipantsUpdate(from, [jid], "approve")
-
                 approved++
-
                 await sleep(2000)
-
             } catch (err) {
+                failed++
+                failedErrors.push(err.message)
                 await sleep(3000)
             }
         }
 
-        return reply(`✅ Successfully approved ${approved} join requests.`)
+        let resultMsg = `✅ Approved: ${approved}\n❌ Failed: ${failed}`
+        if (failedErrors.length > 0) {
+            resultMsg += `\n\n⚠️ Errors:\n${[...new Set(failedErrors)].join('\n')}`
+        }
+
+        return reply(resultMsg)
 
     } catch (e) {
-        console.log("ACCEPT ERROR:", e)
-        return reply("❌ Failed to accept join requests.")
+        return reply("❌ Error: " + e.message)
     }
 })
