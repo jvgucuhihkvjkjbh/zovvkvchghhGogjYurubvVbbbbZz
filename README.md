@@ -39,27 +39,6 @@
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
----
-
-## ⚡ SPECIAL FEATURES
-
-<p align="center">
-
-| ✅ FEATURE | ✅ FEATURE |
-|:---:|:---:|
-| 🛡️ ANTI-DELETE | 👁️ AUTO-READ STATUS |
-| 💬 AUTO-REACT STATUS | 👋 WELCOME & GOODBYE |
-| 🔗 ANTI-LINK | 🚫 ANTI-SPAM |
-| 🌐 ALWAYS ONLINE | ⌨️ AUTO-TYPING |
-| 👑 ANTI-PROMOTE | 🔒 ANTI-DEMOTE |
-| 📵 ANTI-STATUS | 🏷️ ANTI-TAG |
-| 📰 ANTI-NEWSLETTER | 🔧 CUSTOM PREFIX |
-| ⚡ FAST RESPONSE | 🕐 24/7 STABILITY |
-
-</p>
-
-<a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
-
 ----
 ## 🔐 GET SESSION ID — PAIR CODE
 
