@@ -12,14 +12,7 @@
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/graphs/commit-activity"><img height="20" src="https://img.shields.io/badge/Maintained%3F-yes-F5A623.svg"/></a>
 </p>
 
-<a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
-
-<!-- ANIMATED WELCOME -->
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=50&pause=800&color=F5A623&center=true&vCenter=true&width=900&height=120&lines=🌟+WELCOME+TO+ADEEL-MD+🌟;⚡+MULTI+DEVICE+WHATSAPP+BOT+⚡;🔥+CREATED+BY+ADEEL+XTECH+🔥;💫+FAST+%7C+POWERFUL+%7C+STABLE+💫" alt="ADEEL-MD"/>
-</p>
-
-<a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
+<a><img src='https://i.imgur.com/LyHic3i.gif'/></a
 
 <!-- DEVELOPER NAME -->
 <p align="center">
