@@ -83,9 +83,7 @@
 <p align="center">
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/fork" target="_blank">
     <img src="https://img.shields.io/badge/🍴_FORK-THIS_REPO-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100"/>
-    
-  </a>
-  
+ </a>
   &nbsp;&nbsp;
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
     <img src="https://img.shields.io/badge/⭐_STAR-THIS_REPO-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100"/>
