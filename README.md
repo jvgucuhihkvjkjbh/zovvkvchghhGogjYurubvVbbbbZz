@@ -62,12 +62,12 @@
     <tr>
       <td align="center" style="padding:15px;">
         <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
-          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="45"/>
+          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="75"/>
         </a>
       </td>
       <td align="center" style="padding:15px;">
         <a href="https://adeel-md-vps.vercel.app/" target="_blank">
-          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="45"/>
+          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" width="320" height="75"/>
         </a>
       </td>
     </tr>
@@ -83,7 +83,7 @@
 <p align="center">
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/fork" target="_blank">
     <img src="https://img.shields.io/badge/🍴_FORK-THIS_REPO-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100"/>
- </a>
+  </a>
   &nbsp;&nbsp;
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
     <img src="https://img.shields.io/badge/⭐_STAR-THIS_REPO-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100"/>
@@ -116,17 +116,23 @@
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
+---
+
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=15&duration=3000&pause=1000&color=F5A623&background=00000000&center=true&vCenter=true&width=500&lines=THANKS+TO+ALL+CONTRIBUTORS+🙏;SPECIAL+THANKS+TO+OUR+STAR+SUPPORTERS+⭐;KEEP+SUPPORTING+ADEEL-MD+💛" alt="Contributors"/>
+</p>
+
 <!-- STARGAZERS -->
 <p align="center">
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/stargazers">
-    <img src="http://reporoster.com/stars/dark/Adeel-Xtech/ADEEL-MD" alt="Stargazers"/>
+    <img src="https://img.shields.io/github/stars/Adeel-Xtech/ADEEL-MD?style=social" alt="Stargazers"/>
   </a>
 </p>
 
 <!-- FORKERS -->
 <p align="center">
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/network/members">
-    <img src="http://reporoster.com/forks/dark/Adeel-Xtech/ADEEL-MD" alt="Forkers"/>
+    <img src="https://img.shields.io/github/forks/Adeel-Xtech/ADEEL-MD?style=social" alt="Forkers"/>
   </a>
 </p>
 
