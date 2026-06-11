@@ -40,7 +40,7 @@
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
 ----
-## 🔐 GET SESSION ID — PAIR CODE
+## 🔐 GET PAIR CODE
 
 <p align="center">
   <a href="https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/" target="_blank">
@@ -54,7 +54,7 @@
 
 ---
 
-## 🚀 DEPLOYMENT OPTIONS
+## 🚀 DEPLOYMENT
 
 <div align="center">
   <table>
