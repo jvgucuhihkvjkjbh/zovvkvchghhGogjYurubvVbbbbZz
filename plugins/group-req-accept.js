@@ -31,31 +31,72 @@ cmd({
 `)
         }
 
-        let pending
+        const metadata = await conn.groupMetadata(from)
+
+        const botData = metadata.participants.find(p => p.id === conn.user.id)
+        if (!botData?.admin) {
+            return reply("❌ Bot must be a group admin.")
+        }
+
+        // ━━━ PENDING LIST - Multiple Fallback Methods ━━━
+        let pending = null
+
+        // Method 1 - Standard
         try {
-            const result = await conn.query({
-                tag: "iq",
-                attrs: {
-                    id: conn.generateMessageTag(),
-                    type: "get",
-                    xmlns: "w:g2",
-                    to: from,
-                },
-                content: [{ tag: "membership_approval_requests", attrs: {} }]
-            })
+            pending = await conn.groupRequestParticipantsList(from)
+            if (pending && pending.length >= 0) {
+                // Method 1 کام کر گیا
+            }
+        } catch (e1) {
+            pending = null
+        }
 
-            const requests = result?.content?.[0]?.content || []
-            pending = requests.map(r => ({ jid: r.attrs?.jid || r.attrs?.id })).filter(r => r.jid)
+        // Method 2 - Raw Query (RC10+)
+        if (!pending) {
+            try {
+                const result = await conn.query({
+                    tag: "iq",
+                    attrs: {
+                        id: conn.generateMessageTag(),
+                        type: "get",
+                        xmlns: "w:g2",
+                        to: from,
+                    },
+                    content: [{ tag: "membership_approval_requests", attrs: {} }]
+                })
+                const requests = result?.content?.[0]?.content || []
+                pending = requests.map(r => ({
+                    jid: r.attrs?.jid || r.attrs?.id
+                })).filter(r => r.jid)
+            } catch (e2) {
+                pending = null
+            }
+        }
 
-        } catch (listErr) {
-            return reply("❌ List Error: " + listErr.message)
+        // Method 3 - groupFetchAllParticipants
+        if (!pending) {
+            try {
+                const all = await conn.groupFetchAllParticipants(from)
+                pending = all?.filter(p => p?.pending === true) || []
+            } catch (e3) {
+                pending = null
+            }
+        }
+
+        // Method 4 - groupMetadata pending
+        if (!pending) {
+            try {
+                const meta = await conn.groupMetadata(from)
+                pending = meta?.pendingParticipants || []
+            } catch (e4) {
+                pending = null
+            }
         }
 
         if (!pending || pending.length === 0) {
             return reply("❌ No pending join requests found.")
         }
 
-        const metadata = await conn.groupMetadata(from)
         const availableSlots = 1024 - metadata.participants.length
 
         let limit
@@ -77,26 +118,62 @@ cmd({
 
         let approved = 0
         let failed = 0
-        let failedErrors = []
 
         for (const user of toAccept) {
             try {
                 const jid = user.jid || user.id
-                await conn.groupRequestParticipantsUpdate(from, [jid], "approve")
-                approved++
+                if (!jid) continue
+
+                // Approve Method 1 - Standard
+                let done = false
+                try {
+                    await conn.groupRequestParticipantsUpdate(from, [jid], "approve")
+                    done = true
+                } catch (a1) {}
+
+                // Approve Method 2 - Raw Query
+                if (!done) {
+                    try {
+                        await conn.query({
+                            tag: "iq",
+                            attrs: {
+                                id: conn.generateMessageTag(),
+                                type: "set",
+                                xmlns: "w:g2",
+                                to: from,
+                            },
+                            content: [{
+                                tag: "membership_requests_action",
+                                attrs: {},
+                                content: [{
+                                    tag: "approve",
+                                    attrs: {},
+                                    content: [{
+                                        tag: "participant",
+                                        attrs: { jid: jid }
+                                    }]
+                                }]
+                            }]
+                        })
+                        done = true
+                    } catch (a2) {}
+                }
+
+                if (done) {
+                    approved++
+                } else {
+                    failed++
+                }
+
                 await sleep(2000)
+
             } catch (err) {
                 failed++
-                failedErrors.push(err.message)
                 await sleep(3000)
             }
         }
 
         let resultMsg = `✅ Approved: ${approved}\n❌ Failed: ${failed}`
-        if (failedErrors.length > 0) {
-            resultMsg += `\n\n⚠️ Errors:\n${[...new Set(failedErrors)].join('\n')}`
-        }
-
         return reply(resultMsg)
 
     } catch (e) {
