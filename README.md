@@ -12,9 +12,11 @@
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/graphs/commit-activity"><img height="20" src="https://img.shields.io/badge/Maintained%3F-yes-F5A623.svg"/></a>
 </p>
 
+<a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
+
 <!-- ANIMATED WELCOME -->
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=55&pause=800&color=F5A623&center=true&vCenter=true&width=900&height=120&lines=🌟+WELCOME+TO+ADEEL-MD+🌟;⚡+MULTI+DEVICE+WHATSAPP+BOT+⚡;🔥+CREATED+BY+ADEEL+XTECH+🔥;💫+FAST+%7C+POWERFUL+%7C+STABLE+💫" alt="ADEEL-MD Welcome"/>
+  <img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=50&pause=800&color=F5A623&center=true&vCenter=true&width=900&height=120&lines=🌟+WELCOME+TO+ADEEL-MD+🌟;⚡+MULTI+DEVICE+WHATSAPP+BOT+⚡;🔥+CREATED+BY+ADEEL+XTECH+🔥;💫+FAST+%7C+POWERFUL+%7C+STABLE+💫" alt="ADEEL-MD Welcome"/>
 </p>
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
@@ -22,7 +24,7 @@
 <!-- DEVELOPER NAME -->
 <p align="center">
   <a href="https://github.com/Adeel-Xtech" target="_blank">
-    <img src="./ADEEL/adeel.svg" width="300" alt="Developer — ADEEL"/>
+    <img src="https://img.shields.io/badge/👨‍💻_DEVELOPER-ADEEL_XTECH-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100"/>
   </a>
 </p>
 
@@ -86,14 +88,14 @@
 <div align="center">
   <table>
     <tr>
-      <td align="center">
+      <td align="center" style="padding:10px;">
         <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
-          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" height="40"/>
+          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5E6C8?style=for-the-badge&logoColor=1a1100&labelColor=C8860A" height="36"/>
         </a>
       </td>
-      <td align="center">
+      <td align="center" style="padding:10px;">
         <a href="https://adeel-md-vps.vercel.app/" target="_blank">
-          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" height="40"/>
+          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-F5E6C8?style=for-the-badge&logoColor=1a1100&labelColor=8B4513" height="36"/>
         </a>
       </td>
     </tr>
@@ -145,7 +147,7 @@
 ---
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=16&duration=3000&pause=1000&color=F5A623&background=00000000&center=true&vCenter=true&width=500&lines=THANKS+TO+ALL+CONTRIBUTORS+🙏;SPECIAL+THANKS+TO+OUR+STAR+SUPPORTERS+⭐;KEEP+SUPPORTING+ADEEL-MD+💛" alt="Contributors"/>
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=15&duration=3000&pause=1000&color=F5A623&background=00000000&center=true&vCenter=true&width=500&lines=THANKS+TO+ALL+CONTRIBUTORS+🙏;SPECIAL+THANKS+TO+OUR+STAR+SUPPORTERS+⭐;KEEP+SUPPORTING+ADEEL-MD+💛" alt="Contributors"/>
 </p>
 
 <!-- STARGAZERS -->
@@ -164,7 +166,7 @@
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
-<h2 align="center">✨ ᴛʜᴀɴᴋ ʏᴏᴜ ғᴏʀ ᴜsɪɴɢ <span style="color:#F5A623">ᴀᴅᴇᴇʟ-ᴍᴅ</span> ✨</h2>
+<h2 align="center">✨ ᴛʜᴀɴᴋ ʏᴏᴜ ғᴏʀ ᴜsɪɴɢ ᴀᴅᴇᴇʟ-ᴍᴅ ✨</h2>
 
 <p align="center">
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD">
