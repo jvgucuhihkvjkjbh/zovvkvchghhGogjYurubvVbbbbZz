@@ -114,14 +114,6 @@
   <b>🛡️ OWNER NOT RESPONSIBLE FOR ANY MISUSE</b>
 </p>
 
-<a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
-
----
-
-<p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=15&duration=3000&pause=1000&color=F5A623&background=00000000&center=true&vCenter=true&width=500&lines=THANKS+TO+ALL+CONTRIBUTORS+🙏;SPECIAL+THANKS+TO+OUR+STAR+SUPPORTERS+⭐;KEEP+SUPPORTING+ADEEL-MD+💛" alt="Contributors"/>
-</p>
-
 <!-- STARGAZERS -->
 <p align="center">
   <a href="https://github.com/Adeel-Xtech/ADEEL-MD/stargazers">
