@@ -16,7 +16,7 @@
 
 <!-- ANIMATED WELCOME -->
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=50&pause=800&color=F5A623&center=true&vCenter=true&width=900&height=120&lines=🌟+WELCOME+TO+ADEEL-MD+🌟;⚡+MULTI+DEVICE+WHATSAPP+BOT+⚡;🔥+CREATED+BY+ADEEL+XTECH+🔥;💫+FAST+%7C+POWERFUL+%7C+STABLE+💫" alt="ADEEL-MD Welcome"/>
+  <img src="https://readme-typing-svg.demolab.com?font=Black+Ops+One&size=50&pause=800&color=F5A623&center=true&vCenter=true&width=900&height=120&lines=🌟+WELCOME+TO+ADEEL-MD+🌟;⚡+MULTI+DEVICE+WHATSAPP+BOT+⚡;🔥+CREATED+BY+ADEEL+XTECH+🔥;💫+FAST+%7C+POWERFUL+%7C+STABLE+💫" alt="ADEEL-MD"/>
 </p>
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
@@ -85,22 +85,17 @@
 
 ## 🚀 DEPLOYMENT OPTIONS
 
-<div align="center">
-  <table>
-    <tr>
-      <td align="center" style="padding:10px;">
-        <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
-          <img src="https://img.shields.io/badge/🟣_HEROKU-DEPLOY_NOW-F5E6C8?style=for-the-badge&logoColor=1a1100&labelColor=C8860A" height="36"/>
-        </a>
-      </td>
-      <td align="center" style="padding:10px;">
-        <a href="https://adeel-md-vps.vercel.app/" target="_blank">
-          <img src="https://img.shields.io/badge/🖥️_VPS-DEPLOY_NOW-F5E6C8?style=for-the-badge&logoColor=1a1100&labelColor=8B4513" height="36"/>
-        </a>
-      </td>
-    </tr>
-  </table>
-</div>
+<p align="center">
+  <a href="https://dashboard.heroku.com/new?template=https://github.com/Adeel-Xtech/ADEEL-MD" target="_blank">
+    <img src="https://img.shields.io/badge/━━━━━━━━━━%20🟣%20DEPLOY%20ON%20HEROKU%20━━━━━━━━━━-F5A623?style=for-the-badge&logoColor=black&labelColor=1a1100" height="45"/>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://adeel-md-vps.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/━━━━━━━━━━%20🖥️%20DEPLOY%20ON%20VPS%20━━━━━━━━━━-C8860A?style=for-the-badge&logoColor=black&labelColor=1a1100" height="45"/>
+  </a>
+</p>
 
 <a><img src='https://i.imgur.com/LyHic3i.gif'/></a>
 
