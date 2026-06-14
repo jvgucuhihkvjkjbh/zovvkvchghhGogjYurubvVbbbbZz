@@ -4,59 +4,39 @@ const { cmd } = require('../command');
 
 async function downloadInstagram(url) {
     try {
-        const pageRes = await axios.get("https://snapinsta.app/en", {
-            headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
-            },
-            timeout: 15000
-        });
-
-        const $ = cheerio.load(pageRes.data);
-        const token = $('input[name="_token"]').val() || $('meta[name="csrf-token"]').attr("content");
-        if (!token) return null;
-
-        const formData = new URLSearchParams({ url, token, lang: "en" });
-
-        const res = await axios.post(
-            "https://snapinsta.app/action.php",
-            formData,
+        const res = await axios.get(
+            `https://vdfr.app/download/?url=${encodeURIComponent(url)}`,
             {
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Referer": "https://snapinsta.app/en",
-                    "Origin": "https://snapinsta.app",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9",
+                    "Referer": "https://vdfr.app/"
                 },
-                timeout: 25000
+                timeout: 30000
             }
         );
 
-        const $r = cheerio.load(res.data);
+        const $ = cheerio.load(res.data);
         const links = [];
 
-        $r("a").each((i, el) => {
-            const href = $r(el).attr("href");
-            const text = $r(el).text().trim().toLowerCase();
-            if (!href) return;
-            if (text.includes("audio") || text.includes("mp3")) return;
-            if (href.includes(".mp4") || href.includes("cdninstagram") || href.includes("fbcdn")) {
-                if (!links.find(l => l.url === href)) {
-                    links.push({ url: href, contentType: "video/mp4" });
-                }
-            } else if (href.includes(".jpg") || href.includes(".jpeg") || href.includes(".webp")) {
-                if (!links.find(l => l.url === href)) {
-                    links.push({ url: href, contentType: "image/jpeg" });
-                }
+        $("a[href*='vdfr'], a[href*='.mp4'], a[href*='cdninstagram'], a[href*='fbcdn'], a[href*='download']").each((i, el) => {
+            const href = $(el).attr("href");
+            const text = $(el).text().trim().toLowerCase();
+            if (!href || text.includes("audio") || text.includes("mp3")) return;
+            if (href.startsWith("http") && !links.find(l => l.url === href)) {
+                const isImage = href.includes(".jpg") || href.includes(".jpeg") || href.includes(".webp");
+                links.push({
+                    url: href,
+                    contentType: isImage ? "image/jpeg" : "video/mp4"
+                });
             }
         });
 
         return links.length ? [links[0]] : null;
 
     } catch (e) {
-        console.error("IGDL fetch error:", e.message);
+        console.error("VDFR Error:", e.message);
         return null;
     }
 }
@@ -101,8 +81,8 @@ cmd({
         await conn.sendMessage(from, { react: { text: "✅", key: m.key } });
 
     } catch (err) {
-        console.error("IGDL Error:", err);
+        console.error("IGDL Error:", err.message);
         await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
-        reply("❌ Download failed.");
+        reply("❌ Download failed: " + err.message);
     }
 });
