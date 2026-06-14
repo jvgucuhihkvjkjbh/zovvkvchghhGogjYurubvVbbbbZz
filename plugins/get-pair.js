@@ -11,7 +11,6 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, senderNumber, reply }) => {
     try {
-     
         let phoneNumber = q
             ? q.trim().replace(/[^0-9+]/g, '')
             : senderNumber.replace(/[^0-9]/g, '');
@@ -27,7 +26,7 @@ cmd({
         }
 
         const response = await axios.get(
-            `https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/code?number=${encodeURIComponent(phoneNumber)}`,
+            `https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/pair?number=${encodeURIComponent(phoneNumber)}`,
             { timeout: 30000 }
         );
 
