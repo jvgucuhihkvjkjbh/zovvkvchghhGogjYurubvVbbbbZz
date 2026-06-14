@@ -2,72 +2,55 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const { cmd } = require('../command');
 
-async function getInstagramVideo(url) {
+async function downloadInstagram(url) {
     try {
-        const res = await axios.get(
-            `https://vdfr.app/download/?url=${encodeURIComponent(url)}`,
+        const pageRes = await axios.get("https://snapinsta.app/", {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0",
+            },
+            timeout: 15000
+        });
+
+        const $ = cheerio.load(pageRes.data);
+        const token = $('input[name="_token"]').val();
+        if (!token) return null;
+
+        const res = await axios.post(
+            "https://snapinsta.app/action.php",
+            new URLSearchParams({ url, token }),
             {
                 headers: {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0",
-                    "Referer": "https://vdfr.app/",
-                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Referer": "https://snapinsta.app/",
+                    "Origin": "https://snapinsta.app",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0"
                 },
-                timeout: 30000
+                timeout: 20000
             }
         );
 
-        const $ = cheerio.load(res.data);
+        const $r = cheerio.load(res.data);
         const links = [];
 
-        // ━━━ سب links اٹھاؤ ━━━
-        $("a[href*='.mp4'], a[href*='cdninstagram'], a[href*='fbcdn'], a.download-btn").each((i, el) => {
-            const href = $(el).attr("href");
-            const text = $(el).text().trim().toLowerCase();
-
-            // audio only skip کرو
-            if (text.includes("audio") || text.includes("mp3")) return;
-
-            if (href && !links.find(l => l.url === href)) {
-                // resolution اٹھاؤ
-                const resMatch = text.match(/(\d+)x(\d+)/);
-                const width = resMatch ? parseInt(resMatch[1]) : 9999;
-                const height = resMatch ? parseInt(resMatch[2]) : 9999;
-
-                links.push({
-                    url: href,
-                    contentType: "video/mp4",
-                    width,
-                    height
-                });
+        $r("a.download-btn, a[href*='.mp4'], a[href*='cdninstagram'], a[href*='fbcdn']").each((i, el) => {
+            const href = $r(el).attr("href");
+            const text = $r(el).text().trim().toLowerCase();
+            if (!href || text.includes("audio") || text.includes("mp3")) return;
+            if (!links.find(l => l.url === href)) {
+                links.push({ url: href, contentType: "video/mp4" });
             }
         });
 
-        // ━━━ image links ━━━
-        $("a[href*='.jpg'], a[href*='.jpeg'], a[href*='.webp']").each((i, el) => {
-            const href = $(el).attr("href");
+        $r("a[href*='.jpg'], a[href*='.jpeg'], a[href*='.webp']").each((i, el) => {
+            const href = $r(el).attr("href");
             if (href && !links.find(l => l.url === href)) {
                 links.push({ url: href, contentType: "image/jpeg" });
             }
         });
 
-        if (!links.length) return null;
-
-        // ━━━ سب سے کم resolution video پہلے ━━━
-        const videos = links
-            .filter(l => l.contentType === "video/mp4")
-            .sort((a, b) => (a.width * a.height) - (b.width * b.height));
-
-        const images = links.filter(l => l.contentType !== "video/mp4");
-
-        // ━━━ صرف سب سے کم MB والی video ━━━
-        const result = [];
-        if (videos.length) result.push(videos[0]);
-        result.push(...images);
-
-        return result.length ? result : null;
+        return links.length ? links : null;
 
     } catch (e) {
-        console.error("VDFR Error:", e.message);
         return null;
     }
 }
@@ -89,14 +72,14 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⏳", key: m.key } });
 
-        const results = await getInstagramVideo(url);
+        const results = await downloadInstagram(url);
 
         if (!results || !results.length) {
             await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
             return reply("❌ Invalid or private link.");
         }
 
-        const captionText = `*INSTAGRAM REEL*
+        const caption = `*INSTAGRAM REEL*
 
 > *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ*`;
 
@@ -105,7 +88,7 @@ cmd({
             const isVideo = item.contentType?.includes("video");
             await conn.sendMessage(from, {
                 [isVideo ? "video" : "image"]: { url: item.url },
-                caption: captionText
+                caption
             }, { quoted: mek });
         }
 
