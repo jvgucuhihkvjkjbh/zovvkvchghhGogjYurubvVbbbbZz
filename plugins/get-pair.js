@@ -1,6 +1,8 @@
 const { cmd, commands } = require('../command');
 const axios = require('axios');
 
+const pairCooldown = new Map();
+
 cmd({
     pattern: "pair",
     alias: ["getpair", "clonebot"],
@@ -11,8 +13,8 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, senderNumber, reply }) => {
     try {
-        let phoneNumber = q
-            ? q.trim().replace(/[^0-9+]/g, '')
+        let phoneNumber = q 
+            ? q.trim().replace(/[^0-9+]/g, '') 
             : senderNumber.replace(/[^0-9]/g, '');
 
         phoneNumber = phoneNumber.replace(/\+/g, '');
@@ -25,16 +27,20 @@ cmd({
             return await reply("❌ Invalid number\nExample: .pair 923035512967");
         }
 
-        const response = await axios.get(
-            `https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/pair?number=${encodeURIComponent(phoneNumber)}`,
-            { timeout: 30000 }
-        );
+        // ━━━ Cooldown - دوبارہ request نہ جائے ━━━
+        const now = Date.now();
+        const lastUsed = pairCooldown.get(phoneNumber);
+        if (lastUsed && now - lastUsed < 60000) return;
+        pairCooldown.set(phoneNumber, now);
+
+        const response = await axios.get(`https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/pair?number=${encodeURIComponent(phoneNumber)}`, { timeout: 30000 });
 
         if (!response.data || !response.data.code) {
             return await reply("❌ Failed to retrieve pairing code.");
         }
 
-        const pairingCode = response.data.code;
+        // ━━━ Dash ہٹاؤ ━━━
+        const pairingCode = response.data.code.replace(/-/g, '');
         const doneMessage = "> *ADEEL-MD PAIRING COMPLETED*";
 
         await reply(`${doneMessage}\n\n*Your pairing code is:* ${pairingCode}`);
@@ -44,16 +50,8 @@ cmd({
         await reply(`${pairingCode}`);
 
     } catch (error) {
-        console.error("Pair command error:", error.message);
-
-        if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
-            return await reply("❌ Server timeout. Please try again.");
-        } else if (error.response?.status === 503 || error.response?.status === 500) {
-            return await reply("❌ Pair server is down. Try again later.");
-        } else if (error.response?.status === 400) {
-            return await reply("❌ Invalid number format.");
-        } else {
-            return await reply("❌ Error: " + (error.message || "Unknown error"));
-        }
+        console.error("Pair command error:", error);
+        pairCooldown.delete(phoneNumber);
+        await reply("❌ Error");
     }
 });
