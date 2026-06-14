@@ -11,9 +11,9 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, senderNumber, reply }) => {
     try {
-        // Extract number
-        let phoneNumber = q 
-            ? q.trim().replace(/[^0-9+]/g, '') 
+     
+        let phoneNumber = q
+            ? q.trim().replace(/[^0-9+]/g, '')
             : senderNumber.replace(/[^0-9]/g, '');
 
         phoneNumber = phoneNumber.replace(/\+/g, '');
@@ -26,7 +26,10 @@ cmd({
             return await reply("❌ Invalid number\nExample: .pair 923035512967");
         }
 
-        const response = await axios.get(`https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/code?number=${encodeURIComponent(phoneNumber)}`);
+        const response = await axios.get(
+            `https://adeel-md-new-pair-c6a7630bccda.herokuapp.com/code?number=${encodeURIComponent(phoneNumber)}`,
+            { timeout: 30000 }
+        );
 
         if (!response.data || !response.data.code) {
             return await reply("❌ Failed to retrieve pairing code.");
@@ -42,7 +45,16 @@ cmd({
         await reply(`${pairingCode}`);
 
     } catch (error) {
-        console.error("Pair command error:", error);
-        await reply("❌ Error");
+        console.error("Pair command error:", error.message);
+
+        if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+            return await reply("❌ Server timeout. Please try again.");
+        } else if (error.response?.status === 503 || error.response?.status === 500) {
+            return await reply("❌ Pair server is down. Try again later.");
+        } else if (error.response?.status === 400) {
+            return await reply("❌ Invalid number format.");
+        } else {
+            return await reply("❌ Error: " + (error.message || "Unknown error"));
+        }
     }
 });
