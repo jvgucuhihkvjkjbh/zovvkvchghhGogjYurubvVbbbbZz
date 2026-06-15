@@ -46,7 +46,7 @@ async (conn, mek, m, { from, sender, pushname, reply }) => {
 ‎┃◈┃• *auto_react* 
 ‎┃◈┃• *status_reply*
 ‎┃◈┃• *anti-call* *on/off*
-‎┃◈┃• *antilinkkick* *on/off*
+‎┃◈┃• *antilink* *on/off*
 ‎┃◈┃• *deletelink* *on/off*
 ‎┃◈┃• *autovoice*  *on/off*
 ‎┃◈└───────────┈⊷
