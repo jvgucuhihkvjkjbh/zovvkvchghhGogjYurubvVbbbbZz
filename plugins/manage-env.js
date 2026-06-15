@@ -504,36 +504,8 @@ async (conn, mek, m, { args, isCreator, reply, sender }) => {
     reply("_example: .antilink on / off_");
 });
 
-// --- ANTILINK KICK ---
-cmd({
-    pattern: "antilinkkick",
-    alias: ["kicklink"],
-    desc: "enable or disable antilink kick.",
-    category: "settings",
-    filename: __filename
-},
-async (conn, mek, m, { args, isCreator, reply, sender }) => {
-    if (!isAuthorized(sender, isCreator)) {
-        return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴀʟʟᴏᴡᴇᴅ ʟɪᴅ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
-    }
-
-    if (!args[0])
-        return reply("_example: .antilinkkick on / off_");
-
-    if (args[0].toLowerCase() === "on") {
-        config.ANTI_LINK_KICK = true;
-        return reply("*✅ Anti link kick enabled.*");
-    }
-
-    if (args[0].toLowerCase() === "off") {
-        config.ANTI_LINK_KICK = false;
-        return reply("*❌ Anti link kick disabled.*");
-    }
-
-    reply("_example: .antilinkkick on / off_");
-});
-
 // --- DELETE LINK ---
+
 cmd({
     pattern: "delete-link",
     alias: ["deletelink", "linksdelete"],
