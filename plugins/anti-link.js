@@ -41,11 +41,7 @@ cmd({
     try {
         if (!isGroup) return;
         if (!body) return;
-
-        const antilinkOn = config.ANTI_LINK === true || config.ANTI_LINK === 'true';
-        const deleteOn = config.DELETE_LINKS === true || config.DELETE_LINKS === 'true';
-
-        if (!antilinkOn && !deleteOn) return;
+        if (!config.ANTI_LINK || config.ANTI_LINK === 'false') return;
 
         const senderIsAdmin = await isUserAdmin(conn, from, sender);
         if (senderIsAdmin) return;
@@ -60,8 +56,11 @@ cmd({
         const linkRegex = /(https?:\/\/|www\.|wa\.me\/|chat\.whatsapp\.com\/|whatsapp\.com\/channel\/)[^\s]+/gi;
         if (!linkRegex.test(text)) return;
 
-        // DELETE_LINKS on — صرف delete
-        if (deleteOn) {
+        const deleteEnabled =
+            config.DELETE_LINKS === true ||
+            config.DELETE_LINKS === 'true';
+
+        if (deleteEnabled) {
             try {
                 await conn.sendMessage(from, { delete: m.key });
             } catch (e) {
@@ -69,8 +68,7 @@ cmd({
             }
         }
 
-        // ANTI_LINK on — delete + remove
-        if (antilinkOn) {
+        if (config.ANTI_LINK === true || config.ANTI_LINK === 'true') {
             try {
                 await conn.sendMessage(from, { delete: m.key });
             } catch (e) {}
