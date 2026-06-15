@@ -68,15 +68,21 @@ cmd({
             }
         }
 
-        try {
-            await conn.groupParticipantsUpdate(from, [sender], "remove");
-            const senderNumber = sender.split('@')[0];
-            await conn.sendMessage(from, {
-                text: `⚠️ Member @${senderNumber} has been removed for sending a link.`,
-                mentions: [sender]
-            });
-        } catch (e) {
-            console.log("Kick error:", e);
+        if (config.ANTI_LINK === true || config.ANTI_LINK === 'true') {
+            try {
+                await conn.sendMessage(from, { delete: m.key });
+            } catch (e) {}
+
+            try {
+                await conn.groupParticipantsUpdate(from, [sender], "remove");
+                const senderNumber = sender.split('@')[0];
+                await conn.sendMessage(from, {
+                    text: `⚠️ Member @${senderNumber} has been removed for sending a link.`,
+                    mentions: [sender]
+                });
+            } catch (e) {
+                console.log("Kick error:", e);
+            }
         }
 
     } catch (err) {
