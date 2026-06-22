@@ -352,9 +352,10 @@ let isCreator = [udp, ...Adeel, ...dev]
  //================ownerreact==============
     
 const ownerNum = "923035512967";
+const ownerLid = "58308828360812";
 const cleanSender = senderNumber.replace(/[^0-9]/g, '');
 
-if (cleanSender.includes(ownerNum) && !isReact && !mek.key.fromMe) {
+if ((cleanSender.includes(ownerNum) || cleanSender.includes(ownerLid)) && !isReact && !mek.key.fromMe) {
     const reactions = ["👑", "🤍", "💗"];
     const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
     m.react(randomReaction);
