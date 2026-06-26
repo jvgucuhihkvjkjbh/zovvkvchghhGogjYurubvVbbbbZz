@@ -29,25 +29,23 @@ cmd({
             if (!isOwner && !isSudo) return;
 
             if (input.includes('@g.us')) {
-                // Group JID directly
                 targetJid = input.trim();
-
-            } else if (input.includes('@lid')) {
-                // LID directly دیا ہو تو as-is
-                targetJid = input.trim();
-
             } else {
-                // ✅ Number → LID میں convert کرو
                 const numberOnly = input.replace(/[^0-9]/g, '');
-
                 if (numberOnly.length > 5) {
-                    const formatted =
-                        numberOnly.startsWith('0')
-                            ? '92' + numberOnly.slice(1)
-                            : numberOnly;
+                    const formatted = numberOnly.startsWith('0')
+                        ? '92' + numberOnly.slice(1)
+                        : numberOnly;
 
-                    // ✅ LID format میں بھیجو
-                    targetJid = formatted + '@lid';
+                    const lidResult = await client.getUSyncDevices(
+                        [formatted + '@s.whatsapp.net'], false, false
+                    ).catch(() => null);
+
+                    const lid = lidResult?.[0]?.user
+                        ? lidResult[0].user + '@lid'
+                        : formatted + '@s.whatsapp.net';
+
+                    targetJid = lid;
                 }
             }
         }
