@@ -30,6 +30,7 @@ cmd({
 
             if (input.includes('@g.us')) {
                 targetJid = input.trim();
+
             } else {
                 const numberOnly = input.replace(/[^0-9]/g, '');
                 if (numberOnly.length > 5) {
@@ -37,15 +38,25 @@ cmd({
                         ? '92' + numberOnly.slice(1)
                         : numberOnly;
 
-                    const lidResult = await client.getUSyncDevices(
-                        [formatted + '@s.whatsapp.net'], false, false
-                    ).catch(() => null);
+                    const pnJid = formatted + '@s.whatsapp.net';
 
-                    const lid = lidResult?.[0]?.user
-                        ? lidResult[0].user + '@lid'
-                        : formatted + '@s.whatsapp.net';
-
-                    targetJid = lid;
+                    // ✅ RC10 صحیح طریقہ - onWhatsApp سے LID fetch
+                    try {
+                        const [result] = await client.onWhatsApp(pnJid);
+                        if (result?.exists && result?.jid) {
+                            targetJid = result.jid; // LID یا PN جو بھی ملے
+                        } else {
+                            targetJid = pnJid;
+                        }
+                    } catch {
+                        // onWhatsApp fail ہو تو lidMapping try کرو
+                        try {
+                            const lid = await client.signalRepository.lidMapping.getLIDForPN(pnJid);
+                            targetJid = lid || pnJid;
+                        } catch {
+                            targetJid = pnJid;
+                        }
+                    }
                 }
             }
         }
