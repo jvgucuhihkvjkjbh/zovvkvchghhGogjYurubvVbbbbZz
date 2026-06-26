@@ -29,11 +29,15 @@ cmd({
             if (!isOwner && !isSudo) return;
 
             if (input.includes('@g.us')) {
-                // ✅ Group JID directly
+                // Group JID directly
+                targetJid = input.trim();
+
+            } else if (input.includes('@lid')) {
+                // LID directly دیا ہو تو as-is
                 targetJid = input.trim();
 
             } else {
-                // ✅ Number - صرف digits رکھو
+                // ✅ Number → LID میں convert کرو
                 const numberOnly = input.replace(/[^0-9]/g, '');
 
                 if (numberOnly.length > 5) {
@@ -42,7 +46,8 @@ cmd({
                             ? '92' + numberOnly.slice(1)
                             : numberOnly;
 
-                    targetJid = formatted + '@s.whatsapp.net';
+                    // ✅ LID format میں بھیجو
+                    targetJid = formatted + '@lid';
                 }
             }
         }
@@ -61,7 +66,6 @@ cmd({
 
         const ptt = await converter.toPTT(buffer, ext);
 
-        // ✅ targetJid پر بھیجو
         await client.sendMessage(targetJid, {
             audio: ptt,
             mimetype: 'audio/ogg; codecs=opus',
