@@ -7,7 +7,7 @@ cmd({
     category: "group",
     react: "📡",
     filename: __filename
-}, async (client, m, message, { from, reply, sender, isOwner, pushname, body, args }) => {
+}, async (client, m, message, { from, reply, sender, isOwner, pushname, args }) => {
     try {
 
         const caption = args.join(" ");
@@ -32,7 +32,26 @@ cmd({
         }
 
         const quoted = m.quoted;
-        const media = await quoted.download();
+
+        // ✅ Media key check
+        const hasMediaKey =
+            quoted.message?.imageMessage?.mediaKey ||
+            quoted.message?.videoMessage?.mediaKey ||
+            quoted.message?.audioMessage?.mediaKey ||
+            quoted.message?.stickerMessage?.mediaKey;
+
+        if (!hasMediaKey && quoted.mtype !== 'conversation' && quoted.mtype !== 'extendedTextMessage') {
+            return reply("❌ Media expired. Please forward the media again and reply to that fresh message.");
+        }
+
+        let media;
+        try {
+            media = await quoted.download();
+        } catch (e) {
+            return reply("❌ Could not download media. Reply to a fresh/recent message.");
+        }
+
+        if (!media) return reply("❌ Media download failed.");
 
         // IMAGE
         if (quoted.mtype === 'imageMessage') {
