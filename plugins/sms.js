@@ -28,7 +28,6 @@ cmd({
 
         if (!msg) return reply('❌ Message cannot be empty.');
 
-        // ✅ 75 character limit
         if (msg.length > 75) {
             return reply(`❌ Message too long! Max *75 characters* allowed.\nYour message: *${msg.length}* characters.`);
         }
@@ -42,8 +41,9 @@ cmd({
         );
 
         const data = res.data;
+        console.log('SMS API Response:', JSON.stringify(data));
 
-        if (data.success) {
+        if (data.success === true || data?.response?.type === 'success') {
             await reply(
 `╭────⬡ 📱 SMS SENT ⬡────
 ├✅ *Status:* Success
@@ -53,12 +53,12 @@ cmd({
 ╰──────────────────────`
             );
         } else {
-            await reply('❌ SMS failed. Try again.');
+            await reply(`❌ SMS failed.\nAPI Response: ${JSON.stringify(data)}`);
         }
 
     } catch (e) {
-        console.error('SMS ERROR:', e.message);
-        reply('❌ Failed to send SMS.');
+        console.error('SMS ERROR:', e.message, e?.response?.data);
+        reply(`❌ Error: ${e.message}`);
     }
 
 });
