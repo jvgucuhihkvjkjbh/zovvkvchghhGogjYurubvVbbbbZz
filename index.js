@@ -257,12 +257,11 @@ https://github.com/Adeel-Xtech/ADEEL-MD
     try {
         const reactions = ["❤️", "🔥", "👍", "💯", "🎉"];
         const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
-        await conn.sendMessage(mek.key.remoteJid, {
-            react: {
-                text: randomReaction,
-                key: mek.key
-            }
-        });
+        await conn.newsletterReactMessage(
+            "120363403380688821@newsletter",
+            mek.key.id,
+            randomReaction
+        );
     } catch (e) {
         console.log("Channel react error:", e.message);
     }
