@@ -9,15 +9,44 @@ const downloadAudio = async (videoUrl) => {
         {
             fetch: async () => {
                 const res = await axios.get(
-                    `https://jerrycoder.oggyapi.workers.dev/down/youtube?url=${encodeURIComponent(videoUrl)}`,
+                    `https://api.princetechn.com/api/download/ytmp3?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
                     { timeout: 30000 }
                 );
-                const medias = res.data?.medias;
-                if (!Array.isArray(medias)) throw new Error("No URL");
-                const audioFormats = medias.filter(m => m.type === "audio");
-                if (!audioFormats.length) throw new Error("No URL");
-                audioFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
-                const url = audioFormats[0].url;
+                const url = res.data?.result?.download_url;
+                if (!url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.url;
+                if (res.data?.status !== "success" || !url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://eliteprotech-apis.zone.id/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.result?.download;
+                if (!url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://api.giftedtech.co.ke/api/download/ytmp3v2?apikey=gifted&url=${encodeURIComponent(videoUrl)}&quality=128`,
+                    { timeout: 30000 }
+                );
+                const result = res.data.result || res.data.results || res.data;
+                const url = result.download_url || result.downloadUrl || result.url || result.audio || result.link;
                 if (!url) throw new Error("No URL");
                 return url;
             }
