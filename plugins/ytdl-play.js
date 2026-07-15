@@ -33,6 +33,62 @@ const downloadAudio = async (videoUrl) => {
     }
 };
 
+// Invidious instances used only as a search fallback when yt-search fails
+const INVIDIOUS_INSTANCES = [
+    "https://invidious.jing.rocks",
+    "https://iv.ggtyler.dev",
+    "https://invidious.reallyaweso.me"
+];
+
+const searchViaInvidious = async (query) => {
+    for (const base of INVIDIOUS_INSTANCES) {
+        try {
+            const res = await axios.get(
+                `${base}/api/v1/search?q=${encodeURIComponent(query)}&type=video`,
+                { timeout: 15000 }
+            );
+            const results = res.data;
+            if (Array.isArray(results) && results.length > 0) {
+                const v = results[0];
+                console.log(`[play] Invidious search success via ${base}`);
+                return {
+                    title: v.title || "Unknown Title",
+                    url: `https://www.youtube.com/watch?v=${v.videoId}`,
+                    thumbnail: `https://img.youtube.com/vi/${v.videoId}/hqdefault.jpg`,
+                    timestamp: v.lengthSeconds
+                        ? new Date(v.lengthSeconds * 1000).toISOString().substr(11, 8).replace(/^00:/, '')
+                        : 'N/A',
+                    views: v.viewCount || 0,
+                    author: { name: v.author || 'Unknown' }
+                };
+            }
+        } catch (e) {
+            console.log(`[play] Invidious instance ${base} failed:`, e.message);
+            continue;
+        }
+    }
+    return null;
+};
+
+// Tries yt-search first (with 2 retries), then falls back to Invidious search
+const searchSong = async (query) => {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+            const { videos } = await yts(query);
+            if (videos && videos.length > 0) {
+                console.log(`[play] yts search success on attempt ${attempt}`);
+                return videos[0];
+            }
+        } catch (e) {
+            console.log(`[play] yts search attempt ${attempt} failed:`, e.message);
+        }
+    }
+
+    console.log("[play] yts fully failed, trying Invidious fallback...");
+    const fallback = await searchViaInvidious(query);
+    return fallback;
+};
+
 commands.forEach(pattern => {
     cmd({
         pattern: pattern,
@@ -96,16 +152,10 @@ commands.forEach(pattern => {
                 }
 
             } else {
-                try {
-                    const { videos } = await yts(q);
-                    if (!videos || !videos.length) {
-                        return reply("❌ No song results found");
-                    }
-                    vid = videos[0];
-                } catch (e) {
-                    console.log("[play] yts search failed:", e.message);
+                vid = await searchSong(q);
+                if (!vid) {
                     await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                    return reply("❌ Search service is currently unavailable. Please try again in a moment.");
+                    return reply("❌ No song results found. Please try again or use a direct YouTube link.");
                 }
             }
 
