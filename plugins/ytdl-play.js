@@ -9,10 +9,15 @@ const downloadAudio = async (videoUrl) => {
         {
             fetch: async () => {
                 const res = await axios.get(
-                    `https://arslan-apis-v2.vercel.app/download/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+                    `https://jerrycoder.oggyapi.workers.dev/down/youtube?url=${encodeURIComponent(videoUrl)}`,
                     { timeout: 30000 }
                 );
-                const url = res.data?.result?.download?.url;
+                const medias = res.data?.medias;
+                if (!Array.isArray(medias)) throw new Error("No URL");
+                const audioFormats = medias.filter(m => m.type === "audio");
+                if (!audioFormats.length) throw new Error("No URL");
+                audioFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+                const url = audioFormats[0].url;
                 if (!url) throw new Error("No URL");
                 return url;
             }
