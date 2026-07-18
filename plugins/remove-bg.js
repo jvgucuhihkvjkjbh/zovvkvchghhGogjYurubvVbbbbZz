@@ -4,7 +4,7 @@ const { cmd } = require("../command");
 const API_URL = "https://adeel-xtech-api.vercel.app/api/ttdl";
 
 cmd({
-    pattern: "tiktok",
+    pattern: "aatt",
     react: "🎵",
     desc: "Download TikTok video",
     category: "downloader",
