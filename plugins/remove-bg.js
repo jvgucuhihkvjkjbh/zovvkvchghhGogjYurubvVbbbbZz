@@ -1,106 +1,44 @@
 const axios = require("axios");
-const FormData = require("form-data");
 const { cmd } = require("../command");
 
-const API_URL = "https://adeel-xtech-api.vercel.app/api/removebg";
-
-async function uploadToCatbox(buffer) {
-    try {
-        const form = new FormData();
-        form.append("reqtype", "fileupload");
-        form.append("fileToUpload", buffer, "image.jpg");
-
-        const res = await axios.post("https://catbox.moe/user/api.php", form, {
-            headers: form.getHeaders(),
-            timeout: 60000
-        });
-
-        const url = res.data?.toString().trim();
-        if (!url || !url.startsWith("http")) return null;
-
-        return url;
-
-    } catch (e) {
-        console.log("Catbox Upload Error:", e.message);
-        return null;
-    }
-}
-
-async function uploadToUguu(buffer) {
-    try {
-        const form = new FormData();
-        form.append("files[]", buffer, "image.jpg");
-
-        const res = await axios.post("https://uguu.se/upload.php", form, {
-            headers: form.getHeaders(),
-            timeout: 60000
-        });
-
-        const url = res.data?.files?.[0]?.url;
-        if (!url) return null;
-
-        return url;
-
-    } catch (e) {
-        console.log("Uguu Upload Error:", e.message);
-        return null;
-    }
-}
-
-async function uploadImage(buffer) {
-    let url = await uploadToCatbox(buffer);
-    if (url) return url;
-
-    url = await uploadToUguu(buffer);
-    if (url) return url;
-
-    return null;
-}
+const API_URL = "https://adeel-xtech-api.vercel.app/api/ttdl";
 
 cmd({
-    pattern: "rmbg",
-    alias: ["removebg", "rbg"],
-    react: "📸",
-    desc: "Remove background from image",
-    category: "editing",
+    pattern: "tiktok",
+    react: "🎵",
+    desc: "Download TikTok video",
+    category: "downloader",
     filename: __filename
-}, async (conn, message, m, { reply }) => {
-
+}, async (conn, message, m, { reply, args, q }) => {
     try {
-        const quoted = message.quoted || message;
-        const mime = quoted.mimetype || quoted.msg?.mimetype || "";
+        const url = q || args[0];
 
-        if (!mime.startsWith("image/")) {
-            return reply("❌ Please reply to an image");
+        if (!url) {
+            return reply("❌ Please provide a TikTok URL\n\nExample: .tiktok https://vt.tiktok.com/xxxxx");
+        }
+
+        if (!url.includes("tiktok.com")) {
+            return reply("❌ Please provide a valid TikTok URL");
         }
 
         await conn.sendMessage(m.chat, {
             react: { text: "⏳", key: message.key }
         });
 
-        const buffer = await quoted.download();
-        if (!buffer) {
-            return reply("❌ Failed to download image");
-        }
-
-        const uploadedUrl = await uploadImage(buffer);
-        if (!uploadedUrl) {
-            return reply("❌ Image upload failed");
-        }
-
-        const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
-        const response = await axios.get(api, { timeout: 60000 });
+        const response = await axios.get(`${API_URL}?url=${encodeURIComponent(url)}`, { timeout: 60000 });
         const data = response.data;
 
-        if (!data || !data.status || !data.result) {
-            return reply("❌ Failed to remove background");
+        if (!data || data.status !== true || !data.result || !data.result.video) {
+            return reply("❌ Failed to fetch TikTok video");
         }
 
-        const result = await axios.get(data.result, {
+        const { title, video } = data.result;
+
+        const videoRes = await axios.get(video, {
             responseType: "arraybuffer",
             timeout: 60000
         });
-        const resultBuffer = Buffer.from(result.data);
+        const videoBuffer = Buffer.from(videoRes.data);
 
         const formatBytes = (bytes) => {
             if (bytes === 0) return "0 Bytes";
@@ -110,7 +48,7 @@ cmd({
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
         };
 
-        const size = formatBytes(resultBuffer.length);
+        const size = formatBytes(videoBuffer.length);
 
         await conn.sendMessage(m.chat, {
             react: { text: "✅", key: message.key }
@@ -119,17 +57,21 @@ cmd({
         await conn.sendMessage(
             m.chat,
             {
-                image: resultBuffer,
-                caption: `\`REMOVE BACKGROUND\`\n\n📦 SIZE: ${size}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
+                video: videoBuffer,
+                mimetype: "video/mp4",
+                caption: `\`TIKTOK DOWNLOADER\`\n\n📝 TITLE: ${title || "N/A"}\n📦 SIZE: ${size}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
             },
             { quoted: m }
         );
 
     } catch (err) {
-        console.log("RMBG Error:", err.message);
+        console.log("TikTok DL Error:", err.message);
+
         await conn.sendMessage(m.chat, {
             react: { text: "❌", key: message.key }
         });
-        reply("❌ Background remove error, try again");
+
+        const apiError = err.response?.data?.error || err.message;
+        reply(`❌ Error: ${apiError}`);
     }
 });
