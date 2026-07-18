@@ -31,7 +31,7 @@ async function uploadToUguu(buffer) {
         const form = new FormData();
         form.append("files[]", buffer, "image.jpg");
 
-        const res = await axios.post("https://uguu.se/upload", form, {
+        const res = await axios.post("https://uguu.se/upload.php", form, {
             headers: form.getHeaders(),
             timeout: 60000
         });
@@ -67,7 +67,6 @@ cmd({
 }, async (conn, message, m, { reply }) => {
 
     try {
-
         const quoted = message.quoted || message;
         const mime = quoted.mimetype || quoted.msg?.mimetype || "";
 
@@ -80,29 +79,20 @@ cmd({
         });
 
         const buffer = await quoted.download();
-
         if (!buffer) {
             return reply("❌ Failed to download image");
         }
 
         const uploadedUrl = await uploadImage(buffer);
-
         if (!uploadedUrl) {
             return reply("❌ Image upload failed");
         }
 
         const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
-
-        const response = await axios.get(api, {
-            timeout: 60000
-        });
-
+        const response = await axios.get(api, { timeout: 60000 });
         const data = response.data;
 
-        if (
-            !data.status ||
-            !data.result
-        ) {
+        if (!data || !data.status || !data.result) {
             return reply("❌ Failed to remove background");
         }
 
@@ -110,19 +100,14 @@ cmd({
             responseType: "arraybuffer",
             timeout: 60000
         });
-
         const resultBuffer = Buffer.from(result.data);
 
         const formatBytes = (bytes) => {
             if (bytes === 0) return "0 Bytes";
-
             const k = 1024;
             const sizes = ["Bytes", "KB", "MB"];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-            return parseFloat(
-                (bytes / Math.pow(k, i)).toFixed(2)
-            ) + " " + sizes[i];
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
         };
 
         const size = formatBytes(resultBuffer.length);
@@ -135,24 +120,16 @@ cmd({
             m.chat,
             {
                 image: resultBuffer,
-                caption:
-`\`REMOVE BACKGROUND\`
-
-📦 SIZE: ${size}
-
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
+                caption: `\`REMOVE BACKGROUND\`\n\n📦 SIZE: ${size}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
             },
             { quoted: m }
         );
 
     } catch (err) {
-
         console.log("RMBG Error:", err.message);
-
         await conn.sendMessage(m.chat, {
             react: { text: "❌", key: message.key }
         });
-
         reply("❌ Background remove error, try again");
     }
 });
