@@ -61,11 +61,21 @@ cmd({
         }
 
         const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
-        const response = await axios.get(api, { timeout: 60000 });
-        const data = response.data;
+
+        let data;
+        try {
+            const response = await axios.get(api, {
+                timeout: 60000,
+                validateStatus: () => true // status code chahe kuch bhi ho, response object hi mile
+            });
+            data = response.data;
+        } catch (apiErr) {
+            await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
+            return reply(`❌ Background remove failed\n\nReason: ${apiErr.message}`);
+        }
 
         if (!data.success || !data.result?.success || !data.result?.base64) {
-            const reason = data.result?.message || data.message || "Unknown API error";
+            const reason = data.result?.error || data.result?.message || data.message || "Unknown API error";
             await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
             return reply(`❌ Background remove failed\n\nReason: ${reason}`);
         }
