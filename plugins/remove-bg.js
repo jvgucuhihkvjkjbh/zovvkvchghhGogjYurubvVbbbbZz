@@ -7,19 +7,19 @@ const API_URL = "https://adeel-xtech-api.vercel.app/api/removebg";
 async function uploadImage(buffer) {
     try {
         const form = new FormData();
-        form.append("file", buffer, "image.jpg");
+        form.append("reqtype", "fileupload");
+        form.append("fileToUpload", buffer, "image.jpg");
 
-        const res = await axios.post("https://tmpfiles.org/api/v1/upload", form, {
+        const res = await axios.post("https://catbox.moe/user/api.php", form, {
             headers: form.getHeaders(),
             timeout: 60000
         });
 
-        if (!res.data?.data?.url) return null;
+        const url = res.data?.trim();
 
-        return res.data.data.url.replace(
-            "https://tmpfiles.org/",
-            "https://tmpfiles.org/dl/"
-        );
+        if (!url || !url.startsWith("http")) return null;
+
+        return url;
 
     } catch (e) {
         return null;
@@ -41,7 +41,7 @@ cmd({
         const mime = quoted.mimetype || quoted.msg?.mimetype || "";
 
         if (!mime.startsWith("image/")) {
-            return reply("❌ Please reply to an image");
+            return reply("❌ تصویر پر ریپلائی کریں");
         }
 
         await conn.sendMessage(m.chat, {
@@ -51,13 +51,13 @@ cmd({
         const buffer = await quoted.download();
 
         if (!buffer) {
-            return reply("❌ Failed to download image");
+            return reply("❌ تصویر ڈاؤن لوڈ نہیں ہو سکی");
         }
 
         const uploadedUrl = await uploadImage(buffer);
 
         if (!uploadedUrl) {
-            return reply("❌ Image upload failed");
+            return reply("❌ تصویر اپلوڈ نہیں ہو سکی");
         }
 
         const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
@@ -66,18 +66,18 @@ cmd({
         try {
             const response = await axios.get(api, {
                 timeout: 60000,
-                validateStatus: () => true // status code chahe kuch bhi ho, response object hi mile
+                validateStatus: () => true
             });
             data = response.data;
         } catch (apiErr) {
             await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
-            return reply(`❌ Background remove failed\n\nReason: ${apiErr.message}`);
+            return reply(`❌ بیک گراؤنڈ ہٹانے میں ناکامی\n\nوجہ: ${apiErr.message}`);
         }
 
         if (!data.success || !data.result?.success || !data.result?.base64) {
-            const reason = data.result?.error || data.result?.message || data.message || "Unknown API error";
+            const reason = data.result?.errors?.join(" | ") || data.result?.error || data.result?.message || data.message || "نامعلوم خرابی";
             await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
-            return reply(`❌ Background remove failed\n\nReason: ${reason}`);
+            return reply(`❌ بیک گراؤنڈ ہٹانے میں ناکامی\n\nوجہ: ${reason}`);
         }
 
         const base64Data = data.result.base64.split(",")[1];
@@ -117,6 +117,6 @@ cmd({
             react: { text: "❌", key: message.key }
         });
 
-        reply(`❌ Background remove error: ${err.message}`);
+        reply(`❌ خرابی: ${err.message}`);
     }
 });
