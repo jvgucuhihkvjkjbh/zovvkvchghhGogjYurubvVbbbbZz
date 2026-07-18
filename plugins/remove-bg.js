@@ -80,9 +80,12 @@ cmd({
 
     } catch (err) {
         console.log("RMBG Error:", err.message);
+        
         await conn.sendMessage(m.chat, {
             react: { text: "❌", key: message.key }
         });
-        reply("❌ Background remove error, try again");
+
+        const apiError = err.response?.data?.error || err.message;
+        reply(`❌ Error: ${apiError}`);
     }
 });
