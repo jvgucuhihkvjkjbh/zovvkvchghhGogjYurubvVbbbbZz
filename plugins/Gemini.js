@@ -2,27 +2,26 @@ const { cmd } = require('../command');
 const axios = require('axios');
 const yts = require('yt-search');
 
-const commands = ["as", "song", "mp3", "ytmp3"];
-
-const YTMP3_API = "https://adeel-xtech-api.vercel.app/api/ytmp3";
+const commands = ["ass"];
 
 const downloadAudio = async (videoUrl) => {
     try {
-        const res = await axios.get(`${YTMP3_API}?url=${encodeURIComponent(videoUrl)}`, { timeout: 60000 });
-        const data = res.data;
+        const res = await axios.get(
+            `https://adeel-xtech-api.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+            { timeout: 30000 }
+        );
 
-        if (!data || data.status !== true || !data.result || !data.result.audio_download) {
-            return null;
-        }
+        const downloadUrl = res.data?.result?.audio_download;
+        if (!res.data?.status || !downloadUrl) return null;
 
-        const audioRes = await axios.get(data.result.audio_download, {
-            responseType: "arraybuffer",
-            timeout: 60000
-        });
-
+        const audioRes = await axios.get(downloadUrl, { responseType: "arraybuffer", timeout: 60000 });
         const buffer = Buffer.from(audioRes.data);
-        return buffer.length > 0 ? buffer : null;
+
+        if (buffer.length > 0) return buffer;
+        return null;
+
     } catch (e) {
+        console.log("Download Audio Error:", e.message);
         return null;
     }
 };
@@ -30,7 +29,7 @@ const downloadAudio = async (videoUrl) => {
 commands.forEach(pattern => {
     cmd({
         pattern: pattern,
-        desc: "Search & download YouTube audio",
+        desc: "Download YouTube audio",
         category: "download",
         react: "🎶",
         filename: __filename
@@ -38,7 +37,7 @@ commands.forEach(pattern => {
         try {
 
             if (!q) {
-                return reply("*🎵 YT MUSIC DOWNLOADER*\n\nPlease provide a song name or YouTube link.");
+                return reply("❌ Please provide a song name or YouTube link");
             }
 
             let vid;
@@ -58,7 +57,7 @@ commands.forEach(pattern => {
                     videoId = q.split('/').pop().split('?')[0];
                 }
 
-                if (!videoId) return reply("*🎵 YT MUSIC DOWNLOADER*\n\nInvalid YouTube link.");
+                if (!videoId) return reply("❌ Invalid YouTube link");
 
                 const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
@@ -89,18 +88,18 @@ commands.forEach(pattern => {
 
             } else {
                 const { videos } = await yts(q);
-                if (!videos.length) return reply("*🎵 YT MUSIC DOWNLOADER*\n\nNo results found. Please try a different song name.");
+                if (!videos.length) return reply("❌ No song results found");
                 vid = videos[0];
             }
 
             await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
             const caption =
-                `*${vid.title}*\n\n` +
-                `👤 *Channel:* ${vid.author.name}\n` +
-                `⏱ *Duration:* ${vid.timestamp}\n` +
-                `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
-                `> *⚡ Powered by ADEEL-MD ⚡*`;
+    `*${vid.title}*\n\n` +
+    `👤 *Channel:* ${vid.author.name}\n` +
+    `⏱ *Duration:* ${vid.timestamp}\n` +
+    `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
+    `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
             await conn.sendMessage(from, {
                 image: { url: vid.thumbnail },
@@ -118,13 +117,13 @@ commands.forEach(pattern => {
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } else {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("*🎵 YT MUSIC DOWNLOADER*\n\nFailed to download audio. Please try again later.");
+                return reply("❌ Failed to download audio. Please try again later.");
             }
 
         } catch (e) {
             console.log("Play Command Error:", e);
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            reply("*🎵 YT MUSIC DOWNLOADER*\n\nAn unexpected error occurred while processing your request.");
+            reply("❌ An unexpected error occurred while processing your request.");
         }
     });
 });
