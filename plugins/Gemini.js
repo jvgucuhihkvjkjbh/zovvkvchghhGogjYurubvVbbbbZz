@@ -1,72 +1,130 @@
-const axios = require("axios");
-const { cmd } = require("../command");
+const { cmd } = require('../command');
+const axios = require('axios');
+const yts = require('yt-search');
+
+const commands = ["as", "song", "mp3", "ytmp3"];
 
 const YTMP3_API = "https://adeel-xtech-api.vercel.app/api/ytmp3";
 
-cmd({
-    pattern: "ytmp3",
-    alias: ["ytaudio", "ytsong", "ymp3"],
-    react: "🎧",
-    desc: "Search & download YouTube audio by song name",
-    category: "downloader",
-    filename: __filename
-}, async (conn, message, m, { reply, args, q }) => {
+const downloadAudio = async (videoUrl) => {
     try {
-        const query = q || args.join(" ");
-
-        if (!query) {
-            return reply("*🎵 YT MUSIC DOWNLOADER*\n\nPlease provide a song name.\n\n*Example:* .ytmp3 Judaai Maar Deti Hai");
-        }
-
-        if (/youtu\.?be|youtube\.com/i.test(query)) {
-            return reply("*🎵 YT MUSIC DOWNLOADER*\n\nLinks are not supported, please enter only the song name.\n\n*Example:* .ytmp3 Judaai Maar Deti Hai");
-        }
-
-        await conn.sendMessage(m.chat, {
-            react: { text: "⏳", key: message.key }
-        });
-
-        const response = await axios.get(`${YTMP3_API}?url=${encodeURIComponent(query)}`, { timeout: 60000 });
-        const data = response.data;
+        const res = await axios.get(`${YTMP3_API}?url=${encodeURIComponent(videoUrl)}`, { timeout: 60000 });
+        const data = res.data;
 
         if (!data || data.status !== true || !data.result || !data.result.audio_download) {
-            await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
-            return reply("*🎵 YT MUSIC DOWNLOADER*\n\nNo results found. Please try a different song name.");
+            return null;
         }
 
-        const { title, duration, quality, audio_download } = data.result;
-
-        await conn.sendMessage(m.chat, {
-            audio: { url: audio_download },
-            mimetype: "audio/mpeg",
-            fileName: `${title || query}.mp3`
-        }, { quoted: m });
-
-        await conn.sendMessage(
-            m.chat,
-            {
-                text: `╭─❖ *YT MUSIC DOWNLOADER* ❖─╮\n\n` +
-                      `🎼 *Title:* ${title || query}\n` +
-                      `⏱️ *Duration:* ${duration || "N/A"}\n` +
-                      `🎚️ *Quality:* ${quality || "N/A"}\n\n` +
-                      `╰──────────────────╯\n` +
-                      `> *⚡ Powered by ADEEL-MD ⚡*`
-            },
-            { quoted: m }
-        );
-
-        await conn.sendMessage(m.chat, {
-            react: { text: "✅", key: message.key }
+        const audioRes = await axios.get(data.result.audio_download, {
+            responseType: "arraybuffer",
+            timeout: 60000
         });
 
-    } catch (err) {
-        console.log("YTMP3 Error:", err.message);
-
-        await conn.sendMessage(m.chat, {
-            react: { text: "❌", key: message.key }
-        });
-
-        const apiError = err.response?.data?.error || err.message;
-        reply(`*🎵 YT MUSIC DOWNLOADER*\n\nSomething went wrong: ${apiError}`);
+        const buffer = Buffer.from(audioRes.data);
+        return buffer.length > 0 ? buffer : null;
+    } catch (e) {
+        return null;
     }
+};
+
+commands.forEach(pattern => {
+    cmd({
+        pattern: pattern,
+        desc: "Search & download YouTube audio",
+        category: "download",
+        react: "🎶",
+        filename: __filename
+    }, async (conn, mek, m, { from, q, reply }) => {
+        try {
+
+            if (!q) {
+                return reply("*🎵 YT MUSIC DOWNLOADER*\n\nPlease provide a song name or YouTube link.");
+            }
+
+            let vid;
+
+            const isYT = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(q);
+
+            if (isYT) {
+                let videoId = '';
+                try {
+                    const urlObj = new URL(q);
+                    if (urlObj.hostname === 'youtu.be') {
+                        videoId = urlObj.pathname.slice(1);
+                    } else {
+                        videoId = urlObj.searchParams.get('v');
+                    }
+                } catch {
+                    videoId = q.split('/').pop().split('?')[0];
+                }
+
+                if (!videoId) return reply("*🎵 YT MUSIC DOWNLOADER*\n\nInvalid YouTube link.");
+
+                const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+                try {
+                    const search = await yts({ videoId: videoId });
+                    if (search && search.title) {
+                        vid = {
+                            title: search.title,
+                            url: ytUrl,
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                            timestamp: search.duration?.timestamp || search.timestamp || 'N/A',
+                            views: search.views || 0,
+                            author: { name: search.author?.name || search.channel?.name || 'Unknown' }
+                        };
+                    }
+                } catch (e) {}
+
+                if (!vid) {
+                    vid = {
+                        title: 'Unknown Title',
+                        url: ytUrl,
+                        thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                        timestamp: 'N/A',
+                        views: 0,
+                        author: { name: 'Unknown' }
+                    };
+                }
+
+            } else {
+                const { videos } = await yts(q);
+                if (!videos.length) return reply("*🎵 YT MUSIC DOWNLOADER*\n\nNo results found. Please try a different song name.");
+                vid = videos[0];
+            }
+
+            await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
+
+            const caption =
+                `*${vid.title}*\n\n` +
+                `👤 *Channel:* ${vid.author.name}\n` +
+                `⏱ *Duration:* ${vid.timestamp}\n` +
+                `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
+                `> *⚡ Powered by ADEEL-MD ⚡*`;
+
+            await conn.sendMessage(from, {
+                image: { url: vid.thumbnail },
+                caption: caption
+            }, { quoted: mek });
+
+            const audioBuffer = await downloadAudio(vid.url);
+
+            if (audioBuffer) {
+                await conn.sendMessage(from, {
+                    audio: audioBuffer,
+                    mimetype: "audio/mpeg",
+                    fileName: `${vid.title}.mp3`
+                }, { quoted: mek });
+                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            } else {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                return reply("*🎵 YT MUSIC DOWNLOADER*\n\nFailed to download audio. Please try again later.");
+            }
+
+        } catch (e) {
+            console.log("Play Command Error:", e);
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            reply("*🎵 YT MUSIC DOWNLOADER*\n\nAn unexpected error occurred while processing your request.");
+        }
+    });
 });
