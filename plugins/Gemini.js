@@ -1,14 +1,13 @@
 const axios = require("axios");
 const { cmd } = require("../command");
 
-const SEARCH_API = "https://adeel-xtech-api.vercel.app/api/ytsearch";
 const YTMP3_API = "https://adeel-xtech-api.vercel.app/api/ytmp3";
 
 cmd({
     pattern: "ytmp3",
     alias: ["ytaudio", "ytsong", "ymp3"],
     react: "🎧",
-    desc: "Search and download YouTube audio by name",
+    desc: "Search & download YouTube audio by song name",
     category: "downloader",
     filename: __filename
 }, async (conn, message, m, { reply, args, q }) => {
@@ -16,44 +15,23 @@ cmd({
         const query = q || args.join(" ");
 
         if (!query) {
-            return reply("❌ Song ka naam likho\n\nMisal: .ytmp3 Judaai Maar Deti Hai");
+            return reply("*🎵 YT MUSIC DOWNLOADER*\n\nPlease provide a song name.\n\n*Example:* .ytmp3 Judaai Maar Deti Hai");
         }
 
         if (/youtu\.?be|youtube\.com/i.test(query)) {
-            return reply("❌ Link nahi, sirf song ka naam likho\n\nMisal: .ytmp3 Judaai Maar Deti Hai");
-        }
-
-        await conn.sendMessage(m.chat, {
-            react: { text: "🔎", key: message.key }
-        });
-
-        const searchRes = await axios.get(`${SEARCH_API}?query=${encodeURIComponent(query)}`, { timeout: 30000 });
-        const searchData = searchRes.data;
-
-        const firstResult = searchData?.result?.[0] || searchData?.results?.[0] || searchData?.data?.[0];
-
-        if (!searchData || searchData.status !== true || !firstResult) {
-            await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
-            return reply("❌ Song nahi mila. Naam dobara check karke likho.");
-        }
-
-        const videoUrl = firstResult.url || firstResult.link || (firstResult.videoId ? `https://youtu.be/${firstResult.videoId}` : null);
-
-        if (!videoUrl) {
-            await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
-            return reply("❌ Song ka link nahi mila. Dobara try karo.");
+            return reply("*🎵 YT MUSIC DOWNLOADER*\n\nLinks are not supported, please enter only the song name.\n\n*Example:* .ytmp3 Judaai Maar Deti Hai");
         }
 
         await conn.sendMessage(m.chat, {
             react: { text: "⏳", key: message.key }
         });
 
-        const response = await axios.get(`${YTMP3_API}?url=${encodeURIComponent(videoUrl)}`, { timeout: 60000 });
+        const response = await axios.get(`${YTMP3_API}?url=${encodeURIComponent(query)}`, { timeout: 60000 });
         const data = response.data;
 
         if (!data || data.status !== true || !data.result || !data.result.audio_download) {
             await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
-            return reply("❌ Audio download nahi ho saka.");
+            return reply("*🎵 YT MUSIC DOWNLOADER*\n\nNo results found. Please try a different song name.");
         }
 
         const { title, duration, quality, audio_download } = data.result;
@@ -67,7 +45,12 @@ cmd({
         await conn.sendMessage(
             m.chat,
             {
-                text: `\`YOUTUBE AUDIO DOWNLOADER\`\n\n📝 TITLE: ${title || query}\n⏱️ DURATION: ${duration || "N/A"}\n🎚️ QUALITY: ${quality || "N/A"}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
+                text: `╭─❖ *YT MUSIC DOWNLOADER* ❖─╮\n\n` +
+                      `🎼 *Title:* ${title || query}\n` +
+                      `⏱️ *Duration:* ${duration || "N/A"}\n` +
+                      `🎚️ *Quality:* ${quality || "N/A"}\n\n` +
+                      `╰──────────────────╯\n` +
+                      `> *⚡ Powered by ADEEL-MD ⚡*`
             },
             { quoted: m }
         );
@@ -84,6 +67,6 @@ cmd({
         });
 
         const apiError = err.response?.data?.error || err.message;
-        reply(`❌ Error: ${apiError}`);
+        reply(`*🎵 YT MUSIC DOWNLOADER*\n\nSomething went wrong: ${apiError}`);
     }
 });
