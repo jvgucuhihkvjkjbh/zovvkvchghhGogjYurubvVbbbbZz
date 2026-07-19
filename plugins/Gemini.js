@@ -1,109 +1,66 @@
-const { cmd } = require('../command');
-const axios = require('axios');
+const axios = require("axios");
+const { cmd } = require("../command");
 
-const API_URL = "https://adeel-xtech-api.vercel.app/api/txt2img";
-
-const translateToEnglish = async (text) => {
-    try {
-        const res = await axios.get(
-            `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(text)}`,
-            { timeout: 5000 }
-        );
-        return res.data[0].map(x => x[0]).join('');
-    } catch (e) {
-        return text;
-    }
-};
-
-const getImageUrl = async (prompt) => {
-    try {
-        const res = await axios.get(
-            `${API_URL}?prompt=${encodeURIComponent(prompt)}`,
-            { timeout: 30000 }
-        );
-        const data = res.data;
-
-        if (!data || data.status !== true || !data.result) {
-            return { success: false, error: data?.error || "Image generate nahi ho saki" };
-        }
-
-        return { success: true, url: data.result };
-    } catch (e) {
-        const apiError = e.response?.data?.error || e.message;
-        return { success: false, error: apiError };
-    }
-};
-
-// Downloads the image as a buffer instead of letting Baileys stream the URL directly.
-// pollinations can take 30-60s+ to render (flux model), so give it real time and
-// retries with a proper browser User-Agent (pollinations can stall without one).
-const downloadImageBuffer = async (url, retries = 3) => {
-    for (let i = 0; i < retries; i++) {
-        try {
-            const res = await axios.get(url, {
-                responseType: "arraybuffer",
-                timeout: 60000,
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-                    'Accept': 'image/*',
-                    'Referer': 'https://pollinations.ai/'
-                }
-            });
-            if (res.data && res.data.length > 1000) {
-                return Buffer.from(res.data);
-            }
-        } catch (e) {
-            if (i === retries - 1) throw e;
-            await new Promise(r => setTimeout(r, 3000));
-        }
-    }
-    return null;
-};
+const API_URL = "https://adeel-xtech-api.vercel.app/api/ytmp3";
 
 cmd({
-    pattern: "gemini",
-    alias: ["nano", "gemini2"],
-    desc: "AI image generate",
-    category: "ai",
-    react: "🤖",
+    pattern: "ytmp3",
+    alias: ["ytaudio", "ytsong", "ymp3"],
+    react: "🎧",
+    desc: "Download YouTube audio (MP3)",
+    category: "downloader",
     filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
+}, async (conn, message, m, { reply, args, q }) => {
     try {
-        if (!q) return reply("❌ Prompt likho\nMisal: .gemini jungle mein larka khara hai");
+        const url = q || args[0];
 
-        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
-
-        const englishPrompt = await translateToEnglish(q);
-        const result = await getImageUrl(englishPrompt);
-
-        if (!result.success) {
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply(`❌ Error: ${result.error}`);
+        if (!url) {
+            return reply("❌ Please provide a YouTube URL\n\nExample: .ytmp3 https://youtu.be/xxxxx");
         }
 
-        let imageBuffer;
-        try {
-            imageBuffer = await downloadImageBuffer(result.url);
-        } catch (e) {
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ Image server (pollinations) time out ho gaya. Dobara try karo.");
+        if (!url.includes("youtu")) {
+            return reply("❌ Please provide a valid YouTube URL");
         }
 
-        if (!imageBuffer) {
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ Image download nahi ho saki. Dobara try karo.");
+        await conn.sendMessage(m.chat, {
+            react: { text: "⏳", key: message.key }
+        });
+
+        const response = await axios.get(`${API_URL}?url=${encodeURIComponent(url)}`, { timeout: 60000 });
+        const data = response.data;
+
+        if (!data || data.status !== true || !data.result || !data.result.audio_download) {
+            return reply("❌ Failed to fetch YouTube audio");
         }
 
-        await conn.sendMessage(from, {
-            image: imageBuffer,
-            caption: `🖼️ *AI Image Generated!*\n\n📝 *Prompt:* ${q}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
-        }, { quoted: mek });
+        const { title, duration, quality, audio_download } = data.result;
 
-        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+        await conn.sendMessage(m.chat, {
+            audio: { url: audio_download },
+            mimetype: "audio/mpeg",
+            fileName: `${title || "audio"}.mp3`
+        }, { quoted: m });
 
-    } catch (e) {
-        console.log("AI IMAGE ERROR:", e.message);
-        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply(`❌ Error: ${e.message}`);
+        await conn.sendMessage(
+            m.chat,
+            {
+                text: `\`YOUTUBE AUDIO DOWNLOADER\`\n\n📝 TITLE: ${title || "N/A"}\n⏱️ DURATION: ${duration || "N/A"}\n🎚️ QUALITY: ${quality || "N/A"}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
+            },
+            { quoted: m }
+        );
+
+        await conn.sendMessage(m.chat, {
+            react: { text: "✅", key: message.key }
+        });
+
+    } catch (err) {
+        console.log("YTMP3 Error:", err.message);
+
+        await conn.sendMessage(m.chat, {
+            react: { text: "❌", key: message.key }
+        });
+
+        const apiError = err.response?.data?.error || err.message;
+        reply(`❌ Error: ${apiError}`);
     }
 });
