@@ -1,36 +1,59 @@
 const axios = require("axios");
 const { cmd } = require("../command");
 
-const API_URL = "https://adeel-xtech-api.vercel.app/api/ytmp3";
+const SEARCH_API = "https://adeel-xtech-api.vercel.app/api/ytsearch";
+const YTMP3_API = "https://adeel-xtech-api.vercel.app/api/ytmp3";
 
 cmd({
     pattern: "ytmp3",
     alias: ["ytaudio", "ytsong", "ymp3"],
     react: "🎧",
-    desc: "Download YouTube audio (MP3)",
+    desc: "Search and download YouTube audio by name",
     category: "downloader",
     filename: __filename
 }, async (conn, message, m, { reply, args, q }) => {
     try {
-        const url = q || args[0];
+        const query = q || args.join(" ");
 
-        if (!url) {
-            return reply("❌ Please provide a YouTube URL\n\nExample: .ytmp3 https://youtu.be/xxxxx");
+        if (!query) {
+            return reply("❌ Song ka naam likho\n\nMisal: .ytmp3 Judaai Maar Deti Hai");
         }
 
-        if (!url.includes("youtu")) {
-            return reply("❌ Please provide a valid YouTube URL");
+        if (/youtu\.?be|youtube\.com/i.test(query)) {
+            return reply("❌ Link nahi, sirf song ka naam likho\n\nMisal: .ytmp3 Judaai Maar Deti Hai");
+        }
+
+        await conn.sendMessage(m.chat, {
+            react: { text: "🔎", key: message.key }
+        });
+
+        const searchRes = await axios.get(`${SEARCH_API}?query=${encodeURIComponent(query)}`, { timeout: 30000 });
+        const searchData = searchRes.data;
+
+        const firstResult = searchData?.result?.[0] || searchData?.results?.[0] || searchData?.data?.[0];
+
+        if (!searchData || searchData.status !== true || !firstResult) {
+            await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
+            return reply("❌ Song nahi mila. Naam dobara check karke likho.");
+        }
+
+        const videoUrl = firstResult.url || firstResult.link || (firstResult.videoId ? `https://youtu.be/${firstResult.videoId}` : null);
+
+        if (!videoUrl) {
+            await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
+            return reply("❌ Song ka link nahi mila. Dobara try karo.");
         }
 
         await conn.sendMessage(m.chat, {
             react: { text: "⏳", key: message.key }
         });
 
-        const response = await axios.get(`${API_URL}?url=${encodeURIComponent(url)}`, { timeout: 60000 });
+        const response = await axios.get(`${YTMP3_API}?url=${encodeURIComponent(videoUrl)}`, { timeout: 60000 });
         const data = response.data;
 
         if (!data || data.status !== true || !data.result || !data.result.audio_download) {
-            return reply("❌ Failed to fetch YouTube audio");
+            await conn.sendMessage(m.chat, { react: { text: "❌", key: message.key } });
+            return reply("❌ Audio download nahi ho saka.");
         }
 
         const { title, duration, quality, audio_download } = data.result;
@@ -38,13 +61,13 @@ cmd({
         await conn.sendMessage(m.chat, {
             audio: { url: audio_download },
             mimetype: "audio/mpeg",
-            fileName: `${title || "audio"}.mp3`
+            fileName: `${title || query}.mp3`
         }, { quoted: m });
 
         await conn.sendMessage(
             m.chat,
             {
-                text: `\`YOUTUBE AUDIO DOWNLOADER\`\n\n📝 TITLE: ${title || "N/A"}\n⏱️ DURATION: ${duration || "N/A"}\n🎚️ QUALITY: ${quality || "N/A"}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
+                text: `\`YOUTUBE AUDIO DOWNLOADER\`\n\n📝 TITLE: ${title || query}\n⏱️ DURATION: ${duration || "N/A"}\n🎚️ QUALITY: ${quality || "N/A"}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`
             },
             { quoted: m }
         );
