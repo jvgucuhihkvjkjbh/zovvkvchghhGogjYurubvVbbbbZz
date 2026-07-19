@@ -34,6 +34,26 @@ const getImageUrl = async (prompt) => {
     }
 };
 
+// Downloads the image as a buffer instead of letting Baileys stream the URL directly.
+// Retries if pollinations is slow/unstable — fixes "Failed to fetch stream" errors.
+const downloadImageBuffer = async (url, retries = 2) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const res = await axios.get(url, {
+                responseType: "arraybuffer",
+                timeout: 45000
+            });
+            if (res.data && res.data.length > 0) {
+                return Buffer.from(res.data);
+            }
+        } catch (e) {
+            if (i === retries - 1) throw e;
+            await new Promise(r => setTimeout(r, 2000));
+        }
+    }
+    return null;
+};
+
 cmd({
     pattern: "gemini",
     alias: ["nano", "gemini2"],
@@ -55,8 +75,21 @@ cmd({
             return reply(`❌ Error: ${result.error}`);
         }
 
+        let imageBuffer;
+        try {
+            imageBuffer = await downloadImageBuffer(result.url);
+        } catch (e) {
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            return reply("❌ Image server (pollinations) time out ho gaya. Dobara try karo.");
+        }
+
+        if (!imageBuffer) {
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            return reply("❌ Image download nahi ho saki. Dobara try karo.");
+        }
+
         await conn.sendMessage(from, {
-            image: { url: result.url },
+            image: imageBuffer,
             caption: `🖼️ *AI Image Generated!*\n\n📝 *Prompt:* ${q}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
         }, { quoted: mek });
 
