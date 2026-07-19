@@ -35,20 +35,26 @@ const getImageUrl = async (prompt) => {
 };
 
 // Downloads the image as a buffer instead of letting Baileys stream the URL directly.
-// Retries if pollinations is slow/unstable — fixes "Failed to fetch stream" errors.
-const downloadImageBuffer = async (url, retries = 2) => {
+// pollinations can take 30-60s+ to render (flux model), so give it real time and
+// retries with a proper browser User-Agent (pollinations can stall without one).
+const downloadImageBuffer = async (url, retries = 3) => {
     for (let i = 0; i < retries; i++) {
         try {
             const res = await axios.get(url, {
                 responseType: "arraybuffer",
-                timeout: 45000
+                timeout: 60000,
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+                    'Accept': 'image/*',
+                    'Referer': 'https://pollinations.ai/'
+                }
             });
-            if (res.data && res.data.length > 0) {
+            if (res.data && res.data.length > 1000) {
                 return Buffer.from(res.data);
             }
         } catch (e) {
             if (i === retries - 1) throw e;
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 3000));
         }
     }
     return null;
