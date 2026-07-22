@@ -7,11 +7,11 @@ const downloadVideo = async (videoUrl) => {
         {
             fetch: async () => {
                 const res = await axios.get(
-                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4?url=${encodeURIComponent(videoUrl)}`,
+                    `https://adeel-xtech-apis.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`,
                     { timeout: 30000 }
                 );
-                const url = res.data?.url;
-                if (res.data?.status !== "success" || !url) throw new Error("No URL");
+                const url = res.data?.result?.video_download;
+                if (!res.data?.status || !url) throw new Error("No URL");
                 return url;
             }
         }
