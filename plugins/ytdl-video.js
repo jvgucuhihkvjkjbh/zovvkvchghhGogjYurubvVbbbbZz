@@ -7,55 +7,11 @@ const downloadVideo = async (videoUrl) => {
         {
             fetch: async () => {
                 const res = await axios.get(
-                    `https://api.princetechn.com/api/download/ytmp4?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
+                    `https://adeel-xtech-apis.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`,
                     { timeout: 30000 }
                 );
-                const url = res.data?.result?.url || res.data?.result?.download_url;
-                if (!res.data?.success || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://api.princetechn.com/api/download/mp4?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.result?.url || res.data?.result?.download_url;
-                if (!res.data?.success || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://jawad-tech.vercel.app/download/ytdl?url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.result?.mp4;
+                const url = res.data?.result?.video_download;
                 if (!res.data?.status || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4?url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.url;
-                if (res.data?.status !== "success" || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4-v1?url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.url;
-                if (res.data?.status !== "success" || !url) throw new Error("No URL");
                 return url;
             }
         }
@@ -154,7 +110,7 @@ cmd({
             `🎥 *Channel:* ${video.author.name}\n` +
             `👁️ *Views:* ${(video.views || 0).toLocaleString()}\n` +
             `⏳ *Duration:* ${video.timestamp}\n\n` +
-            `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+            `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇگʟ-ᴍᴅ ⚡*`;
 
         await sock.sendMessage(message.chat, {
             image: { url: video.thumbnail },
