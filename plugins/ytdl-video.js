@@ -17,8 +17,8 @@ const downloadVideo = async (videoUrl) => {
 };
 
 cmd({
-    pattern: "ytmp4",
-    alias: ["video"],
+    pattern: "video",
+    alias: ["mp4"],
     desc: "Download video by name or link",
     category: "download",
     react: "🎬",
@@ -97,7 +97,8 @@ cmd({
             `*${video.title}*\n\n` +
             `🎥 *Channel:* ${video.author.name}\n` +
             `👁️ *Views:* ${(video.views || 0).toLocaleString()}\n` +
-            `⏳ *Duration:* ${video.timestamp}`;
+            `⏳ *Duration:* ${video.timestamp}\n\n` +
+            `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
         await sock.sendMessage(message.chat, {
             image: { url: video.thumbnail },
@@ -119,28 +120,10 @@ cmd({
             }, { quoted: message });
         }
 
-        // Download the video as buffer instead of streaming raw URL —
-        // fixes tunnel links that don't support range/streaming properly
-        let videoBuffer;
-        try {
-            const videoRes = await axios.get(downUrl, {
-                responseType: "arraybuffer",
-                timeout: 60000
-            });
-            videoBuffer = Buffer.from(videoRes.data);
-        } catch (e) {
-            await sock.sendMessage(message.chat, {
-                react: { text: "❌", key: message.key }
-            });
-            return sock.sendMessage(message.chat, {
-                text: "❌ Failed to fetch video file from server."
-            }, { quoted: message });
-        }
-
         await sock.sendMessage(message.chat, {
-            video: videoBuffer,
+            video: { url: downUrl },
             mimetype: "video/mp4",
-            caption: `*${video.title}*`
+            caption: `*${video.title}*\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
         }, { quoted: message });
 
         await sock.sendMessage(message.chat, {
