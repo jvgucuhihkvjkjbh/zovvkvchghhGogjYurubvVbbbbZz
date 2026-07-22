@@ -7,11 +7,11 @@ const downloadVideo = async (videoUrl) => {
         {
             fetch: async () => {
                 const res = await axios.get(
-                    `https://adeel-xtech-apis.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`,
+                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4?url=${encodeURIComponent(videoUrl)}`,
                     { timeout: 30000 }
                 );
-                const url = res.data?.result?.video_download;
-                if (!res.data?.status || !url) throw new Error("No URL");
+                const url = res.data?.url;
+                if (res.data?.status !== "success" || !url) throw new Error("No URL");
                 return url;
             }
         }
@@ -110,7 +110,7 @@ cmd({
             `🎥 *Channel:* ${video.author.name}\n` +
             `👁️ *Views:* ${(video.views || 0).toLocaleString()}\n` +
             `⏳ *Duration:* ${video.timestamp}\n\n` +
-            `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇگʟ-ᴍᴅ ⚡*`;
+            `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
         await sock.sendMessage(message.chat, {
             image: { url: video.thumbnail },
