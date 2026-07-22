@@ -119,8 +119,26 @@ cmd({
             }, { quoted: message });
         }
 
+        // Download the video as buffer instead of streaming raw URL —
+        // fixes tunnel links that don't support range/streaming properly
+        let videoBuffer;
+        try {
+            const videoRes = await axios.get(downUrl, {
+                responseType: "arraybuffer",
+                timeout: 60000
+            });
+            videoBuffer = Buffer.from(videoRes.data);
+        } catch (e) {
+            await sock.sendMessage(message.chat, {
+                react: { text: "❌", key: message.key }
+            });
+            return sock.sendMessage(message.chat, {
+                text: "❌ Failed to fetch video file from server."
+            }, { quoted: message });
+        }
+
         await sock.sendMessage(message.chat, {
-            video: { url: downUrl },
+            video: videoBuffer,
             mimetype: "video/mp4",
             caption: `*${video.title}*`
         }, { quoted: message });
