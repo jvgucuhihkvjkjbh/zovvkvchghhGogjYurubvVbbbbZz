@@ -3,17 +3,73 @@ const axios = require('axios');
 const yts = require('yt-search');
 
 const downloadVideo = async (videoUrl) => {
-    try {
-        const res = await axios.get(
-            `https://adeel-xtech-apis.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`,
-            { timeout: 30000 }
-        );
-        const url = res.data?.result?.video_download;
-        if (!res.data?.status || !url) throw new Error("No URL");
-        return url;
-    } catch (e) {
-        return null;
+    const apis = [
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://api.princetechn.com/api/download/ytmp4?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.result?.url || res.data?.result?.download_url;
+                if (!res.data?.success || !url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://api.princetechn.com/api/download/mp4?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.result?.url || res.data?.result?.download_url;
+                if (!res.data?.success || !url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://jawad-tech.vercel.app/download/ytdl?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.result?.mp4;
+                if (!res.data?.status || !url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.url;
+                if (res.data?.status !== "success" || !url) throw new Error("No URL");
+                return url;
+            }
+        },
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4-v1?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.url;
+                if (res.data?.status !== "success" || !url) throw new Error("No URL");
+                return url;
+            }
+        }
+    ];
+
+    for (const api of apis) {
+        try {
+            const url = await api.fetch();
+            if (url) return url;
+        } catch (e) {
+            continue;
+        }
     }
+    return null;
 };
 
 cmd({
@@ -116,7 +172,7 @@ cmd({
                 react: { text: "❌", key: message.key }
             });
             return sock.sendMessage(message.chat, {
-                text: "❌ Download server is currently unavailable. Please try again later."
+                text: "❌ All download servers are currently unavailable. Please try again later."
             }, { quoted: message });
         }
 
