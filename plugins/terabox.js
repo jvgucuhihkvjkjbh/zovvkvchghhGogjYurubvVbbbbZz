@@ -51,11 +51,11 @@ commands.forEach(pattern => {
     `⚖ *Size:* ${fileData.size || 'N/A'}\n` +
     `🎬 *Quality:* ${fileData.quality || 'N/A'}\n` +
     `⏱ *Duration:* ${fileData.duration || 'N/A'}\n\n` +
-    `🔗 *Direct Download:* ${fileData.fast_dlink || 'N/A'}\n\n` +
     `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
             const thumbnail = fileData.thumbnail || "https://i.ibb.co/L8y2k1D/terabox.jpg";
 
+            // 1. پہلے تھمب نیل اور ڈیٹیلز بھیجنا
             await conn.sendMessage(from, {
                 image: { url: thumbnail },
                 caption: caption
@@ -66,7 +66,7 @@ commands.forEach(pattern => {
             if (fileUrl) {
                 const fileRes = await axios.get(fileUrl, { 
                     responseType: "arraybuffer", 
-                    timeout: 90000,
+                    timeout: 120000,
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
                     }
@@ -75,28 +75,24 @@ commands.forEach(pattern => {
                 const buffer = Buffer.from(fileRes.data);
 
                 if (buffer.length > 0) {
-                    const isVideo = fileData.file_name && fileData.file_name.match(/\.(mp4|mkv|mov|avi)$/i);
+                    const fileName = fileData.file_name || "TeraBox_Video.mp4";
 
-                    if (isVideo) {
-                        await conn.sendMessage(from, {
-                            video: buffer,
-                            mimetype: "video/mp4",
-                            caption: `*${fileData.file_name}*\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
-                        }, { quoted: mek });
-                    } else {
-                        await conn.sendMessage(from, {
-                            document: buffer,
-                            mimetype: "application/octet-stream",
-                            fileName: fileData.file_name || "TeraBox_File"
-                        }, { quoted: mek });
-                    }
+                    // 2. ڈاکومنٹ کے اندر ویڈیو سینڈ کرنا
+                    await conn.sendMessage(from, {
+                        document: buffer,
+                        mimetype: "video/mp4",
+                        fileName: fileName,
+                        caption: `🎥 *${fileName}*\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
+                    }, { quoted: mek });
 
                     await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
                 } else {
                     await conn.sendMessage(from, { react: { text: "⚠️", key: mek.key } });
+                    reply("❌ Download buffer was empty.");
                 }
             } else {
-                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                reply("❌ Direct download link not found.");
             }
 
         } catch (e) {
