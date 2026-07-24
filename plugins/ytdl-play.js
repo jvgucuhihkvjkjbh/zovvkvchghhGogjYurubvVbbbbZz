@@ -4,25 +4,44 @@ const yts = require('yt-search');
 
 const commands = ["play", "song", "mp3"];
 
+const BROWSER_HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': '*/*',
+    'Referer': 'https://www.youtube.com/'
+};
+
 const getAudioBuffer = async (videoUrl) => {
+    let apiResult;
     try {
-        const res = await axios.get(
+        apiResult = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
-            { timeout: 30000 }
+            { timeout: 30000, headers: BROWSER_HEADERS }
         );
+    } catch (e) {
+        console.log("Stage 1 (Vercel API call) failed:", e.message);
+        return null;
+    }
 
-        if (!res.data?.status || !res.data.result?.audio_download) {
-            return null;
-        }
+    if (!apiResult.data?.status || !apiResult.data.result?.audio_download) {
+        console.log("Stage 1 (Vercel API call) returned invalid data:", JSON.stringify(apiResult.data));
+        return null;
+    }
 
-        const audioRes = await axios.get(res.data.result.audio_download, {
+    try {
+        const audioRes = await axios.get(apiResult.data.result.audio_download, {
             responseType: "arraybuffer",
-            timeout: 60000
+            timeout: 60000,
+            headers: BROWSER_HEADERS
         });
 
-        return Buffer.from(audioRes.data);
+        const buffer = Buffer.from(audioRes.data);
+        if (!buffer || buffer.length < 1000) {
+            console.log("Stage 2 (audio fetch) returned an empty/too small buffer, size:", buffer?.length);
+            return null;
+        }
+        return buffer;
     } catch (e) {
-        console.log("getAudioBuffer Error:", e.message);
+        console.log("Stage 2 (audio fetch) failed:", e.message);
         return null;
     }
 };
