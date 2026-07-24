@@ -4,17 +4,25 @@ const yts = require('yt-search');
 
 const commands = ["play", "song", "mp3"];
 
-const getAudioUrl = async (videoUrl) => {
+const getAudioBuffer = async (videoUrl) => {
     try {
         const res = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
             { timeout: 30000 }
         );
-        if (res.data?.status && res.data.result?.audio_download) {
-            return res.data.result.audio_download;
+
+        if (!res.data?.status || !res.data.result?.audio_download) {
+            return null;
         }
-        return null;
+
+        const audioRes = await axios.get(res.data.result.audio_download, {
+            responseType: "arraybuffer",
+            timeout: 60000
+        });
+
+        return Buffer.from(audioRes.data);
     } catch (e) {
+        console.log("getAudioBuffer Error:", e.message);
         return null;
     }
 };
@@ -90,18 +98,18 @@ commands.forEach(pattern => {
     `👤 *Channel:* ${vid.author.name}\n` +
     `⏱ *Duration:* ${vid.timestamp}\n` +
     `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
-    `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+    `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ sᴀʀᴡᴀʀ-ᴍɪɴɪ ⚡*`;
 
             await conn.sendMessage(from, {
                 image: { url: vid.thumbnail },
                 caption: caption
             }, { quoted: mek });
 
-            const audioUrl = await getAudioUrl(vid.url);
+            const audioBuffer = await getAudioBuffer(vid.url);
 
-            if (audioUrl) {
+            if (audioBuffer) {
                 await conn.sendMessage(from, {
-                    audio: { url: audioUrl },
+                    audio: audioBuffer,
                     mimetype: "audio/mpeg",
                     fileName: `${vid.title}.mp3`
                 }, { quoted: mek });
@@ -112,7 +120,7 @@ commands.forEach(pattern => {
             }
 
         } catch (e) {
-            console.log("Play Command Error:", e);
+            console.log("Play Command Error:", e.message);
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             reply("❌ An unexpected error occurred while processing your request.");
         }
