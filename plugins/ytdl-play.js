@@ -4,32 +4,19 @@ const yts = require('yt-search');
 
 const commands = ["play", "song", "mp3"];
 
-const downloadAudio = async (videoUrl) => {
-    const apis = [
-        {
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.result?.audio_download;
-                if (!res.data?.status || !url) throw new Error("No URL");
-                return url;
-            }
+const getAudioUrl = async (videoUrl) => {
+    try {
+        const res = await axios.get(
+            `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+            { timeout: 30000 }
+        );
+        if (res.data?.status && res.data.result?.audio_download) {
+            return res.data.result.audio_download;
         }
-    ];
-
-    for (const api of apis) {
-        try {
-            const downloadUrl = await api.fetch();
-            const audioRes = await axios.get(downloadUrl, { responseType: "arraybuffer", timeout: 60000 });
-            const buffer = Buffer.from(audioRes.data);
-            if (buffer.length > 0) return buffer;
-        } catch (e) {
-            continue;
-        }
+        return null;
+    } catch (e) {
+        return null;
     }
-    return null;
 };
 
 commands.forEach(pattern => {
@@ -41,13 +28,11 @@ commands.forEach(pattern => {
         filename: __filename
     }, async (conn, mek, m, { from, q, reply }) => {
         try {
-
             if (!q) {
                 return reply("❌ Please provide a song name or YouTube link");
             }
 
             let vid;
-
             const isYT = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(q);
 
             if (isYT) {
@@ -112,11 +97,11 @@ commands.forEach(pattern => {
                 caption: caption
             }, { quoted: mek });
 
-            const audioBuffer = await downloadAudio(vid.url);
+            const audioUrl = await getAudioUrl(vid.url);
 
-            if (audioBuffer) {
+            if (audioUrl) {
                 await conn.sendMessage(from, {
-                    audio: audioBuffer,
+                    audio: { url: audioUrl },
                     mimetype: "audio/mpeg",
                     fileName: `${vid.title}.mp3`
                 }, { quoted: mek });
