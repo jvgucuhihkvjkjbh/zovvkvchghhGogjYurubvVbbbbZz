@@ -98,7 +98,7 @@ commands.forEach(pattern => {
     `👤 *Channel:* ${vid.author.name}\n` +
     `⏱ *Duration:* ${vid.timestamp}\n` +
     `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
-    `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ sᴀʀᴡᴀʀ-ᴍɪɴɪ ⚡*`;
+    `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
             await conn.sendMessage(from, {
                 image: { url: vid.thumbnail },
