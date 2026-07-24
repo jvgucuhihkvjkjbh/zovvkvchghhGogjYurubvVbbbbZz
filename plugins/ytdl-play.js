@@ -26,6 +26,7 @@ const downloadAudio = async (videoUrl) => {
         return null;
 
     } catch (e) {
+        console.log("downloadAudio Error:", e.message);
         return null;
     }
 };
@@ -77,7 +78,9 @@ commands.forEach(pattern => {
                             author: { name: search.author?.name || search.channel?.name || 'Unknown' }
                         };
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.log("yts videoId search Error:", e.message);
+                }
 
                 if (!vid) {
                     vid = {
@@ -127,7 +130,7 @@ commands.forEach(pattern => {
         } catch (e) {
             console.log("Play Command Error:", e);
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            reply("❌ An unexpected error occurred while processing your request.");
+            reply(`❌ Error: ${e.message}`);
         }
     });
 });
