@@ -4,46 +4,25 @@ const yts = require('yt-search');
 
 const commands = ["play", "song", "mp3"];
 
-const BROWSER_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'Accept': '*/*',
-    'Referer': 'https://www.youtube.com/'
-};
+const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
 const getAudioBuffer = async (videoUrl) => {
-    let apiResult;
-    try {
-        apiResult = await axios.get(
-            `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
-            { timeout: 30000, headers: BROWSER_HEADERS }
-        );
-    } catch (e) {
-        console.log("Stage 1 (Vercel API call) failed:", e.message);
+    const apiRes = await axios.get(
+        `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+        { timeout: 30000, headers: { 'User-Agent': USER_AGENT } }
+    );
+
+    if (!apiRes.data?.status || !apiRes.data.result?.audio_download) {
         return null;
     }
 
-    if (!apiResult.data?.status || !apiResult.data.result?.audio_download) {
-        console.log("Stage 1 (Vercel API call) returned invalid data:", JSON.stringify(apiResult.data));
-        return null;
-    }
+    const audioRes = await axios.get(apiRes.data.result.audio_download, {
+        responseType: "arraybuffer",
+        timeout: 60000,
+        headers: { 'User-Agent': USER_AGENT }
+    });
 
-    try {
-        const audioRes = await axios.get(apiResult.data.result.audio_download, {
-            responseType: "arraybuffer",
-            timeout: 60000,
-            headers: BROWSER_HEADERS
-        });
-
-        const buffer = Buffer.from(audioRes.data);
-        if (!buffer || buffer.length < 1000) {
-            console.log("Stage 2 (audio fetch) returned an empty/too small buffer, size:", buffer?.length);
-            return null;
-        }
-        return buffer;
-    } catch (e) {
-        console.log("Stage 2 (audio fetch) failed:", e.message);
-        return null;
-    }
+    return Buffer.from(audioRes.data);
 };
 
 commands.forEach(pattern => {
