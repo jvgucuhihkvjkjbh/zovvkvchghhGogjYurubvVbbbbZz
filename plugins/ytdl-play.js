@@ -5,30 +5,31 @@ const yts = require('yt-search');
 const commands = ["play", "song", "mp3"];
 
 const downloadAudio = async (videoUrl) => {
-    try {
-        const res = await axios.get(
-            `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
-            { timeout: 30000 }
-        );
-
-        const data = res.data;
-
-        if (!data || !data.status || !data.result || !data.result.url) {
-            throw new Error("No URL");
+    const apis = [
+        {
+            fetch: async () => {
+                const res = await axios.get(
+                    `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
+                    { timeout: 30000 }
+                );
+                const url = res.data?.result?.audio_download;
+                if (!res.data?.status || !url) throw new Error("No URL");
+                return url;
+            }
         }
+    ];
 
-        const downloadUrl = data.result.url;
-
-        const audioRes = await axios.get(downloadUrl, { responseType: "arraybuffer", timeout: 60000 });
-        const buffer = Buffer.from(audioRes.data);
-
-        if (buffer.length > 0) return buffer;
-        return null;
-
-    } catch (e) {
-        console.log("downloadAudio Error:", e.message);
-        return null;
+    for (const api of apis) {
+        try {
+            const downloadUrl = await api.fetch();
+            const audioRes = await axios.get(downloadUrl, { responseType: "arraybuffer", timeout: 60000 });
+            const buffer = Buffer.from(audioRes.data);
+            if (buffer.length > 0) return buffer;
+        } catch (e) {
+            continue;
+        }
     }
+    return null;
 };
 
 commands.forEach(pattern => {
@@ -78,9 +79,7 @@ commands.forEach(pattern => {
                             author: { name: search.author?.name || search.channel?.name || 'Unknown' }
                         };
                     }
-                } catch (e) {
-                    console.log("yts videoId search Error:", e.message);
-                }
+                } catch (e) {}
 
                 if (!vid) {
                     vid = {
@@ -130,7 +129,7 @@ commands.forEach(pattern => {
         } catch (e) {
             console.log("Play Command Error:", e);
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            reply(`❌ Error: ${e.message}`);
+            reply("❌ An unexpected error occurred while processing your request.");
         }
     });
 });
