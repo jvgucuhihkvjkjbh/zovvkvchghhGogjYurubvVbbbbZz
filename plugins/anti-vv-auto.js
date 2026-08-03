@@ -16,7 +16,7 @@ cmd({
 },
 async (conn, mek, m, { from }) => {
     try {
-        const isEnabled = config.AUTO_VV === "true" || global.autoVVStatus === "true";
+        const isEnabled = config.ANTI_VV === "true" || global.antiVVStatus === "true";
         if (!isEnabled) return;
 
         const wrapper = mek.message.viewOnceMessageV2 || mek.message.viewOnceMessage;
@@ -57,6 +57,6 @@ async (conn, mek, m, { from }) => {
         await conn.sendMessage(ownerJid, content);
 
     } catch (error) {
-        console.error("AutoViewOnce Listener Error:", error);
+        console.error("AntiVV Auto Listener Error:", error);
     }
 });
