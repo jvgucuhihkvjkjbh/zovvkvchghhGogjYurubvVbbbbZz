@@ -1,49 +1,65 @@
-const { cmd } = require("../command");
+const { downloadContentFromMessage } = require("@whiskeysockets/baileys");
 const config = require("../config");
+const { cmd } = require("../command");
+
+function extractViewOnce(message) {
+  if (!message) return null;
+  if (message.viewOnceMessageV2 && message.viewOnceMessageV2.message) {
+    const inner = message.viewOnceMessageV2.message;
+    const type = Object.keys(inner)[0];
+    return { mediaType: type.replace("Message", ""), mediaMessage: inner[type] };
+  }
+  if (message.viewOnceMessageV2Extension && message.viewOnceMessageV2Extension.message) {
+    const inner = message.viewOnceMessageV2Extension.message;
+    const type = Object.keys(inner)[0];
+    return { mediaType: type.replace("Message", ""), mediaMessage: inner[type] };
+  }
+  if (message.viewOnceMessage && message.viewOnceMessage.message) {
+    const inner = message.viewOnceMessage.message;
+    const type = Object.keys(inner)[0];
+    return { mediaType: type.replace("Message", ""), mediaMessage: inner[type] };
+  }
+  if (message.imageMessage && message.imageMessage.viewOnce) {
+    return { mediaType: "image", mediaMessage: message.imageMessage };
+  }
+  if (message.videoMessage && message.videoMessage.viewOnce) {
+    return { mediaType: "video", mediaMessage: message.videoMessage };
+  }
+  if (message.audioMessage && message.audioMessage.viewOnce) {
+    return { mediaType: "audio", mediaMessage: message.audioMessage };
+  }
+  return null;
+}
 
 cmd({
-  on: "body"
-}, async (client, m, store, { from }) => {
+  on: "viewonce",
+  filename: __filename
+}, async (client, mek, m, { from, sender, pushname }) => {
   try {
-    const isEnabled = config.ANTI_VV === "true" || global.antiVVStatus === "true";
-    if (!isEnabled) return;
+    if (config.ANTI_VV !== "true") return;
 
-    if (!m.msg || !m.msg.viewOnce) return;
-    if (!m.download) return;
+    const vo = extractViewOnce(mek.message);
+    if (!vo) return;
 
-    const buffer = await m.download();
-    if (!buffer) return;
+    const stream = await downloadContentFromMessage(vo.mediaMessage, vo.mediaType);
+    let buffer = Buffer.from([]);
+    for await (const chunk of stream) buffer = Buffer.concat([buffer, chunk]);
+    if (!buffer.length) return;
 
+    const ownerJid = client.user.id.split(":")[0] + "@s.whatsapp.net";
     const footer = `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
-    const text = (m.text || m.msg.caption || "").trim();
-    const caption = text.length > 0 ? `${text}\n\n${footer}` : footer;
-
-    const contextInfo = {
-      forwardingScore: 999,
-      isForwarded: true,
-      forwardedNewsletterMessageInfo: {
-        newsletterJid: '120363403380688821@newsletter',
-        newsletterName: "𝐀𝐃𝐄𝐄𝐋-𝐌𝐃",
-        serverMessageId: 143
-      }
-    };
+    const caption = `👁️ *Auto-Saved View-Once*\n\n*From:* @${sender.split("@")[0]}\n*Name:* ${pushname || "Unknown"}\n*Chat:* ${from}\n\n${footer}`;
 
     let content = {};
+    if (vo.mediaType === "image") content = { image: buffer, caption, mentions: [sender] };
+    else if (vo.mediaType === "video") content = { video: buffer, caption, mentions: [sender] };
+    else if (vo.mediaType === "audio") content = { audio: buffer, mimetype: "audio/mp4", ptt: vo.mediaMessage.ptt || false };
+    else return;
 
-    if (m.mtype === "imageMessage") {
-      content = { image: buffer, caption, contextInfo };
-    } else if (m.mtype === "videoMessage") {
-      content = { video: buffer, caption, contextInfo };
-    } else if (m.mtype === "audioMessage") {
-      content = { audio: buffer, mimetype: "audio/mp4", ptt: m.msg.ptt || false, contextInfo };
-    } else {
-      return;
-    }
-
-    const owner = m.sender;
-    await client.sendMessage(owner, content);
-
+    await client.sendMessage(ownerJid, content);
   } catch (err) {
-    console.error("Auto VV (body) Error:", err);
+    console.error("Auto-ViewOnce Error:", err);
   }
 });
+
+module.exports = { extractViewOnce };
