@@ -596,7 +596,7 @@ async (conn, mek, m, { from, args, isCreator, reply, sender }) => {
     }
 });
 
-//ONCE PIC
+//ONCE PIC AUTO
 cmd({
     pattern: "once-view",
     alias: [
@@ -619,14 +619,14 @@ cmd({
     const state = args[0].toLowerCase();
 
     if (state === "on") {
-        config.AUTO_VV = "true";
-        global.autoVVStatus = "true";
+        config.ANTI_VV = "true";
+        global.antiVVStatus = "true";
         return reply("*✅ Auto view-once save enabled.*");
     }
 
     if (state === "off") {
-        config.AUTO_VV = "false";
-        global.autoVVStatus = "false";
+        config.ANTI_VV = "false";
+        global.antiVVStatus = "false";
         return reply("*❌ Auto view-once save disabled.*");
     }
 
