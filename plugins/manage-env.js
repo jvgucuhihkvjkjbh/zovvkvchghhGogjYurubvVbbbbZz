@@ -595,29 +595,3 @@ async (conn, mek, m, { from, args, isCreator, reply, sender }) => {
         return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .antidelete on / off / inbox / same*");
     }
 });
-
-//ONCE PIC AUTO
-cmd({
-    pattern: "antivv",
-    alias: ["auto-vv", "autoviewonce"],
-    description: "Enable or disable auto-save of view-once photos/videos/audio.",
-    category: "settings",
-    filename: __filename
-},    
-async (conn, mek, m, { from, args, isCreator, reply, sender }) => {
-    if (!isAuthorized(sender, isCreator)) {
-        return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴀɴᴅ ᴀʟʟᴏᴡᴇᴅ ʟɪᴅ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
-    }
-
-    const status = args[0]?.toLowerCase();
-    if (!["on", "off"].includes(status)) {
-        return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .ᴀɴᴛɪᴠᴠ ᴏɴ*");
-    }
-
-    config.ANTI_VV = status === "on" ? "true" : "false";
-    if (status === "on") {
-        return reply("✅ Auto-save for view-once media is now enabled.");
-    } else {
-        return reply("❌ Auto-save for view-once media has been disabled.");
-    }
-});
