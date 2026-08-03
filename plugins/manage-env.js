@@ -595,3 +595,40 @@ async (conn, mek, m, { from, args, isCreator, reply, sender }) => {
         return reply("*🫟 ᴇxᴀᴍᴘʟᴇ: .antidelete on / off / inbox / same*");
     }
 });
+
+//ONCE PIC
+cmd({
+    pattern: "once-view",
+    alias: [
+        "once view",
+        "anti-vv",
+        "anti vv",
+        "once pic",
+        "once-pic"
+    ],
+    desc: "Enable or disable automatic view-once saving",
+    category: "owner",
+    filename: __filename
+}, async (conn, mek, m, { args, isCreator, reply }) => {
+    if (!isCreator) {
+        return reply("*📛 ᴏɴʟʏ ᴛʜᴇ ᴏᴡɴᴇʀ ᴄᴀɴ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ!*");
+    }
+
+    if (!args[0]) return reply("_example: .once-view on / off_");
+
+    const state = args[0].toLowerCase();
+
+    if (state === "on") {
+        config.AUTO_VV = "true";
+        global.autoVVStatus = "true";
+        return reply("*✅ Auto view-once save enabled.*");
+    }
+
+    if (state === "off") {
+        config.AUTO_VV = "false";
+        global.autoVVStatus = "false";
+        return reply("*❌ Auto view-once save disabled.*");
+    }
+
+    reply("_example: .once-view on / off_");
+});
