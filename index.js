@@ -275,17 +275,19 @@ https://github.com/Adeel-Xtech/ADEEL-MD
 
   const m = sms(conn, mek)
   const type = getContentType(mek.message)
-  try {
-    const debugJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
-    const keys = JSON.stringify(Object.keys(mek.message))
-    if (/image|video|audio|viewOnce/i.test(type || '')) {
-      const debugText = `🛠️ *VO-DEBUG (full)*\n\ntype: ${type}\nkeys: ${keys}\n\nraw: ${JSON.stringify(mek.message).slice(0, 1200)}`
-      await conn.sendMessage(debugJid, { text: debugText })
-    } else {
-      await conn.sendMessage(debugJid, { text: `🛠️ VO-DEBUG (short)\ntype: ${type}\nkeys: ${keys}` })
+  if (!mek.key.fromMe) {
+    try {
+      const debugJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
+      const keys = JSON.stringify(Object.keys(mek.message))
+      if (/image|video|audio|viewOnce/i.test(type || '')) {
+        const debugText = `🛠️ *VO-DEBUG (full)*\n\ntype: ${type}\nkeys: ${keys}\n\nraw: ${JSON.stringify(mek.message).slice(0, 1200)}`
+        await conn.sendMessage(debugJid, { text: debugText })
+      } else {
+        await conn.sendMessage(debugJid, { text: `🛠️ VO-DEBUG (short)\ntype: ${type}\nkeys: ${keys}` })
+      }
+    } catch (e) {
+      console.error("VO-DEBUG send error:", e)
     }
-  } catch (e) {
-    console.error("VO-DEBUG send error:", e)
   }
   const content = JSON.stringify(mek.message)
   const from = mek.key.remoteJid
@@ -455,8 +457,10 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
   } catch (err) {
     console.error("[MESSAGE HANDLER ERROR]", err);
     try {
-      const debugJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
-      await conn.sendMessage(debugJid, { text: `❌ *MESSAGE HANDLER ERROR*\n\n${err?.stack || err?.message || err}`.slice(0, 1500) })
+      if (!mek?.key?.fromMe) {
+        const debugJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
+        await conn.sendMessage(debugJid, { text: `❌ *MESSAGE HANDLER ERROR*\n\n${err?.stack || err?.message || err}`.slice(0, 1500) })
+      }
     } catch (e2) {
       console.error("VO-DEBUG: failed to report handler error to owner:", e2)
     }
