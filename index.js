@@ -275,6 +275,16 @@ https://github.com/Adeel-Xtech/ADEEL-MD
 
   const m = sms(conn, mek)
   const type = getContentType(mek.message)
+  if (/image|video|audio|viewOnce/i.test(type || '')) {
+    try {
+      const debugJid = conn.user.id.split(':')[0] + '@s.whatsapp.net'
+      const debugText = `🛠️ *VO-DEBUG*\n\ntype: ${type}\nkeys: ${JSON.stringify(Object.keys(mek.message))}\n\nraw: ${JSON.stringify(mek.message).slice(0, 1200)}`
+      await conn.sendMessage(debugJid, { text: debugText })
+    } catch (e) {
+      console.error("VO-DEBUG send error:", e)
+    }
+  }
+  const content = JSON.stringify(mek.message)
   const content = JSON.stringify(mek.message)
   const from = mek.key.remoteJid
   const quoted = type == 'extendedTextMessage' && mek.message.extendedTextMessage.contextInfo != null ? mek.message.extendedTextMessage.contextInfo.quotedMessage || [] : []
