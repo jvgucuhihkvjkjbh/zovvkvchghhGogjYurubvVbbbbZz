@@ -1,12 +1,25 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const crypto = require('crypto');
+const http = require('http');
+const https = require('https');
+
+const httpAgent = new http.Agent({ keepAlive: true, maxSockets: 50 });
+const httpsAgent = new https.Agent({ keepAlive: true, maxSockets: 50 });
 
 const AXIOS_DEFAULTS = {
-    timeout: 60000,
-    headers: { 'User-Agent': 'Mozilla/5.0' }
+    timeout: 20000,
+    headers: { 'User-Agent': 'Mozilla/5.0' },
+    httpAgent,
+    httpsAgent
 };
 
 const CREDIT = "> *⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ⚡*";
+
+const tempFile = (ext) => path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
 
 async function searchMovies(query) {
     try {
@@ -34,11 +47,43 @@ async function getMovieDetails(pageUrl) {
     return null;
 }
 
-function bestQualityLink(downloads) {
-    if (!Array.isArray(downloads) || downloads.length === 0) return null;
-    const clean = downloads.filter(d => !d.url.includes("jio=yes"));
-    const pool = clean.length ? clean : downloads;
-    return pool[pool.length - 1]; // highest quality (last entry = 720p in API's order)
+function dedupeQualities(downloads) {
+    if (!Array.isArray(downloads)) return [];
+    const seen = new Set();
+    const out = [];
+    for (const d of downloads) {
+        if (d.url.includes("jio=yes")) continue;
+        const label = d.title.match(/(\d{3,4})p/i)?.[1]
+            ? `${d.title.match(/(\d{3,4})p/i)[1]}p`
+            : "Low";
+        if (seen.has(label)) continue;
+        seen.add(label);
+        out.push({ label, size: d.size, url: d.url });
+    }
+    return out;
+}
+
+async function downloadToTemp(url, outputPath) {
+    const writer = fs.createWriteStream(outputPath);
+    const response = await axios({
+        method: 'get',
+        url,
+        responseType: 'stream',
+        timeout: 1200000,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+        httpAgent,
+        httpsAgent,
+        headers: { "User-Agent": "Mozilla/5.0" }
+    });
+
+    response.data.pipe(writer);
+
+    await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+        response.data.on('error', reject);
+    });
 }
 
 cmd({
@@ -68,7 +113,7 @@ cmd({
             caption: listText
         }, { quoted: message });
 
-        const listener = async (chatUpdate) => {
+        const movieListener = async (chatUpdate) => {
             const msg = chatUpdate.messages[0];
             if (!msg.message?.extendedTextMessage) return;
 
@@ -80,7 +125,7 @@ cmd({
             const idx = parseInt(selectedText, 10);
             if (isNaN(idx) || idx < 1 || idx > limited.length) return;
 
-            sock.ev.off("messages.upsert", listener);
+            sock.ev.off("messages.upsert", movieListener);
 
             await sock.sendMessage(message.chat, { react: { text: "⏳", key: msg.key } });
 
@@ -94,8 +139,8 @@ cmd({
                 }, { quoted: msg });
             }
 
-            const bestLink = bestQualityLink(details.downloads);
-            if (!bestLink) {
+            const qualities = dedupeQualities(details.downloads);
+            if (qualities.length === 0) {
                 await sock.sendMessage(message.chat, { react: { text: "❌", key: msg.key } });
                 return sock.sendMessage(message.chat, {
                     text: "❌ No download link available for this movie."
@@ -103,20 +148,75 @@ cmd({
             }
 
             const movieName = details.movieName || selected.title;
-            const caption = `*${movieName}*\n\n${CREDIT}`;
 
-            await sock.sendMessage(message.chat, {
-                document: { url: bestLink.url },
-                mimetype: "video/mp4",
-                fileName: `${movieName}.mp4`,
-                caption
-            }, { quoted: msg });
+            let qText = `╭━〔 *SELECT QUALITY* 〕━┈⊷\n┃ 🎬 *${movieName}*\n╰━━━━━━━━━━━━━━━━┈⊷\n\n`;
+            qualities.forEach((qopt, i) => {
+                qText += `*${i + 1}.* ${qopt.label}  (${qopt.size})\n`;
+            });
+            qText += `\n*ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴡɪᴛʜ ᴀ ɴᴜᴍʙᴇʀ (1-${qualities.length})*\n\n${CREDIT}`;
 
+            const qMsg = await sock.sendMessage(message.chat, { text: qText }, { quoted: msg });
             await sock.sendMessage(message.chat, { react: { text: "✅", key: msg.key } });
+
+            const qualityListener = async (chatUpdate2) => {
+                const msg2 = chatUpdate2.messages[0];
+                if (!msg2.message?.extendedTextMessage) return;
+
+                const qSelectedText = msg2.message.extendedTextMessage.text.trim();
+                const qContext = msg2.message.extendedTextMessage.contextInfo;
+                const isReplyToQMsg = qContext && qContext.stanzaId === qMsg.key.id;
+                if (!isReplyToQMsg) return;
+
+                const qIdx = parseInt(qSelectedText, 10);
+                if (isNaN(qIdx) || qIdx < 1 || qIdx > qualities.length) return;
+
+                sock.ev.off("messages.upsert", qualityListener);
+
+                await sock.sendMessage(message.chat, { react: { text: "⏳", key: msg2.key } });
+
+                const chosen = qualities[qIdx - 1];
+                const caption = `*${movieName}*\n📀 *Quality:* ${chosen.label}\n\n${CREDIT}`;
+
+                let outputPath;
+                try {
+                    outputPath = tempFile('mp4');
+                    await downloadToTemp(chosen.url, outputPath);
+
+                    if (!fs.existsSync(outputPath)) throw new Error("Download failed");
+
+                    const stats = fs.statSync(outputPath);
+                    if (stats.size < 10000) {
+                        fs.unlinkSync(outputPath);
+                        throw new Error("Invalid video file downloaded");
+                    }
+
+                    await sock.sendMessage(message.chat, {
+                        document: { url: outputPath },
+                        mimetype: "video/mp4",
+                        fileName: `${movieName} [${chosen.label}].mp4`,
+                        caption
+                    }, { quoted: msg2 });
+
+                    await sock.sendMessage(message.chat, { react: { text: "✅", key: msg2.key } });
+                } catch (e) {
+                    console.error(e);
+                    await sock.sendMessage(message.chat, { react: { text: "❌", key: msg2.key } });
+                    await sock.sendMessage(message.chat, {
+                        text: "❌ Failed to download/send the movie file. Please try again."
+                    }, { quoted: msg2 });
+                } finally {
+                    if (outputPath && fs.existsSync(outputPath)) {
+                        try { fs.unlinkSync(outputPath); } catch {}
+                    }
+                }
+            };
+
+            sock.ev.on("messages.upsert", qualityListener);
+            setTimeout(() => sock.ev.off("messages.upsert", qualityListener), 120000);
         };
 
-        sock.ev.on("messages.upsert", listener);
-        setTimeout(() => sock.ev.off("messages.upsert", listener), 120000);
+        sock.ev.on("messages.upsert", movieListener);
+        setTimeout(() => sock.ev.off("messages.upsert", movieListener), 120000);
 
     } catch (e) {
         console.error(e);
