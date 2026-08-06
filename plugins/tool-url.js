@@ -43,26 +43,9 @@ cmd({
     const tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}${extension}`);
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
-    const uguuForm = new FormData();
-    uguuForm.append('files[]', fs.createReadStream(tempFilePath), `file${extension}`);
-
-    const uguuResponse = await axios.post('https://uguu.se/upload.php', uguuForm, {
-      headers: {
-        ...uguuForm.getHeaders(),
-        'User-Agent': 'Mozilla/5.0'
-      },
-      timeout: 60000
-    });
-
-    if (!uguuResponse.data || !uguuResponse.data.files || !uguuResponse.data.files[0] || !uguuResponse.data.files[0].url) {
-      throw "Failed to upload to Uguu";
-    }
-
-    const uguuUrl = uguuResponse.data.files[0].url;
-
     const catboxForm = new FormData();
-    catboxForm.append('reqtype', 'urlupload');
-    catboxForm.append('url', uguuUrl);
+    catboxForm.append('reqtype', 'fileupload');
+    catboxForm.append('fileToUpload', fs.createReadStream(tempFilePath), `file${extension}`);
 
     const catboxResponse = await axios.post('https://catbox.moe/user/api.php', catboxForm, {
       headers: {
@@ -76,12 +59,8 @@ cmd({
 
     let mediaUrl = catboxResponse.data.trim();
 
-    if (!mediaUrl || mediaUrl.toLowerCase().includes('error')) {
+    if (!mediaUrl || mediaUrl.toLowerCase().includes('error') || !mediaUrl.startsWith('http')) {
       throw "Catbox upload failed";
-    }
-
-    if (mediaUrl.endsWith('.bin') && extension) {
-      mediaUrl = mediaUrl.substring(0, mediaUrl.lastIndexOf('.')) + extension;
     }
 
     let mediaType = 'File';
