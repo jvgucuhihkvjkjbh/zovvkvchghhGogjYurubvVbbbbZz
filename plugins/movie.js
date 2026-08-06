@@ -1,5 +1,9 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
+const crypto = require('crypto');
 const http = require('http');
 const https = require('https');
 
@@ -14,6 +18,13 @@ const AXIOS_DEFAULTS = {
 };
 
 const CREDIT = "> *⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ⚡*";
+
+// ── Load control settings ──
+const MAX_FILE_SIZE = 700 * 1024 * 1024; // 700MB cap — adjust based on your server RAM/disk
+const MAX_CONCURRENT_DOWNLOADS = 2;      // only this many movies download at once, bot-wide
+let activeDownloads = 0;
+
+const tempFile = (ext) => path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
 
 async function searchMovies(query) {
     try {
@@ -55,6 +66,51 @@ function dedupeQualities(downloads) {
         out.push({ label, size: d.size, url: d.url });
     }
     return out;
+}
+
+// Streams to disk in chunks (low memory), enforces a hard size cap mid-stream
+// even if the server lies about / omits Content-Length.
+async function downloadToTemp(url, outputPath) {
+    const response = await axios({
+        method: 'get',
+        url,
+        responseType: 'stream',
+        timeout: 1200000,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+        httpAgent,
+        httpsAgent,
+        headers: { "User-Agent": "Mozilla/5.0" }
+    });
+
+    const contentLength = parseInt(response.headers['content-length'] || '0', 10);
+    if (contentLength && contentLength > MAX_FILE_SIZE) {
+        response.data.destroy();
+        throw new Error(`FILE_TOO_LARGE:${contentLength}`);
+    }
+
+    const writer = fs.createWriteStream(outputPath);
+    let downloaded = 0;
+    let aborted = false;
+
+    response.data.on('data', (chunk) => {
+        downloaded += chunk.length;
+        if (!aborted && downloaded > MAX_FILE_SIZE) {
+            aborted = true;
+            response.data.destroy();
+            writer.destroy();
+        }
+    });
+
+    response.data.pipe(writer);
+
+    await new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+        response.data.on('error', reject);
+    });
+
+    if (aborted) throw new Error('FILE_TOO_LARGE_MIDSTREAM');
 }
 
 cmd({
@@ -143,30 +199,32 @@ cmd({
 
                 sock.ev.off("messages.upsert", qualityListener);
 
+                // ── Concurrency gate: don't let too many big downloads run at once ──
+                if (activeDownloads >= MAX_CONCURRENT_DOWNLOADS) {
+                    await sock.sendMessage(message.chat, { react: { text: "⏳", key: msg2.key } });
+                    return sock.sendMessage(message.chat, {
+                        text: "⏳ Bot is busy downloading other movies right now. Please try again in a minute."
+                    }, { quoted: msg2 });
+                }
+
+                activeDownloads++;
                 await sock.sendMessage(message.chat, { react: { text: "⏳", key: msg2.key } });
 
                 const chosen = qualities[qIdx - 1];
                 const caption = `*${movieName}*\n📀 *Quality:* ${chosen.label}\n\n${CREDIT}`;
 
+                let outputPath;
                 try {
-                    console.log("Attempting download from:", chosen.url);
+                    outputPath = tempFile('mp4');
+                    await downloadToTemp(chosen.url, outputPath);
 
-                    const response = await axios({
-                        method: 'get',
-                        url: chosen.url,
-                        responseType: 'stream',
-                        timeout: 1200000,
-                        maxContentLength: Infinity,
-                        maxBodyLength: Infinity,
-                        httpAgent,
-                        httpsAgent,
-                        headers: { "User-Agent": "Mozilla/5.0" }
-                    });
-
-                    console.log("Got response, status:", response.status, "content-length:", response.headers['content-length']);
+                    const stats = fs.statSync(outputPath);
+                    if (stats.size < 10000) {
+                        throw new Error("Invalid video file downloaded (too small)");
+                    }
 
                     await sock.sendMessage(message.chat, {
-                        document: { stream: response.data },
+                        document: { url: outputPath },
                         mimetype: "video/mp4",
                         fileName: `${movieName} [${chosen.label}].mp4`,
                         caption
@@ -174,19 +232,20 @@ cmd({
 
                     await sock.sendMessage(message.chat, { react: { text: "✅", key: msg2.key } });
                 } catch (e) {
-                    console.error("Movie send FULL error:", e);
-
-                    const debugInfo = [
-                        `Error: ${e.message}`,
-                        e.code ? `Code: ${e.code}` : null,
-                        e.response?.status ? `HTTP Status: ${e.response.status}` : null,
-                        e.response?.statusText ? `Status Text: ${e.response.statusText}` : null
-                    ].filter(Boolean).join('\n');
-
+                    console.error("Movie send error:", e.message);
                     await sock.sendMessage(message.chat, { react: { text: "❌", key: msg2.key } });
+
+                    const isTooBig = e.message?.startsWith('FILE_TOO_LARGE');
                     await sock.sendMessage(message.chat, {
-                        text: `❌ Failed to send the movie file.\n\n*Debug Info:*\n${debugInfo}\n\nURL tried: ${chosen.url}`
+                        text: isTooBig
+                            ? "❌ This file is too large to send. Please try a lower quality."
+                            : "❌ Failed to download/send the movie file. Please try again."
                     }, { quoted: msg2 });
+                } finally {
+                    activeDownloads--;
+                    if (outputPath && fs.existsSync(outputPath)) {
+                        try { fs.unlinkSync(outputPath); } catch {}
+                    }
                 }
             };
 
