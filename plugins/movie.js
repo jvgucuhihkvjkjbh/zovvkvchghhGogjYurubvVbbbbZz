@@ -1,9 +1,5 @@
 const { cmd } = require('../command');
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const crypto = require('crypto');
 const http = require('http');
 const https = require('https');
 
@@ -18,8 +14,6 @@ const AXIOS_DEFAULTS = {
 };
 
 const CREDIT = "> *⚡ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ⚡*";
-
-const tempFile = (ext) => path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
 
 async function searchMovies(query) {
     try {
@@ -61,29 +55,6 @@ function dedupeQualities(downloads) {
         out.push({ label, size: d.size, url: d.url });
     }
     return out;
-}
-
-async function downloadToTemp(url, outputPath) {
-    const writer = fs.createWriteStream(outputPath);
-    const response = await axios({
-        method: 'get',
-        url,
-        responseType: 'stream',
-        timeout: 1200000,
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-        httpAgent,
-        httpsAgent,
-        headers: { "User-Agent": "Mozilla/5.0" }
-    });
-
-    response.data.pipe(writer);
-
-    await new Promise((resolve, reject) => {
-        writer.on('finish', resolve);
-        writer.on('error', reject);
-        response.data.on('error', reject);
-    });
 }
 
 cmd({
@@ -177,21 +148,21 @@ cmd({
                 const chosen = qualities[qIdx - 1];
                 const caption = `*${movieName}*\n📀 *Quality:* ${chosen.label}\n\n${CREDIT}`;
 
-                let outputPath;
                 try {
-                    outputPath = tempFile('mp4');
-                    await downloadToTemp(chosen.url, outputPath);
-
-                    if (!fs.existsSync(outputPath)) throw new Error("Download failed");
-
-                    const stats = fs.statSync(outputPath);
-                    if (stats.size < 10000) {
-                        fs.unlinkSync(outputPath);
-                        throw new Error("Invalid video file downloaded");
-                    }
+                    const response = await axios({
+                        method: 'get',
+                        url: chosen.url,
+                        responseType: 'stream',
+                        timeout: 1200000,
+                        maxContentLength: Infinity,
+                        maxBodyLength: Infinity,
+                        httpAgent,
+                        httpsAgent,
+                        headers: { "User-Agent": "Mozilla/5.0" }
+                    });
 
                     await sock.sendMessage(message.chat, {
-                        document: { url: outputPath },
+                        document: response.data,
                         mimetype: "video/mp4",
                         fileName: `${movieName} [${chosen.label}].mp4`,
                         caption
@@ -199,15 +170,11 @@ cmd({
 
                     await sock.sendMessage(message.chat, { react: { text: "✅", key: msg2.key } });
                 } catch (e) {
-                    console.error(e);
+                    console.error("Movie send error:", e.message);
                     await sock.sendMessage(message.chat, { react: { text: "❌", key: msg2.key } });
                     await sock.sendMessage(message.chat, {
-                        text: "❌ Failed to download/send the movie file. Please try again."
+                        text: "❌ Failed to send the movie file. Link might be expired, please try again."
                     }, { quoted: msg2 });
-                } finally {
-                    if (outputPath && fs.existsSync(outputPath)) {
-                        try { fs.unlinkSync(outputPath); } catch {}
-                    }
                 }
             };
 
