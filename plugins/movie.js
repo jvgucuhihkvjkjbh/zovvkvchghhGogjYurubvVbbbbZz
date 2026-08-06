@@ -162,7 +162,7 @@ cmd({
                     });
 
                     await sock.sendMessage(message.chat, {
-                        document: response.data,
+                        document: { stream: response.data },
                         mimetype: "video/mp4",
                         fileName: `${movieName} [${chosen.label}].mp4`,
                         caption
