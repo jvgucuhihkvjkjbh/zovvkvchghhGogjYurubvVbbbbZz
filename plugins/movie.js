@@ -149,6 +149,8 @@ cmd({
                 const caption = `*${movieName}*\n📀 *Quality:* ${chosen.label}\n\n${CREDIT}`;
 
                 try {
+                    console.log("Attempting download from:", chosen.url);
+
                     const response = await axios({
                         method: 'get',
                         url: chosen.url,
@@ -161,6 +163,8 @@ cmd({
                         headers: { "User-Agent": "Mozilla/5.0" }
                     });
 
+                    console.log("Got response, status:", response.status, "content-length:", response.headers['content-length']);
+
                     await sock.sendMessage(message.chat, {
                         document: { stream: response.data },
                         mimetype: "video/mp4",
@@ -170,10 +174,18 @@ cmd({
 
                     await sock.sendMessage(message.chat, { react: { text: "✅", key: msg2.key } });
                 } catch (e) {
-                    console.error("Movie send error:", e.message);
+                    console.error("Movie send FULL error:", e);
+
+                    const debugInfo = [
+                        `Error: ${e.message}`,
+                        e.code ? `Code: ${e.code}` : null,
+                        e.response?.status ? `HTTP Status: ${e.response.status}` : null,
+                        e.response?.statusText ? `Status Text: ${e.response.statusText}` : null
+                    ].filter(Boolean).join('\n');
+
                     await sock.sendMessage(message.chat, { react: { text: "❌", key: msg2.key } });
                     await sock.sendMessage(message.chat, {
-                        text: "❌ Failed to send the movie file. Link might be expired, please try again."
+                        text: `❌ Failed to send the movie file.\n\n*Debug Info:*\n${debugInfo}\n\nURL tried: ${chosen.url}`
                     }, { quoted: msg2 });
                 }
             };
