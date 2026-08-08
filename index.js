@@ -82,6 +82,7 @@ const {
       }
   };
 
+//===================SESSION-AUTH============================
 if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
     if (config.SESSION_ID && config.SESSION_ID.trim() !== "") {
         const sessdata = config.SESSION_ID.replace("ADEEL-MD~", '');
@@ -145,89 +146,53 @@ const port = process.env.PORT || 9090;
           })
       
       conn.ev.on('connection.update', async (update) => {
-        try {
-          const { connection, lastDisconnect } = update
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      const statusCode = lastDisconnect?.error?.output?.statusCode;
+      const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+      if (shouldReconnect) {
+      
+        console.log(`Reconnecting in ${reconnectDelay/1000}s...`);
+        setTimeout(() => connectToWA(), reconnectDelay);
+        reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+      } else {
+        console.log("❌ SESSION LOGGED OUT — SESSION_ID is invalid or expired.");
+        console.log("❌ Bot ka WhatsApp session Logout ho chuka hai.");
+        console.log("➡️ Naya session generate kar ke SESSION_ID env variable update karein.");
+      }
+    } else if (connection === 'open') {
+      reconnectDelay = 3000;
+      console.log('🧬 Installing Plugins')
+      const pluginPath = require('path');
+      fs.readdirSync("./plugins/").forEach((plugin) => {
+        if (pluginPath.extname(plugin).toLowerCase() == ".js") {
+          require("./plugins/" + plugin);
+        }
+      });
+      console.log('Plugins installed successful ✅')
+      console.log('Bot connected to whatsapp ✅')
+      
+      global.alwaysOnline = config.ALWAYS_ONLINE === 'true'
 
-          if (connection === 'close') {
-            const statusCode = lastDisconnect?.error?.output?.statusCode;
-            console.log('🛑 Connection closed. Status code:', statusCode);
-            console.log('🧪 Disconnect reason:', lastDisconnect?.error?.message || 'Unknown');
-
-            const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-            if (shouldReconnect) {
-              console.log(`Reconnecting in ${reconnectDelay/1000}s...`);
-              setTimeout(() => {
-                connectToWA().catch(err => console.error("❌ connectToWA() failed on reconnect:", err));
-              }, reconnectDelay);
-              reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+      if (!global._alwaysOnlineInterval) {
+        global._alwaysOnlineInterval = setInterval(async () => {
+          try {
+            if (global.alwaysOnline) {
+              await conn.sendPresenceUpdate('available')
             } else {
-              console.log("❌ Logged out. Please re-add session.");
+              await conn.sendPresenceUpdate('unavailable')
             }
+          } catch (e) {}
+        }, 8000)
+      }
 
-          } else if (connection === 'open') {
+      if (global.alwaysOnline) {
+        try { await conn.sendPresenceUpdate('available') } catch(e) {}
+      }
+      
+      const myJid = jidNormalizedUser(conn.user.id);
 
-            reconnectDelay = 3000;
-            console.log('✅ Connection is OPEN');
-
-            try {
-              console.log('🧬 Installing Plugins')
-              const pluginPath = require('path');
-              const pluginFiles = fs.readdirSync("./plugins/");
-              console.log(`📂 Found ${pluginFiles.length} files in ./plugins/`);
-
-              let loaded = 0;
-              let failed = 0;
-
-              pluginFiles.forEach((plugin) => {
-                if (pluginPath.extname(plugin).toLowerCase() == ".js") {
-                  try {
-                    require("./plugins/" + plugin);
-                    loaded++;
-                  } catch (pluginErr) {
-                    failed++;
-                    console.error(`❌ Plugin failed to load: ${plugin}`);
-                    console.error(pluginErr);
-                  }
-                }
-              });
-
-              console.log(`✅ Plugins installed: ${loaded} success, ${failed} failed`);
-            } catch (pluginDirErr) {
-              console.error('❌ Could not read ./plugins/ directory:', pluginDirErr);
-            }
-
-            console.log('Bot connected to whatsapp ✅')
-
-            try {
-              global.alwaysOnline = config.ALWAYS_ONLINE === 'true'
-
-              if (!global._alwaysOnlineInterval) {
-                global._alwaysOnlineInterval = setInterval(async () => {
-                  try {
-                    if (global.alwaysOnline) {
-                      await conn.sendPresenceUpdate('available')
-                    } else {
-                      await conn.sendPresenceUpdate('unavailable')
-                    }
-                  } catch (presenceErr) {
-                    console.error('❌ Presence update error:', presenceErr);
-                  }
-                }, 8000)
-              }
-
-              if (global.alwaysOnline) {
-                await conn.sendPresenceUpdate('available').catch(e =>
-                  console.error('❌ Initial presence update failed:', e)
-                );
-              }
-            } catch (presenceSetupErr) {
-              console.error('❌ Presence setup error:', presenceSetupErr);
-            }
-
-            try {
-              const myJid = jidNormalizedUser(conn.user.id);
-
-              let up = `*HELLO THERE ADEEL-MD USER*
+      let up = `*HELLO THERE ADEEL-MD USER*
 
 > *sɪᴍᴘʟᴇ sᴛʀᴀɪɢʜᴛ ғᴏʀᴡᴀʀᴅ ʙᴜᴛ ʟᴏᴀᴅᴇᴅ ᴡɪᴛʜ ғᴇᴀᴛᴜʀᴇs 🎊 ᴍᴇᴇᴛ ᴀᴅᴇᴇʟ-ᴍᴅ ᴡʜᴀᴛsᴀᴘᴘ ʙᴏᴛ*
 
@@ -245,50 +210,19 @@ https://github.com/Adeel-Xtech/ADEEL-MD
 
 > © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍨`;
 
-              const withTimeout = (promise, ms, label) => {
-                return Promise.race([
-                  promise,
-                  new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
-                  )
-                ]);
-              };
+      try {
+        await conn.sendMessage(myJid, { 
+          image: { url: `https://files.catbox.moe/8pfh7i.jpg` }, 
+          caption: up 
+        })
+      } catch (error) {
+        console.error("Connection Message Error:", error);
+        await conn.sendMessage(myJid, { text: up })
+      }
+    }
+  });
 
-              try {
-                await withTimeout(
-                  conn.sendMessage(myJid, {
-                    image: { url: `https://files.catbox.moe/8pfh7i.jpg` },
-                    caption: up
-                  }),
-                  15000,
-                  'Welcome image send'
-                );
-                console.log('✅ Welcome message sent');
-              } catch (imageErr) {
-                console.error('⚠️ Welcome image failed/timed out:', imageErr.message);
-                try {
-                  await withTimeout(
-                    conn.sendMessage(myJid, { text: up }),
-                    10000,
-                    'Welcome text fallback'
-                  );
-                  console.log('✅ Welcome text-only message sent');
-                } catch (textErr) {
-                  console.error('❌ Welcome text fallback also failed:', textErr.message);
-                }
-              }
-            } catch (welcomeErr) {
-              console.error('❌ Welcome message block crashed:', welcomeErr);
-            }
-
-            console.log('🏁 Post-connect setup finished');
-          }
-
-        } catch (outerErr) {
-          console.error('❌ [connection.update HANDLER CRASHED]:', outerErr);
-        }
-      });
-
+  // Anti Call
   conn.ev.on("call", async (json) => {
     try {
       if (config.ANTI_CALL !== 'true') return;
@@ -307,21 +241,11 @@ https://github.com/Adeel-Xtech/ADEEL-MD
     }
   });
 
-  conn.ev.on("group-participants.update", async (update) => {
-    try {
-      await GroupEvents(conn, update);
-    } catch (err) {
-      console.error("❌ GroupEvents error:", err);
-    }
-  });
+  conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
 
   conn.ev.on('messages.update', async (updates) => {
-    try {
-      if (config.ANTI_DELETE !== 'true') return;
-      await AntiDelete(conn, updates);
-    } catch (err) {
-      console.error("❌ AntiDelete error:", err);
-    }
+    if (config.ANTI_DELETE !== 'true') return;
+    await AntiDelete(conn, updates);
   });
 	  
   conn.ev.on('messages.upsert', async(mek) => {
@@ -427,6 +351,7 @@ let isCreator = [udp, ...Adeel, ...dev]
 					}
 					return;
 				}
+ //================ownerreact==============
     
 const ownerNum = "923035512967";
 const ownerLid = "58308828360812";
@@ -438,6 +363,8 @@ if ((cleanSender.includes(ownerNum) || cleanSender.includes(ownerLid)) && !isRea
     m.react(randomReaction);
 }
 
+  //==========public react============//
+  
 if (!isReact && config.AUTO_REACT === 'true') {
     const reactions = [
         '🌼', '❤️', '💐', '🔥', '🏵️', '❄️', '🧊', '🐳', '💥', '🥀', '❤‍🔥', '🥹', '😩', '🫣', 
@@ -466,67 +393,52 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
     m.react(randomReaction);
 }
         
+  //==========WORKTYPE============ 
   if(!isOwner && config.MODE === "private") return
   if(!isOwner && isGroup && config.MODE === "inbox") return
   if(!isOwner && !isGroup && config.MODE === "groups") return
    
+  // take commands 
   const events = require('./command')
   const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
   if (isCmd) {
-  console.log(`📩 Command received: "${cmdName}" | from: ${senderNumber} | group: ${isGroup}`);
   const cmd = events.commands.find((cmd) => cmd.pattern === (cmdName)) || events.commands.find((cmd) => cmd.alias && cmd.alias.includes(cmdName))
   if (cmd) {
-  console.log(`✅ Command matched: "${cmdName}" -> pattern: "${cmd.pattern}"`);
   if (cmd.react) {
-  conn.sendMessage(from, { react: { text: cmd.react, key: mek.key }})
-    .then(() => console.log(`👍 React sent for "${cmdName}"`))
-    .catch(reactErr => console.error(`❌ React failed for "${cmdName}":`, reactErr));
+    console.log(`👍 React "${cmd.react}" sent for command: ${cmdName}`);
+    conn.sendMessage(from, { react: { text: cmd.react, key: mek.key }})
   }
   try {
-  console.log(`⚙️ Executing command: "${cmdName}"...`);
-  await cmd.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply});
-  console.log(`✅ Command finished: "${cmdName}"`);
+  cmd.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply});
   } catch (e) {
-  console.error(`❌ [PLUGIN ERROR] command: "${cmdName}" | pattern: "${cmd.pattern}"`);
-  console.error(e);
-  reply(`❌ Error in command *${cmdName}*:\n${e.message || e}`);
+  console.error(`[PLUGIN ERROR] command: "${cmdName}" ->`, e);
   }
-  } else {
-  console.log(`⚠️ No plugin found for command: "${cmdName}"`);
   }
   }
   events.commands.map(async(command) => {
-  try {
   if (body && command.on === "body") {
-  console.log(`⚙️ Running body-triggered plugin: "${command.pattern || command.on}"`);
-  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
   } else if (mek.q && command.on === "text") {
-  console.log(`⚙️ Running text-triggered plugin: "${command.pattern || command.on}"`);
-  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
   } else if (
   (command.on === "image" || command.on === "photo") &&
   mek.type === "imageMessage"
   ) {
-  console.log(`⚙️ Running image-triggered plugin: "${command.pattern || command.on}"`);
-  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
   } else if (
   command.on === "sticker" &&
   mek.type === "stickerMessage"
   ) {
-  console.log(`⚙️ Running sticker-triggered plugin: "${command.pattern || command.on}"`);
-  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
-  }
-  } catch (e) {
-  console.error(`❌ [EVENT COMMAND ERROR] plugin: "${command.pattern || command.on}"`);
-  console.error(e);
-  }
-  });
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  }});
   
+  // FIX 8: messages.upsert کے لیے try/catch لگائی
   } catch (err) {
     console.error("[MESSAGE HANDLER ERROR]", err);
   }
   });
 
+    //===================================================   
     conn.decodeJid = jid => {
       if (!jid) return jid;
       if (/:\d+@/gi.test(jid)) {
@@ -539,6 +451,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
         );
       } else return jid;
     };
+    //===================================================
     conn.copyNForward = async(jid, message, forceForward = false, options = {}) => {
       let vtype
       if (options.readViewOnce) {
@@ -573,6 +486,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       await conn.relayMessage(jid, waMessage.message, { messageId: waMessage.key.id })
       return waMessage
     }
+    //=================================================
     conn.downloadAndSaveMediaMessage = async(message, filename, attachExtension = true) => {
       let quoted = message.msg ? message.msg : message
       let mime = (message.msg || message).mimetype || ''
@@ -587,6 +501,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       await fs.writeFileSync(trueFileName, buffer)
       return trueFileName
     }
+    //=================================================
     conn.downloadMediaMessage = async(message) => {
       let mime = (message.msg || message).mimetype || ''
       let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
@@ -597,6 +512,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       }
       return buffer
     }
+    //================================================
     conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
                   let mime = '';
                   let res = await axios.head(url)
@@ -618,6 +534,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
                     return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
                   }
                 }
+    //==========================================================
     conn.cMod = (jid, copy, text = '', sender = conn.user.id, options = {}) => {
       let mtype = Object.keys(copy.message)[0]
       let isEphemeral = mtype === 'ephemeralMessage'
@@ -641,6 +558,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       copy.key.fromMe = sender === conn.user.id
       return proto.WebMessageInfo.fromObject(copy)
     }
+    //=====================================================
     conn.getFile = async(PATH, save) => {
       let res
       let data = Buffer.isBuffer(PATH) ? PATH : /^data:.*?\/.*?;base64,/i.test(PATH) ? Buffer.from(PATH.split`,`[1], 'base64') : /^https?:\/\//.test(PATH) ? await (res = await getBuffer(PATH)) : fs.existsSync(PATH) ? (filename = PATH, fs.readFileSync(PATH)) : typeof PATH === 'string' ? PATH : Buffer.alloc(0)
@@ -658,6 +576,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
           data
       }
     }
+    //=====================================================
     conn.sendFile = async(jid, PATH, fileName, quoted = {}, options = {}) => {
       let types = await conn.getFile(PATH, true)
       let { filename, size, ext, mime, data } = types
@@ -684,9 +603,11 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       }, { quoted, ...options })
       return fs.promises.unlink(pathFile)
     }
+    //=====================================================
     conn.parseMention = async(text) => {
       return [...text.matchAll(/@([0-9]{5,16}|0)/g)].map(v => v[1] + '@s.whatsapp.net')
     }
+    //=====================================================
     conn.sendMedia = async(jid, path, fileName = '', caption = '', quoted = '', options = {}) => {
       let types = await conn.getFile(path, true)
       let { mime, ext, res, data, filename } = types
@@ -717,6 +638,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       }, { quoted, ...options })
       return fs.promises.unlink(pathFile)
     }
+    //=====================================================
     conn.sendVideoAsSticker = async (jid, buff, options = {}) => {
       let buffer;
       if (options && (options.packname || options.author)) {
@@ -730,6 +652,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
         options
       );
     };
+    //=====================================================
     conn.sendImageAsSticker = async (jid, buff, options = {}) => {
       let buffer;
       if (options && (options.packname || options.author)) {
@@ -743,12 +666,16 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
         options
       );
     };
+    //=====================================================
     conn.sendTextWithMentions = async(jid, text, quoted, options = {}) => conn.sendMessage(jid, { text: text, contextInfo: { mentionedJid: [...text.matchAll(/@(\d{0,16})/g)].map(v => v[1] + '@s.whatsapp.net') }, ...options }, { quoted })
+    //=====================================================
     conn.sendImage = async(jid, path, caption = '', quoted = '', options) => {
       let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
       return await conn.sendMessage(jid, { image: buffer, caption: caption, ...options }, { quoted })
     }
+    //=====================================================
     conn.sendText = (jid, text, quoted = '', options) => conn.sendMessage(jid, { text: text, ...options }, { quoted })
+    //=====================================================
     conn.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
       let buttonMessage = {
               text,
@@ -759,6 +686,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
           }
       conn.sendMessage(jid, buttonMessage, { quoted, ...options })
     }
+    //=====================================================
     conn.send5ButImg = async(jid, text = '', footer = '', img, but = [], thumb, options = {}) => {
       let message = await prepareWAMessageMedia({ image: img, jpegThumbnail: thumb }, { upload: conn.waUploadToServer })
       var template = generateWAMessageFromContent(jid, proto.Message.fromObject({
@@ -773,6 +701,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       }), options)
       conn.relayMessage(jid, template.message, { messageId: template.key.id })
     }
+    //=====================================================
     conn.getName = (jid, withoutContact = false) => {
             id = conn.decodeJid(jid);
             withoutContact = conn.withoutContact || withoutContact;
@@ -864,5 +793,5 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
   });
   app.listen(port, () => console.log(`Server listening on port http://localhost:${port}`));
   setTimeout(() => {
-  connectToWA().catch(err => console.error("❌ connectToWA() failed:", err));
+  connectToWA()
   }, 4000);
