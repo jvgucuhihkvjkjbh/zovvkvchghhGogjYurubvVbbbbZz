@@ -473,35 +473,52 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
   const events = require('./command')
   const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
   if (isCmd) {
+  console.log(`📩 Command received: "${cmdName}" | from: ${senderNumber} | group: ${isGroup}`);
   const cmd = events.commands.find((cmd) => cmd.pattern === (cmdName)) || events.commands.find((cmd) => cmd.alias && cmd.alias.includes(cmdName))
   if (cmd) {
-  if (cmd.react) conn.sendMessage(from, { react: { text: cmd.react, key: mek.key }})
-  try {
-  cmd.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply});
-  } catch (e) {
-  console.error("[PLUGIN ERROR] " + e);
+  console.log(`✅ Command matched: "${cmdName}" -> pattern: "${cmd.pattern}"`);
+  if (cmd.react) {
+  conn.sendMessage(from, { react: { text: cmd.react, key: mek.key }})
+    .then(() => console.log(`👍 React sent for "${cmdName}"`))
+    .catch(reactErr => console.error(`❌ React failed for "${cmdName}":`, reactErr));
   }
+  try {
+  console.log(`⚙️ Executing command: "${cmdName}"...`);
+  await cmd.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply});
+  console.log(`✅ Command finished: "${cmdName}"`);
+  } catch (e) {
+  console.error(`❌ [PLUGIN ERROR] command: "${cmdName}" | pattern: "${cmd.pattern}"`);
+  console.error(e);
+  reply(`❌ Error in command *${cmdName}*:\n${e.message || e}`);
+  }
+  } else {
+  console.log(`⚠️ No plugin found for command: "${cmdName}"`);
   }
   }
   events.commands.map(async(command) => {
   try {
   if (body && command.on === "body") {
-  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  console.log(`⚙️ Running body-triggered plugin: "${command.pattern || command.on}"`);
+  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
   } else if (mek.q && command.on === "text") {
-  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  console.log(`⚙️ Running text-triggered plugin: "${command.pattern || command.on}"`);
+  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
   } else if (
   (command.on === "image" || command.on === "photo") &&
   mek.type === "imageMessage"
   ) {
-  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  console.log(`⚙️ Running image-triggered plugin: "${command.pattern || command.on}"`);
+  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
   } else if (
   command.on === "sticker" &&
   mek.type === "stickerMessage"
   ) {
-  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  console.log(`⚙️ Running sticker-triggered plugin: "${command.pattern || command.on}"`);
+  await command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
   }
   } catch (e) {
-  console.error("[EVENT COMMAND ERROR] " + e);
+  console.error(`❌ [EVENT COMMAND ERROR] plugin: "${command.pattern || command.on}"`);
+  console.error(e);
   }
   });
   
