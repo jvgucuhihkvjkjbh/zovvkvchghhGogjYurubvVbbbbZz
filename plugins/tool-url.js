@@ -14,22 +14,23 @@ cmd({
   'use': ".tourl [reply to media]",
   'filename': __filename
 }, async (client, message, match, { reply }) => {
+  let tempFilePath;
   try {
- 
+
     const quotedMsg = message.quoted ? message.quoted : message;
     const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
-    
+
     if (!mimeType) {
       return reply("🍁 Please reply to an image, video, or audio message");
     }
 
     const mediaBuffer = await quotedMsg.download();
-    
+
     if (!mediaBuffer || mediaBuffer.length === 0) {
-      throw "Failed to download media";
+      throw new Error("Failed to download media");
     }
 
-    let extension = '';
+    let extension = '.bin';
     if (mimeType.includes('image/jpeg')) extension = '.jpg';
     else if (mimeType.includes('image/png')) extension = '.png';
     else if (mimeType.includes('image/webp')) extension = '.webp';
@@ -39,10 +40,11 @@ cmd({
     else if (mimeType.includes('audio/mp4')) extension = '.m4a';
     else if (mimeType.includes('audio/x-m4a')) extension = '.m4a';
     else if (mimeType.includes('audio/wav')) extension = '.wav';
-    
-    const tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}${extension}`);
+
+    tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}${extension}`);
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
+    // Direct Catbox upload (fileupload) — no middle-man uguu.se step
     const catboxForm = new FormData();
     catboxForm.append('reqtype', 'fileupload');
     catboxForm.append('fileToUpload', fs.createReadStream(tempFilePath), `file${extension}`);
@@ -52,15 +54,15 @@ cmd({
         ...catboxForm.getHeaders(),
         'User-Agent': 'Mozilla/5.0'
       },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
       timeout: 60000
     });
 
-    fs.unlinkSync(tempFilePath);
+    let mediaUrl = (catboxResponse.data || '').toString().trim();
 
-    let mediaUrl = catboxResponse.data.trim();
-
-    if (!mediaUrl || mediaUrl.toLowerCase().includes('error') || !mediaUrl.startsWith('http')) {
-      throw "Catbox upload failed";
+    if (!mediaUrl || !mediaUrl.startsWith('http') || mediaUrl.toLowerCase().includes('error')) {
+      throw new Error("Catbox upload failed: " + mediaUrl);
     }
 
     let mediaType = 'File';
@@ -78,6 +80,10 @@ cmd({
   } catch (error) {
     console.error(error);
     await reply(`❌ Error: ${error.message || error}`);
+  } finally {
+    if (tempFilePath && fs.existsSync(tempFilePath)) {
+      fs.unlinkSync(tempFilePath);
+    }
   }
 });
 
