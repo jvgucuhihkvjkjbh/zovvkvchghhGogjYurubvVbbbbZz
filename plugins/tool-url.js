@@ -6,31 +6,30 @@ const path = require("path");
 const { cmd } = require("../command");
 
 cmd({
-  'pattern': "tourl",
-  'alias': ["imgtourl", "imgurl", "url", "geturl", "upload"],
+  'pattern': "tourl2",
+  'alias': ["imgtourl2", "imgurl2", "url2", "geturl2", "upload2"],
   'react': '🖇',
   'desc': "Convert media to Catbox URL",
   'category': "utility",
-  'use': ".tourl [reply to media]",
+  'use': ".tourl2 [reply to media]",
   'filename': __filename
 }, async (client, message, match, { reply }) => {
-  let tempFilePath;
   try {
-
+ 
     const quotedMsg = message.quoted ? message.quoted : message;
     const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
-
+    
     if (!mimeType) {
       return reply("🍁 Please reply to an image, video, or audio message");
     }
 
     const mediaBuffer = await quotedMsg.download();
-
+    
     if (!mediaBuffer || mediaBuffer.length === 0) {
-      throw new Error("Failed to download media");
+      throw "Failed to download media";
     }
 
-    let extension = '.bin';
+    let extension = '';
     if (mimeType.includes('image/jpeg')) extension = '.jpg';
     else if (mimeType.includes('image/png')) extension = '.png';
     else if (mimeType.includes('image/webp')) extension = '.webp';
@@ -40,29 +39,33 @@ cmd({
     else if (mimeType.includes('audio/mp4')) extension = '.m4a';
     else if (mimeType.includes('audio/x-m4a')) extension = '.m4a';
     else if (mimeType.includes('audio/wav')) extension = '.wav';
-
-    tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}${extension}`);
+    
+    const tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}${extension}`);
     fs.writeFileSync(tempFilePath, mediaBuffer);
 
-    // Direct Catbox upload (fileupload) — no middle-man uguu.se step
-    const catboxForm = new FormData();
-    catboxForm.append('reqtype', 'fileupload');
-    catboxForm.append('fileToUpload', fs.createReadStream(tempFilePath), `file${extension}`);
+    const quaxForm = new FormData();
+    quaxForm.append('files[]', fs.createReadStream(tempFilePath), `file${extension}`);
 
-    const catboxResponse = await axios.post('https://catbox.moe/user/api.php', catboxForm, {
+    const quaxResponse = await axios.post('https://qu.ax/upload.php', quaxForm, {
       headers: {
-        ...catboxForm.getHeaders(),
+        Origin: 'https://qu.ax',
+        Referer: 'https://qu.ax/',
+        ...quaxForm.getHeaders(),
         'User-Agent': 'Mozilla/5.0'
       },
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity,
       timeout: 60000
     });
 
-    let mediaUrl = (catboxResponse.data || '').toString().trim();
+    fs.unlinkSync(tempFilePath);
 
-    if (!mediaUrl || !mediaUrl.startsWith('http') || mediaUrl.toLowerCase().includes('error')) {
-      throw new Error("Catbox upload failed: " + mediaUrl);
+    if (!quaxResponse.data || !quaxResponse.data.files || !quaxResponse.data.files[0] || !quaxResponse.data.files[0].url) {
+      throw "Failed to upload to Qu.ax";
+    }
+
+    let mediaUrl = quaxResponse.data.files[0].url.trim();
+
+    if (!mediaUrl || mediaUrl.toLowerCase().includes('error')) {
+      throw "Qu.ax upload failed";
     }
 
     let mediaType = 'File';
@@ -80,10 +83,6 @@ cmd({
   } catch (error) {
     console.error(error);
     await reply(`❌ Error: ${error.message || error}`);
-  } finally {
-    if (tempFilePath && fs.existsSync(tempFilePath)) {
-      fs.unlinkSync(tempFilePath);
-    }
   }
 });
 
