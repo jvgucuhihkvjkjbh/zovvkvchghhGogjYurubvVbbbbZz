@@ -1,3 +1,5 @@
+const axios = require("axios");
+const FormData = require('form-data');
 const fs = require('fs');
 const os = require('os');
 const path = require("path");
