@@ -1,10 +1,84 @@
-const axios = require("axios");
-const FormData = require('form-data');
 const fs = require('fs');
 const os = require('os');
 const path = require("path");
 const { cmd } = require("../command");
+const { sendButtons } = require('gifted-btns');
 
+cmd({
+  'pattern': "imgbb",
+  'alias': ["tobb", "bbimg"],
+  'react': '🖇',
+  'desc': "Convert image to ImgBB URL",
+  'category': "utility",
+  'use': ".imgbb [reply to image]",
+  'filename': __filename
+}, async (client, message, match, { reply }) => {
+  try {
+
+    const quotedMsg = message.quoted ? message.quoted : message;
+    const mimeType = (quotedMsg.msg || quotedMsg).mimetype || '';
+
+    if (!mimeType) {
+      return reply("🍁 Please reply to an image message");
+    }
+
+    if (!mimeType.includes('image/')) {
+      return reply("❌ ImgBB only supports image files (jpg, png, webp, sticker).");
+    }
+
+    const mediaBuffer = await quotedMsg.download();
+
+    if (!mediaBuffer || mediaBuffer.length === 0) {
+      throw "Failed to download media";
+    }
+
+    let extension = '';
+    if (mimeType.includes('image/jpeg')) extension = '.jpg';
+    else if (mimeType.includes('image/png')) extension = '.png';
+    else if (mimeType.includes('image/webp')) extension = '.webp';
+
+    const fileName = `image${extension}`;
+
+    const uploadResult = await uploadToImgBB(mediaBuffer, fileName);
+
+    if (!uploadResult || !uploadResult.url) {
+      throw "Failed to upload to ImgBB";
+    }
+
+    const fileSizeMB = mediaBuffer.length / (1024 * 1024);
+    const fileTypeName = extension ? extension.replace('.', '').toUpperCase() : 'UNKNOWN';
+
+    const caption = `Here is Your *IMGBB* Upload Result:\n\n*File Type:* ${fileTypeName}\n*File Size:* ${fileSizeMB.toFixed(2)} MBs\n*File Url:* ${uploadResult.url}\n*File Expiration:* No Expiry\n`;
+
+    await sendButtons(client, message.chat, {
+      title: '',
+      text: caption,
+      footer: `> *© ᴜᴘʟᴏᴀᴅᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ 🍸*`,
+      buttons: [
+        {
+          name: 'cta_copy',
+          buttonParamsJson: JSON.stringify({
+            display_text: '📋 Copy Url',
+            copy_code: uploadResult.url
+          })
+        },
+        {
+          name: 'cta_url',
+          buttonParamsJson: JSON.stringify({
+            display_text: '🌐 Open Link',
+            url: uploadResult.url
+          })
+        }
+      ]
+    });
+
+  } catch (error) {
+    console.error("Upload Error:", error);
+    await reply(`❌ Failed to upload to ImgBB. Error: ${error.message || error}`);
+  }
+});
+
+// URL-2
 cmd({
   'pattern': "tourl2",
   'alias': ["imgtourl2", "imgurl2", "url2", "geturl2", "upload2"],
