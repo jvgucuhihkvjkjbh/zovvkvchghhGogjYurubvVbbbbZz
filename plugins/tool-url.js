@@ -29,11 +29,17 @@ cmd({
     let imageBuffer = null;
     let imageUrl = null;
 
-    if (mimeType && (mimeType.includes('image') || mimeType.includes('sticker'))) {
-      imageBuffer = await quotedMsg.download();
-      if (!imageBuffer || imageBuffer.length === 0) {
+    if (mimeType) {
+      const imageBufferAttempt = await quotedMsg.download();
+      if (!imageBufferAttempt || imageBufferAttempt.length === 0) {
         throw "Failed to download media";
       }
+
+      if (!(mimeType.includes('image') || mimeType.includes('sticker'))) {
+        return reply("❌ imgbb only supports images/stickers. Please reply to an image or sticker.");
+      }
+
+      imageBuffer = imageBufferAttempt;
     } else if (urlMatch) {
       imageUrl = urlMatch[0];
     } else {
