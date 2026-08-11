@@ -10,8 +10,8 @@ const IMGBB_API_KEY = process.env.IMGBB_API_KEY || '8db492efc937a635b90680a9a860
 const IMGBB_API_URL = 'https://api.imgbb.com/1/upload';
 
 cmd({
-  'pattern': "imgbb",
-  'alias': ["imgbburl", "bburl"],
+  'pattern': "tourl",
+  'alias': ["imgtourl", "imgurl", "url", "geturl", "upload"],
   'react': '🖼️',
   'desc': "Convert image/URL to ImgBB URL",
   'category': "utility",
