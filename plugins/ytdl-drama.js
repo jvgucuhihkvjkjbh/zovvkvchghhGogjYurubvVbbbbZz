@@ -1,6 +1,7 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 const yts = require('yt-search');
+const { sendButtons } = require('gifted-btns');
 
 const AXIOS_DEFAULTS = { 
     timeout: 60000, 
