@@ -1,7 +1,6 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 const yts = require('yt-search');
-const { sendButtons } = require('gifted-btns');
 
 const AXIOS_DEFAULTS = { 
     timeout: 60000, 
@@ -74,48 +73,28 @@ cmd({
 
 ${customName}`;
 
-        const sentMsg = await sendButtons(sock, message.chat, {
-            title: '',
-            text: captionBox,
-            footer: customName,
+        const sentMsg = await sock.sendMessage(message.chat, {
             image: { url: video.thumbnail },
+            caption: captionBox,
+            footer: customName,
             buttons: [
-                {
-                    name: 'quick_reply',
-                    buttonParamsJson: JSON.stringify({
-                        display_text: '📂 Document',
-                        id: 'drama_doc'
-                    })
-                },
-                {
-                    name: 'quick_reply',
-                    buttonParamsJson: JSON.stringify({
-                        display_text: '🎥 Video',
-                        id: 'drama_video'
-                    })
-                }
-            ]
-        });
+                { buttonId: 'drama_doc', buttonText: { displayText: '📂 Document' }, type: 1 },
+                { buttonId: 'drama_video', buttonText: { displayText: '🎥 Video' }, type: 1 }
+            ],
+            headerType: 4
+        }, { quoted: message });
 
         const listener = async (chatUpdate) => {
             const msg = chatUpdate.messages[0];
             if (!msg.message) return;
 
             const buttonId = msg.message?.buttonsResponseMessage?.selectedButtonId
-                || msg.message?.templateButtonReplyMessage?.selectedId
-                || (() => {
-                    try {
-                        const paramsJson = msg.message?.interactiveResponseMessage?.nativeFlowResponseMessage?.paramsJson;
-                        if (paramsJson) return JSON.parse(paramsJson).id;
-                    } catch (e) {}
-                    return null;
-                })();
+                || msg.message?.templateButtonReplyMessage?.selectedId;
 
             if (!buttonId) return;
 
             const context = msg.message?.buttonsResponseMessage?.contextInfo
-                || msg.message?.templateButtonReplyMessage?.contextInfo
-                || msg.message?.interactiveResponseMessage?.contextInfo;
+                || msg.message?.templateButtonReplyMessage?.contextInfo;
 
             const isReplyToBot = context && context.stanzaId === sentMsg.key.id;
             if (!isReplyToBot) return;
