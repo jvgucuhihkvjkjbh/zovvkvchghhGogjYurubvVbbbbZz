@@ -1,85 +1,40 @@
 const { cmd } = require('../command');
 
-const normalizeId = (id) => {
-    if (!id) return '';
-    return id
-        .replace(/:[0-9]+/g, '')
-        .replace(/@(lid|s\.whatsapp\.net|c\.us|g\.us)/g, '')
-        .replace(/[^\d]/g, '');
-};
-
-async function isUserAdmin(conn, chatId, userId) {
-    const metadata = await conn.groupMetadata(chatId);
-    const participants = metadata.participants || [];
-    const user = normalizeId(userId);
-
-    return participants.some(p => {
-        const ids = [p.id, p.lid, p.jid, p.phoneNumber].filter(Boolean);
-        return ids.some(id => normalizeId(id) === user) &&
-            (p.admin === "admin" || p.admin === "superadmin");
-    });
-}
-
 cmd({
     pattern: "kick",
-    alias: ["remove", "k"],
-    desc: "Remove group members",
+    alias: ["remove"],
+    desc: "Remove a member from the group",
     category: "group",
-    react: "🗑️",
+    react: "🚪",
     filename: __filename
-}, async (conn, mek, m, { from, isGroup, sender, isOwner, isCreator, reply }) => {
+}, async (conn, mek, m, { from, args, isGroup, isAdmins, isBotAdmins, isOwner, isCreator, reply }) => {
     try {
-        if (!isGroup)
-            return reply("❌ This command only works in groups.");
+        if (!isGroup) return reply("⚠️ This command only works in groups.");
 
-        const senderIsAdmin = await isUserAdmin(conn, from, sender);
-        if (!isOwner && !isCreator && !senderIsAdmin)
-            return reply("⚠️ Only group admins can use this command.");
+        if (!isBotAdmins) return reply("❌ I need to be an Admin to remove members.");
 
-        const metadata = await conn.groupMetadata(from);
-        const admins = metadata.participants
-            .filter(p => p.admin)
-            .map(p => p.id);
-
-        let targets = [];
-
-        if (m.quoted?.sender) {
-            targets.push(m.quoted.sender);
+        if (!isOwner && !isCreator && !isAdmins) {
+            return reply("❌ Access Denied! Only group admins can use this command.");
         }
 
-        if (m.mentionedJid?.length) {
-            targets.push(...m.mentionedJid);
-        }
+        let users = m.mentionedJid[0] 
+            ? m.mentionedJid[0] 
+            : m.quoted 
+            ? m.quoted.sender 
+            : args[0] 
+            ? args[0].replace(/[^0-9]/g, '') + '@s.whatsapp.net' 
+            : false;
 
-        if (targets.length === 0)
-            return reply("❌ Reply to a member or mention user(s) to kick.");
+        if (!users) return reply("⚠️ Please mention a user, quote their message, or give their phone number to kick.");
 
-        let removed = [];
-        let skipped = [];
+        await conn.groupParticipantsUpdate(from, [users], "remove");
 
-        for (const jid of targets) {
-            if (admins.includes(jid)) {
-                skipped.push(jid);
-                continue;
-            }
-
-            await conn.groupParticipantsUpdate(from, [jid], "remove");
-            removed.push(jid);
-        }
-
-        let msg = "";
-        if (removed.length)
-            msg += `🗑️ Removed:\n${removed.map(j => `@${j.split('@')[0]}`).join('\n')}\n\n`;
-
-        if (skipped.length)
-            msg += `🚫 Skipped (Admins):\n${skipped.map(j => `@${j.split('@')[0]}`).join('\n')}`;
-
-        return reply(msg.trim(), {
-            mentions: [...removed, ...skipped]
+        return reply(`✅ Successfully removed @${users.split('@')[0]} from the group.`, {
+            mentions: [users]
         });
 
     } catch (e) {
         console.log("KICK ERROR:", e);
-        return reply("❌ Failed to remove member(s). Check bot permissions.");
+        return reply("❌ Failed to remove user from the group.");
     }
 });
