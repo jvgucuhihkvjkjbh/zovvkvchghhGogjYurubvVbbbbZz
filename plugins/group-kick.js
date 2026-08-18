@@ -7,18 +7,34 @@ cmd({
     category: "group",
     react: "🗑️",
     filename: __filename
-}, async (conn, mek, m, { from, isGroup, isAdmins, isCreator, reply }) => {
+}, async (conn, mek, m, { from, isGroup, reply, sender }) => {
     try {
         if (!isGroup)
             return reply("❌ This command only works in groups.")
 
-        if (!isAdmins && !isCreator)
+        const metadata = await conn.groupMetadata(from)
+        const participants = metadata.participants
+
+        const normalize = (jid) => (jid || "").replace(/@.*$/, "").replace(/:.+$/, "")
+
+        const admins = participants
+            .filter(p => p.admin)
+            .map(p => normalize(p.id))
+
+        const senderNorm = normalize(sender)
+        const senderAlt = normalize(mek.key.participantAlt || mek.key.participant)
+
+        const isSenderAdmin =
+            admins.includes(senderNorm) ||
+            admins.includes(senderAlt)
+
+        if (!isSenderAdmin)
             return reply("⚠️ Only group admins can use this command.")
 
-        const metadata = await conn.groupMetadata(from)
-        const admins = metadata.participants
-            .filter(p => p.admin)
-            .map(p => p.id)
+        const botNumber = normalize(conn.user.id)
+        const isBotAdmin = admins.includes(botNumber)
+        if (!isBotAdmin)
+            return reply("⚠️ I need to be an admin to remove members.")
 
         let targets = []
 
@@ -37,7 +53,7 @@ cmd({
         let skipped = []
 
         for (const jid of targets) {
-            if (admins.includes(jid)) {
+            if (admins.includes(normalize(jid))) {
                 skipped.push(jid)
                 continue
             }
