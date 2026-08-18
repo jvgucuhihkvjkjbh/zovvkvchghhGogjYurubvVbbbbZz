@@ -1,6 +1,6 @@
-const config = require('../config')
-const { cmd, commands } = require('../command')
-const { sleep } = require('../lib/functions')
+const config = require('../config');
+const { cmd } = require('../command');
+const { sleep } = require('../lib/functions');
 
 cmd({
     pattern: "accept",
@@ -9,10 +9,13 @@ cmd({
     category: "group",
     react: "✅",
     filename: __filename
-}, async (conn, mek, m, { from, body, args, isGroup, reply, isCreator, isAdmins }) => {
+}, async (conn, mek, m, { from, body, args, isGroup, isAdmins, isOwner, isCreator, reply }) => {
     try {
-        if (!isGroup) return reply("⚠️ This command only works in groups.")
-        if (!isAdmins && !isCreator) return reply("❌ Access Denied! Only group admins can use this command.")
+        if (!isGroup) return reply("⚠️ This command only works in groups.");
+
+        if (!isOwner && !isCreator && !isAdmins) {
+            return reply("❌ Access Denied! Only group admins can use this command.");
+        }
 
         if (
             body.trim().toLowerCase() === ".accept" ||
@@ -28,58 +31,57 @@ cmd({
 ┃ ➜ Accept only 15 requests
 ┃
 ╰━━━━━━━━━━━━━━⬣
-`)
+`);
         }
 
-        let pending = await conn.groupRequestParticipantsList(from)
+        let pending = await conn.groupRequestParticipantsList(from);
 
         if (!pending || pending.length === 0) {
-            return reply("❌ No pending join requests found.")
+            return reply("❌ No pending join requests found.");
         }
 
-        const metadata = await conn.groupMetadata(from)
-        const availableSlots = 1024 - metadata.participants.length
+        const metadata = await conn.groupMetadata(from);
+        const availableSlots = 1024 - metadata.participants.length;
 
-        let limit
+        let limit;
 
-        if (body.toLowerCase().startsWith(".acceptall")) {
-            limit = pending.length
+        if (body.toLowerCase().startsWith(".acceptall") || body.toLowerCase().startsWith(`${config.PREFIX}acceptall`)) {
+            limit = pending.length;
         } else {
-          
-            limit = parseInt(args[0])
+            limit = parseInt(args[0]);
 
             if (isNaN(limit) || limit <= 0) {
-                return reply("❌ Please provide a valid number.")
+                return reply("❌ Please provide a valid number.");
             }
         }
 
-        let toAccept = pending.slice(0, Math.min(limit, availableSlots))
+        let toAccept = pending.slice(0, Math.min(limit, availableSlots));
 
         if (toAccept.length === 0) {
-            return reply("❌ Group is full or no requests to process.")
+            return reply("❌ Group is full or no requests to process.");
         }
 
-        let approved = 0
+        let approved = 0;
 
         for (const user of toAccept) {
             try {
-                const jid = user.jid || user.id
+                const jid = user.jid || user.id;
 
-                await conn.groupRequestParticipantsUpdate(from, [jid], "approve")
+                await conn.groupRequestParticipantsUpdate(from, [jid], "approve");
 
-                approved++
+                approved++;
 
-                await sleep(2000)
+                await sleep(2000);
 
             } catch (err) {
-                await sleep(3000)
+                await sleep(3000);
             }
         }
 
-        return reply(`✅ Successfully approved ${approved} join requests.`)
+        return reply(`✅ Successfully approved ${approved} join requests.`);
 
     } catch (e) {
-        console.log("ACCEPT ERROR:", e)
-        return reply("❌ Failed to accept join requests.")
+        console.log("ACCEPT ERROR:", e);
+        return reply("❌ Failed to accept join requests.");
     }
-})
+});
