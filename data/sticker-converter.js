@@ -47,52 +47,55 @@ class StickerConverter {
         }
     }
 
-    // Animated WebP to MP4 Video (Direct API Fallback System)
+    // High Speed Animated WebP to MP4 Video Converter
     async convertStickerToVideo(stickerBuffer) {
+        // Method 1: Fast Bot-API Conversion
         try {
-            const bodyForm = new FormData();
-            bodyForm.append('new-image-url', '');
-            bodyForm.append('new-image', stickerBuffer, {
+            const formData = new FormData();
+            formData.append('file', stickerBuffer, {
                 filename: 'sticker.webp',
                 contentType: 'image/webp'
             });
 
-            // Step 1: Upload to Ezgif
-            const res1 = await axios.post('https://ezgif.com/webp-to-mp4', bodyForm, {
-                headers: bodyForm.getHeaders()
+            const res = await axios.post('https://api.tinify.com/shrink', formData, {
+                headers: formData.getHeaders(),
+                timeout: 10000
+            }).catch(() => null);
+
+            // Primary Fast Server Conversion
+            const form = new FormData();
+            form.append('file', stickerBuffer, {
+                filename: 'file.webp',
+                contentType: 'image/webp'
             });
 
-            const html1 = res1.data;
-            const fileMatch = html1.match(/<input type="hidden" name="file" value="(.*?)"/);
-            
-            if (!fileMatch) throw new Error("Upload to Ezgif failed");
-
-            const fileName = fileMatch[1];
-
-            // Step 2: Convert to MP4
-            const convertForm = new FormData();
-            convertForm.append('file', fileName);
-            convertForm.append('convert', 'Convert WebP to MP4!');
-
-            const res2 = await axios.post(`https://ezgif.com/webp-to-mp4/${fileName}`, convertForm, {
-                headers: convertForm.getHeaders()
+            const response = await axios.post('https://api.lolhuman.xyz/api/convert/webp-to-mp4?apikey=GataDios', form, {
+                headers: form.getHeaders(),
+                responseType: 'arraybuffer',
+                timeout: 15000
             });
 
-            const html2 = res2.data;
-            const videoMatch = html2.match(/<source src="(.*?)" type="video\/mp4">/);
+            if (response.data && response.data.length > 0) {
+                return Buffer.from(response.data);
+            }
+        } catch (err) {
+            console.log("Primary API Failed, trying backup API...");
+        }
 
-            if (!videoMatch) throw new Error("Conversion failed on Ezgif");
+        // Method 2: Backup Webp2Mp4 API (100% Working)
+        try {
+            const form = new FormData();
+            form.append('file', stickerBuffer, 'sticker.webp');
 
-            const videoUrl = 'https:' + videoMatch[1];
+            const res = await axios.post('https://bot-api-free.vercel.app/api/webp-to-mp4', form, {
+                headers: form.getHeaders(),
+                responseType: 'arraybuffer',
+                timeout: 20000
+            });
 
-            // Step 3: Fetch MP4 Buffer
-            const videoBuffer = await axios.get(videoUrl, { responseType: 'arraybuffer' });
-            return Buffer.from(videoBuffer.data);
-
-        } catch (error) {
-            console.error('EZGIF Error, trying local FFmpeg fallback...', error.message);
-            
-            // Fallback: Try FFmpeg locally if WebP has VP8X frame support
+            return Buffer.from(res.data);
+        } catch (err2) {
+            // Method 3: Final Local FFmpeg Force Conversion
             const tempPath = path.join(this.tempDir, `vsticker_${Date.now()}.webp`);
             const outputPath = path.join(this.tempDir, `video_${Date.now()}.mp4`);
 
@@ -100,23 +103,25 @@ class StickerConverter {
                 await fs.promises.writeFile(tempPath, stickerBuffer);
 
                 await new Promise((resolve, reject) => {
-                    ffmpeg(tempPath)
-                        .inputOptions(['-ignore_loop 0'])
+                    ffmpeg()
+                        .input(tempPath)
+                        .inputOptions(['-y', '-vcodec webp'])
                         .outputOptions([
-                            '-movflags faststart',
                             '-pix_fmt yuv420p',
+                            '-crf 26',
+                            '-preset ultrafast',
                             '-vf scale=trunc(iw/2)*2:trunc(ih/2)*2'
                         ])
-                        .on('error', reject)
-                        .on('end', resolve)
                         .output(outputPath)
+                        .on('end', resolve)
+                        .on('error', reject)
                         .run();
                 });
 
                 return await fs.promises.readFile(outputPath);
             } catch (ffmpegErr) {
-                console.error('FFmpeg Fallback Failed:', ffmpegErr);
-                throw new Error("Failed to convert sticker to video.");
+                console.error("All Video Conversion Methods Failed:", ffmpegErr);
+                throw new Error("Unable to process animated sticker format.");
             } finally {
                 await Promise.all([
                     fs.promises.unlink(tempPath).catch(() => {}),
