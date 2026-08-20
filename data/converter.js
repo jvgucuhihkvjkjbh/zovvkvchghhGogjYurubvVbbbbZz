@@ -86,6 +86,14 @@ class AudioConverter {
             '-compression_level', '10'
         ], ext, 'opus');
     }
+
+    webpToMp4(buffer) {
+        return this.convert(buffer, [
+            '-movflags', 'faststart',
+            '-pix_fmt', 'yuv420p',
+            '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2'
+        ], 'webp', 'mp4');
+    }
 }
 
 module.exports = new AudioConverter();
