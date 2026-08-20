@@ -24,10 +24,8 @@ class StickerConverter {
         const outputPath = path.join(this.tempDir, `image_${Date.now()}.png`);
 
         try {
-            // Save sticker to temp file
             await fs.promises.writeFile(tempPath, stickerBuffer);
 
-            // Convert using fluent-ffmpeg (same as your video sticker converter)
             await new Promise((resolve, reject) => {
                 ffmpeg(tempPath)
                     .on('error', reject)
@@ -36,13 +34,43 @@ class StickerConverter {
                     .run();
             });
 
-            // Read and return converted image
             return await fs.promises.readFile(outputPath);
         } catch (error) {
             console.error('Conversion error:', error);
             throw new Error('Failed to convert sticker to image');
         } finally {
-            // Cleanup temp files
+            await Promise.all([
+                fs.promises.unlink(tempPath).catch(() => {}),
+                fs.promises.unlink(outputPath).catch(() => {})
+            ]);
+        }
+    }
+
+    async convertStickerToVideo(stickerBuffer) {
+        const tempPath = path.join(this.tempDir, `vsticker_${Date.now()}.webp`);
+        const outputPath = path.join(this.tempDir, `video_${Date.now()}.mp4`);
+
+        try {
+            await fs.promises.writeFile(tempPath, stickerBuffer);
+
+            await new Promise((resolve, reject) => {
+                ffmpeg(tempPath)
+                    .outputOptions([
+                        '-movflags faststart',
+                        '-pix_fmt yuv420p',
+                        '-vf scale=trunc(iw/2)*2:trunc(ih/2)*2'
+                    ])
+                    .on('error', reject)
+                    .on('end', resolve)
+                    .output(outputPath)
+                    .run();
+            });
+
+            return await fs.promises.readFile(outputPath);
+        } catch (error) {
+            console.error('Video conversion error:', error);
+            throw new Error('Failed to convert sticker to video');
+        } finally {
             await Promise.all([
                 fs.promises.unlink(tempPath).catch(() => {}),
                 fs.promises.unlink(outputPath).catch(() => {})
