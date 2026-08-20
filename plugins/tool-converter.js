@@ -2,10 +2,11 @@ const converter = require('../data/converter');
 const stickerConverter = require('../data/sticker-converter');
 const { cmd } = require('../command');
 
+// Static Sticker to Image
 cmd({
     pattern: 'toimg',
     alias: ['toimage', 'tophoto'],
-    desc: 'Convert stickers to images',
+    desc: 'Convert static stickers to images',
     category: 'media',
     react: '🖼️',
     filename: __filename
@@ -13,7 +14,7 @@ cmd({
     try {
         if (!message.quoted || message.quoted.mtype !== 'stickerMessage') {
             return await client.sendMessage(from, {
-                text: "✨ *Sticker Converter*\n\nPlease reply to a sticker message to convert it into an image.\n\nExample: `.convert` (reply to a sticker)"
+                text: "✨ *Sticker Converter*\n\nPlease reply to a sticker message to convert it into an image.\n\nExample: `.toimg` (reply to a sticker)"
             }, { quoted: message });
         }
 
@@ -29,9 +30,52 @@ cmd({
 
     } catch (e) {
         console.error('convert error:', e);
+        await client.sendMessage(from, {
+            text: "❌ Failed to convert sticker to image"
+        }, { quoted: message });
     }
 });
 
+// Animated/Video Sticker to MP4 Video
+cmd({
+    pattern: 'tovideo',
+    alias: ['tomp4', 'togif'],
+    desc: 'Convert animated/video stickers to MP4 video',
+    category: 'media',
+    react: '🎥',
+    filename: __filename
+}, async (client, match, message, { from }) => {
+    try {
+        if (!message.quoted || message.quoted.mtype !== 'stickerMessage') {
+            return await client.sendMessage(from, {
+                text: "🎬 *Animated Sticker Converter*\n\nPlease reply to an animated/video sticker to convert it into a video.\n\nExample: `.tovideo` (reply to a video sticker)"
+            }, { quoted: message });
+        }
+
+        await client.sendMessage(from, {
+            text: "🔄 Converting video sticker to MP4..."
+        }, { quoted: message });
+
+        const stickerBuffer = await message.quoted.download();
+        if (!stickerBuffer) return;
+
+        const videoBuffer = await stickerConverter.convertStickerToVideo(stickerBuffer);
+
+        await client.sendMessage(from, {
+            video: videoBuffer,
+            mimetype: 'video/mp4',
+            caption: '> *sᴛɪᴄᴋᴇʀ ᴛᴏ ᴠɪᴅᴇᴏ*'
+        }, { quoted: message });
+
+    } catch (e) {
+        console.error('Video sticker conversion error:', e);
+        await client.sendMessage(from, {
+            text: "❌ Failed to convert sticker to video"
+        }, { quoted: message });
+    }
+});
+
+// Media to Audio (MP3)
 cmd({
     pattern: 'tomp3',
     desc: 'Convert media to audio',
@@ -39,7 +83,6 @@ cmd({
     react: '🎵',
     filename: __filename
 }, async (client, match, message, { from }) => {
-    // Input validation
     if (!match.quoted) {
         return await client.sendMessage(from, {
             text: "*🔊 Please reply to a video/audio message*"
@@ -58,7 +101,6 @@ cmd({
         }, { quoted: message });
     }
 
-    // Send processing message and store it
     await client.sendMessage(from, {
         text: "🔄 Converting to audio..."
     }, { quoted: message });
@@ -68,7 +110,6 @@ cmd({
         const ext = match.quoted.mtype === 'videoMessage' ? 'mp4' : 'm4a';
         const audio = await converter.toAudio(buffer, ext);
 
-        // Send result
         await client.sendMessage(from, {
             audio: audio,
             mimetype: 'audio/mpeg'
@@ -82,6 +123,7 @@ cmd({
     }
 });
 
+// Media to Voice Message (PTT)
 cmd({
     pattern: 'toptt',
     desc: 'Convert media to voice message',
@@ -89,7 +131,6 @@ cmd({
     react: '🎙️',
     filename: __filename
 }, async (client, match, message, { from }) => {
-    // Input validation
     if (!match.quoted) {
         return await client.sendMessage(from, {
             text: "*🗣️ Please reply to a video/audio message*"
@@ -108,7 +149,6 @@ cmd({
         }, { quoted: message });
     }
 
-    // Send processing message
     await client.sendMessage(from, {
         text: "🔄 Converting to voice message..."
     }, { quoted: message });
@@ -118,7 +158,6 @@ cmd({
         const ext = match.quoted.mtype === 'videoMessage' ? 'mp4' : 'm4a';
         const ptt = await converter.toPTT(buffer, ext);
 
-        // Send result
         await client.sendMessage(from, {
             audio: ptt,
             mimetype: 'audio/ogg; codecs=opus',
