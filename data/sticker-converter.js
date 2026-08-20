@@ -4,7 +4,6 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
 const sharp = require('sharp');
 
-// Set ffmpeg path
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 class StickerConverter {
@@ -24,10 +23,8 @@ class StickerConverter {
         const outputPath = path.join(this.tempDir, `image_${Date.now()}.png`);
 
         try {
-            // Save sticker to temp file
             await fs.promises.writeFile(tempPath, stickerBuffer);
 
-            // Convert using fluent-ffmpeg (same as your video sticker converter)
             await new Promise((resolve, reject) => {
                 ffmpeg(tempPath)
                     .on('error', reject)
@@ -36,13 +33,11 @@ class StickerConverter {
                     .run();
             });
 
-            // Read and return converted image
             return await fs.promises.readFile(outputPath);
         } catch (error) {
             console.error('Conversion error:', error);
             throw new Error('Failed to convert sticker to image');
         } finally {
-            // Cleanup temp files
             await Promise.all([
                 fs.promises.unlink(tempPath).catch(() => {}),
                 fs.promises.unlink(outputPath).catch(() => {})
@@ -50,18 +45,6 @@ class StickerConverter {
         }
     }
 
-    /**
-     * Converts an animated (or static) WebP sticker buffer into an MP4 video buffer.
-     *
-     * Why not just pipe the .webp straight into ffmpeg? The prebuilt
-     * @ffmpeg-installer/ffmpeg binary does not reliably demux multi-frame
-     * (animated) WebP, so ffmpeg errors out on most WhatsApp animated stickers.
-     *
-     * Fix: use `sharp` (libvips) to decode the animated WebP into individual
-     * PNG frames — sharp handles animated WebP natively and reliably — then
-     * hand those frames to ffmpeg purely for video *encoding* (no WebP
-     * decoding required from ffmpeg at all).
-     */
     async convertStickerToVideo(stickerBuffer) {
         const jobId = Date.now();
         const framesDir = path.join(this.tempDir, `frames_${jobId}`);
@@ -77,17 +60,14 @@ class StickerConverter {
             const pageHeight = metadata.pageHeight || metadata.height;
             const width = metadata.width;
 
-            // Get raw pixel data for every page/frame stacked vertically
             const { data, info } = await img
                 .raw()
                 .ensureAlpha()
                 .toBuffer({ resolveWithObject: true });
 
-            const channels = info.channels; // 4 (RGBA) since we called ensureAlpha()
+            const channels = info.channels;
             const frameBytes = width * pageHeight * channels;
 
-            // Work out fps from the WebP's per-frame delay (ms). Default to
-            // a sane 15fps if delay metadata isn't available (static image).
             let fps = 15;
             if (Array.isArray(metadata.delay) && metadata.delay.length) {
                 const avgDelayMs =
@@ -97,7 +77,6 @@ class StickerConverter {
                 }
             }
 
-            // Slice out each frame and write it as a PNG
             const writes = [];
             for (let i = 0; i < pageCount; i++) {
                 const frameBuffer = data.subarray(i * frameBytes, (i + 1) * frameBytes);
@@ -115,7 +94,6 @@ class StickerConverter {
             }
             await Promise.all(writes);
 
-            // Encode the PNG sequence into an MP4 (ffmpeg never touches WebP here)
             await new Promise((resolve, reject) => {
                 ffmpeg()
                     .input(path.join(framesDir, 'frame_%05d.png'))
@@ -124,7 +102,6 @@ class StickerConverter {
                         '-c:v', 'libx264',
                         '-pix_fmt', 'yuv420p',
                         '-movflags', '+faststart',
-                        // libx264 requires even width/height
                         '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2'
                     ])
                     .on('error', reject)
