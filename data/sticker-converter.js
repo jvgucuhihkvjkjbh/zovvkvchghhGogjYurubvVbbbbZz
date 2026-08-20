@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const axios = require('axios');
-const FormData = require('form-data');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 const ffmpeg = require('fluent-ffmpeg');
+const sharp = require('sharp');
 
+// Set ffmpeg path
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 class StickerConverter {
@@ -19,14 +19,15 @@ class StickerConverter {
         }
     }
 
-    // Static Sticker to Image
     async convertStickerToImage(stickerBuffer) {
         const tempPath = path.join(this.tempDir, `sticker_${Date.now()}.webp`);
         const outputPath = path.join(this.tempDir, `image_${Date.now()}.png`);
 
         try {
+            // Save sticker to temp file
             await fs.promises.writeFile(tempPath, stickerBuffer);
 
+            // Convert using fluent-ffmpeg (same as your video sticker converter)
             await new Promise((resolve, reject) => {
                 ffmpeg(tempPath)
                     .on('error', reject)
@@ -35,11 +36,13 @@ class StickerConverter {
                     .run();
             });
 
+            // Read and return converted image
             return await fs.promises.readFile(outputPath);
         } catch (error) {
-            console.error('Image Conversion error:', error);
+            console.error('Conversion error:', error);
             throw new Error('Failed to convert sticker to image');
         } finally {
+            // Cleanup temp files
             await Promise.all([
                 fs.promises.unlink(tempPath).catch(() => {}),
                 fs.promises.unlink(outputPath).catch(() => {})
@@ -47,87 +50,95 @@ class StickerConverter {
         }
     }
 
-    // High Speed Animated WebP to MP4 Video Converter
+    /**
+     * Converts an animated (or static) WebP sticker buffer into an MP4 video buffer.
+     *
+     * Why not just pipe the .webp straight into ffmpeg? The prebuilt
+     * @ffmpeg-installer/ffmpeg binary does not reliably demux multi-frame
+     * (animated) WebP, so ffmpeg errors out on most WhatsApp animated stickers.
+     *
+     * Fix: use `sharp` (libvips) to decode the animated WebP into individual
+     * PNG frames — sharp handles animated WebP natively and reliably — then
+     * hand those frames to ffmpeg purely for video *encoding* (no WebP
+     * decoding required from ffmpeg at all).
+     */
     async convertStickerToVideo(stickerBuffer) {
-        // Method 1: Fast Bot-API Conversion
+        const jobId = Date.now();
+        const framesDir = path.join(this.tempDir, `frames_${jobId}`);
+        const outputPath = path.join(this.tempDir, `video_${jobId}.mp4`);
+
         try {
-            const formData = new FormData();
-            formData.append('file', stickerBuffer, {
-                filename: 'sticker.webp',
-                contentType: 'image/webp'
-            });
+            await fs.promises.mkdir(framesDir, { recursive: true });
 
-            const res = await axios.post('https://api.tinify.com/shrink', formData, {
-                headers: formData.getHeaders(),
-                timeout: 10000
-            }).catch(() => null);
+            const img = sharp(stickerBuffer, { animated: true });
+            const metadata = await img.metadata();
 
-            // Primary Fast Server Conversion
-            const form = new FormData();
-            form.append('file', stickerBuffer, {
-                filename: 'file.webp',
-                contentType: 'image/webp'
-            });
+            const pageCount = metadata.pages || 1;
+            const pageHeight = metadata.pageHeight || metadata.height;
+            const width = metadata.width;
 
-            const response = await axios.post('https://api.lolhuman.xyz/api/convert/webp-to-mp4?apikey=GataDios', form, {
-                headers: form.getHeaders(),
-                responseType: 'arraybuffer',
-                timeout: 15000
-            });
+            // Get raw pixel data for every page/frame stacked vertically
+            const { data, info } = await img
+                .raw()
+                .ensureAlpha()
+                .toBuffer({ resolveWithObject: true });
 
-            if (response.data && response.data.length > 0) {
-                return Buffer.from(response.data);
+            const channels = info.channels; // 4 (RGBA) since we called ensureAlpha()
+            const frameBytes = width * pageHeight * channels;
+
+            // Work out fps from the WebP's per-frame delay (ms). Default to
+            // a sane 15fps if delay metadata isn't available (static image).
+            let fps = 15;
+            if (Array.isArray(metadata.delay) && metadata.delay.length) {
+                const avgDelayMs =
+                    metadata.delay.reduce((a, b) => a + b, 0) / metadata.delay.length;
+                if (avgDelayMs > 0) {
+                    fps = Math.min(30, Math.max(1, Math.round(1000 / avgDelayMs)));
+                }
             }
-        } catch (err) {
-            console.log("Primary API Failed, trying backup API...");
-        }
 
-        // Method 2: Backup Webp2Mp4 API (100% Working)
-        try {
-            const form = new FormData();
-            form.append('file', stickerBuffer, 'sticker.webp');
+            // Slice out each frame and write it as a PNG
+            const writes = [];
+            for (let i = 0; i < pageCount; i++) {
+                const frameBuffer = data.subarray(i * frameBytes, (i + 1) * frameBytes);
+                const frameName = path.join(
+                    framesDir,
+                    `frame_${String(i).padStart(5, '0')}.png`
+                );
+                writes.push(
+                    sharp(frameBuffer, {
+                        raw: { width, height: pageHeight, channels }
+                    })
+                        .png()
+                        .toFile(frameName)
+                );
+            }
+            await Promise.all(writes);
 
-            const res = await axios.post('https://bot-api-free.vercel.app/api/webp-to-mp4', form, {
-                headers: form.getHeaders(),
-                responseType: 'arraybuffer',
-                timeout: 20000
+            // Encode the PNG sequence into an MP4 (ffmpeg never touches WebP here)
+            await new Promise((resolve, reject) => {
+                ffmpeg()
+                    .input(path.join(framesDir, 'frame_%05d.png'))
+                    .inputFPS(fps)
+                    .outputOptions([
+                        '-c:v', 'libx264',
+                        '-pix_fmt', 'yuv420p',
+                        '-movflags', '+faststart',
+                        // libx264 requires even width/height
+                        '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2'
+                    ])
+                    .on('error', reject)
+                    .on('end', resolve)
+                    .save(outputPath);
             });
 
-            return Buffer.from(res.data);
-        } catch (err2) {
-            // Method 3: Final Local FFmpeg Force Conversion
-            const tempPath = path.join(this.tempDir, `vsticker_${Date.now()}.webp`);
-            const outputPath = path.join(this.tempDir, `video_${Date.now()}.mp4`);
-
-            try {
-                await fs.promises.writeFile(tempPath, stickerBuffer);
-
-                await new Promise((resolve, reject) => {
-                    ffmpeg()
-                        .input(tempPath)
-                        .inputOptions(['-y', '-vcodec webp'])
-                        .outputOptions([
-                            '-pix_fmt yuv420p',
-                            '-crf 26',
-                            '-preset ultrafast',
-                            '-vf scale=trunc(iw/2)*2:trunc(ih/2)*2'
-                        ])
-                        .output(outputPath)
-                        .on('end', resolve)
-                        .on('error', reject)
-                        .run();
-                });
-
-                return await fs.promises.readFile(outputPath);
-            } catch (ffmpegErr) {
-                console.error("All Video Conversion Methods Failed:", ffmpegErr);
-                throw new Error("Unable to process animated sticker format.");
-            } finally {
-                await Promise.all([
-                    fs.promises.unlink(tempPath).catch(() => {}),
-                    fs.promises.unlink(outputPath).catch(() => {})
-                ]);
-            }
+            return await fs.promises.readFile(outputPath);
+        } catch (error) {
+            console.error('Sticker to video conversion error:', error);
+            throw new Error('Failed to convert sticker to video');
+        } finally {
+            await fs.promises.rm(framesDir, { recursive: true, force: true }).catch(() => {});
+            await fs.promises.unlink(outputPath).catch(() => {});
         }
     }
 }
