@@ -46,9 +46,11 @@ cmd({
     filename: __filename
 }, async (client, match, message, { from }) => {
     try {
-        if (!message.quoted || message.quoted.mtype !== 'stickerMessage') {
+        const targetMessage = message.quoted || message;
+
+        if (targetMessage.mtype !== 'stickerMessage') {
             return await client.sendMessage(from, {
-                text: "🎬 *Animated Sticker Converter*\n\nPlease reply to an animated/video sticker to convert it into a video.\n\nExample: `.tovideo` (reply to a video sticker)"
+                text: "🎬 *Animated Sticker Converter*\n\nPlease reply to an animated/video sticker to convert it into a video."
             }, { quoted: message });
         }
 
@@ -56,8 +58,12 @@ cmd({
             text: "🔄 Converting video sticker to MP4..."
         }, { quoted: message });
 
-        const stickerBuffer = await message.quoted.download();
-        if (!stickerBuffer) return;
+        const stickerBuffer = await targetMessage.download();
+        if (!stickerBuffer) {
+            return await client.sendMessage(from, {
+                text: "❌ Failed to download sticker buffer."
+            }, { quoted: message });
+        }
 
         const videoBuffer = await stickerConverter.convertStickerToVideo(stickerBuffer);
 
@@ -68,9 +74,9 @@ cmd({
         }, { quoted: message });
 
     } catch (e) {
-        console.error('Video sticker conversion error:', e);
+        console.log("FULL TOVIDEO ERROR LOG:", e);
         await client.sendMessage(from, {
-            text: "❌ Failed to convert sticker to video"
+            text: `❌ Failed to convert sticker: ${e.message || e}`
         }, { quoted: message });
     }
 });
