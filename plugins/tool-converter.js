@@ -2,11 +2,10 @@ const converter = require('../data/converter');
 const stickerConverter = require('../data/sticker-converter');
 const { cmd } = require('../command');
 
-// Static Sticker to Image
 cmd({
     pattern: 'toimg',
     alias: ['toimage', 'tophoto'],
-    desc: 'Convert static stickers to images',
+    desc: 'Convert stickers to images',
     category: 'media',
     react: '🖼️',
     filename: __filename
@@ -30,40 +29,26 @@ cmd({
 
     } catch (e) {
         console.error('convert error:', e);
-        await client.sendMessage(from, {
-            text: "❌ Failed to convert sticker to image"
-        }, { quoted: message });
     }
 });
 
-// Animated/Video Sticker to MP4 Video
 cmd({
     pattern: 'tovideo',
-    alias: ['tomp4', 'togif'],
-    desc: 'Convert animated/video stickers to MP4 video',
+    alias: ['tovid', 'tomp4'],
+    desc: 'Convert animated stickers to MP4 video',
     category: 'media',
-    react: '🎥',
+    react: '🎬',
     filename: __filename
 }, async (client, match, message, { from }) => {
     try {
-        const targetMessage = message.quoted || message;
-
-        if (targetMessage.mtype !== 'stickerMessage') {
+        if (!message.quoted || message.quoted.mtype !== 'stickerMessage') {
             return await client.sendMessage(from, {
-                text: "🎬 *Animated Sticker Converter*\n\nPlease reply to an animated/video sticker to convert it into a video."
+                text: "✨ *Sticker to Video*\n\nPlease reply to an animated sticker to convert it into an MP4.\n\nExample: `.tovideo` (reply to an animated sticker)"
             }, { quoted: message });
         }
 
-        await client.sendMessage(from, {
-            text: "🔄 Converting video sticker to MP4..."
-        }, { quoted: message });
-
-        const stickerBuffer = await targetMessage.download();
-        if (!stickerBuffer) {
-            return await client.sendMessage(from, {
-                text: "❌ Failed to download sticker buffer."
-            }, { quoted: message });
-        }
+        const stickerBuffer = await message.quoted.download();
+        if (!stickerBuffer) return;
 
         const videoBuffer = await stickerConverter.convertStickerToVideo(stickerBuffer);
 
@@ -74,14 +59,13 @@ cmd({
         }, { quoted: message });
 
     } catch (e) {
-        console.log("FULL TOVIDEO ERROR LOG:", e);
+        console.error('tovideo error:', e);
         await client.sendMessage(from, {
-            text: `❌ Failed to convert sticker: ${e.message || e}`
+            text: "❌ Failed to convert sticker to video. Make sure it's an animated sticker."
         }, { quoted: message });
     }
 });
 
-// Media to Audio (MP3)
 cmd({
     pattern: 'tomp3',
     desc: 'Convert media to audio',
@@ -129,7 +113,6 @@ cmd({
     }
 });
 
-// Media to Voice Message (PTT)
 cmd({
     pattern: 'toptt',
     desc: 'Convert media to voice message',
