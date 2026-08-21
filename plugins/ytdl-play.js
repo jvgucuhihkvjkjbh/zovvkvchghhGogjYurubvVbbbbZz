@@ -1,14 +1,9 @@
 const { cmd } = require('../command');
 const axios = require('axios');
-const crypto = require('crypto');
 const yts = require('yt-search');
+const crypto = require('crypto');
 
 const commands = ["play", "song", "mp3"];
-
-const TIMEOUT = 20000;
-const api = {
-    post: (url, data, config = {}) => axios.post(url, data, { timeout: TIMEOUT, ...config })
-};
 
 const CDNS = ["cdn406.savetube.vip", "cdn405.savetube.vip", "cdn404.savetube.vip"];
 const SECRET_KEY = Buffer.from("C5D58EF67A7584E4A29F6C35BBC4EB12", "hex");
@@ -35,15 +30,21 @@ function decryptData(enc) {
 const downloadAudio = async (videoUrl) => {
     const id = getVideoId(videoUrl);
     if (!id) return null;
-
     for (const CDN of CDNS) {
         try {
-            const infoRes = await api.post(`https://${CDN}/v2/info`, { url: `https://youtube.com/watch?v=${id}` }, { headers: ytHeaders });
+            const infoRes = await axios.post(
+                `https://${CDN}/v2/info`,
+                { url: `https://youtube.com/watch?v=${id}` },
+                { headers: ytHeaders, timeout: 30000 }
+            );
             const info = decryptData(infoRes.data.data);
-            const dlRes = await api.post(`https://${CDN}/download`, { id: info.id, key: info.key, downloadType: "audio", quality: "192" }, { headers: ytHeaders });
+            const dlRes = await axios.post(
+                `https://${CDN}/download`,
+                { id: info.id, key: info.key, downloadType: "audio", quality: "128" },
+                { headers: ytHeaders, timeout: 30000 }
+            );
             const link = dlRes.data?.data?.downloadUrl;
-            if (!link) continue;
-            return link;
+            if (link) return link;
         } catch (e) {
             continue;
         }
@@ -131,11 +132,11 @@ commands.forEach(pattern => {
                 caption: caption
             }, { quoted: mek });
 
-            const audioUrl = await downloadAudio(vid.url);
+            const streamUrl = await downloadAudio(vid.url);
 
-            if (audioUrl) {
+            if (streamUrl) {
                 await conn.sendMessage(from, {
-                    audio: { url: audioUrl },
+                    audio: { url: streamUrl },
                     mimetype: "audio/mpeg",
                     fileName: `${vid.title}.mp3`
                 }, { quoted: mek });
