@@ -4,18 +4,30 @@ const yts = require('yt-search');
 
 const commands = ["play", "song", "mp3"];
 
-const getAudioUrl = async (videoUrl) => {
+const downloadAudio = async (videoUrl) => {
     try {
-        const res = await axios.get(
+        const apiRes = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
             { timeout: 30000 }
         );
-        if (res.data?.status && res.data.result?.audio_download) {
-            return res.data.result.audio_download;
-        }
+
+        const audioUrl = apiRes.data?.result?.audio_download;
+        if (!audioUrl) throw new Error("No audio_download URL in response");
+
+        const audioRes = await axios.get(audioUrl, {
+            responseType: "arraybuffer",
+            timeout: 60000,
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+        });
+
+        const buffer = Buffer.from(audioRes.data);
+        if (buffer.length > 0) return buffer;
         return null;
+
     } catch (e) {
-        console.error("API Fetch Error:", e.message);
+        console.error("Audio Download Error:", e.message);
         return null;
     }
 };
@@ -100,11 +112,11 @@ commands.forEach(pattern => {
                 caption: caption
             }, { quoted: mek });
 
-            const audioUrl = await getAudioUrl(vid.url);
+            const audioBuffer = await downloadAudio(vid.url);
 
-            if (audioUrl) {
+            if (audioBuffer) {
                 await conn.sendMessage(from, {
-                    audio: { url: audioUrl },
+                    audio: audioBuffer,
                     mimetype: "audio/mpeg",
                     fileName: `${vid.title}.mp3`
                 }, { quoted: mek });
