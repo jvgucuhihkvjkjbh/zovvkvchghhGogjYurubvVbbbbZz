@@ -1,35 +1,54 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const crypto = require('crypto');
 const yts = require('yt-search');
 
 const commands = ["play", "song", "mp3"];
 
+const TIMEOUT = 20000;
+const api = {
+    post: (url, data, config = {}) => axios.post(url, data, { timeout: TIMEOUT, ...config })
+};
+
+const CDNS = ["cdn406.savetube.vip", "cdn405.savetube.vip", "cdn404.savetube.vip"];
+const SECRET_KEY = Buffer.from("C5D58EF67A7584E4A29F6C35BBC4EB12", "hex");
+const ytHeaders = {
+    "content-type": "application/json",
+    "origin": "https://ytube.savetube.me",
+    "referer": "https://ytube.savetube.me/",
+    "user-agent": "Mozilla/5.0"
+};
+
+const getVideoId = (url) => {
+    const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|\/(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    return match ? match[1] : null;
+};
+
+function decryptData(enc) {
+    const buf = Buffer.from(enc.replace(/\s/g, ""), "base64");
+    const iv = buf.subarray(0, 16);
+    const data = buf.subarray(16);
+    const decipher = crypto.createDecipheriv("aes-128-cbc", SECRET_KEY, iv);
+    return JSON.parse(Buffer.concat([decipher.update(data), decipher.final()]).toString());
+}
+
 const downloadAudio = async (videoUrl) => {
-    try {
-        const apiRes = await axios.get(
-            `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
-            { timeout: 30000 }
-        );
+    const id = getVideoId(videoUrl);
+    if (!id) return null;
 
-        const audioUrl = apiRes.data?.result?.audio_download;
-        if (!audioUrl) throw new Error("No audio_download URL in response");
-
-        const audioRes = await axios.get(audioUrl, {
-            responseType: "arraybuffer",
-            timeout: 60000,
-            headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-            }
-        });
-
-        const buffer = Buffer.from(audioRes.data);
-        if (buffer.length > 0) return buffer;
-        return null;
-
-    } catch (e) {
-        console.error("Audio Download Error:", e.message);
-        return null;
+    for (const CDN of CDNS) {
+        try {
+            const infoRes = await api.post(`https://${CDN}/v2/info`, { url: `https://youtube.com/watch?v=${id}` }, { headers: ytHeaders });
+            const info = decryptData(infoRes.data.data);
+            const dlRes = await api.post(`https://${CDN}/download`, { id: info.id, key: info.key, downloadType: "audio", quality: "192" }, { headers: ytHeaders });
+            const link = dlRes.data?.data?.downloadUrl;
+            if (!link) continue;
+            return link;
+        } catch (e) {
+            continue;
+        }
     }
+    return null;
 };
 
 commands.forEach(pattern => {
@@ -112,15 +131,14 @@ commands.forEach(pattern => {
                 caption: caption
             }, { quoted: mek });
 
-            const audioBuffer = await downloadAudio(vid.url);
+            const audioUrl = await downloadAudio(vid.url);
 
-            if (audioBuffer) {
+            if (audioUrl) {
                 await conn.sendMessage(from, {
-                    audio: audioBuffer,
+                    audio: { url: audioUrl },
                     mimetype: "audio/mpeg",
                     fileName: `${vid.title}.mp3`
                 }, { quoted: mek });
-
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } else {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
