@@ -43,7 +43,7 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
-        if (!q) return reply("⚠️ Kuch likho\nMisal: .ai Salam kya hal hai")
+        if (!q) return reply("⚠️ Please provide a prompt.\nExample: .ai Hello, how are you?")
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } })
 
@@ -52,7 +52,7 @@ cmd({
 
         if (!answer) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } })
-            return reply("❌ AI ne jawab nahi diya. Try again.")
+            return reply("❌ AI failed to respond. Please try again later.")
         }
 
         await reply(`🤖 ${answer}`)
@@ -61,6 +61,6 @@ cmd({
     } catch (e) {
         console.log("AI ERROR:", e.message)
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } })
-        reply("❌ Error occurred. Try again.")
+        reply("❌ An error occurred while processing your request. Please try again.")
     }
 })
