@@ -1,19 +1,22 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 
-const API_URL = "https://adeel-xtech-api.vercel.app/api/gpt";
-
 const aiRequest = async (prompt) => {
-    try {
-        const res = await axios.get(`${API_URL}?q=${encodeURIComponent(prompt)}`, { timeout: 20000 })
-        const data = res.data
-        if (data?.status === true && data?.result && data.result.trim()) {
-            return data.result.trim()
+    const apis = [
+        {
+            url: `https://adeel-xtech-apis.vercel.app/api/blackboxai?q=${encodeURIComponent(prompt)}`,
+            extract: d => d?.result
         }
-        return null
-    } catch {
-        return null
+    ]
+
+    for (const api of apis) {
+        try {
+            const res = await axios.get(api.url, { timeout: 12000 })
+            const reply = api.extract(res.data)
+            if (reply && reply.trim()) return reply.trim()
+        } catch { continue }
     }
+    return null
 }
 
 const buildPrompt = (q) => {
