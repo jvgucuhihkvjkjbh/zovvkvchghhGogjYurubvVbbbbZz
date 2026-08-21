@@ -3,78 +3,17 @@ const axios = require('axios');
 const yts = require('yt-search');
 
 const downloadVideo = async (videoUrl) => {
-    const apis = [
-        {
-            name: "princetechn (ytmp4)",
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://api.princetechn.com/api/download/ytmp4?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.result?.url || res.data?.result?.download_url;
-                if (!res.data?.success || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            name: "princetechn (mp4)",
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://api.princetechn.com/api/download/mp4?apikey=prince&url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.result?.url || res.data?.result?.download_url;
-                if (!res.data?.success || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            name: "jawad-tech",
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://jawad-tech.vercel.app/download/ytdl?url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.result?.mp4;
-                if (!res.data?.status || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            name: "jerrycoder (ytmp4)",
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4?url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.url;
-                if (res.data?.status !== "success" || !url) throw new Error("No URL");
-                return url;
-            }
-        },
-        {
-            name: "jerrycoder (ytmp4-v1)",
-            fetch: async () => {
-                const res = await axios.get(
-                    `https://jerrycoder.oggyapi.workers.dev/down/ytmp4-v1?url=${encodeURIComponent(videoUrl)}`,
-                    { timeout: 30000 }
-                );
-                const url = res.data?.url;
-                if (res.data?.status !== "success" || !url) throw new Error("No URL");
-                return url;
-            }
-        }
-    ];
-
-    for (const api of apis) {
-        try {
-            const url = await api.fetch();
-            if (url) return { url, name: api.name };
-        } catch (e) {
-            continue;
-        }
+    try {
+        const res = await axios.get(
+            `https://adeel-xtech-apis.vercel.app/api/ytmp4?url=${encodeURIComponent(videoUrl)}`,
+            { timeout: 30000 }
+        );
+        const url = res.data?.result?.video_download;
+        if (!res.data?.status || !url) throw new Error("No URL");
+        return url;
+    } catch (e) {
+        return null;
     }
-    return null;
 };
 
 cmd({
@@ -170,9 +109,9 @@ cmd({
             react: { text: "⏳", key: message.key }
         });
 
-        const downResult = await downloadVideo(video.url);
+        const downUrl = await downloadVideo(video.url);
 
-        if (!downResult) {
+        if (!downUrl) {
             await sock.sendMessage(message.chat, {
                 react: { text: "❌", key: message.key }
             });
@@ -182,13 +121,9 @@ cmd({
         }
 
         await sock.sendMessage(message.chat, {
-            video: { url: downResult.url },
+            video: { url: downUrl },
             mimetype: "video/mp4",
             caption: `*${video.title}*\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
-        }, { quoted: message });
-
-        await sock.sendMessage(message.chat, {
-            text: `✅ *API Used:* ${downResult.name}\n🔗 ${downResult.url}`
         }, { quoted: message });
 
         await sock.sendMessage(message.chat, {
