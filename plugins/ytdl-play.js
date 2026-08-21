@@ -8,14 +8,14 @@ const getAudioUrl = async (videoUrl) => {
     try {
         const res = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/ytmp3?url=${encodeURIComponent(videoUrl)}`,
-            { timeout: 35000 }
+            { timeout: 30000 }
         );
-        if (res.data && res.data.status && res.data.result && res.data.result.audio_download) {
+        if (res.data?.status && res.data.result?.audio_download) {
             return res.data.result.audio_download;
         }
         return null;
     } catch (e) {
-        console.error("Vercel API Request Error:", e.message);
+        console.error("API Fetch Error:", e.message);
         return null;
     }
 };
@@ -29,11 +29,13 @@ commands.forEach(pattern => {
         filename: __filename
     }, async (conn, mek, m, { from, q, reply }) => {
         try {
+
             if (!q) {
                 return reply("❌ Please provide a song name or YouTube link");
             }
 
-            let vid = null;
+            let vid;
+
             const isYT = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//i.test(q);
 
             if (isYT) {
@@ -65,40 +67,31 @@ commands.forEach(pattern => {
                             author: { name: search.author?.name || search.channel?.name || 'Unknown' }
                         };
                     }
-                } catch (e) {
-                    console.log("YTS VideoId Fetch Error:", e.message);
-                }
+                } catch (e) {}
 
                 if (!vid) {
                     vid = {
-                        title: 'YouTube Audio',
+                        title: 'Unknown Title',
                         url: ytUrl,
                         thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
                         timestamp: 'N/A',
                         views: 0,
-                        author: { name: 'YouTube' }
+                        author: { name: 'Unknown' }
                     };
                 }
 
             } else {
-                try {
-                    const searchResult = await yts(q);
-                    if (searchResult && searchResult.videos && searchResult.videos.length > 0) {
-                        vid = searchResult.videos[0];
-                    }
-                } catch (e) {
-                    console.log("YTS Search Query Error:", e.message);
-                }
-
-                if (!vid) return reply("❌ No song results found. Try using a direct YouTube link!");
+                const { videos } = await yts(q);
+                if (!videos.length) return reply("❌ No song results found");
+                vid = videos[0];
             }
 
             await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
             const caption =
     `*${vid.title}*\n\n` +
-    `👤 *Channel:* ${vid.author?.name || 'Unknown'}\n` +
-    `⏱ *Duration:* ${vid.timestamp || 'N/A'}\n` +
+    `👤 *Channel:* ${vid.author.name}\n` +
+    `⏱ *Duration:* ${vid.timestamp}\n` +
     `👁 *Views:* ${(vid.views || 0).toLocaleString()}\n\n` +
     `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
@@ -107,7 +100,6 @@ commands.forEach(pattern => {
                 caption: caption
             }, { quoted: mek });
 
-            // Fetch audio URL from Vercel API
             const audioUrl = await getAudioUrl(vid.url);
 
             if (audioUrl) {
@@ -120,11 +112,11 @@ commands.forEach(pattern => {
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } else {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("❌ Failed to download audio from server. Please try again later.");
+                return reply("❌ Failed to download audio. Please try again later.");
             }
 
         } catch (e) {
-            console.error("Play Command Critical Error:", e);
+            console.log("Play Command Error:", e);
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             reply("❌ An unexpected error occurred while processing your request.");
         }
