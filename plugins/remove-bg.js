@@ -4,22 +4,28 @@ const { cmd } = require("../command");
 
 const API_URL = "https://adeel-xtech-apis.vercel.app/api/removebg";
 
+// Upload image using Adeel-Xtech imgtourl API
 async function uploadImage(buffer) {
     try {
         const form = new FormData();
-        form.append("file", buffer, "image.jpg");
+        form.append("file", buffer, {
+            filename: "image.jpg",
+            contentType: "image/jpeg"
+        });
 
-        const res = await axios.post("https://tmpfiles.org/api/v1/upload", form, {
-            headers: form.getHeaders(),
+        const res = await axios.post("https://adeel-xtech-apis.vercel.app/api/imgtourl", form, {
+            headers: {
+                ...form.getHeaders(),
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+            },
             timeout: 60000
         });
 
-        if (!res.data?.data?.url) return null;
+        if (!res.data || res.data.status !== true || !res.data.result || !res.data.result.url) {
+            return null;
+        }
 
-        return res.data.data.url.replace(
-            "https://tmpfiles.org/",
-            "https://tmpfiles.org/dl/"
-        );
+        return res.data.result.url;
 
     } catch (e) {
         console.log("Upload Error:", e.message);
@@ -79,7 +85,10 @@ cmd({
 
         const result = await axios.get(data.result.image_url, {
             responseType: "arraybuffer",
-            timeout: 60000
+            timeout: 60000,
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+            }
         });
 
         const resultBuffer = Buffer.from(result.data);
