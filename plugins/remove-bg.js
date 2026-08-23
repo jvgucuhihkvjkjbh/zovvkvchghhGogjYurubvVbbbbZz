@@ -1,8 +1,47 @@
 const axios = require("axios");
 const FormData = require("form-data");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const { cmd } = require("../command");
 
 const API_URL = "https://adeel-xtech-apis.vercel.app/api/removebg";
+
+async function uploadToQuax(buffer, extension) {
+    try {
+        const tempFilePath = path.join(os.tmpdir(), `rmbg_${Date.now()}${extension}`);
+        fs.writeFileSync(tempFilePath, buffer);
+
+        const form = new FormData();
+        form.append('files[]', fs.createReadStream(tempFilePath), `file${extension}`);
+
+        const response = await axios.post('https://qu.ax/upload.php', form, {
+            headers: {
+                Origin: 'https://qu.ax',
+                Referer: 'https://qu.ax/',
+                ...form.getHeaders(),
+                'User-Agent': 'Mozilla/5.0'
+            },
+            timeout: 60000
+        });
+
+        if (fs.existsSync(tempFilePath)) {
+            fs.unlinkSync(tempFilePath);
+        }
+
+        const url = response.data?.files?.[0]?.url?.trim();
+
+        if (!url || url.toLowerCase().includes('error')) {
+            return null;
+        }
+
+        return url;
+
+    } catch (e) {
+        console.log("Qu.ax Upload Error:", e.response?.data || e.message);
+        return null;
+    }
+}
 
 cmd({
     pattern: "rmbg",
@@ -32,11 +71,19 @@ cmd({
             return reply("❌ Failed to download image");
         }
 
-        const form = new FormData();
-        form.append("image", buffer, "image.jpg");
+        let extension = '.jpg';
+        if (mime.includes('image/png')) extension = '.png';
+        else if (mime.includes('image/webp')) extension = '.webp';
 
-        const response = await axios.post(API_URL, form, {
-            headers: form.getHeaders(),
+        const uploadedUrl = await uploadToQuax(buffer, extension);
+
+        if (!uploadedUrl) {
+            return reply("❌ Image upload failed");
+        }
+
+        const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
+
+        const response = await axios.get(api, {
             timeout: 60000
         });
 
