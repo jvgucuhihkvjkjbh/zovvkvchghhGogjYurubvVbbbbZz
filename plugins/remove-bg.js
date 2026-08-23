@@ -4,32 +4,6 @@ const { cmd } = require("../command");
 
 const API_URL = "https://adeel-xtech-apis.vercel.app/api/removebg";
 
-async function uploadImage(buffer) {
-    try {
-        const form = new FormData();
-        form.append("reqtype", "fileupload");
-        form.append("fileToUpload", buffer, "image.jpg");
-
-        const res = await axios.post("https://catbox.moe/user/api.php", form, {
-            headers: form.getHeaders(),
-            timeout: 60000
-        });
-
-        const url = typeof res.data === "string" ? res.data.trim() : null;
-
-        if (!url || !url.startsWith("http")) {
-            console.log("Catbox Upload Failed, response:", res.data);
-            return null;
-        }
-
-        return url;
-
-    } catch (e) {
-        console.log("Upload Error:", e.response?.data || e.message);
-        return null;
-    }
-}
-
 cmd({
     pattern: "rmbg",
     alias: ["removebg", "rbg"],
@@ -58,17 +32,11 @@ cmd({
             return reply("❌ Failed to download image");
         }
 
-        const uploadedUrl = await uploadImage(buffer);
+        const form = new FormData();
+        form.append("image", buffer, "image.jpg");
 
-        if (!uploadedUrl) {
-            return reply("❌ Image upload failed");
-        }
-
-        console.log("Uploaded URL:", uploadedUrl);
-
-        const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
-
-        const response = await axios.get(api, {
+        const response = await axios.post(API_URL, form, {
+            headers: form.getHeaders(),
             timeout: 60000
         });
 
@@ -79,7 +47,6 @@ cmd({
             !data.result ||
             !data.result.image_url
         ) {
-            console.log("API Response:", data);
             return reply("❌ Failed to remove background");
         }
 
