@@ -1,51 +1,8 @@
 const axios = require("axios");
 const FormData = require("form-data");
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
 const { cmd } = require("../command");
 
 const API_URL = "https://adeel-xtech-apis.vercel.app/api/removebg";
-
-async function uploadToQuax(buffer, extension) {
-    let tempFilePath;
-    try {
-        tempFilePath = path.join(os.tmpdir(), `rmbg_${Date.now()}${extension}`);
-        fs.writeFileSync(tempFilePath, buffer);
-
-        const form = new FormData();
-        form.append('files[]', fs.createReadStream(tempFilePath), `file${extension}`);
-
-        const response = await axios.post('https://qu.ax/upload.php', form, {
-            headers: {
-                Origin: 'https://qu.ax',
-                Referer: 'https://qu.ax/',
-                ...form.getHeaders(),
-                'User-Agent': 'Mozilla/5.0'
-            },
-            timeout: 60000
-        });
-
-        if (fs.existsSync(tempFilePath)) {
-            fs.unlinkSync(tempFilePath);
-        }
-
-        const url = response.data?.files?.[0]?.url?.trim();
-
-        if (!url || url.toLowerCase().includes('error')) {
-            return { success: false, error: `Qu.ax returned invalid response: ${JSON.stringify(response.data)}` };
-        }
-
-        return { success: true, url };
-
-    } catch (e) {
-        if (tempFilePath && fs.existsSync(tempFilePath)) {
-            fs.unlinkSync(tempFilePath);
-        }
-        const detail = e.response?.data ? JSON.stringify(e.response.data) : e.message;
-        return { success: false, error: `Qu.ax upload failed: ${detail}` };
-    }
-}
 
 cmd({
     pattern: "rmbg",
@@ -75,26 +32,18 @@ cmd({
             return reply("❌ *Failed to download image*\n\nReason: Media download from WhatsApp returned empty buffer.");
         }
 
-        let extension = '.jpg';
-        if (mime.includes('image/png')) extension = '.png';
-        else if (mime.includes('image/webp')) extension = '.webp';
-
-        const uploadResult = await uploadToQuax(buffer, extension);
-
-        if (!uploadResult.success) {
-            return reply(`❌ *Image upload failed*\n\nReason: ${uploadResult.error}`);
-        }
-
-        const uploadedUrl = uploadResult.url;
-
-        const api = `${API_URL}?url=${encodeURIComponent(uploadedUrl)}`;
+        const form = new FormData();
+        form.append("image", buffer, "image.jpg");
 
         let response;
         try {
-            response = await axios.get(api, { timeout: 60000 });
+            response = await axios.post(API_URL, form, {
+                headers: form.getHeaders(),
+                timeout: 60000
+            });
         } catch (apiErr) {
             const detail = apiErr.response?.data ? JSON.stringify(apiErr.response.data) : apiErr.message;
-            return reply(`❌ *RemoveBG API call failed*\n\nUploaded URL: ${uploadedUrl}\nReason: ${detail}`);
+            return reply(`❌ *RemoveBG API call failed*\n\nReason: ${detail}`);
         }
 
         const data = response.data;
@@ -104,7 +53,7 @@ cmd({
             !data.result ||
             !data.result.image_url
         ) {
-            return reply(`❌ *Failed to remove background*\n\nUploaded URL: ${uploadedUrl}\nAPI Response: ${JSON.stringify(data)}`);
+            return reply(`❌ *Failed to remove background*\n\nAPI Response: ${JSON.stringify(data)}`);
         }
 
         let result;
