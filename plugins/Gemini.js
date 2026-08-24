@@ -1,34 +1,49 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const FormData = require('form-data');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
-// Image Upload Helper (Catbox / Telegraph)
+// Image Upload Helper — Ab "tourl" command wala confirmed-working pattern use karta hai
+// (temp file + User-Agent header, imgtourl API ke through)
 const uploadMedia = async (buffer, debugLog) => {
     debugLog.push(`📤 Upload start. Buffer size: ${buffer?.length || 'NO BUFFER'} bytes`);
+    let tempFilePath = null;
     try {
-        const FormData = require('form-data');
-        const form = new FormData();
-        form.append('reqtype', 'fileupload');
-        form.append('fileToUpload', buffer, { filename: 'image.jpg' });
+        tempFilePath = path.join(os.tmpdir(), `gemini_upload_${Date.now()}.jpg`);
+        fs.writeFileSync(tempFilePath, buffer);
 
-        debugLog.push(`📤 Sending to Catbox...`);
-        const res = await axios.post('https://catbox.moe/user/api.php', form, {
-            headers: form.getHeaders(),
-            timeout: 15000
+        const form = new FormData();
+        form.append('file', fs.createReadStream(tempFilePath), 'image.jpg');
+
+        debugLog.push(`📤 Sending to imgtourl API...`);
+        const res = await axios.post('https://adeel-xtech-apis.vercel.app/api/imgtourl', form, {
+            headers: {
+                ...form.getHeaders(),
+                'User-Agent': 'Mozilla/5.0'
+            },
+            timeout: 60000
         });
 
-        debugLog.push(`📤 Catbox raw response: ${JSON.stringify(res.data)}`);
+        debugLog.push(`📤 imgtourl raw response: ${JSON.stringify(res.data)}`);
 
-        if (res.data && typeof res.data === 'string' && res.data.startsWith('http')) {
-            debugLog.push(`✅ Upload success: ${res.data.trim()}`);
-            return res.data.trim();
+        if (res.data?.status && res.data?.result?.url) {
+            const uploadedUrl = res.data.result.url.trim();
+            debugLog.push(`✅ Upload success: ${uploadedUrl}`);
+            return uploadedUrl;
         }
 
         debugLog.push(`❌ Response did not contain a valid URL.`);
     } catch (e) {
-        debugLog.push(`❌ Catbox Upload Error: ${e.message}`);
+        debugLog.push(`❌ imgtourl Upload Error: ${e.message}`);
         if (e.response) {
             debugLog.push(`❌ Error status: ${e.response.status}`);
             debugLog.push(`❌ Error data: ${JSON.stringify(e.response.data)}`);
+        }
+    } finally {
+        if (tempFilePath && fs.existsSync(tempFilePath)) {
+            fs.unlinkSync(tempFilePath);
         }
     }
     return null;
