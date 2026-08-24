@@ -48,25 +48,28 @@ const uploadMedia = async (buffer, debugLog) => {
     return null;
 };
 
-// Result Image Download Helper — Pollinations (kontext) generation slow ho sakta hai,
-// isliye seedha WhatsApp ko URL fetch karne ke bajaye pehle khud buffer bana lete hain,
-// generous timeout ke sath.
+// Small delay helper
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// Result Image Download Helper — Pollinations (kontext) ko generate hone mein waqt lagta hai,
+// isliye download attempt se pehle 1 minute wait karte hain.
 const downloadResultImage = async (imageUrl, debugLog) => {
-    debugLog.push(`⬇️ Downloading result image (this can take a while for edits)...`);
+    debugLog.push(`⏳ Waiting 60s before downloading result image...`);
+    await sleep(60000);
+
+    debugLog.push(`⬇️ Downloading result image...`);
     try {
         const res = await axios.get(imageUrl, {
             responseType: 'arraybuffer',
-            timeout: 90000, // kontext edits slow ho sakte hain, 90s diya hai
+            timeout: 90000,
             headers: { 'User-Agent': 'Mozilla/5.0' }
         });
         const buffer = Buffer.from(res.data);
         debugLog.push(`✅ Result image downloaded: ${buffer.length} bytes`);
         return buffer;
     } catch (e) {
-        debugLog.push(`❌ Result image download failed: ${e.message}`);
-        if (e.response) {
-            debugLog.push(`❌ Error status: ${e.response.status}`);
-        }
+        const status = e.response?.status || 'N/A';
+        debugLog.push(`❌ Download failed: ${e.message} (status: ${status})`);
         return null;
     }
 };
@@ -127,7 +130,7 @@ cmd({
         if (response.data && response.data.status && response.data.result?.image_url) {
             const resultImg = response.data.result.image_url;
 
-            // === Ab seedha URL WhatsApp ko fetch karne nahi dete, khud buffer download karte hain ===
+            // 1 minute wait ke baad download hoga
             const imgBuffer = await downloadResultImage(resultImg, debugLog);
 
             // === DEBUG LOG WHATSAPP PAR BHEJO ===
@@ -135,7 +138,11 @@ cmd({
 
             if (!imgBuffer) {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("❌ Result image download nahi ho saki. Dobara try karo.");
+                return reply(
+                    uploadedImageUrl
+                        ? "❌ Image edit karne wala AI model (Pollinations Kontext) abhi unstable hai / down hai. Thodi der baad dobara try karein."
+                        : "❌ Image generate nahi ho saki. Thodi der baad dobara try karein."
+                );
             }
 
             await conn.sendMessage(from, {
