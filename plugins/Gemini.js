@@ -5,8 +5,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-// Image Upload Helper — Ab "tourl" command wala confirmed-working pattern use karta hai
-// (temp file + User-Agent header, imgtourl API ke through)
+// Image Upload Helper — "tourl" command wala confirmed-working pattern
 const uploadMedia = async (buffer, debugLog) => {
     debugLog.push(`📤 Upload start. Buffer size: ${buffer?.length || 'NO BUFFER'} bytes`);
     let tempFilePath = null;
@@ -47,6 +46,29 @@ const uploadMedia = async (buffer, debugLog) => {
         }
     }
     return null;
+};
+
+// Result Image Download Helper — Pollinations (kontext) generation slow ho sakta hai,
+// isliye seedha WhatsApp ko URL fetch karne ke bajaye pehle khud buffer bana lete hain,
+// generous timeout ke sath.
+const downloadResultImage = async (imageUrl, debugLog) => {
+    debugLog.push(`⬇️ Downloading result image (this can take a while for edits)...`);
+    try {
+        const res = await axios.get(imageUrl, {
+            responseType: 'arraybuffer',
+            timeout: 90000, // kontext edits slow ho sakte hain, 90s diya hai
+            headers: { 'User-Agent': 'Mozilla/5.0' }
+        });
+        const buffer = Buffer.from(res.data);
+        debugLog.push(`✅ Result image downloaded: ${buffer.length} bytes`);
+        return buffer;
+    } catch (e) {
+        debugLog.push(`❌ Result image download failed: ${e.message}`);
+        if (e.response) {
+            debugLog.push(`❌ Error status: ${e.response.status}`);
+        }
+        return null;
+    }
 };
 
 cmd({
@@ -102,14 +124,22 @@ cmd({
 
         debugLog.push(`🔹 API Response: ${JSON.stringify(response.data)}`);
 
-        // === DEBUG LOG WHATSAPP PAR BHEJO ===
-        await reply("🛠️ *DEBUG LOG:*\n\n" + debugLog.join('\n'));
-
         if (response.data && response.data.status && response.data.result?.image_url) {
             const resultImg = response.data.result.image_url;
 
+            // === Ab seedha URL WhatsApp ko fetch karne nahi dete, khud buffer download karte hain ===
+            const imgBuffer = await downloadResultImage(resultImg, debugLog);
+
+            // === DEBUG LOG WHATSAPP PAR BHEJO ===
+            await reply("🛠️ *DEBUG LOG:*\n\n" + debugLog.join('\n'));
+
+            if (!imgBuffer) {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                return reply("❌ Result image download nahi ho saki. Dobara try karo.");
+            }
+
             await conn.sendMessage(from, {
-                image: { url: resultImg },
+                image: imgBuffer,
                 caption: uploadedImageUrl 
                     ? `✏️ *AI Image Edited!*\n\n📝 *Prompt:* ${q}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
                     : `🖼️ *AI Image Generated!*\n\n📝 *Prompt:* ${q}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
@@ -117,6 +147,7 @@ cmd({
 
             await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
         } else {
+            await reply("🛠️ *DEBUG LOG:*\n\n" + debugLog.join('\n'));
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Image process nahi ho saki. Dobara try karo.");
         }
