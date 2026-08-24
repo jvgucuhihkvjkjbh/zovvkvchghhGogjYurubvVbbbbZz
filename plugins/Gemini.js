@@ -2,23 +2,34 @@ const { cmd } = require('../command');
 const axios = require('axios');
 
 // Image Upload Helper (Catbox / Telegraph)
-const uploadMedia = async (buffer) => {
+const uploadMedia = async (buffer, debugLog) => {
+    debugLog.push(`📤 Upload start. Buffer size: ${buffer?.length || 'NO BUFFER'} bytes`);
     try {
         const FormData = require('form-data');
         const form = new FormData();
         form.append('reqtype', 'fileupload');
         form.append('fileToUpload', buffer, { filename: 'image.jpg' });
 
+        debugLog.push(`📤 Sending to Catbox...`);
         const res = await axios.post('https://catbox.moe/user/api.php', form, {
             headers: form.getHeaders(),
             timeout: 15000
         });
 
+        debugLog.push(`📤 Catbox raw response: ${JSON.stringify(res.data)}`);
+
         if (res.data && typeof res.data === 'string' && res.data.startsWith('http')) {
+            debugLog.push(`✅ Upload success: ${res.data.trim()}`);
             return res.data.trim();
         }
+
+        debugLog.push(`❌ Response did not contain a valid URL.`);
     } catch (e) {
-        console.log("Catbox Upload Error:", e.message);
+        debugLog.push(`❌ Catbox Upload Error: ${e.message}`);
+        if (e.response) {
+            debugLog.push(`❌ Error status: ${e.response.status}`);
+            debugLog.push(`❌ Error data: ${JSON.stringify(e.response.data)}`);
+        }
     }
     return null;
 };
@@ -31,21 +42,37 @@ cmd({
     react: "🤖",
     filename: __filename
 }, async (conn, mek, m, { from, q, reply }) => {
+    const debugLog = [];
+
     try {
+        debugLog.push(`🔹 Prompt (q): ${q || 'EMPTY'}`);
+
         if (!q) return reply("❌ Prompt likho ya kisi pic ko reply kar ke prompt likho!\n\nMisal 1: .gemini jungle mein larka khara hai\nMisal 2: (Image ko reply kar ke) .gemini is pic par ADEEL-X-MD likh do");
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
         // Quoted / Replied message check for image
         const quoted = m.quoted ? m.quoted : null;
+        debugLog.push(`🔹 Quoted message exists: ${!!quoted}`);
+
         const mime = (quoted?.msg || quoted)?.mimetype || '';
+        debugLog.push(`🔹 Detected mimetype: ${mime || 'NONE'}`);
+
         let uploadedImageUrl = null;
 
         if (quoted && /image/.test(mime)) {
+            debugLog.push(`🔹 Image detected. Downloading...`);
             const mediaBuffer = await quoted.download();
+            debugLog.push(`🔹 Downloaded buffer: ${mediaBuffer ? `OK (${mediaBuffer.length} bytes)` : 'NULL/EMPTY'}`);
+
             if (mediaBuffer) {
-                uploadedImageUrl = await uploadMedia(mediaBuffer);
+                uploadedImageUrl = await uploadMedia(mediaBuffer, debugLog);
+                debugLog.push(`🔹 uploadedImageUrl: ${uploadedImageUrl || 'NULL'}`);
+            } else {
+                debugLog.push(`❌ mediaBuffer is empty — download failed.`);
             }
+        } else {
+            debugLog.push(`🔹 No image reply detected — text-to-image mode.`);
         }
 
         // ADEEL-Xtech API Request
@@ -54,7 +81,14 @@ cmd({
             apiUrl += `&url=${encodeURIComponent(uploadedImageUrl)}`;
         }
 
+        debugLog.push(`🔹 Final API URL: ${apiUrl}`);
+
         const response = await axios.get(apiUrl, { timeout: 25000 });
+
+        debugLog.push(`🔹 API Response: ${JSON.stringify(response.data)}`);
+
+        // === DEBUG LOG WHATSAPP PAR BHEJO ===
+        await reply("🛠️ *DEBUG LOG:*\n\n" + debugLog.join('\n'));
 
         if (response.data && response.data.status && response.data.result?.image_url) {
             const resultImg = response.data.result.image_url;
@@ -73,7 +107,13 @@ cmd({
         }
 
     } catch (e) {
-        console.log("AI ERROR:", e.message);
+        debugLog.push(`❌❌ FATAL ERROR: ${e.message}`);
+        if (e.response) {
+            debugLog.push(`❌❌ Error status: ${e.response.status}`);
+            debugLog.push(`❌❌ Error data: ${JSON.stringify(e.response.data)}`);
+        }
+        await reply("🛠️ *DEBUG LOG (ERROR):*\n\n" + debugLog.join('\n'));
+
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
         reply("❌ Error occurred: " + (e.response?.data?.error || e.message));
     }
