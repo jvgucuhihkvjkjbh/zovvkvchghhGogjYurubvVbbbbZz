@@ -5,10 +5,11 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
+// Image Upload Helper (Catbox / imgtourl)
 const uploadMedia = async (buffer) => {
     let tempFilePath = null;
     try {
-        tempFilePath = path.join(os.tmpdir(), `gemini_upload_${Date.now()}.jpg`);
+        tempFilePath = path.join(os.tmpdir(), `upload_${Date.now()}.jpg`);
         fs.writeFileSync(tempFilePath, buffer);
 
         const form = new FormData();
@@ -37,19 +38,20 @@ const uploadMedia = async (buffer) => {
 
 cmd({
     pattern: "gemini",
-    alias: ["nano", "gemini2", "ask"],
-    desc: "AI Chat or Analyze reply image using Gemini 3.6",
+    alias: ["nano", "gemini2", "txt2img"],
+    desc: "AI image generate or edit reply image",
     category: "ai",
     react: "🤖",
     filename: __filename
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
         if (!q) {
-            return reply("❌ Please ask a question or reply to an image with a question!");
+            return reply("❌ Please provide a prompt or reply to an image with a prompt!\n\n*Example 1:* .gemini A stylish man standing in the street\n*Example 2:* (Reply to image) .gemini add perfume in his hand");
         }
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
+        // Quoted / Replied message check for image
         const quoted = m.quoted ? m.quoted : null;
         const mime = (quoted?.msg || quoted)?.mimetype || '';
         let uploadedImageUrl = null;
@@ -65,6 +67,7 @@ cmd({
             }
         }
 
+        // Call Adeel-Xtech API
         let apiUrl = `https://adeel-xtech-apis.vercel.app/api/txt2img?prompt=${encodeURIComponent(q)}`;
         if (uploadedImageUrl) {
             apiUrl += `&url=${encodeURIComponent(uploadedImageUrl)}`;
@@ -72,15 +75,22 @@ cmd({
 
         const response = await axios.get(apiUrl, { timeout: 60000 });
 
-        if (response.data && response.data.status && response.data.result) {
-            const aiTextResponse = response.data.result;
+        // Safely extract result image URL
+        const resultData = response.data?.result;
+        const resultImg = typeof resultData === 'string' ? resultData : (resultData?.image_url || resultData?.download_url);
 
-            // Sends Text response instead of Image
-            await reply(`${aiTextResponse}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`);
+        if (response.data && response.data.status && resultImg) {
+            await conn.sendMessage(from, {
+                image: { url: resultImg },
+                caption: uploadedImageUrl 
+                    ? `✏️ *AI Image Edited!*\n\n📝 *Prompt:* ${q}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
+                    : `🖼️ *AI Image Generated!*\n\n📝 *Prompt:* ${q}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
+            }, { quoted: mek });
+
             await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
         } else {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ Failed to get response from Gemini 3.6. Please try again.");
+            return reply("❌ Failed to process image. Please try again.");
         }
 
     } catch (e) {
