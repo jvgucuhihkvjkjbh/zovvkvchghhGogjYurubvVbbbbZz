@@ -29,7 +29,7 @@ async (conn, mek, m, { from, q, reply }) => {
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
         const { data } = await axios.get(
-            `https://adeel-xtech-apis.vercel.app/api/terabox-dl?url=${encodeURIComponent(url)}`,
+            `https://api-fast-d602ea78cf9f.herokuapp.com/api/terabox-dl?url=${encodeURIComponent(url)}`,
             { timeout: 30000, headers: { "User-Agent": "Mozilla/5.0" } }
         );
 
