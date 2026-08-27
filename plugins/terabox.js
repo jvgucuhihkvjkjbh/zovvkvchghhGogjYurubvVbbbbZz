@@ -37,7 +37,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
         const result = data.result;
 
-        const streamUrl = result.stream_url || result.fast_stream_url?.["720p"] || result.fast_stream_url?.["480p"] || result.fast_stream_url?.["360p"] || result.fast_stream_360p;
+        const streamUrl = result.stream_url || result.fast_stream_url?.stream || result.fast_stream_360p || result.fast_stream_480p;
         const downloadUrl = result.normal_dlink;
 
         if (!streamUrl && !downloadUrl) return reply("❌ No downloadable video found");
@@ -112,9 +112,8 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         await conn.sendMessage(from, {
-            document: { url: outputPath },
+            video: { url: outputPath },
             mimetype: 'video/mp4',
-            fileName,
             caption: result.thumbnail ? "" : caption
         }, { quoted: mek });
 
