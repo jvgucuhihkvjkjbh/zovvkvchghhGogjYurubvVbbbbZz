@@ -112,8 +112,9 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         await conn.sendMessage(from, {
-            video: { url: outputPath },
+            document: { url: outputPath },
             mimetype: 'video/mp4',
+            fileName,
             caption: result.thumbnail ? "" : caption
         }, { quoted: mek });
 
