@@ -25,7 +25,7 @@ async (conn, mek, m, { from, q, reply }) => {
         const url = q.trim();
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        // Call Adeel-Xtech TeraBox Express API
+        // Correct Endpoint: /api/terabox
         const { data } = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/terabox?url=${encodeURIComponent(url)}`,
             { timeout: 45000, headers: { "User-Agent": "Mozilla/5.0" } }
@@ -58,7 +58,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
         outputPath = tempFile('mp4');
 
-        // Direct Ultra-Fast Stream Download to Disk
+        // Direct Fast Stream Download to Disk
         const writer = fs.createWriteStream(outputPath);
         const response = await axios({
             method: 'get',
