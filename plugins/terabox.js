@@ -101,14 +101,16 @@ async (conn, mek, m, { from, q, reply }) => {
 
         outputPath = tempFile('mp4');
         let downloadSuccess = false;
+        const errors = [];
 
         // 1) Try direct mp4 link first — fastest, lowest CPU, most reliable
         if (downloadUrl) {
             try {
                 await withTimeout(directDownload(downloadUrl, outputPath), DOWNLOAD_TIMEOUT_MS, "Direct download");
                 downloadSuccess = true;
-            } catch {
-                downloadSuccess = false;
+            } catch (err) {
+                console.error("[terabox] direct download failed:", err.response?.status || err.code || err.message);
+                errors.push(`Direct: ${err.response?.status ? `HTTP ${err.response.status}` : err.message}`);
             }
         }
 
@@ -117,17 +119,20 @@ async (conn, mek, m, { from, q, reply }) => {
             try {
                 await withTimeout(ffmpegDownload(streamUrl, outputPath), DOWNLOAD_TIMEOUT_MS, "Stream download");
                 downloadSuccess = true;
-            } catch {
-                downloadSuccess = false;
+            } catch (err) {
+                console.error("[terabox] stream download failed:", err.message);
+                errors.push(`Stream: ${err.message}`);
             }
         }
 
-        if (!downloadSuccess || !fs.existsSync(outputPath)) return reply("❌ Download failed from all sources");
+        if (!downloadSuccess || !fs.existsSync(outputPath)) {
+            return reply(`❌ Download failed from all sources\n\n🔍 Debug:\n${errors.join('\n') || 'No source available'}`);
+        }
 
         const stats = fs.statSync(outputPath);
         if (stats.size < 10000) {
             fs.unlinkSync(outputPath);
-            return reply("❌ Invalid video file downloaded");
+            return reply(`❌ Invalid video file downloaded (size: ${stats.size} bytes — likely an error page, not a real video)`);
         }
 
         await conn.sendMessage(from, {
@@ -141,6 +146,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
     } catch (e) {
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+        console.error("[terabox] fatal error:", e);
         reply(`❌ ${e.message}`);
     } finally {
         if (outputPath && fs.existsSync(outputPath)) {
