@@ -25,7 +25,7 @@ async (conn, mek, m, { from, q, reply }) => {
         const url = q.trim();
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        // API Endpoint strictly based on your routes: terabox-dl
+        // Fetch link from your active terabox-dl API endpoint
         const { data } = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/terabox-dl?url=${encodeURIComponent(url)}`,
             { timeout: 45000, headers: { "User-Agent": "Mozilla/5.0" } }
@@ -37,7 +37,7 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         const result = data.result;
-        const downloadUrl = result.stream_url || result.fast_stream_360p || result.normal_dlink;
+        const downloadUrl = result.stream_url || result.fast_stream_360p || result.fast_stream_480p || result.normal_dlink;
 
         if (!downloadUrl) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
@@ -47,7 +47,7 @@ async (conn, mek, m, { from, q, reply }) => {
         const fileName = result.file_name || `terabox_${Date.now()}.mp4`;
         const caption = `🎬 *${fileName}*\n\n📦 *Size:* ${result.size || "Unknown"}\n⏱️ *Duration:* ${result.duration || "N/A"}\n🎥 *Quality:* ${result.quality || "HD"}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
-        // Thumbnail send
+        // Send Thumbnail
         if (result.thumbnail) {
             try {
                 await conn.sendMessage(from, { image: { url: result.thumbnail }, caption }, { quoted: mek });
@@ -58,44 +58,31 @@ async (conn, mek, m, { from, q, reply }) => {
 
         outputPath = tempFile('mp4');
 
-        // Direct stream download to disk
-        const writer = fs.createWriteStream(outputPath);
+        // Robust Download Handling with Fallback Headers
         const response = await axios({
             method: 'get',
             url: downloadUrl,
-            responseType: 'stream',
-            timeout: 1200000,
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity,
+            responseType: 'arraybuffer',
+            timeout: 180000,
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-                "Referer": "https://terabox.com/"
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "*/*",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Connection": "keep-alive",
+                "Referer": "https://www.terabox.com/"
             }
         });
 
-        response.data.pipe(writer);
+        const buffer = Buffer.from(response.data);
 
-        await new Promise((resolve, reject) => {
-            writer.on('finish', resolve);
-            writer.on('error', (err) => {
-                writer.close();
-                reject(err);
-            });
-        });
-
-        if (!fs.existsSync(outputPath)) {
+        if (!buffer || buffer.length < 5000) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ File download failed!");
+            return reply("❌ Download failed or file was blocked by TeraBox!");
         }
 
-        const stats = fs.statSync(outputPath);
-        if (stats.size < 10000) {
-            if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ Invalid or corrupted video file downloaded!");
-        }
+        fs.writeFileSync(outputPath, buffer);
 
-        // Send File as Document
+        // Send File directly as Document
         await conn.sendMessage(from, {
             document: { url: outputPath },
             mimetype: 'video/mp4',
