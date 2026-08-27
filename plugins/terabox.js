@@ -9,8 +9,8 @@ const tempFile = (ext) => path.join(os.tmpdir(), `terabox_${crypto.randomBytes(6
 
 cmd({
     pattern: "terabox",
-    alias: ["tera", "tbx", "terabox2"],
-    desc: "Download Terabox video",
+    alias: ["terabox-dl", "tera", "tbx"],
+    desc: "Download files and videos directly from TeraBox link.",
     category: "download",
     react: "📦",
     filename: __filename
@@ -25,9 +25,9 @@ async (conn, mek, m, { from, q, reply }) => {
         const url = q.trim();
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        // Correct Endpoint: /api/terabox
+        // API Endpoint strictly based on your routes: terabox-dl
         const { data } = await axios.get(
-            `https://adeel-xtech-apis.vercel.app/api/terabox?url=${encodeURIComponent(url)}`,
+            `https://adeel-xtech-apis.vercel.app/api/terabox-dl?url=${encodeURIComponent(url)}`,
             { timeout: 45000, headers: { "User-Agent": "Mozilla/5.0" } }
         );
 
@@ -47,7 +47,7 @@ async (conn, mek, m, { from, q, reply }) => {
         const fileName = result.file_name || `terabox_${Date.now()}.mp4`;
         const caption = `🎬 *${fileName}*\n\n📦 *Size:* ${result.size || "Unknown"}\n⏱️ *Duration:* ${result.duration || "N/A"}\n🎥 *Quality:* ${result.quality || "HD"}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
-        // Send Thumbnail fast
+        // Thumbnail send
         if (result.thumbnail) {
             try {
                 await conn.sendMessage(from, { image: { url: result.thumbnail }, caption }, { quoted: mek });
@@ -58,7 +58,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
         outputPath = tempFile('mp4');
 
-        // Direct Fast Stream Download to Disk
+        // Direct stream download to disk
         const writer = fs.createWriteStream(outputPath);
         const response = await axios({
             method: 'get',
@@ -95,7 +95,7 @@ async (conn, mek, m, { from, q, reply }) => {
             return reply("❌ Invalid or corrupted video file downloaded!");
         }
 
-        // Send File as Document Stream directly from Disk
+        // Send File as Document
         await conn.sendMessage(from, {
             document: { url: outputPath },
             mimetype: 'video/mp4',
