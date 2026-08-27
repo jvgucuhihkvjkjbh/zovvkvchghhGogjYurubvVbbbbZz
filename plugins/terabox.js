@@ -5,36 +5,71 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 const ffmpeg = require('fluent-ffmpeg');
-const { pipeline } = require('stream/promises');
 
 const tempFile = (ext) => path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
 
-const DOWNLOAD_TIMEOUT_MS = 5 * 60 * 1000; // 5 min hard cap so nothing hangs forever
-
-function withTimeout(promise, ms, label) {
-    let timer;
-    const timeout = new Promise((_, reject) => {
-        timer = setTimeout(() => reject(new Error(`${label} timed out`)), ms);
-    });
-    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
-}
+const STALL_TIMEOUT_MS = 25 * 1000;   // kill only if NO new data arrives for this long
+const ABSOLUTE_MAX_MS = 20 * 60 * 1000; // hard safety cap even if data keeps trickling
 
 async function directDownload(url, outputPath) {
     const response = await axios({
         method: 'get',
         url,
         responseType: 'stream',
-        timeout: 30000,
+        timeout: 30000, // connection/initial-response timeout only
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
         headers: { "User-Agent": "Mozilla/5.0" }
     });
-    await pipeline(response.data, fs.createWriteStream(outputPath));
+
+    return new Promise((resolve, reject) => {
+        const writer = fs.createWriteStream(outputPath);
+        let stallTimer;
+        let absoluteTimer;
+        let settled = false;
+
+        const cleanup = () => {
+            clearTimeout(stallTimer);
+            clearTimeout(absoluteTimer);
+        };
+
+        const fail = (err) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            response.data.destroy();
+            writer.destroy();
+            reject(err);
+        };
+
+        const resetStallTimer = () => {
+            clearTimeout(stallTimer);
+            stallTimer = setTimeout(() => fail(new Error("Connection stalled (no data for 25s)")), STALL_TIMEOUT_MS);
+        };
+
+        absoluteTimer = setTimeout(() => fail(new Error("Absolute max download time exceeded (20 min)")), ABSOLUTE_MAX_MS);
+
+        resetStallTimer();
+
+        response.data.on('data', () => resetStallTimer());
+        response.data.on('error', fail);
+        writer.on('error', fail);
+
+        writer.on('finish', () => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            resolve();
+        });
+
+        response.data.pipe(writer);
+    });
 }
 
 function ffmpegDownload(streamUrl, outputPath) {
     return new Promise((resolve, reject) => {
-        ffmpeg(streamUrl)
+        let settled = false;
+        const proc = ffmpeg(streamUrl)
             .inputOptions([
                 '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
                 '-allowed_extensions', 'ALL',
@@ -44,13 +79,36 @@ function ffmpegDownload(streamUrl, outputPath) {
                 '-c:v copy',
                 '-c:a aac',
                 '-bsf:a aac_adtstoasc',
-                '-movflags +faststart'
+                '-movflags +faststart',
+                '-max_muxing_queue_size', '1024' // avoids buffer buildup that can trigger OOM/segfault
             ])
             .format('mp4')
-            .on('end', resolve)
-            .on('error', reject)
+            .on('end', () => { if (!settled) { settled = true; resolve(); } })
+            .on('error', (err) => {
+                if (settled) return;
+                settled = true;
+                if (/SIGSEGV|SIGKILL/.test(err.message)) {
+                    reject(new Error("ffmpeg crashed (likely low memory on host — try upgrading dyno/VPS RAM)"));
+                } else {
+                    reject(err);
+                }
+            })
             .save(outputPath);
     });
+}
+
+async function directDownloadWithRetry(url, outputPath, attempts = 2) {
+    let lastErr;
+    for (let i = 0; i < attempts; i++) {
+        try {
+            await directDownload(url, outputPath);
+            return;
+        } catch (err) {
+            lastErr = err;
+            try { fs.existsSync(outputPath) && fs.unlinkSync(outputPath); } catch {}
+        }
+    }
+    throw lastErr;
 }
 
 cmd({
@@ -106,18 +164,18 @@ async (conn, mek, m, { from, q, reply }) => {
         // 1) Try direct mp4 link first — fastest, lowest CPU, most reliable
         if (downloadUrl) {
             try {
-                await withTimeout(directDownload(downloadUrl, outputPath), DOWNLOAD_TIMEOUT_MS, "Direct download");
+                await directDownloadWithRetry(downloadUrl, outputPath, 2);
                 downloadSuccess = true;
             } catch (err) {
-                console.error("[terabox] direct download failed:", err.response?.status || err.code || err.message);
-                errors.push(`Direct: ${err.response?.status ? `HTTP ${err.response.status}` : err.message}`);
+                console.error("[terabox] direct download failed:", err.message);
+                errors.push(`Direct: ${err.message}`);
             }
         }
 
         // 2) Fallback to ffmpeg/m3u8 stream only if direct download failed or unavailable
         if (!downloadSuccess && streamUrl) {
             try {
-                await withTimeout(ffmpegDownload(streamUrl, outputPath), DOWNLOAD_TIMEOUT_MS, "Stream download");
+                await ffmpegDownload(streamUrl, outputPath);
                 downloadSuccess = true;
             } catch (err) {
                 console.error("[terabox] stream download failed:", err.message);
