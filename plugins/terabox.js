@@ -45,20 +45,11 @@ async (conn, mek, m, { from, q, reply }) => {
         }
 
         const fileName = result.file_name || `terabox_${Date.now()}.mp4`;
-        const caption = `🎬 *${fileName}*\n\n📦 *Size:* ${result.size || "Unknown"}\n⏱️ *Duration:* ${result.duration || "N/A"}\n🎥 *Quality:* ${result.quality || "HD"}\n\n> *⚡ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
-
-        // Send Thumbnail
-        if (result.thumbnail) {
-            try {
-                await conn.sendMessage(from, { image: { url: result.thumbnail }, caption }, { quoted: mek });
-            } catch (e) {
-                console.error("Thumbnail Send Error:", e.message);
-            }
-        }
+        const caption = `🎬 *${fileName}*\n\n📦 *Size:* ${result.size || "Unknown"}\n⏱️ *Duration:* ${result.duration || "N/A"}\n🎥 *Quality:* ${result.quality || "HD"}\n\n> *⚡ ᴘᴏᴡᴇʀ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
         outputPath = tempFile('mp4');
 
-        // Robust Download Handling with Fallback Headers
+        // Robust Direct Download
         const response = await axios({
             method: 'get',
             url: downloadUrl,
@@ -82,12 +73,12 @@ async (conn, mek, m, { from, q, reply }) => {
 
         fs.writeFileSync(outputPath, buffer);
 
-        // Send File directly as Document
+        // Send Direct Video Player Message
         await conn.sendMessage(from, {
-            document: { url: outputPath },
+            video: fs.readFileSync(outputPath),
             mimetype: 'video/mp4',
-            fileName: fileName,
-            caption: result.thumbnail ? "" : caption
+            caption: caption,
+            ptv: false
         }, { quoted: mek });
 
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
