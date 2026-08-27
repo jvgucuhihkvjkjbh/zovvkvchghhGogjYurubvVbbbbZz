@@ -5,8 +5,53 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 const ffmpeg = require('fluent-ffmpeg');
+const { pipeline } = require('stream/promises');
 
 const tempFile = (ext) => path.join(os.tmpdir(), `${crypto.randomBytes(6).toString('hex')}.${ext}`);
+
+const DOWNLOAD_TIMEOUT_MS = 5 * 60 * 1000; // 5 min hard cap so nothing hangs forever
+
+function withTimeout(promise, ms, label) {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`${label} timed out`)), ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+async function directDownload(url, outputPath) {
+    const response = await axios({
+        method: 'get',
+        url,
+        responseType: 'stream',
+        timeout: 30000,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+        headers: { "User-Agent": "Mozilla/5.0" }
+    });
+    await pipeline(response.data, fs.createWriteStream(outputPath));
+}
+
+function ffmpegDownload(streamUrl, outputPath) {
+    return new Promise((resolve, reject) => {
+        ffmpeg(streamUrl)
+            .inputOptions([
+                '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
+                '-allowed_extensions', 'ALL',
+                '-headers', 'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
+            ])
+            .outputOptions([
+                '-c:v copy',
+                '-c:a aac',
+                '-bsf:a aac_adtstoasc',
+                '-movflags +faststart'
+            ])
+            .format('mp4')
+            .on('end', resolve)
+            .on('error', reject)
+            .save(outputPath);
+    });
+}
 
 cmd({
     pattern: "terabox",
@@ -52,58 +97,32 @@ async (conn, mek, m, { from, q, reply }) => {
             } catch {}
         }
 
+        await reply("⏳ Downloading video, please wait...");
+
         outputPath = tempFile('mp4');
         let downloadSuccess = false;
 
-        if (streamUrl) {
+        // 1) Try direct mp4 link first — fastest, lowest CPU, most reliable
+        if (downloadUrl) {
             try {
-                await new Promise((resolve, reject) => {
-                    ffmpeg(streamUrl)
-                        .inputOptions([
-                            '-protocol_whitelist', 'file,http,https,tcp,tls,crypto',
-                            '-allowed_extensions', 'ALL',
-                            '-headers', 'User-Agent: Mozilla/5.0\r\nReferer: https://terabox.com/\r\n'
-                        ])
-                        .outputOptions([
-                            '-c:v copy',
-                            '-c:a aac',
-                            '-bsf:a aac_adtstoasc',
-                            '-movflags +faststart'
-                        ])
-                        .format('mp4')
-                        .on('end', () => {
-                            downloadSuccess = true;
-                            resolve();
-                        })
-                        .on('error', reject)
-                        .save(outputPath);
-                });
+                await withTimeout(directDownload(downloadUrl, outputPath), DOWNLOAD_TIMEOUT_MS, "Direct download");
+                downloadSuccess = true;
             } catch {
                 downloadSuccess = false;
             }
         }
 
-        if (!downloadSuccess && downloadUrl) {
-            const writer = fs.createWriteStream(outputPath);
-            const response = await axios({
-                method: 'get',
-                url: downloadUrl,
-                responseType: 'stream',
-                timeout: 1200000,
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
-                headers: { "User-Agent": "Mozilla/5.0" }
-            });
-
-            response.data.pipe(writer);
-
-            await new Promise((resolve, reject) => {
-                writer.on('finish', resolve);
-                writer.on('error', reject);
-            });
+        // 2) Fallback to ffmpeg/m3u8 stream only if direct download failed or unavailable
+        if (!downloadSuccess && streamUrl) {
+            try {
+                await withTimeout(ffmpegDownload(streamUrl, outputPath), DOWNLOAD_TIMEOUT_MS, "Stream download");
+                downloadSuccess = true;
+            } catch {
+                downloadSuccess = false;
+            }
         }
 
-        if (!fs.existsSync(outputPath)) return reply("❌ Download failed from all sources");
+        if (!downloadSuccess || !fs.existsSync(outputPath)) return reply("❌ Download failed from all sources");
 
         const stats = fs.statSync(outputPath);
         if (stats.size < 10000) {
