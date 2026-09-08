@@ -51,8 +51,9 @@ cmd({
         const availableSlots = 1024 - metadata.participants.length;
 
         let limit;
+        const isAcceptAll = cleanBody.startsWith(`${currentPrefix}acceptall`) || cleanBody.startsWith(`.acceptall`);
 
-        if (cleanBody.startsWith(`${currentPrefix}acceptall`) || cleanBody.startsWith(`.acceptall`)) {
+        if (isAcceptAll) {
             limit = pending.length;
         } else {
             limit = parseInt(args[0]);
@@ -62,11 +63,9 @@ cmd({
             }
         }
 
-        // Anti-Ban Safety Constraint: Max 30 requests per batch
-        const MAX_SAFE_BATCH = 30;
-        let finalLimit = Math.min(limit, availableSlots, MAX_SAFE_BATCH);
-
-        let toAccept = pending.slice(0, finalLimit);
+        // Exact slice count ensuring zero requests are left behind
+        let totalToProcess = Math.min(limit, availableSlots, pending.length);
+        let toAccept = pending.slice(0, totalToProcess);
 
         if (toAccept.length === 0) {
             return reply("❌ Group is full or no requests to process.");
@@ -83,16 +82,16 @@ cmd({
                 approved++;
 
                 // Anti-Ban Delay (Hidden in backend)
-                const randomSleep = getRandomDelay(4000, 7000);
+                const randomSleep = getRandomDelay(3000, 6000);
                 await sleep(randomSleep);
 
                 if ((i + 1) % 5 === 0 && i !== toAccept.length - 1) {
-                    const batchPause = getRandomDelay(12000, 18000);
+                    const batchPause = getRandomDelay(8000, 12000);
                     await sleep(batchPause);
                 }
 
             } catch (err) {
-                await sleep(getRandomDelay(6000, 10000));
+                await sleep(getRandomDelay(4000, 7000));
             }
         }
 
