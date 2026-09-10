@@ -11,146 +11,142 @@ cmd({
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
         if (!q) {
-            return reply("❌ *Please provide a video query or type 'all' / 'random'!*");
+            return reply("❌ *Query do ya 'all' / 'random' likho!*\n\nExample:\n• .viralvid Dr Zahra\n• .viral all");
         }
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        const isAllOrRandom = ['all', 'random'].includes(q.trim().toLowerCase());
-        const apiTimeout = isAllOrRandom ? 34000 : 35000;
-
         const apiUrl = `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`;
         
-        let response;
-        try {
-            response = await axios.get(apiUrl, { timeout: apiTimeout });
-        } catch (err) {
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ *Request timed out or server failed to respond.*");
-        }
-
-        const data = response.data;
+        const { data } = await axios.get(apiUrl, { timeout: 30000 });
 
         if (!data || !data.status) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ *No results found for your request.*");
+            return reply("❌ *Koi video nahi mili.*");
         }
 
-        // Headers required to bypass server blocking for direct .mp4 downloads
-        const downloadHeaders = {
+        // Common headers for darkero servers
+        const headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             'Referer': 'https://darkero.com/',
-            'Accept': '*/*'
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.9'
         };
 
-        // Single Video Handler
-        if (data.mode === 'single' || data.stream_url || data.download_url) {
+        // ========== SINGLE VIDEO ==========
+        if (data.mode === 'single' || data.stream_url) {
             const title = data.title || 'Viral Video';
-            // ڈائریکٹ mp4 یعنی stream_url کو پہلی ترجیح دی گئی ہے
             const videoUrl = data.stream_url || data.download_url;
 
             if (!videoUrl) {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("❌ *Video link unavailable.*");
+                return reply("❌ *Video link nahi mila.*");
             }
 
-            const caption = 
-`🎬 *${title}*\n\n` +
-`🔗 *Post Link:* ${data.post_url || 'N/A'}\n\n` +
-`> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+            const caption = `🎬 *${title}*\n\n🔗 ${data.post_url || ''}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
+            // 1st try: Direct URL (Fastest)
             try {
-                // Direct MP4 Buffer Download
-                const videoRes = await axios.get(videoUrl, { 
-                    responseType: 'arraybuffer',
-                    headers: downloadHeaders,
-                    timeout: 45000
-                });
-                
-                const videoBuffer = Buffer.from(videoRes.data);
-
                 await conn.sendMessage(from, {
-                    video: videoBuffer,
-                    mimetype: "video/mp4",
+                    video: { url: videoUrl },
+                    mimetype: 'video/mp4',
                     caption: caption
                 }, { quoted: mek });
-                
+
+                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+                return;
+            } catch (err) {
+                console.log("Direct URL failed, trying buffer...");
+            }
+
+            // 2nd try: Buffer download
+            try {
+                const videoRes = await axios.get(videoUrl, {
+                    responseType: 'arraybuffer',
+                    headers: headers,
+                    timeout: 60000,
+                    maxContentLength: 50 * 1024 * 1024 // 50MB max
+                });
+
+                await conn.sendMessage(from, {
+                    video: Buffer.from(videoRes.data),
+                    mimetype: 'video/mp4',
+                    caption: caption
+                }, { quoted: mek });
+
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } catch (e) {
-                // Backup attempt with Direct Stream URL
-                try {
-                    await conn.sendMessage(from, {
-                        video: { url: videoUrl },
-                        mimetype: "video/mp4",
-                        caption: caption
-                    }, { quoted: mek });
-                    await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-                } catch (errFallback) {
-                    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                    reply("❌ *Failed to send video file.*");
-                }
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                reply("❌ *Video send nahi ho saki.*");
             }
             return;
         }
 
-        // Multiple / Random List Handler
+        // ========== MULTIPLE / RANDOM LIST ==========
         if (data.mode === 'random_list' && Array.isArray(data.results)) {
-            const results = data.results;
+            const results = data.results.slice(0, 8); // max 8 videos (safety)
 
             if (!results.length) {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("❌ *No videos available.*");
+                return reply("❌ *Koi video available nahi.*");
             }
 
-            let listText = `🔥 *FOUND ${results.length} VIRAL VIDEOS* 🔥\n\n`;
-            results.forEach((v, index) => {
-                listText += `*${index + 1}.* ${v.title}\n`;
+            // Pehle list bhejo
+            let listText = `🔥 *${results.length} Viral Videos Found* 🔥\n\n`;
+            results.forEach((v, i) => {
+                listText += `*${i + 1}.* ${v.title}\n`;
             });
-            listText += `\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
-
+            listText += `\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
             await reply(listText);
 
+            // Videos one by one (direct URL pehle)
             for (let i = 0; i < results.length; i++) {
                 const vid = results[i];
                 const videoUrl = vid.stream_url || vid.download_url;
+                if (!videoUrl) continue;
 
-                if (videoUrl) {
-                    let sent = false;
+                const caption = `🎥 *[\( {i + 1}/ \){results.length}]* ${vid.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
+                try {
+                    // Direct URL try
+                    await conn.sendMessage(from, {
+                        video: { url: videoUrl },
+                        mimetype: 'video/mp4',
+                        caption: caption
+                    }, { quoted: mek });
+                } catch (e) {
+                    // Buffer fallback
                     try {
-                        const vidRes = await axios.get(videoUrl, { 
+                        const res = await axios.get(videoUrl, {
                             responseType: 'arraybuffer',
-                            headers: downloadHeaders,
-                            timeout: 35000 
+                            headers: headers,
+                            timeout: 45000,
+                            maxContentLength: 40 * 1024 * 1024
                         });
-                        const vidBuf = Buffer.from(vidRes.data);
-
                         await conn.sendMessage(from, {
-                            video: vidBuf,
-                            mimetype: "video/mp4",
-                            caption: `🎥 *[${i + 1}/${results.length}]* ${vid.title}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
+                            video: Buffer.from(res.data),
+                            mimetype: 'video/mp4',
+                            caption: caption
                         }, { quoted: mek });
-                        sent = true;
-                    } catch (e) {}
-
-                    if (!sent) {
-                        try {
-                            await conn.sendMessage(from, {
-                                video: { url: videoUrl },
-                                mimetype: "video/mp4",
-                                caption: `🎥 *[${i + 1}/${results.length}]* ${vid.title}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
-                            }, { quoted: mek });
-                        } catch (errFallback) {}
+                    } catch (err) {
+                        // skip this video
                     }
                 }
+
+                // Thoda delay taake rate-limit na aaye
+                await new Promise(r => setTimeout(r, 1200));
             }
 
             await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             return;
         }
 
-    } catch (e) {
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply("❌ *An error occurred while processing your request.*");
+        reply("❌ *Unexpected response from API.*");
+
+    } catch (e) {
+        console.error(e);
+        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+        reply("❌ *Error aa gaya. Thori der baad try karo.*");
     }
 });
