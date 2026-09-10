@@ -15,37 +15,18 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        // Query Sanitization for "all" / "random"
-        let searchQuery = q.trim();
-        if (searchQuery.toLowerCase() === 'all' || searchQuery.toLowerCase() === 'random') {
-            searchQuery = 'All';
-        }
-
-        // API Call with Safe Handling
-        let data;
-        try {
-            const apiRes = await axios.get(
-                `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(searchQuery)}`,
-                {
-                    timeout: 45000,
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36'
-                    }
-                }
-            );
-            data = apiRes.data;
-        } catch (apiErr) {
-            console.error("API Fetch Error:", apiErr.response?.data || apiErr.message);
-            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply(`❌ API Error: Server ne response nahi diya (Code: ${apiErr.response?.status || 500})`);
-        }
+        // API Call
+        const { data } = await axios.get(
+            `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`,
+            { timeout: 45000 }
+        );
 
         if (!data || !data.status) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Video nahi mili.");
         }
 
-        // ========== HELPER FUNCTIONS ==========
+        // ========== ORIGINAL HELPER FUNCTIONS ==========
 
         async function getEliteProxies(limit = 5) {
             try {
@@ -67,7 +48,7 @@ cmd({
                 'Accept-Language': 'en-US,en;q=0.9'
             };
 
-            // 1. Direct Download
+            // 1. Direct Buffer Download
             try {
                 const res = await axios.get(videoUrl, {
                     responseType: 'arraybuffer',
@@ -146,7 +127,7 @@ cmd({
         }
 
         async function processAndSend(videoUrl, title) {
-            // Step A: Direct URL Send
+            // Step A: Direct URL Send (Fastest)
             try {
                 await conn.sendMessage(from, {
                     video: { url: videoUrl },
@@ -156,7 +137,7 @@ cmd({
                 return true;
             } catch (e) {}
 
-            // Step B: Download via Proxy Logic
+            // Step B: Download via Original Proxy Fallbacks
             try {
                 const { buffer, method } = await downloadVideoWithMethod(videoUrl);
 
@@ -169,7 +150,7 @@ cmd({
                         caption: `🎬 *${title}*\n\n📡 *Downloaded via:* ${method} + 0x0.st`
                     }, { quoted: mek });
                 } else {
-                    // Fallback to Buffer
+                    // Direct Buffer Send Fallback
                     await conn.sendMessage(from, {
                         video: buffer,
                         mimetype: 'video/mp4',
@@ -201,39 +182,28 @@ cmd({
             return;
         }
 
-        // ========== RANDOM LIST / ALL MODE ==========
-        if (data.mode === 'random_list' || Array.isArray(data.results)) {
-            const list = data.results || [];
-            if (list.length === 0) {
-                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("❌ Koi video list nahi mili.");
-            }
+        // ========== ALL / RANDOM LIST MODE (ORIGINAL LOGIC) ==========
+        if (data.mode === 'random_list' && Array.isArray(data.results)) {
+            const results = data.results; // Complete list (Up to 10 videos)
 
-            let sentCount = 0;
-
-            for (let i = 0; i < list.length; i++) {
-                const vid = list[i];
+            for (let i = 0; i < results.length; i++) {
+                const vid = results[i];
                 const videoUrl = vid.stream_url;
                 if (!videoUrl) continue;
 
-                const success = await processAndSend(videoUrl, vid.title);
-                if (success) sentCount++;
+                await processAndSend(videoUrl, vid.title);
 
-                if (i < list.length - 1) {
-                    await new Promise(r => setTimeout(r, 2000));
+                // 3 Seconds Delay Between Videos (Original Setup)
+                if (i < results.length - 1) {
+                    await new Promise(r => setTimeout(r, 3000));
                 }
             }
 
-            if (sentCount > 0) {
-                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-            } else {
-                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                reply("❌ Kisi bhi video ko download nahi kiya ja saka.");
-            }
+            await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
         }
 
     } catch (e) {
-        console.error("Main Command Error:", e);
+        console.error(e);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
         reply(`❌ Error: ${e.message || e}`);
     }
