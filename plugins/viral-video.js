@@ -36,9 +36,17 @@ cmd({
             return reply("❌ *No results found for your request.*");
         }
 
+        // Headers required to bypass server blocking for direct .mp4 downloads
+        const downloadHeaders = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Referer': 'https://darkero.com/',
+            'Accept': '*/*'
+        };
+
         // Single Video Handler
-        if (data.mode === 'single' || data.stream_url) {
+        if (data.mode === 'single' || data.stream_url || data.download_url) {
             const title = data.title || 'Viral Video';
+            // ڈائریکٹ mp4 یعنی stream_url کو پہلی ترجیح دی گئی ہے
             const videoUrl = data.stream_url || data.download_url;
 
             if (!videoUrl) {
@@ -52,10 +60,10 @@ cmd({
 `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
             try {
-                // Buffer Download for 100% video delivery guarantee
+                // Direct MP4 Buffer Download
                 const videoRes = await axios.get(videoUrl, { 
                     responseType: 'arraybuffer',
-                    headers: { 'User-Agent': 'Mozilla/5.0' },
+                    headers: downloadHeaders,
                     timeout: 45000
                 });
                 
@@ -69,7 +77,7 @@ cmd({
                 
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } catch (e) {
-                // Fallback to Direct URL if buffer exceeds limit
+                // Backup attempt with Direct Stream URL
                 try {
                     await conn.sendMessage(from, {
                         video: { url: videoUrl },
@@ -98,20 +106,22 @@ cmd({
             results.forEach((v, index) => {
                 listText += `*${index + 1}.* ${v.title}\n`;
             });
-            listText += `\n> *ᴘᴏᴡᴇʀᴇ丁 ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+            listText += `\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
             await reply(listText);
 
             for (let i = 0; i < results.length; i++) {
                 const vid = results[i];
-                const stream = vid.stream_url || vid.download_url;
+                const videoUrl = vid.stream_url || vid.download_url;
 
-                if (stream) {
+                if (videoUrl) {
+                    let sent = false;
+
                     try {
-                        const vidRes = await axios.get(stream, { 
+                        const vidRes = await axios.get(videoUrl, { 
                             responseType: 'arraybuffer',
-                            headers: { 'User-Agent': 'Mozilla/5.0' },
-                            timeout: 30000 
+                            headers: downloadHeaders,
+                            timeout: 35000 
                         });
                         const vidBuf = Buffer.from(vidRes.data);
 
@@ -120,10 +130,13 @@ cmd({
                             mimetype: "video/mp4",
                             caption: `🎥 *[${i + 1}/${results.length}]* ${vid.title}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
                         }, { quoted: mek });
-                    } catch (e) {
+                        sent = true;
+                    } catch (e) {}
+
+                    if (!sent) {
                         try {
                             await conn.sendMessage(from, {
-                                video: { url: stream },
+                                video: { url: videoUrl },
                                 mimetype: "video/mp4",
                                 caption: `🎥 *[${i + 1}/${results.length}]* ${vid.title}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
                             }, { quoted: mek });
