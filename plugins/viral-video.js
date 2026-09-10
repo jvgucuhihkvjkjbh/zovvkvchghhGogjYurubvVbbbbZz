@@ -16,7 +16,7 @@ cmd({
 
         const { data } = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`,
-            { timeout: 40000 }
+            { timeout: 45000 }
         );
 
         if (!data || !data.status) {
@@ -38,70 +38,88 @@ cmd({
                 return reply("❌ Video link nahi mila.");
             }
 
+            let sent = false;
+
+            // Method 1: Direct URL
             try {
-                // Pehle direct URL try
                 await conn.sendMessage(from, {
                     video: { url: videoUrl },
                     mimetype: 'video/mp4',
                     caption: `🎬 *${data.title}*`
                 }, { quoted: mek });
-            } catch (e) {
-                // Fail hone pe buffer se bhejo
-                const res = await axios.get(videoUrl, {
-                    responseType: 'arraybuffer',
-                    headers,
-                    timeout: 60000,
-                    maxContentLength: 60 * 1024 * 1024
-                });
-                await conn.sendMessage(from, {
-                    video: Buffer.from(res.data),
-                    mimetype: 'video/mp4',
-                    caption: `🎬 *${data.title}*`
-                }, { quoted: mek });
+                sent = true;
+            } catch (err1) {
+                console.log("Direct URL failed:", err1.message);
             }
 
-            await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            // Method 2: Buffer
+            if (!sent) {
+                try {
+                    const res = await axios.get(videoUrl, {
+                        responseType: 'arraybuffer',
+                        headers,
+                        timeout: 70000,
+                        maxContentLength: 70 * 1024 * 1024
+                    });
+
+                    await conn.sendMessage(from, {
+                        video: Buffer.from(res.data),
+                        mimetype: 'video/mp4',
+                        caption: `🎬 *${data.title}*`
+                    }, { quoted: mek });
+                    sent = true;
+                } catch (err2) {
+                    console.log("Buffer failed:", err2.message);
+                    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                    return reply(`❌ Video send nahi ho saki.\n\nError: ${err2.message}`);
+                }
+            }
+
+            if (sent) {
+                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            }
             return;
         }
 
         // ========== ALL / RANDOM ==========
         if (data.mode === 'random_list' && Array.isArray(data.results)) {
-            const results = data.results.slice(0, 6); // max 6 videos
+            const results = data.results.slice(0, 5);
 
             for (let i = 0; i < results.length; i++) {
                 const vid = results[i];
                 const videoUrl = vid.stream_url;
                 if (!videoUrl) continue;
 
+                let sent = false;
+
                 try {
-                    // Direct URL
                     await conn.sendMessage(from, {
                         video: { url: videoUrl },
                         mimetype: 'video/mp4',
                         caption: `🎥 *${vid.title}*`
                     }, { quoted: mek });
+                    sent = true;
                 } catch (e) {
                     try {
-                        // Buffer fallback
                         const res = await axios.get(videoUrl, {
                             responseType: 'arraybuffer',
                             headers,
-                            timeout: 50000,
-                            maxContentLength: 50 * 1024 * 1024
+                            timeout: 55000,
+                            maxContentLength: 55 * 1024 * 1024
                         });
                         await conn.sendMessage(from, {
                             video: Buffer.from(res.data),
                             mimetype: 'video/mp4',
                             caption: `🎥 *${vid.title}*`
                         }, { quoted: mek });
+                        sent = true;
                     } catch (err) {
-                        // skip this video
+                        console.log(`Video ${i+1} failed:`, err.message);
                     }
                 }
 
-                // 2.5 second wait before next video
                 if (i < results.length - 1) {
-                    await new Promise(r => setTimeout(r, 2500));
+                    await new Promise(r => setTimeout(r, 2800));
                 }
             }
 
@@ -109,8 +127,8 @@ cmd({
         }
 
     } catch (e) {
-        console.error(e);
+        console.error("Main Error:", e);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply("❌ Error aa gaya.");
+        reply(`❌ Error aa gaya.\n\n${e.message || e}`);
     }
 });
