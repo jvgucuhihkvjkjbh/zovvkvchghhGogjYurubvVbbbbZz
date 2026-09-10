@@ -52,16 +52,35 @@ cmd({
 `> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
             try {
+                // Buffer Download for 100% video delivery guarantee
+                const videoRes = await axios.get(videoUrl, { 
+                    responseType: 'arraybuffer',
+                    headers: { 'User-Agent': 'Mozilla/5.0' },
+                    timeout: 45000
+                });
+                
+                const videoBuffer = Buffer.from(videoRes.data);
+
                 await conn.sendMessage(from, {
-                    video: { url: videoUrl },
+                    video: videoBuffer,
                     mimetype: "video/mp4",
                     caption: caption
                 }, { quoted: mek });
                 
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } catch (e) {
-                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                reply("❌ *Failed to send video file.*");
+                // Fallback to Direct URL if buffer exceeds limit
+                try {
+                    await conn.sendMessage(from, {
+                        video: { url: videoUrl },
+                        mimetype: "video/mp4",
+                        caption: caption
+                    }, { quoted: mek });
+                    await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+                } catch (errFallback) {
+                    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                    reply("❌ *Failed to send video file.*");
+                }
             }
             return;
         }
@@ -79,7 +98,7 @@ cmd({
             results.forEach((v, index) => {
                 listText += `*${index + 1}.* ${v.title}\n`;
             });
-            listText += `\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
+            listText += `\n> *ᴘᴏᴡᴇʀᴇ丁 ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
             await reply(listText);
 
@@ -89,13 +108,26 @@ cmd({
 
                 if (stream) {
                     try {
+                        const vidRes = await axios.get(stream, { 
+                            responseType: 'arraybuffer',
+                            headers: { 'User-Agent': 'Mozilla/5.0' },
+                            timeout: 30000 
+                        });
+                        const vidBuf = Buffer.from(vidRes.data);
+
                         await conn.sendMessage(from, {
-                            video: { url: stream },
+                            video: vidBuf,
                             mimetype: "video/mp4",
                             caption: `🎥 *[${i + 1}/${results.length}]* ${vid.title}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
                         }, { quoted: mek });
                     } catch (e) {
-                        // Silent skip if single stream fails
+                        try {
+                            await conn.sendMessage(from, {
+                                video: { url: stream },
+                                mimetype: "video/mp4",
+                                caption: `🎥 *[${i + 1}/${results.length}]* ${vid.title}\n\n> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`
+                            }, { quoted: mek });
+                        } catch (errFallback) {}
                     }
                 }
             }
