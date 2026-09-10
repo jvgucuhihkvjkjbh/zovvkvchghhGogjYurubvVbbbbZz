@@ -1,5 +1,6 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const FormData = require('form-data');
 
 cmd({
     pattern: "viralvid",
@@ -16,7 +17,7 @@ cmd({
 
         const { data } = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`,
-            { timeout: 40000 }
+            { timeout: 45000 }
         );
 
         if (!data || !data.status) {
@@ -24,49 +25,96 @@ cmd({
             return reply("❌ Video nahi mili.");
         }
 
-        // ========== FAST DOWNLOAD SYSTEM ==========
-        async function downloadVideo(videoUrl) {
+        // ========== FAST DOWNLOAD & UPLOAD SYSTEM ==========
+        async function fetchVideoBuffer(videoUrl) {
             const headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-                'Referer': 'https://darkero.com/',
-                'Accept': '*/*'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36',
+                'Referer': 'https://darkero.com/'
             };
 
-            // Method 1: Fastest CORS (usually works)
-            try {
-                const res = await axios.get(`https://corsproxy.io/?url=${encodeURIComponent(videoUrl)}`, {
-                    responseType: 'arraybuffer',
-                    timeout: 22000,
-                    maxContentLength: 70 * 1024 * 1024
-                });
-                if (res.data?.byteLength > 10000) return Buffer.from(res.data);
-            } catch (e) {}
+            // Fast CORS Proxies & Direct Download in Parallel (Race strategy)
+            const targets = [
+                videoUrl,
+                `https://corsproxy.io/?url=${encodeURIComponent(videoUrl)}`,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(videoUrl)}`
+            ];
 
-            // Method 2: Direct (sometimes works)
-            try {
-                const res = await axios.get(videoUrl, {
+            const fetchStream = async (url) => {
+                const res = await axios.get(url, {
                     responseType: 'arraybuffer',
                     headers,
-                    timeout: 18000,
+                    timeout: 20000,
                     maxContentLength: 70 * 1024 * 1024
                 });
-                if (res.data?.byteLength > 10000) return Buffer.from(res.data);
-            } catch (e) {}
+                if (res.data && res.data.byteLength > 10000) {
+                    return Buffer.from(res.data);
+                }
+                throw new Error("Invalid video data");
+            };
 
-            // Method 3: Another CORS
-            try {
-                const res = await axios.get(`https://api.allorigins.win/raw?url=${encodeURIComponent(videoUrl)}`, {
-                    responseType: 'arraybuffer',
-                    timeout: 22000,
-                    maxContentLength: 70 * 1024 * 1024
-                });
-                if (res.data?.byteLength > 10000) return Buffer.from(res.data);
-            } catch (e) {}
-
-            throw new Error("Download failed");
+            // Sab se fast working link pehle pick hoga
+            return await Promise.any(targets.map(url => fetchStream(url)));
         }
 
-        // ========== SINGLE VIDEO (Fast path) ==========
+        async function uploadTo0x0(buffer, filename = 'viral.mp4') {
+            try {
+                const form = new FormData();
+                form.append('file', buffer, { filename });
+
+                const res = await axios.post('https://0x0.st', form, {
+                    headers: form.getHeaders(),
+                    timeout: 30000,
+                    maxContentLength: Infinity,
+                    maxBodyLength: Infinity
+                });
+
+                if (typeof res.data === 'string' && res.data.startsWith('http')) {
+                    return res.data.trim();
+                }
+            } catch (e) {
+                console.error("0x0.st Upload error:", e.message);
+            }
+            return null;
+        }
+
+        async function processAndSendVideo(videoUrl, title) {
+            // 1. Direct Whatsapp URL Upload Test
+            try {
+                await conn.sendMessage(from, {
+                    video: { url: videoUrl },
+                    mimetype: 'video/mp4',
+                    caption: `🎬 *${title}*`
+                }, { quoted: mek });
+                return true;
+            } catch (e) {}
+
+            // 2. Fast Download & Cloud Upload Fallback (0x0.st)
+            try {
+                const buffer = await fetchVideoBuffer(videoUrl);
+                const cloudUrl = await uploadTo0x0(buffer);
+
+                if (cloudUrl) {
+                    await conn.sendMessage(from, {
+                        video: { url: cloudUrl },
+                        mimetype: 'video/mp4',
+                        caption: `🎬 *${title}*`
+                    }, { quoted: mek });
+                } else {
+                    // Direct Buffer Fallback
+                    await conn.sendMessage(from, {
+                        video: buffer,
+                        mimetype: 'video/mp4',
+                        caption: `🎬 *${title}*`
+                    }, { quoted: mek });
+                }
+                return true;
+            } catch (e) {
+                console.error("Failed to process video:", e.message);
+                return false;
+            }
+        }
+
+        // ========== SINGLE VIDEO ==========
         if (data.mode === 'single') {
             const videoUrl = data.stream_url;
             if (!videoUrl) {
@@ -74,20 +122,12 @@ cmd({
                 return reply("❌ Video link nahi mila.");
             }
 
-            try {
-                // Seedha buffer download (direct URL skip kiya taake time na waste ho)
-                const buffer = await downloadVideo(videoUrl);
-
-                await conn.sendMessage(from, {
-                    video: buffer,
-                    mimetype: 'video/mp4',
-                    caption: `🎬 *${data.title}*`
-                }, { quoted: mek });
-
+            const success = await processAndSendVideo(videoUrl, data.title);
+            if (success) {
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-            } catch (e) {
+            } else {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                reply("❌ Video download nahi ho saki.");
+                reply("❌ Video download aur send karne me nakami hui.");
             }
             return;
         }
@@ -98,29 +138,12 @@ cmd({
 
             for (let i = 0; i < results.length; i++) {
                 const vid = results[i];
-                const videoUrl = vid.stream_url;
-                if (!videoUrl) continue;
-
-                try {
-                    // Pehle direct URL try (all mein kai baar chal jata hai)
-                    await conn.sendMessage(from, {
-                        video: { url: videoUrl },
-                        mimetype: 'video/mp4',
-                        caption: `🎥 *${vid.title}*`
-                    }, { quoted: mek });
-                } catch (e) {
-                    try {
-                        const buffer = await downloadVideo(videoUrl);
-                        await conn.sendMessage(from, {
-                            video: buffer,
-                            mimetype: 'video/mp4',
-                            caption: `🎥 *${vid.title}*`
-                        }, { quoted: mek });
-                    } catch (err) {}
+                if (vid.stream_url) {
+                    await processAndSendVideo(vid.stream_url, vid.title);
                 }
 
                 if (i < results.length - 1) {
-                    await new Promise(r => setTimeout(r, 2500));
+                    await new Promise(r => setTimeout(r, 2000));
                 }
             }
 
