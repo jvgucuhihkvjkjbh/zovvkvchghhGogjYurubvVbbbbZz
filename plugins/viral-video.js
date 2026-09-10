@@ -15,11 +15,30 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        // API Call
-        const { data } = await axios.get(
-            `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`,
-            { timeout: 45000 }
-        );
+        // Query Sanitization for "all" / "random"
+        let searchQuery = q.trim();
+        if (searchQuery.toLowerCase() === 'all' || searchQuery.toLowerCase() === 'random') {
+            searchQuery = 'All';
+        }
+
+        // API Call with Safe Handling
+        let data;
+        try {
+            const apiRes = await axios.get(
+                `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(searchQuery)}`,
+                {
+                    timeout: 45000,
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36'
+                    }
+                }
+            );
+            data = apiRes.data;
+        } catch (apiErr) {
+            console.error("API Fetch Error:", apiErr.response?.data || apiErr.message);
+            await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+            return reply(`❌ API Error: Server ne response nahi diya (Code: ${apiErr.response?.status || 500})`);
+        }
 
         if (!data || !data.status) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
@@ -48,7 +67,7 @@ cmd({
                 'Accept-Language': 'en-US,en;q=0.9'
             };
 
-            // 1. Direct Buffer Download
+            // 1. Direct Download
             try {
                 const res = await axios.get(videoUrl, {
                     responseType: 'arraybuffer',
@@ -183,8 +202,13 @@ cmd({
         }
 
         // ========== RANDOM LIST / ALL MODE ==========
-        if ((data.mode === 'random_list' || Array.isArray(data.results)) && data.results) {
-            const list = data.results;
+        if (data.mode === 'random_list' || Array.isArray(data.results)) {
+            const list = data.results || [];
+            if (list.length === 0) {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                return reply("❌ Koi video list nahi mili.");
+            }
+
             let sentCount = 0;
 
             for (let i = 0; i < list.length; i++) {
@@ -209,7 +233,7 @@ cmd({
         }
 
     } catch (e) {
-        console.error(e);
+        console.error("Main Command Error:", e);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
         reply(`❌ Error: ${e.message || e}`);
     }
