@@ -11,32 +11,30 @@ cmd({
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
         if (!q) {
-            return reply("❌ *Query do ya 'all' / 'random' likho!*\n\nExample:\n• .viralvid Dr Zahra\n• .viral all");
+            return reply("❌ *Query do ya 'all' / 'random' likho!*\n\nExample:\n• .viralvid Dr zahra\n• .viral all");
         }
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
         const apiUrl = `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`;
-        
-        const { data } = await axios.get(apiUrl, { timeout: 30000 });
+        const { data } = await axios.get(apiUrl, { timeout: 35000 });
 
         if (!data || !data.status) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ *Koi video nahi mili.*");
         }
 
-        // Common headers for darkero servers
         const headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
             'Referer': 'https://darkero.com/',
             'Accept': '*/*',
-            'Accept-Language': 'en-US,en;q=0.9'
+            'Origin': 'https://darkero.com'
         };
 
         // ========== SINGLE VIDEO ==========
         if (data.mode === 'single' || data.stream_url) {
             const title = data.title || 'Viral Video';
-            const videoUrl = data.stream_url || data.download_url;
+            const videoUrl = data.stream_url;
 
             if (!videoUrl) {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
@@ -45,46 +43,37 @@ cmd({
 
             const caption = `🎬 *${title}*\n\n🔗 ${data.post_url || ''}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
 
-            // 1st try: Direct URL (Fastest)
             try {
-                await conn.sendMessage(from, {
-                    video: { url: videoUrl },
-                    mimetype: 'video/mp4',
-                    caption: caption
-                }, { quoted: mek });
-
-                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-                return;
-            } catch (err) {
-                console.log("Direct URL failed, trying buffer...");
-            }
-
-            // 2nd try: Buffer download
-            try {
+                // Force buffer download (most reliable)
                 const videoRes = await axios.get(videoUrl, {
                     responseType: 'arraybuffer',
                     headers: headers,
-                    timeout: 60000,
-                    maxContentLength: 50 * 1024 * 1024 // 50MB max
+                    timeout: 90000,
+                    maxContentLength: 80 * 1024 * 1024
                 });
 
+                const buffer = Buffer.from(videoRes.data);
+
                 await conn.sendMessage(from, {
-                    video: Buffer.from(videoRes.data),
+                    video: buffer,
                     mimetype: 'video/mp4',
+                    fileName: `${title.replace(/[^\w\s]/gi, '').slice(0, 40)}.mp4`,
                     caption: caption
                 }, { quoted: mek });
 
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } catch (e) {
+                console.error("Single video error:", e.message);
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                reply("❌ *Video send nahi ho saki.*");
+                reply("❌ *Video download/send fail ho gaya.*\n\nError: " + (e.message || "Unknown"));
             }
             return;
         }
 
-        // ========== MULTIPLE / RANDOM LIST ==========
+        // ========== RANDOM LIST (all / random) ==========
         if (data.mode === 'random_list' && Array.isArray(data.results)) {
-            const results = data.results.slice(0, 8); // max 8 videos (safety)
+            // Max 4 videos only (10 se crash ho jata hai)
+            const results = data.results.slice(0, 4);
 
             if (!results.length) {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
@@ -92,61 +81,60 @@ cmd({
             }
 
             // Pehle list bhejo
-            let listText = `🔥 *${results.length} Viral Videos Found* 🔥\n\n`;
+            let listText = `🔥 *${results.length} Viral Videos* 🔥\n\n`;
             results.forEach((v, i) => {
                 listText += `*${i + 1}.* ${v.title}\n`;
             });
             listText += `\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
             await reply(listText);
 
-            // Videos one by one (direct URL pehle)
+            let successCount = 0;
+
             for (let i = 0; i < results.length; i++) {
                 const vid = results[i];
-                const videoUrl = vid.stream_url || vid.download_url;
+                const videoUrl = vid.stream_url;
                 if (!videoUrl) continue;
 
-                const caption = `🎥 *[\( {i + 1}/ \){results.length}]* ${vid.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`;
-
                 try {
-                    // Direct URL try
-                    await conn.sendMessage(from, {
-                        video: { url: videoUrl },
-                        mimetype: 'video/mp4',
-                        caption: caption
-                    }, { quoted: mek });
-                } catch (e) {
-                    // Buffer fallback
-                    try {
-                        const res = await axios.get(videoUrl, {
-                            responseType: 'arraybuffer',
-                            headers: headers,
-                            timeout: 45000,
-                            maxContentLength: 40 * 1024 * 1024
-                        });
-                        await conn.sendMessage(from, {
-                            video: Buffer.from(res.data),
-                            mimetype: 'video/mp4',
-                            caption: caption
-                        }, { quoted: mek });
-                    } catch (err) {
-                        // skip this video
-                    }
-                }
+                    const res = await axios.get(videoUrl, {
+                        responseType: 'arraybuffer',
+                        headers: headers,
+                        timeout: 70000,
+                        maxContentLength: 60 * 1024 * 1024
+                    });
 
-                // Thoda delay taake rate-limit na aaye
-                await new Promise(r => setTimeout(r, 1200));
+                    await conn.sendMessage(from, {
+                        video: Buffer.from(res.data),
+                        mimetype: 'video/mp4',
+                        fileName: `viral_${i + 1}.mp4`,
+                        caption: `🎥 *[\( {i + 1}/ \){results.length}]* ${vid.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡`
+                    }, { quoted: mek });
+
+                    successCount++;
+                    
+                    // Delay between videos
+                    await new Promise(r => setTimeout(r, 2000));
+                } catch (err) {
+                    console.error(`Video ${i + 1} failed:`, err.message);
+                    // continue next video
+                }
             }
 
-            await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            if (successCount > 0) {
+                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            } else {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                reply("❌ *Koi bhi video send nahi ho saki.*");
+            }
             return;
         }
 
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply("❌ *Unexpected response from API.*");
+        reply("❌ *Unexpected API response.*");
 
     } catch (e) {
-        console.error(e);
+        console.error("Main error:", e);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply("❌ *Error aa gaya. Thori der baad try karo.*");
+        reply("❌ *Error aa gaya.*\n\n" + (e.message || "Unknown error"));
     }
 });
