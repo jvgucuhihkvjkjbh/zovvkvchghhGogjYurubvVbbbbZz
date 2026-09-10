@@ -11,10 +11,11 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
-        if (!q) return reply("❌ Query do!\nExample: `.viralvid Dr zahra` ya `.viral all`");
+        if (!q) return reply("❌ Query do!\nExample: `.viralvid status` ya `.viral all`");
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
+        // API Call
         const { data } = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`,
             { timeout: 45000 }
@@ -25,35 +26,85 @@ cmd({
             return reply("❌ Video nahi mili.");
         }
 
-        // ========== FAST DOWNLOAD & UPLOAD SYSTEM ==========
-        async function fetchVideoBuffer(videoUrl) {
+        // ========== HELPER FUNCTIONS ==========
+
+        async function getEliteProxies(limit = 5) {
+            try {
+                const res = await axios.get('https://api.princetechn.com/api/tools/proxy?apikey=prince', { timeout: 4000 });
+                if (res.data?.success && Array.isArray(res.data.results)) {
+                    return res.data.results
+                        .filter(p => p.ip && p.port && p.ip !== '0.0.0.0')
+                        .slice(0, limit);
+                }
+            } catch (e) {}
+            return [];
+        }
+
+        async function downloadVideoWithMethod(videoUrl) {
             const headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0 Safari/537.36',
-                'Referer': 'https://darkero.com/'
+                'Referer': 'https://darkero.com/',
+                'Accept': '*/*',
+                'Accept-Language': 'en-US,en;q=0.9'
             };
 
-            // Fast CORS Proxies & Direct Download in Parallel (Race strategy)
-            const targets = [
-                videoUrl,
-                `https://corsproxy.io/?url=${encodeURIComponent(videoUrl)}`,
-                `https://api.allorigins.win/raw?url=${encodeURIComponent(videoUrl)}`
-            ];
-
-            const fetchStream = async (url) => {
-                const res = await axios.get(url, {
+            // 1. Direct Buffer Download
+            try {
+                const res = await axios.get(videoUrl, {
                     responseType: 'arraybuffer',
                     headers,
-                    timeout: 20000,
+                    timeout: 25000,
                     maxContentLength: 70 * 1024 * 1024
                 });
                 if (res.data && res.data.byteLength > 10000) {
-                    return Buffer.from(res.data);
+                    return { buffer: Buffer.from(res.data), method: "Direct Download" };
                 }
-                throw new Error("Invalid video data");
-            };
+            } catch (e) {}
 
-            // Sab se fast working link pehle pick hoga
-            return await Promise.any(targets.map(url => fetchStream(url)));
+            // 2. CORS Proxies
+            const corsList = [
+                `https://corsproxy.io/?url=${encodeURIComponent(videoUrl)}`,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(videoUrl)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(videoUrl)}`
+            ];
+
+            for (const corsUrl of corsList) {
+                try {
+                    const res = await axios.get(corsUrl, {
+                        responseType: 'arraybuffer',
+                        timeout: 30000,
+                        maxContentLength: 70 * 1024 * 1024
+                    });
+                    if (res.data && res.data.byteLength > 10000) {
+                        return { buffer: Buffer.from(res.data), method: "CORS Proxy" };
+                    }
+                } catch (e) {}
+            }
+
+            // 3. Elite Proxies
+            try {
+                const proxies = await getEliteProxies(6);
+                for (const proxy of proxies) {
+                    try {
+                        const res = await axios.get(videoUrl, {
+                            responseType: 'arraybuffer',
+                            timeout: 20000,
+                            maxContentLength: 70 * 1024 * 1024,
+                            proxy: {
+                                protocol: 'http',
+                                host: proxy.ip,
+                                port: Number(proxy.port)
+                            },
+                            headers
+                        });
+                        if (res.data && res.data.byteLength > 10000) {
+                            return { buffer: Buffer.from(res.data), method: "Elite Proxy" };
+                        }
+                    } catch (e) {}
+                }
+            } catch (e) {}
+
+            throw new Error("All download methods failed");
         }
 
         async function uploadTo0x0(buffer, filename = 'viral.mp4') {
@@ -63,7 +114,7 @@ cmd({
 
                 const res = await axios.post('https://0x0.st', form, {
                     headers: form.getHeaders(),
-                    timeout: 30000,
+                    timeout: 45000,
                     maxContentLength: Infinity,
                     maxBodyLength: Infinity
                 });
@@ -71,50 +122,49 @@ cmd({
                 if (typeof res.data === 'string' && res.data.startsWith('http')) {
                     return res.data.trim();
                 }
-            } catch (e) {
-                console.error("0x0.st Upload error:", e.message);
-            }
+            } catch (e) {}
             return null;
         }
 
-        async function processAndSendVideo(videoUrl, title) {
-            // 1. Direct Whatsapp URL Upload Test
+        async function processAndSend(videoUrl, title) {
+            // Step A: Direct URL Send
             try {
                 await conn.sendMessage(from, {
                     video: { url: videoUrl },
                     mimetype: 'video/mp4',
-                    caption: `🎬 *${title}*`
+                    caption: `🎬 *${title}*\n\n📡 *Downloaded via:* Direct Link`
                 }, { quoted: mek });
                 return true;
             } catch (e) {}
 
-            // 2. Fast Download & Cloud Upload Fallback (0x0.st)
+            // Step B: Download via Proxy Logic
             try {
-                const buffer = await fetchVideoBuffer(videoUrl);
-                const cloudUrl = await uploadTo0x0(buffer);
+                const { buffer, method } = await downloadVideoWithMethod(videoUrl);
 
+                // Step C: Try 0x0.st Upload
+                const cloudUrl = await uploadTo0x0(buffer);
                 if (cloudUrl) {
                     await conn.sendMessage(from, {
                         video: { url: cloudUrl },
                         mimetype: 'video/mp4',
-                        caption: `🎬 *${title}*`
+                        caption: `🎬 *${title}*\n\n📡 *Downloaded via:* ${method} + 0x0.st`
                     }, { quoted: mek });
                 } else {
-                    // Direct Buffer Fallback
+                    // Fallback to Buffer
                     await conn.sendMessage(from, {
                         video: buffer,
                         mimetype: 'video/mp4',
-                        caption: `🎬 *${title}*`
+                        caption: `🎬 *${title}*\n\n📡 *Downloaded via:* ${method} (Buffer)`
                     }, { quoted: mek });
                 }
                 return true;
-            } catch (e) {
-                console.error("Failed to process video:", e.message);
+            } catch (err) {
+                console.error(`Failed to download ${title}:`, err.message);
                 return false;
             }
         }
 
-        // ========== SINGLE VIDEO ==========
+        // ========== SINGLE VIDEO MODE ==========
         if (data.mode === 'single') {
             const videoUrl = data.stream_url;
             if (!videoUrl) {
@@ -122,7 +172,7 @@ cmd({
                 return reply("❌ Video link nahi mila.");
             }
 
-            const success = await processAndSendVideo(videoUrl, data.title);
+            const success = await processAndSend(videoUrl, data.title);
             if (success) {
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } else {
@@ -132,22 +182,30 @@ cmd({
             return;
         }
 
-        // ========== ALL / RANDOM ==========
-        if (data.mode === 'random_list' && Array.isArray(data.results)) {
-            const results = data.results.slice(0, 5);
+        // ========== RANDOM LIST / ALL MODE ==========
+        if ((data.mode === 'random_list' || Array.isArray(data.results)) && data.results) {
+            const list = data.results;
+            let sentCount = 0;
 
-            for (let i = 0; i < results.length; i++) {
-                const vid = results[i];
-                if (vid.stream_url) {
-                    await processAndSendVideo(vid.stream_url, vid.title);
-                }
+            for (let i = 0; i < list.length; i++) {
+                const vid = list[i];
+                const videoUrl = vid.stream_url;
+                if (!videoUrl) continue;
 
-                if (i < results.length - 1) {
+                const success = await processAndSend(videoUrl, vid.title);
+                if (success) sentCount++;
+
+                if (i < list.length - 1) {
                     await new Promise(r => setTimeout(r, 2000));
                 }
             }
 
-            await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            if (sentCount > 0) {
+                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+            } else {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                reply("❌ Kisi bhi video ko download nahi kiya ja saka.");
+            }
         }
 
     } catch (e) {
