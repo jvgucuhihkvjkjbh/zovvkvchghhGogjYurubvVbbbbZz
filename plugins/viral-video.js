@@ -14,6 +14,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
+        // API se response ka wait (max 45 second)
         const { data } = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`,
             { timeout: 45000 }
@@ -30,6 +31,44 @@ cmd({
             'Accept': '*/*'
         };
 
+        // Helper function: video download with multiple methods
+        async function getVideoBuffer(videoUrl) {
+            // Method 1: Direct
+            try {
+                const res = await axios.get(videoUrl, {
+                    responseType: 'arraybuffer',
+                    headers,
+                    timeout: 60000,
+                    maxContentLength: 70 * 1024 * 1024
+                });
+                return Buffer.from(res.data);
+            } catch (e) {}
+
+            // Method 2: CORS Proxy
+            try {
+                const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(videoUrl)}`;
+                const res = await axios.get(proxyUrl, {
+                    responseType: 'arraybuffer',
+                    timeout: 70000,
+                    maxContentLength: 70 * 1024 * 1024
+                });
+                return Buffer.from(res.data);
+            } catch (e) {}
+
+            // Method 3: Another proxy
+            try {
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(videoUrl)}`;
+                const res = await axios.get(proxyUrl, {
+                    responseType: 'arraybuffer',
+                    timeout: 70000,
+                    maxContentLength: 70 * 1024 * 1024
+                });
+                return Buffer.from(res.data);
+            } catch (e) {}
+
+            throw new Error("All download methods failed (403/timeout)");
+        }
+
         // ========== SINGLE VIDEO ==========
         if (data.mode === 'single') {
             const videoUrl = data.stream_url;
@@ -38,46 +77,24 @@ cmd({
                 return reply("❌ Video link nahi mila.");
             }
 
-            let sent = false;
-
-            // Method 1: Direct URL
             try {
+                // Pehle direct URL try
                 await conn.sendMessage(from, {
                     video: { url: videoUrl },
                     mimetype: 'video/mp4',
                     caption: `🎬 *${data.title}*`
                 }, { quoted: mek });
-                sent = true;
-            } catch (err1) {
-                console.log("Direct URL failed:", err1.message);
+            } catch (e) {
+                // Buffer + proxy se bhejo
+                const buffer = await getVideoBuffer(videoUrl);
+                await conn.sendMessage(from, {
+                    video: buffer,
+                    mimetype: 'video/mp4',
+                    caption: `🎬 *${data.title}*`
+                }, { quoted: mek });
             }
 
-            // Method 2: Buffer
-            if (!sent) {
-                try {
-                    const res = await axios.get(videoUrl, {
-                        responseType: 'arraybuffer',
-                        headers,
-                        timeout: 70000,
-                        maxContentLength: 70 * 1024 * 1024
-                    });
-
-                    await conn.sendMessage(from, {
-                        video: Buffer.from(res.data),
-                        mimetype: 'video/mp4',
-                        caption: `🎬 *${data.title}*`
-                    }, { quoted: mek });
-                    sent = true;
-                } catch (err2) {
-                    console.log("Buffer failed:", err2.message);
-                    await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                    return reply(`❌ Video send nahi ho saki.\n\nError: ${err2.message}`);
-                }
-            }
-
-            if (sent) {
-                await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-            }
+            await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             return;
         }
 
@@ -90,36 +107,28 @@ cmd({
                 const videoUrl = vid.stream_url;
                 if (!videoUrl) continue;
 
-                let sent = false;
-
                 try {
                     await conn.sendMessage(from, {
                         video: { url: videoUrl },
                         mimetype: 'video/mp4',
                         caption: `🎥 *${vid.title}*`
                     }, { quoted: mek });
-                    sent = true;
                 } catch (e) {
                     try {
-                        const res = await axios.get(videoUrl, {
-                            responseType: 'arraybuffer',
-                            headers,
-                            timeout: 55000,
-                            maxContentLength: 55 * 1024 * 1024
-                        });
+                        const buffer = await getVideoBuffer(videoUrl);
                         await conn.sendMessage(from, {
-                            video: Buffer.from(res.data),
+                            video: buffer,
                             mimetype: 'video/mp4',
                             caption: `🎥 *${vid.title}*`
                         }, { quoted: mek });
-                        sent = true;
                     } catch (err) {
-                        console.log(`Video ${i+1} failed:`, err.message);
+                        console.log(`Video ${i + 1} failed`);
                     }
                 }
 
+                // 3 second wait
                 if (i < results.length - 1) {
-                    await new Promise(r => setTimeout(r, 2800));
+                    await new Promise(r => setTimeout(r, 3000));
                 }
             }
 
@@ -127,8 +136,8 @@ cmd({
         }
 
     } catch (e) {
-        console.error("Main Error:", e);
+        console.error(e);
         await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-        reply(`❌ Error aa gaya.\n\n${e.message || e}`);
+        reply(`❌ Error: ${e.message || e}`);
     }
 });
