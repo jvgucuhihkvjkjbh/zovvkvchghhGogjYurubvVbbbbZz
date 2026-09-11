@@ -10,7 +10,7 @@ cmd({
     filename: __filename
 }, async (conn, mek, m, { from, q, reply }) => {
     try {
-        if (!q) return reply("❌ Query do!\nExample: `.viralvid status` ya `.viral all`");
+        if (!q) return reply("❌ Please provide a query!\nExample: `.viralvid status` or `.viral all`");
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
@@ -21,7 +21,7 @@ cmd({
 
         if (!data || !data.status) {
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-            return reply("❌ Video nahi mili.");
+            return reply("❌ Video not found.");
         }
 
         async function getEliteProxies(limit = 5) {
@@ -128,7 +128,7 @@ cmd({
             const videoUrl = data.stream_url;
             if (!videoUrl) {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                return reply("❌ Video link nahi mila.");
+                return reply("❌ Video link not found.");
             }
 
             const success = await processAndSend(videoUrl, data.title);
@@ -136,7 +136,7 @@ cmd({
                 await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
             } else {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-                reply("❌ Video download aur send karne me nakami hui.");
+                reply("❌ Failed to download and send the video.");
             }
             return;
         }
