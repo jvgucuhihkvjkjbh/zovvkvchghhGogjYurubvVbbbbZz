@@ -1,6 +1,5 @@
 const { cmd } = require('../command');
 const axios = require('axios');
-const FormData = require('form-data');
 
 cmd({
     pattern: "viralvid",
@@ -15,7 +14,6 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        // API Call
         const { data } = await axios.get(
             `https://adeel-xtech-apis.vercel.app/api/viral-video?q=${encodeURIComponent(q)}`,
             { timeout: 45000 }
@@ -25,8 +23,6 @@ cmd({
             await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
             return reply("❌ Video nahi mili.");
         }
-
-        // ========== ORIGINAL HELPER FUNCTIONS ==========
 
         async function getEliteProxies(limit = 5) {
             try {
@@ -48,7 +44,6 @@ cmd({
                 'Accept-Language': 'en-US,en;q=0.9'
             };
 
-            // 1. Direct Buffer Download
             try {
                 const res = await axios.get(videoUrl, {
                     responseType: 'arraybuffer',
@@ -61,7 +56,6 @@ cmd({
                 }
             } catch (e) {}
 
-            // 2. CORS Proxies
             const corsList = [
                 `https://corsproxy.io/?url=${encodeURIComponent(videoUrl)}`,
                 `https://api.allorigins.win/raw?url=${encodeURIComponent(videoUrl)}`,
@@ -81,7 +75,6 @@ cmd({
                 } catch (e) {}
             }
 
-            // 3. Elite Proxies
             try {
                 const proxies = await getEliteProxies(6);
                 for (const proxy of proxies) {
@@ -107,27 +100,7 @@ cmd({
             throw new Error("All download methods failed");
         }
 
-        async function uploadTo0x0(buffer, filename = 'viral.mp4') {
-            try {
-                const form = new FormData();
-                form.append('file', buffer, { filename });
-
-                const res = await axios.post('https://0x0.st', form, {
-                    headers: form.getHeaders(),
-                    timeout: 45000,
-                    maxContentLength: Infinity,
-                    maxBodyLength: Infinity
-                });
-
-                if (typeof res.data === 'string' && res.data.startsWith('http')) {
-                    return res.data.trim();
-                }
-            } catch (e) {}
-            return null;
-        }
-
         async function processAndSend(videoUrl, title) {
-            // Step A: Direct URL Send (Fastest)
             try {
                 await conn.sendMessage(from, {
                     video: { url: videoUrl },
@@ -137,26 +110,13 @@ cmd({
                 return true;
             } catch (e) {}
 
-            // Step B: Download via Original Proxy Fallbacks
             try {
                 const { buffer, method } = await downloadVideoWithMethod(videoUrl);
-
-                // Step C: Try 0x0.st Upload
-                const cloudUrl = await uploadTo0x0(buffer);
-                if (cloudUrl) {
-                    await conn.sendMessage(from, {
-                        video: { url: cloudUrl },
-                        mimetype: 'video/mp4',
-                        caption: `🎬 *${title}*\n\n📡 *Downloaded via:* ${method} + 0x0.st`
-                    }, { quoted: mek });
-                } else {
-                    // Direct Buffer Send Fallback
-                    await conn.sendMessage(from, {
-                        video: buffer,
-                        mimetype: 'video/mp4',
-                        caption: `🎬 *${title}*\n\n📡 *Downloaded via:* ${method} (Buffer)`
-                    }, { quoted: mek });
-                }
+                await conn.sendMessage(from, {
+                    video: buffer,
+                    mimetype: 'video/mp4',
+                    caption: `🎬 *${title}*\n\n📡 *Downloaded via:* ${method} (Buffer)`
+                }, { quoted: mek });
                 return true;
             } catch (err) {
                 console.error(`Failed to download ${title}:`, err.message);
@@ -164,7 +124,6 @@ cmd({
             }
         }
 
-        // ========== SINGLE VIDEO MODE ==========
         if (data.mode === 'single') {
             const videoUrl = data.stream_url;
             if (!videoUrl) {
@@ -182,9 +141,8 @@ cmd({
             return;
         }
 
-        // ========== ALL / RANDOM LIST MODE (ORIGINAL LOGIC) ==========
         if (data.mode === 'random_list' && Array.isArray(data.results)) {
-            const results = data.results; // Complete list (Up to 10 videos)
+            const results = data.results;
 
             for (let i = 0; i < results.length; i++) {
                 const vid = results[i];
@@ -193,7 +151,6 @@ cmd({
 
                 await processAndSend(videoUrl, vid.title);
 
-                // 3 Seconds Delay Between Videos (Original Setup)
                 if (i < results.length - 1) {
                     await new Promise(r => setTimeout(r, 3000));
                 }
