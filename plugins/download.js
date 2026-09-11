@@ -159,10 +159,9 @@ cmd({
 });
 
 // MediaFire-dl
-
 cmd({
   pattern: "mediafire",
-  alias: ["mfire"],
+  alias: ["mfire", "mf"],
   desc: "To download MediaFire files.",
   react: "📥",
   category: "download",
@@ -174,58 +173,70 @@ cmd({
 }) => {
   try {
     if (!q) {
-      return reply("❌ Please provide a valid MediaFire link.");
+      return reply("❌ Please provide a valid MediaFire link.\n\nExample: .mediafire https://www.mediafire.com/file/...");
+    }
+
+    if (!q.includes("mediafire.com")) {
+      return reply("⚠️ Invalid link! Please send a valid MediaFire URL.");
     }
 
     await conn.sendMessage(from, {
       react: { text: "⏳", key: m.key }
     });
 
-    const response = await axios.get(
-      `https://api.princetechn.com/api/download/mediafire?apikey=prince&url=${encodeURIComponent(q)}`
-    );
+    // New API Request
+    const apiUrl = `https://arslan-apis-v2.vercel.app/download/mfire?url=${encodeURIComponent(q)}`;
+    const response = await axios.get(apiUrl, { timeout: 30000 });
 
     const data = response.data;
 
-    if (!data || !data.success || !data.result) {
+    if (!data || !data.status || !data.result) {
       return reply("⚠️ Failed to fetch MediaFire download link.");
     }
 
     const {
       fileName,
-      fileSize,
+      size,
       fileType,
-      mimeType,
-      uploadedOn,
-      uploadedFrom,
-      downloadUrl
+      date,
+      dl_link
     } = data.result;
+
+    if (!dl_link) {
+      return reply("❌ Download link not found in the response.");
+    }
 
     await conn.sendMessage(from, {
       react: { text: "⬆️", key: m.key }
     });
 
-    const caption =
+    const caption = 
 `╭━━━〔 *MEDIAFIRE* 〕━━━⊷
-┃▸ *File Name:* ${fileName}
-┃▸ *File Size:* ${fileSize}
-┃▸ *File Type:* ${fileType}
-┃▸ *Uploaded:* ${uploadedOn}
-┃▸ *Region:* ${uploadedFrom}
+┃▸ *File Name:* ${fileName || "Unknown"}
+┃▸ *File Size:* ${size || "N/A"}
+┃▸ *File Type:* ${fileType || "application/octet-stream"}
+┃▸ *Date:* ${date || "N/A"}
 ╰━━━⪼
 
 > *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴀᴅᴇᴇʟ-ᴍᴅ ⚡*`;
 
     await conn.sendMessage(from, {
-      document: { url: downloadUrl },
-      mimetype: mimeType || "application/octet-stream",
-      fileName: fileName || "mediafire_download",
-      caption
+      document: { url: dl_link },
+      mimetype: fileType || "application/octet-stream",
+      fileName: fileName || "MediaFire_Download",
+      caption: caption
     }, { quoted: m });
+
+    await conn.sendMessage(from, {
+      react: { text: "✅", key: m.key }
+    });
 
   } catch (error) {
     console.error("MediaFire Error:", error);
-    reply("❌ An error occurred while processing your request.");
+    reply("❌ An error occurred while processing your request. Please try again later.");
+    try {
+      await conn.sendMessage(from, { react: { text: "❌", key: m.key } });
+    } catch {}
   }
 });
 
@@ -300,17 +311,13 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "⬇️", key: m.key } });
 
-        const encodedUrl = encodeURIComponent(q.trim());
-        const apiUrl = `https://api.princetechn.com/api/download/gdrivedl?apikey=prince&url=${encodedUrl}`;
-        const response = await axios.get(apiUrl, { 
-            timeout: 30000,
-            headers: { 'User-Agent': 'Mozilla/5.0' }
-        });
+        const apiUrl = `https://api.princetechn.com/api/download/gdrivedl?apikey=prince&url=${encodeURIComponent(q)}`;
+        const response = await axios.get(apiUrl, { timeout: 30000 });
 
         const result = response.data?.result;
         if (!result || !result.download_url) return reply("⚠️ No download URL found.");
 
-        const fileName = result.name || "gdrive_file";
+        const fileName = result.name || "file";
         const downloadUrl = result.download_url;
 
         await conn.sendMessage(from, {
