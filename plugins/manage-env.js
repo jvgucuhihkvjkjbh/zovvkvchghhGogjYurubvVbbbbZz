@@ -5,23 +5,11 @@ const fs = require('fs');
 const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, sleep, fetchJson } = require('../lib/functions2');
 const { writeFileSync } = require('fs');
 const path = require('path');
-
-const OWNER_PATH = path.join(__dirname, "../lib/sudo.json");
-
-const loadSudo = () => {
-    try {
-        return JSON.parse(fs.readFileSync(OWNER_PATH, "utf-8"));
-    } catch {
-        return [];
-    }
-};
+const { isSudo } = require('../lib/sudo');
 
 const isAuthorized = (sender, isCreator) => {
     if (isCreator) return true;
-    
-    const sudoOwners = loadSudo();
-    
-    return sudoOwners.some(owner => owner === sender);
+    return isSudo(sender);
 };
 
 // --- AUTOVOICE COMMAND ---
