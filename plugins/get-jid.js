@@ -1,28 +1,38 @@
 const { cmd } = require("../command");
 
 cmd({
-  pattern: "jid",
-  alias: ["gjid"],
-  desc: "Return Group JID (Everyone) or User JID in private chat",
-  category: "utility",
-  react: "🆔",
-  filename: __filename
-}, async (conn, mek, m, { from, isGroup, reply, sender }) => {
-  try {
+    pattern: "getlid",
+    alias: ["lidcheck"],
+    desc: "Check WhatsApp ID info for a number",
+    category: "owner",
+    react: "🔍",
+    filename: __filename
+},
+async (conn, mek, m, { from, reply, q, isCreator }) => {
 
-    if (isGroup) {
-      // Public for all group members
-      const groupJID = from.includes("@g.us") ? from : `${from}@g.us`;
-      return reply(`👥 Group JID:\n\`\`\`${groupJID}\`\`\``);
-    } 
-    else {
-      // Private chat → return sender JID only
-      const fixedJID = sender.includes("@") ? sender : `${sender}@s.whatsapp.net`;
-      return reply(`👤 User JID:\n\`\`\`${fixedJID}\`\`\``);
+    try {
+
+        if (!isCreator) return reply("❌ only owner command use");
+
+        if (!q) return reply("❌ Number do (jaise: .getlid 923001234567)");
+
+        const number = q.replace(/\D/g, "");
+        const result = await conn.onWhatsApp(number + "@s.whatsapp.net");
+
+        if (!result || result.length === 0) {
+            return reply("❌ Ye number WhatsApp pe nahi mila");
+        }
+
+        let info = `*Number:* ${number}\n`;
+        result.forEach(r => {
+            info += `\n*JID:* ${r.jid}`;
+            if (r.lid) info += `\n*LID:* ${r.lid}`;
+        });
+
+        reply(info);
+
+    } catch (e) {
+        console.error(e);
+        reply("❌ Error: " + e.message);
     }
-
-  } catch (e) {
-    console.error(e);
-    return reply("⚠️ Error fetching JID.");
-  }
 });
