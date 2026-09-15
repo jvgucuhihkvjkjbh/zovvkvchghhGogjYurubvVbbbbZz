@@ -1,5 +1,6 @@
 const { cmd } = require('../command');
 const axios = require('axios');
+const { isSudo } = require('../lib/sudo');
 const { isChatbotOn, setChatbot, getHistory, addToHistory, clearHistory, markBotMessage, isBotMessage } = require('../lib/chatbot');
 
 cmd({
@@ -9,8 +10,12 @@ cmd({
     category: "ai",
     react: "🤖",
     filename: __filename
-}, async (conn, mek, m, { from, args, reply }) => {
+}, async (conn, mek, m, { from, args, reply, isCreator, sender }) => {
     try {
+        if (!isCreator && !isSudo(sender)) {
+            return reply("❌ only owner command use");
+        }
+
         const option = (args[0] || '').toLowerCase();
 
         if (option === 'on') {
@@ -54,7 +59,7 @@ async function handleChatbotMessage(conn, mek, m, { from, body, reply, isCmd }) 
 
         const fullPrompt = `Tum ek casual Pakistani friend ho. Natural Urdu + Roman Urdu me baat karo. Robotic mat bano. Apne aap ko baar baar introduce mat karo. Short aur natural reply do.\n\nConversation:\n${contextText}`;
 
-        const apiUrl = `https://adeel-xtech-apis.vercel.app/api/gemini?text=${encodeURIComponent(fullPrompt)}`;
+        const apiUrl = `https://adeel-xtech-apis.vercel.app/api/gpt?q=${encodeURIComponent(fullPrompt)}`;
 
         const { data } = await axios.get(apiUrl, {
             timeout: 35000,
