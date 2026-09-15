@@ -3,20 +3,38 @@ const { loadSudo, saveSudo } = require("../lib/sudo");
 
 const normalizeTarget = (input) => {
     if (!input) return null;
-    input = input.trim();
+    input = String(input).trim();
 
-    if (input.includes("@lid")) return input;
+    if (input.includes("@lid")) {
+        return input;
+    }
 
     if (input.includes("@s.whatsapp.net")) {
-        const beforeAt = input.split('@')[0];
-        if (/^\d+$/.test(beforeAt) && beforeAt.length >= 10) {
-            return input;
+        const beforeAt = input.split("@")[0].replace(/\D/g, "");
+        if (beforeAt.length >= 10) {
+            let num = beforeAt;
+            if (num.startsWith("0") && num.length === 11) {
+                num = "92" + num.slice(1);
+            }
+            return num + "@s.whatsapp.net";
         }
         return null;
     }
 
-    if (/^\d+$/.test(input) && input.length >= 10) {
-        return input + "@s.whatsapp.net";
+    let number = input.replace(/\D/g, "");
+
+    if (!number || number.length < 10) return null;
+
+    if (number.startsWith("0") && number.length === 11) {
+        number = "92" + number.slice(1);
+    }
+
+    if (number.length === 10 && number.startsWith("3")) {
+        number = "92" + number;
+    }
+
+    if (number.startsWith("92") && number.length >= 12) {
+        return number + "@s.whatsapp.net";
     }
 
     return null;
