@@ -1,5 +1,5 @@
 const { cmd } = require("../command");
-const fs = require("fs");
+const { isSudo } = require("../lib/sudo");
 
 cmd({
     pattern: "update",
@@ -13,14 +13,7 @@ async (conn, mek, m, { from, reply, isCreator, sender }) => {
 
     try {
 
-        let sudoList = [];
-        if (fs.existsSync("./lib/sudo.json")) {
-            sudoList = JSON.parse(fs.readFileSync("./lib/sudo.json"));
-        }
-
-        const isSudo = sudoList.includes(sender);
-
-        if (!isCreator && !isSudo) {
+        if (!isCreator && !isSudo(sender)) {
             return reply("❌ only owner command use");
         }
 
