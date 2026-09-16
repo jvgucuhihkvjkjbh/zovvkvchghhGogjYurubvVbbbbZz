@@ -4,9 +4,6 @@ const config = require('../config');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 🔐 COMPLETE PROTOBUF MONKEY-PATCH: Preserve StatusAudienceMetadata
-// ─────────────────────────────────────────────────────────────────────────────
 (function patchProtobufForStatusAudienceMetadata() {
   try {
     const baileys = require('@whiskeysockets/baileys');
@@ -76,45 +73,18 @@ const cheerio = require('cheerio');
   }
 })();
 
-// ── Color Constants ──────────────────────────────────────────────────────────
 const COLORS = {
-  merah: 'FF0000',
-  hijau: '00FF00',
-  biru: '0000FF',
-  kuning: 'FFFF00',
-  hitam: '000000',
-  putih: 'FFFFFF',
-  ungu: '800080',
-  pink: 'FFC0CB',
-  orange: 'FFA500',
-  cyan: '00FFFF',
-  black: '000000',
-  white: 'FFFFFF',
-  red: 'FF0000',
-  blue: '1DA1F2',
-  green: '25D366',
-  yellow: 'FFD700',
-  purple: '7B2CBF',
-  gray: '808080',
-  navy: '001F5B'
+  merah: 'FF0000', hijau: '00FF00', biru: '0000FF', kuning: 'FFFF00',
+  hitam: '000000', putih: 'FFFFFF', ungu: '800080', pink: 'FFC0CB',
+  orange: 'FFA500', cyan: '00FFFF', black: '000000', white: 'FFFFFF',
+  red: 'FF0000', blue: '1DA1F2', green: '25D366', yellow: 'FFD700',
+  purple: '7B2CBF', gray: '808080', navy: '001F5B'
 };
 
 const RANDOM_BG_COLORS = [
-  0xFF7B2CBF, // Purple
-  0xFF1D3557, // Navy
-  0xFF2B2D42, // Charcoal Blue
-  0xFFD90429, // Crimson Red
-  0xFF0077B6, // Ocean Blue
-  0xFF007F5F, // Emerald Green
-  0xFF5A189A, // Royal Violet
-  0xFF6B705C, // Olive Earth
-  0xFFE76F51, // Terracotta Orange
-  0xFF2A9D8F, // Teal
-  0xFF3D348B, // Indigo
-  0xFF6A040F, // Dark Burgundy
-  0xFF3F37C9, // Electric Indigo
-  0xFF03045E, // Midnight Blue
-  0xFF1A1A1D, // Onyx Black
+  0xFF7B2CBF, 0xFF1D3557, 0xFF2B2D42, 0xFFD90429, 0xFF0077B6,
+  0xFF007F5F, 0xFF5A189A, 0xFF6B705C, 0xFFE76F51, 0xFF2A9D8F,
+  0xFF3D348B, 0xFF6A040F, 0xFF3F37C9, 0xFF03045E, 0xFF1A1A1D
 ];
 
 function getRandomArgbColor() {
@@ -122,14 +92,8 @@ function getRandomArgbColor() {
 }
 
 const FONTS = {
-  system: 0,
-  sans: 1,
-  serif: 2,
-  script: 3,
-  morning: 4,
-  calistoga: 5,
-  oswald: 6,
-  courier: 7
+  system: 0, sans: 1, serif: 2, script: 3,
+  morning: 4, calistoga: 5, oswald: 6, courier: 7
 };
 
 const TYPE_MAP = {
@@ -153,14 +117,12 @@ function getRealMessage(message) {
 function tokenize(input) {
   const tokens = [];
   if (!input) return tokens;
-
   let current = '';
   let inQuotes = false;
   let quoteChar = '';
 
   for (let i = 0; i < input.length; i++) {
     const ch = input[i];
-
     if (inQuotes) {
       if (ch === quoteChar) {
         tokens.push(current);
@@ -183,11 +145,7 @@ function tokenize(input) {
       }
     }
   }
-
-  if (current) {
-    tokens.push(current);
-  }
-
+  if (current) tokens.push(current);
   return tokens;
 }
 
@@ -220,13 +178,11 @@ function parseSwgcFlags(rawText) {
       i++;
       continue;
     }
-
     if (lower === '-ai') {
       result.useAiBadge = true;
       i++;
       continue;
     }
-
     if (LINK_FLAGS.has(lower)) {
       result.useLinkPreview = true;
       const val = tokens[i + 1];
@@ -238,35 +194,26 @@ function parseSwgcFlags(rawText) {
       }
       continue;
     }
-
-    if (lower === '-color') {
+    if (lower === '-color' || lower === 'color') {
       const val = tokens[i + 1];
       if (val !== undefined) {
-        const key = val.toLowerCase();
-        result.textColor = COLORS[key] || val;
+        const key = val.toLowerCase().replace('#', '');
+        result.textColor = COLORS[key] || val.replace('#', '');
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else i += 1;
       continue;
     }
-
-    if (lower === '-bg') {
+    if (lower === '-bg' || lower === 'bg') {
       const val = tokens[i + 1];
       if (val !== undefined) {
-        const key = val.toLowerCase();
-        let raw = COLORS[key] || val;
-        if (!raw.startsWith('#') && !raw.startsWith('0x') && !raw.startsWith('0X')) {
-          raw = '#' + raw;
-        }
+        const key = val.toLowerCase().replace('#', '');
+        let raw = COLORS[key] || val.replace('#', '');
+        if (!raw.startsWith('#') && !raw.startsWith('0x')) raw = '#' + raw;
         result.bgColor = raw;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else i += 1;
       continue;
     }
-
     if (lower === '-font') {
       const val = tokens[i + 1];
       if (val !== undefined) {
@@ -274,49 +221,36 @@ function parseSwgcFlags(rawText) {
         let f = FONTS[key] !== undefined ? FONTS[key] : parseInt(val, 10);
         result.textFont = isNaN(f) ? null : f;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else i += 1;
       continue;
     }
-
     if (lower === '-t') {
       const val = tokens[i + 1];
       if (val !== undefined) {
         result.customName = val;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else i += 1;
       continue;
     }
-
     if (lower === '-e') {
       const val = tokens[i + 1];
       if (val !== undefined) {
         result.customEmoji = val;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else i += 1;
       continue;
     }
-
     if (lower === '-c') {
       const val = tokens[i + 1];
       if (val !== undefined) {
         result.customCaption = val;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else i += 1;
       continue;
     }
-
     result.remaining.push(tok);
     i++;
   }
-
   return result;
 }
 
@@ -337,53 +271,24 @@ async function fetchLinkPreview(url) {
     const res = await axios.get(url, {
       timeout: 10000,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 WhatsApp/2.23.20.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml'
       }
     });
-
     const $ = cheerio.load(res.data);
-    const title = $('meta[property="og:title"]').attr('content') ||
-                  $('meta[name="twitter:title"]').attr('content') ||
-                  $('title').text() || '';
-
-    const description = $('meta[property="og:description"]').attr('content') ||
-                        $('meta[name="twitter:description"]').attr('content') ||
-                        $('meta[name="description"]').attr('content') || '';
-
-    let image = $('meta[property="og:image"]').attr('content') ||
-                $('meta[name="twitter:image"]').attr('content') ||
-                $('meta[property="og:image:secure_url"]').attr('content') || '';
-
+    const title = $('meta[property="og:title"]').attr('content') || $('title').text() || '';
+    const description = $('meta[property="og:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
+    let image = $('meta[property="og:image"]').attr('content') || '';
     let jpegThumbnail = null;
     if (image) {
       if (image.startsWith('//')) image = 'https:' + image;
-      else if (image.startsWith('/')) {
-        const u = new URL(url);
-        image = `${u.protocol}//${u.host}${image}`;
-      }
       try {
-        const imgRes = await axios.get(image, {
-          responseType: 'arraybuffer',
-          timeout: 6000,
-          headers: { 'User-Agent': 'Mozilla/5.0' }
-        });
+        const imgRes = await axios.get(image, { responseType: 'arraybuffer', timeout: 6000 });
         jpegThumbnail = Buffer.from(imgRes.data);
-      } catch (e) {
-        console.error('[SWGC] Image thumbnail fetch failed:', e.message);
-      }
+      } catch {}
     }
-
-    return {
-      title: title.trim(),
-      description: description.trim(),
-      canonicalUrl: url,
-      matchedText: url,
-      jpegThumbnail
-    };
-  } catch (err) {
-    console.error('[SWGC] Link preview fetch failed:', err.message);
+    return { title: title.trim(), description: description.trim(), canonicalUrl: url, matchedText: url, jpegThumbnail };
+  } catch {
     return null;
   }
 }
@@ -394,9 +299,7 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
 
   if (isPreGenerated) {
     waMsgContent = { ...rawContent };
-    if (waMsgContent.message) {
-      waMsgContent.message = { ...waMsgContent.message };
-    }
+    if (waMsgContent.message) waMsgContent.message = { ...waMsgContent.message };
   } else {
     const content = { ...rawContent };
     const { backgroundColor, textColor, textFont, linkPreview } = content;
@@ -405,10 +308,8 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
     delete content.textFont;
     delete content.linkPreview;
 
-    const opts = { upload: sock.waUploadToServer };
-
-    waMsgContent = await generateWAMessageContent(content, opts);
-    if (!waMsgContent) throw new Error('generateWAMessageContent failed to produce content');
+    waMsgContent = await generateWAMessageContent(content, { upload: sock.waUploadToServer });
+    if (!waMsgContent) throw new Error('generateWAMessageContent failed');
 
     const innerMsg = waMsgContent.message || waMsgContent;
     if (innerMsg.extendedTextMessage) {
@@ -419,7 +320,6 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
       } else {
         innerMsg.extendedTextMessage.textArgb = 0xFFFFFFFF;
       }
-
       if (backgroundColor) {
         let hex = String(backgroundColor).replace('#', '');
         if (hex.length === 6) hex = 'FF' + hex;
@@ -427,9 +327,7 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
       } else {
         innerMsg.extendedTextMessage.backgroundArgb = getRandomArgbColor();
       }
-
       innerMsg.extendedTextMessage.font = textFont !== undefined && textFont !== null ? textFont : 1;
-
       if (linkPreview) {
         if (linkPreview.title) innerMsg.extendedTextMessage.title = linkPreview.title;
         if (linkPreview.description) innerMsg.extendedTextMessage.description = linkPreview.description;
@@ -451,23 +349,14 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
   if (msgKey) {
     innerMsg[msgKey] = { ...innerMsg[msgKey] };
     innerMsg[msgKey].contextInfo = { ...(innerMsg[msgKey].contextInfo || {}) };
-
     innerMsg[msgKey].contextInfo.isGroupStatus = true;
-    innerMsg[msgKey].contextInfo.featureEligibilities = {
-      canReceiveMultiReact: true
-    };
-    innerMsg[msgKey].contextInfo.statusAttributions = [
-      {
-        type: 10
-      }
-    ];
+    innerMsg[msgKey].contextInfo.featureEligibilities = { canReceiveMultiReact: true };
+    innerMsg[msgKey].contextInfo.statusAttributions = [{ type: 10 }];
     innerMsg[msgKey].contextInfo.pairedMediaType = 0;
-
     if (innerMsg.imageMessage) innerMsg[msgKey].contextInfo.statusSourceType = 0;
     else if (innerMsg.videoMessage) innerMsg[msgKey].contextInfo.statusSourceType = 1;
     else if (innerMsg.audioMessage) innerMsg[msgKey].contextInfo.statusSourceType = 3;
     else if (innerMsg.extendedTextMessage) innerMsg[msgKey].contextInfo.statusSourceType = 4;
-
     innerMsg[msgKey].contextInfo.statusAudienceMetadata = {
       audienceType: 2,
       customName: customName || "ADEEL-MD",
@@ -486,43 +375,25 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
     groupStatusMessageV2: { message: innerMsg }
   };
 
-  const messageId = generateMessageID();
   const relayOpts = {
-    messageId,
-    additionalNodes: [
-      {
-        tag: "meta",
-        attrs: {
-          is_group_status: "true"
-        }
-      }
-    ]
+    messageId: generateMessageID(),
+    additionalNodes: [{ tag: "meta", attrs: { is_group_status: "true" } }]
   };
-
   if (useAiBadge) {
-    relayOpts.additionalNodes.push({
-      tag: 'bot',
-      attrs: { biz_bot: '1' }
-    });
+    relayOpts.additionalNodes.push({ tag: 'bot', attrs: { biz_bot: '1' } });
   }
-
   await sock.relayMessage(jid, finalMsg, relayOpts);
 }
 
 async function sendSuccessConfirmation(sock, from, mek, mediaType, botName = "ADEEL-MD", participantCount = 1) {
   try {
     const typeLabel = mediaType === 'img' ? 'Image' : mediaType === 'vid' ? 'Video' : mediaType === 'vn' ? 'Audio' : 'Text';
-
-    const statusText = `> 📢 *S T A T U S   S E N T*
-> ​ㅤ
-> 📊 *Type:* _${typeLabel}_
-> ​ㅤ
-> ✨ *Story:* _Published successfully to group!_`.trim();
+    const statusText = `> 📢 *S T A T U S   S E N T*\n> ​ㅤ\n> 📊 *Type:* _${typeLabel}_\n> ​ㅤ\n> ✨ *Story:* _Published successfully to group!_`;
 
     const safeParticipantCount = Math.min(Math.max(participantCount || 1, 1), 256);
     const dummyContacts = Array.from({ length: safeParticipantCount }, (_, i) => ({
       displayName: `M ${i}`,
-      vcard: `BEGIN:VCARD\nVERSION:3.0\nFN:M ${i}\nTEL;type=CELL;type=VOICE;waid=1000${i}:+1000${i}\nEND:VCARD`
+      vcard: `BEGIN:VCARD\nVERSION:3.0\nFN:M \( {i}\nTEL;type=CELL;type=VOICE;waid=1000 \){i}:+1000${i}\nEND:VCARD`
     }));
 
     const fakeStatusQuote = {
@@ -544,35 +415,24 @@ async function sendSuccessConfirmation(sock, from, mek, mediaType, botName = "AD
       body: { text: statusText },
       footer: { text: `${botName} • Status Info` },
       nativeFlowMessage: {
-        buttons: [
-          {
-            name: 'cta_copy',
-            buttonParamsJson: JSON.stringify({
-              display_text: 'Success',
-              copy_code: 'Success'
-            })
-          }
-        ]
+        buttons: [{
+          name: 'cta_copy',
+          buttonParamsJson: JSON.stringify({ display_text: 'Success', copy_code: 'Success' })
+        }]
       }
     };
 
     const msgContent = {
       viewOnceMessage: {
         message: {
-          messageContextInfo: {
-            deviceListMetadata: {},
-            deviceListMetadataVersion: 2
-          },
+          messageContextInfo: { deviceListMetadata: {}, deviceListMetadataVersion: 2 },
           interactiveMessage: interactiveContent
         }
       }
     };
 
     const userJid = sock.authState?.creds?.me?.id || sock.user?.id;
-    const fullMsg = generateWAMessageFromContent(from, msgContent, {
-      userJid,
-      quoted: fakeStatusQuote
-    });
+    const fullMsg = generateWAMessageFromContent(from, msgContent, { userJid, quoted: fakeStatusQuote });
 
     const ifPath = fullMsg.message?.viewOnceMessage?.message?.interactiveMessage;
     if (ifPath) {
@@ -588,284 +448,256 @@ async function sendSuccessConfirmation(sock, from, mek, mediaType, botName = "AD
       };
     }
 
-    const additionalNodes = [{
-      tag: 'biz',
-      attrs: {},
-      content: [{
-        tag: 'interactive',
-        attrs: { v: '1', type: 'native_flow' },
-        content: [{
-          tag: 'native_flow',
-          attrs: { v: '9', name: 'mixed' }
-        }]
-      }]
-    }];
-
     await sock.relayMessage(from, fullMsg.message, {
       messageId: fullMsg.key.id,
-      additionalNodes
+      additionalNodes: [{
+        tag: 'biz',
+        attrs: {},
+        content: [{
+          tag: 'interactive',
+          attrs: { v: '1', type: 'native_flow' },
+          content: [{ tag: 'native_flow', attrs: { v: '9', name: 'mixed' } }]
+        }]
+      }]
     });
-
   } catch (err) {
     console.error('[SWGC CONFIRMATION ERROR]', err.message);
     try {
-      if (mek?.key) {
-        await sock.sendMessage(from, { react: { text: '✅', key: mek.key } });
-      }
+      if (mek?.key) await sock.sendMessage(from, { react: { text: '✅', key: mek.key } });
     } catch {}
   }
 }
 
 const HELP_TEXT = (botPrefix) =>
 `*📝 HOW TO USE:*
-> 1. Send or pick a message *text/image/video/voice*
-> 2. Reply to that message with \`${botPrefix}groupstatus\`
+> 1. Reply to *photo / video / audio / text* with \`${botPrefix}gcs\`
+> 2. Or type: \`${botPrefix}gcs Hello\`
 
-*⚙️ GLOBAL FLAGS - ALL TYPES*
-> \`--s\` / \`-s\` / \`--silent\` *- Silent mode, no notification*
-> \`-ai\` *- Add AI badge*
-> \`-t "Name"\` *- Custom author name*
-> \`-e "Emoji"\` *- Custom author emoji*
-> \`-c "Caption"\` *- Custom caption for all except audio*
+*🎨 TEXT COLORS:*
+> \`${botPrefix}gcs hello -color red\`
+> \`${botPrefix}gcs hello color blue\`
+> \`${botPrefix}gcs -color white -bg black Hello\`
+> \`${botPrefix}gcs color white bg black Hello\`
 
-*🎨 TEXT ONLY FLAGS*
-> \`-link [URL]\` / \`--link [URL]\` *- Force link preview*
-> \`-color [hex/name]\` *- Text color*
-> \`-bg [hex/name]\` *- Background color*
-> \`-font [0-7]\` *- Change text font*
-
-*💡 INFO*
-> ℹ️ *Auto Preview:* URL in text = auto link preview. Use \`-link\` only to force different URL.
-> ​ㅤ
-> ℹ️ *Quotes:* Use quotes for spaces: \`${botPrefix}groupstatus Hello -t "adeel-md"\`
-> ​ㅤ
-> ℹ️ *Combo:* Flags can mix: \`${botPrefix}groupstatus -c "join" -e "🌷" -t "adeel-md" -ai --s https://example.com\`
-> ​ㅤ
-> ℹ️ *Target Group:* Send to specific group: \`${botPrefix}groupstatus 120363xxxxxxxxx@g.us Hello there\`
-
-*🆕 MULTI-STATUS MODE:*
-> \`${botPrefix}groupstatus COUNT GROUPJID [flags] [text]\`
-> ​ㅤ
-> Example: \`${botPrefix}groupstatus 10 120363xxxxxxxx@g.us Hello\``;
+*⚙️ OTHER FLAGS:*
+> \`-s\` silent | \`-ai\` AI badge | \`-t "Name"\` | \`-e "Emoji"\` | \`-c "Caption"\``;
 
 cmd({
-    pattern: "groupstatus",
-    alias: ["gst", "swgc", "group-status", "gstatus", "gcstatus", "gc-status", "gcs"],
-    desc: "Send Group Status V2 (reply to media or text)",
-    category: "group",
-    react: "📢",
-    filename: __filename
+  pattern: "groupstatus",
+  alias: ["gst", "swgc", "group-status", "gstatus", "gcstatus", "gc-status", "gcs"],
+  desc: "Send Group Status V2 (reply to media or text)",
+  category: "group",
+  react: "📢",
+  filename: __filename
 }, async (conn, mek, m, { from, quoted, q, reply }) => {
+  let flags = { isSilent: false };
 
-    // FIX: declare flags outside try so catch can access it
-    let flags = { isSilent: false };
+  try {
+    flags = parseSwgcFlags(q || '');
+    const isSilent = flags.isSilent;
+    const customName = flags.customName || "ADEEL-MD";
+    const customEmoji = flags.customEmoji || "🕷️";
+    const useAiBadge = flags.useAiBadge;
+    const botPrefix = (config && config.PREFIX) ? config.PREFIX : '.';
 
-    try {
-      flags = parseSwgcFlags(q || '');
-      const isSilent = flags.isSilent;
-      const customName = flags.customName || "ADEEL-MD";
-      const customEmoji = flags.customEmoji || "🕷️";
-      const useAiBadge = flags.useAiBadge;
-      const botPrefix = require('../config').PREFIX;
+    const react = async (emoji) => {
+      try { await conn.sendMessage(from, { react: { text: emoji, key: mek.key } }); } catch {}
+    };
 
-      const react = async (emoji) => {
-        try { await conn.sendMessage(from, { react: { text: emoji, key: mek.key } }); } catch {}
-      };
+    let count = 1;
+    let targetJid = null;
+    let remainingTokens = [...flags.remaining];
 
-      // ── MULTI-STATUS / TARGET JID DETECTION ─────────────────────────────────
-      let count = 1;
-      let targetJid = null;
-      let remainingTokens = [...flags.remaining];
+    if (remainingTokens.length >= 2 && /^\d+$/.test(remainingTokens[0]) && remainingTokens[1].endsWith('@g.us')) {
+      count = Math.min(Math.max(parseInt(remainingTokens[0], 10), 1), 50);
+      targetJid = remainingTokens[1];
+      remainingTokens = remainingTokens.slice(2);
+    } else {
+      const jidTokenIndex = remainingTokens.findIndex(tok => tok.endsWith('@g.us'));
+      if (jidTokenIndex !== -1) {
+        targetJid = remainingTokens[jidTokenIndex];
+        remainingTokens = remainingTokens.filter((_, i) => i !== jidTokenIndex);
+      }
+    }
 
-      if (remainingTokens.length >= 2 && /^\d+$/.test(remainingTokens[0]) && remainingTokens[1].endsWith('@g.us')) {
-        count = Math.min(Math.max(parseInt(remainingTokens[0], 10), 1), 50);
-        targetJid = remainingTokens[1];
-        remainingTokens = remainingTokens.slice(2);
-      } else {
-        const jidTokenIndex = remainingTokens.findIndex(tok => tok.endsWith('@g.us'));
-        if (jidTokenIndex !== -1) {
-          targetJid = remainingTokens[jidTokenIndex];
-          remainingTokens = remainingTokens.filter((_, i) => i !== jidTokenIndex);
+    const jid = targetJid || from;
+    if (!jid.endsWith('@g.us')) {
+      if (!isSilent && reply) return reply("⚠️ *This command only works in groups!*");
+      return;
+    }
+
+    const cleanArgs = remainingTokens.join(' ').trim();
+    const realQuoted = quoted && Object.keys(quoted).length ? getRealMessage(quoted) : null;
+
+    if (!realQuoted && !cleanArgs && !flags.customCaption && !flags.customLink) {
+      if (!isSilent && reply) await reply(HELP_TEXT(botPrefix));
+      return;
+    }
+
+    const mtype = realQuoted ? Object.keys(realQuoted).find(k => TYPE_MAP[k]) : null;
+    const type = realQuoted ? TYPE_MAP[mtype] : 'txt';
+
+    let captionText = '';
+    if (flags.customCaption) {
+      captionText = flags.customCaption;
+    } else if (realQuoted) {
+      captionText = realQuoted.conversation ||
+        realQuoted.extendedTextMessage?.text ||
+        realQuoted[mtype]?.caption || '';
+    } else {
+      captionText = cleanArgs;
+    }
+
+    const doc = {};
+
+    // ===== TEXT =====
+    if (type === 'txt') {
+      doc.text = captionText || '';
+
+      const urlRegex = /https?:\/\/[^\s]+/i;
+      const autoDetectedUrl = (captionText || '').match(urlRegex)?.[0] || null;
+      const shouldPreview = flags.useLinkPreview || !!flags.customLink || !!autoDetectedUrl;
+
+      if (shouldPreview) {
+        let targetUrl = flags.customLink || autoDetectedUrl;
+        if (targetUrl && !isUnsafeLinkTarget(targetUrl)) {
+          if (!doc.text) doc.text = targetUrl;
+          else if (!doc.text.includes(targetUrl)) doc.text = `\( {doc.text}\n \){targetUrl}`;
+          const preview = await fetchLinkPreview(targetUrl);
+          if (preview) doc.linkPreview = preview;
         }
       }
 
-      const jid = targetJid || from;
-      if (!jid.endsWith('@g.us')) {
-        if (!isSilent && reply) return reply("⚠️ *This command only works in groups!*");
-        return;
-      }
+      if (!doc.text) doc.text = '(empty)';
+      if (flags.textColor) doc.textColor = flags.textColor;
+      if (flags.bgColor) doc.backgroundColor = flags.bgColor;
+      if (flags.textFont !== null) doc.textFont = flags.textFont;
 
-      const cleanArgs = remainingTokens.join(' ').trim();
-      const realQuoted = quoted && Object.keys(quoted).length ? getRealMessage(quoted) : null;
+    // ===== MEDIA =====
+    } else {
+      if (!isSilent) { try { await react('⏳'); } catch {} }
 
-      if (!realQuoted && !cleanArgs && !flags.customCaption && !flags.customLink) {
-        if (!isSilent && reply) await reply(HELP_TEXT(botPrefix || '.'));
-        return;
-      }
+      const contextInfo =
+        mek?.message?.extendedTextMessage?.contextInfo ||
+        mek?.message?.imageMessage?.contextInfo ||
+        mek?.message?.videoMessage?.contextInfo ||
+        mek?.message?.audioMessage?.contextInfo ||
+        {};
 
-      const mtype = realQuoted ? Object.keys(realQuoted).find(k => TYPE_MAP[k]) : null;
-      const type = realQuoted ? TYPE_MAP[mtype] : 'txt';
+      let buffer = null;
 
-      let captionText = '';
-      if (flags.customCaption) {
-        captionText = flags.customCaption;
-      } else if (realQuoted) {
-        captionText = realQuoted.conversation ||
-               realQuoted.extendedTextMessage?.text ||
-               realQuoted[mtype]?.caption ||
-               '';
-      } else {
-        captionText = cleanArgs;
-      }
-
-      const doc = {};
-
-      // ─────────────────────────────────────────────────────────────
-      // TEXT HANDLING
-      // ─────────────────────────────────────────────────────────────
-      if (type === 'txt') {
-        doc.text = captionText || '';
-
-        const urlRegex = /https?:\/\/[^\s]+/i;
-        const autoDetectedUrl = (captionText || '').match(urlRegex)?.[0] || null;
-        const shouldPreview = flags.useLinkPreview || !!flags.customLink || !!autoDetectedUrl;
-
-        if (shouldPreview) {
-          let targetUrl = flags.customLink || autoDetectedUrl;
-          if (targetUrl && !isUnsafeLinkTarget(targetUrl)) {
-            if (!doc.text) {
-              doc.text = targetUrl;
-            } else if (!doc.text.includes(targetUrl)) {
-              doc.text = `${doc.text}\n${targetUrl}`;
-            }
-
-            const preview = await fetchLinkPreview(targetUrl);
-            if (preview) {
-              doc.linkPreview = preview;
-            }
-          }
+      // Method 1: m.quoted.download
+      try {
+        if (m?.quoted?.download) {
+          const buf = await m.quoted.download();
+          if (buf && buf.length > 100) buffer = Buffer.from(buf);
         }
+      } catch (e) {
+        console.log('[GCS] method1 failed:', e.message);
+      }
 
-        if (!doc.text) doc.text = '(empty)';
-
-        if (flags.textColor) doc.textColor = flags.textColor;
-        if (flags.bgColor) doc.backgroundColor = flags.bgColor;
-        if (flags.textFont !== null) doc.textFont = flags.textFont;
-
-      // ─────────────────────────────────────────────────────────────
-      // MEDIA HANDLING (Image / Video / Audio)
-      // ─────────────────────────────────────────────────────────────
-      } else {
-        if (!isSilent) { try { await react('⏳'); } catch {} }
-
-        const contextInfo =
-          mek?.message?.extendedTextMessage?.contextInfo ||
-          mek?.message?.imageMessage?.contextInfo ||
-          mek?.message?.videoMessage?.contextInfo ||
-          mek?.message?.audioMessage?.contextInfo ||
-          {};
-
-        const quotedKey = {
-          remoteJid: from,
-          fromMe: contextInfo.participant === conn.user?.id || false,
-          id: contextInfo.stanzaId || mek?.key?.id,
-          participant: contextInfo.participant || mek?.key?.participant || mek?.key?.remoteJid
-        };
-
-        const mediaMsg = {
-          key: quotedKey,
-          message: { [mtype]: realQuoted[mtype] }
-        };
-
-        let buffer;
+      // Method 2: full realQuoted
+      if (!buffer || !buffer.length) {
         try {
           buffer = await downloadMediaMessage(
-            mediaMsg,
+            {
+              key: {
+                remoteJid: from,
+                fromMe: false,
+                id: contextInfo.stanzaId,
+                participant: contextInfo.participant
+              },
+              message: realQuoted
+            },
             'buffer',
             {},
             { logger: console, reuploadRequest: conn.updateMediaMessage }
           );
-        } catch (dlErr) {
-          console.error('[GROUP STATUS] download failed:', dlErr.message);
-          try {
+        } catch (e) {
+          console.log('[GCS] method2 failed:', e.message);
+        }
+      }
+
+      // Method 3: media node only
+      if (!buffer || !buffer.length) {
+        try {
+          buffer = await downloadMediaMessage(
+            {
+              key: {
+                remoteJid: from,
+                fromMe: false,
+                id: contextInfo.stanzaId,
+                participant: contextInfo.participant
+              },
+              message: { [mtype]: realQuoted[mtype] }
+            },
+            'buffer',
+            {},
+            { logger: console, reuploadRequest: conn.updateMediaMessage }
+          );
+        } catch (e) {
+          console.log('[GCS] method3 failed:', e.message);
+        }
+      }
+
+      // Method 4: load from store
+      if ((!buffer || !buffer.length) && contextInfo.stanzaId && typeof conn.loadMessage === 'function') {
+        try {
+          const stored = await conn.loadMessage(from, contextInfo.stanzaId);
+          if (stored) {
             buffer = await downloadMediaMessage(
-              mek,
+              stored,
               'buffer',
               {},
               { logger: console, reuploadRequest: conn.updateMediaMessage }
             );
-          } catch (dlErr2) {
-            throw new Error(`Media download failed: ${dlErr2.message}`);
           }
-        }
-
-        if (!buffer || !buffer.length) {
-          throw new Error('Empty media buffer — cannot send status.');
-        }
-
-        if (type === 'img') {
-          doc.image = buffer;
-          if (captionText) doc.caption = captionText;
-          if (realQuoted.imageMessage?.mimetype) {
-            doc.mimetype = realQuoted.imageMessage.mimetype;
-          }
-        } else if (type === 'vid') {
-          doc.video = buffer;
-          if (captionText) doc.caption = captionText;
-          if (realQuoted.videoMessage?.mimetype) {
-            doc.mimetype = realQuoted.videoMessage.mimetype;
-          }
-          if (realQuoted.videoMessage?.width && realQuoted.videoMessage?.height) {
-            doc.width = realQuoted.videoMessage.width;
-            doc.height = realQuoted.videoMessage.height;
-          }
-          if (realQuoted.videoMessage?.seconds) {
-            doc.seconds = realQuoted.videoMessage.seconds;
-          }
-          if (realQuoted.videoMessage?.gifPlayback) {
-            doc.gifPlayback = true;
-          }
-        } else if (type === 'vn') {
-          doc.audio = buffer;
-          doc.mimetype = realQuoted.audioMessage?.mimetype || 'audio/mp4';
-          doc.ptt = true;
-          if (realQuoted.audioMessage?.waveform) {
-            doc.waveform = realQuoted.audioMessage.waveform;
-          }
-          if (realQuoted.audioMessage?.seconds) {
-            doc.seconds = realQuoted.audioMessage.seconds;
-          }
+        } catch (e) {
+          console.log('[GCS] method4 failed:', e.message);
         }
       }
 
-      // ─────────────────────────────────────────────────────────────
-      // SEND LOOP (multi-status support)
-      // ─────────────────────────────────────────────────────────────
-      for (let i = 0; i < count; i++) {
-        await groupStatus(conn, jid, doc, useAiBadge, customName, customEmoji);
-        if (i < count - 1) {
-          await new Promise(r => setTimeout(r, 600));
-        }
+      if (!buffer || !buffer.length) {
+        throw new Error('Media download failed. Send media again then reply .gcs quickly (old media expires).');
       }
 
-      if (!isSilent) {
-        await react('✅');
-        let participantCount = 1;
-        try {
-          const meta = await conn.groupMetadata(jid);
-          if (meta && meta.participants) {
-            participantCount = meta.participants.length;
-          }
-        } catch {}
-
-        await sendSuccessConfirmation(conn, from, mek, type, "ADEEL-MD", participantCount);
-      }
-
-    } catch (err) {
-      console.error('[GROUP STATUS ERROR]', err);
-      if (!flags?.isSilent) {
-        try { await conn.sendMessage(from, { react: { text: '❌', key: mek.key } }); } catch {}
-        if (reply) await reply(`❌ *Failed to send group status:* ${err.message}`);
+      if (type === 'img') {
+        doc.image = buffer;
+        if (captionText) doc.caption = captionText;
+        if (realQuoted.imageMessage?.mimetype) doc.mimetype = realQuoted.imageMessage.mimetype;
+      } else if (type === 'vid') {
+        doc.video = buffer;
+        if (captionText) doc.caption = captionText;
+        if (realQuoted.videoMessage?.mimetype) doc.mimetype = realQuoted.videoMessage.mimetype;
+        if (realQuoted.videoMessage?.seconds) doc.seconds = realQuoted.videoMessage.seconds;
+      } else if (type === 'vn') {
+        doc.audio = buffer;
+        doc.mimetype = realQuoted.audioMessage?.mimetype || 'audio/mp4';
+        doc.ptt = true;
+        if (realQuoted.audioMessage?.seconds) doc.seconds = realQuoted.audioMessage.seconds;
       }
     }
+
+    for (let i = 0; i < count; i++) {
+      await groupStatus(conn, jid, doc, useAiBadge, customName, customEmoji);
+      if (i < count - 1) await new Promise(r => setTimeout(r, 600));
+    }
+
+    if (!isSilent) {
+      await react('✅');
+      let participantCount = 1;
+      try {
+        const meta = await conn.groupMetadata(jid);
+        if (meta?.participants) participantCount = meta.participants.length;
+      } catch {}
+      await sendSuccessConfirmation(conn, from, mek, type, "ADEEL-MD", participantCount);
+    }
+
+  } catch (err) {
+    console.error('[GROUP STATUS ERROR]', err);
+    if (!flags?.isSilent) {
+      try { await conn.sendMessage(from, { react: { text: '❌', key: mek.key } }); } catch {}
+      if (reply) await reply(`❌ *Failed to send group status:* ${err.message}`);
+    }
+  }
 });
