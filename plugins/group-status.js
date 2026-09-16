@@ -42,8 +42,7 @@ const { cmd } = require("../command");
 const COLORS = {
   red: 'FF0000', blue: '1DA1F2', green: '25D366', yellow: 'FFD700',
   black: '000000', white: 'FFFFFF', purple: '7B2CBF', pink: 'FFC0CB',
-  orange: 'FFA500', cyan: '00FFFF', gray: '808080', navy: '001F5B',
-  merah: 'FF0000', hijau: '00FF00', biru: '0000FF'
+  orange: 'FFA500', cyan: '00FFFF', gray: '808080', navy: '001F5B'
 };
 
 const RANDOM_BG = [
@@ -71,7 +70,6 @@ function resolveColor(val) {
   const key = val.toLowerCase();
   if (COLORS[key]) return COLORS[key];
   if (/^[0-9A-Fa-f]{6}$/.test(val)) return val.toUpperCase();
-  if (/^[0-9A-Fa-f]{8}$/.test(val)) return val.toUpperCase().slice(-6);
   return null;
 }
 
@@ -79,7 +77,6 @@ function parseFlags(text) {
   const result = { textColor: null, bgColor: null, remaining: '' };
   if (!text) return result;
 
-  // Normalize: "color white", "-color white", "color: white", "- bg black"
   let cleaned = text
     .replace(/[-–—]?\s*color\s*[:\-]?\s*/gi, ' -color ')
     .replace(/[-–—]?\s*bg\s*[:\-]?\s*/gi, ' -bg ')
@@ -114,11 +111,12 @@ function parseFlags(text) {
 
 async function sendGroupStatus(sock, jid, content) {
   const opts = { upload: sock.waUploadToServer };
-  let waMsgContent = await generateWAMessageContent(content, opts);
-  if (!waMsgContent) throw new Error('Failed to generate message content');
+  const waMsgContent = await generateWAMessageContent(content, opts);
+  if (!waMsgContent) throw new Error('Failed to generate content');
 
   const innerMsg = waMsgContent.message || waMsgContent;
 
+  // Text colors only
   if (innerMsg.extendedTextMessage) {
     if (content.textColor) {
       let hex = String(content.textColor).replace('#', '');
@@ -135,7 +133,6 @@ async function sendGroupStatus(sock, jid, content) {
     } else {
       innerMsg.extendedTextMessage.backgroundArgb = getRandomBg();
     }
-
     innerMsg.extendedTextMessage.font = 1;
   }
 
@@ -143,22 +140,22 @@ async function sendGroupStatus(sock, jid, content) {
     innerMsg[k] && typeof innerMsg[k] === 'object' && k !== 'messageContextInfo'
   );
 
-  if (msgKey) {
-    innerMsg[msgKey] = { ...innerMsg[msgKey] };
-    innerMsg[msgKey].contextInfo = {
-      ...(innerMsg[msgKey].contextInfo || {}),
-      isGroupStatus: true,
-      featureEligibilities: { canReceiveMultiReact: true },
-      statusAttributions: [{ type: 10 }],
-      pairedMediaType: 0,
-      statusSourceType: innerMsg.imageMessage ? 0 : innerMsg.videoMessage ? 1 : innerMsg.audioMessage ? 3 : 4,
-      statusAudienceMetadata: {
-        audienceType: 2,
-        customName: "ADEEL-MD",
-        customEmoji: "🕷️"
-      }
-    };
-  }
+  if (!msgKey) throw new Error('No valid message type found');
+
+  innerMsg[msgKey] = { ...innerMsg[msgKey] };
+  innerMsg[msgKey].contextInfo = {
+    ...(innerMsg[msgKey].contextInfo || {}),
+    isGroupStatus: true,
+    featureEligibilities: { canReceiveMultiReact: true },
+    statusAttributions: [{ type: 10 }],
+    pairedMediaType: 0,
+    statusSourceType: innerMsg.imageMessage ? 0 : innerMsg.videoMessage ? 1 : innerMsg.audioMessage ? 3 : 4,
+    statusAudienceMetadata: {
+      audienceType: 2,
+      customName: "ADEEL-MD",
+      customEmoji: "🕷️"
+    }
+  };
 
   const finalMsg = {
     senderKeyDistributionMessage: {
@@ -199,16 +196,12 @@ cmd({
 1. Reply to photo/video/audio/text:
 \`.gcs\`
 
-2. Text status:
+2. Text:
 \`.gcs Hello\`
 
-3. With colors:
+3. Colors:
 \`.gcs hello -color red\`
-\`.gcs hello color blue\`
-\`.gcs -color white -bg black Hello\`
-\`.gcs color white bg black Hello\`
-
-Colors: red, blue, green, yellow, black, white, purple, pink, orange`);
+\`.gcs color white bg black Hello\``);
     }
 
     const TYPE_MAP = {
@@ -220,43 +213,73 @@ Colors: red, blue, green, yellow, black, white, purple, pink, orange`);
     };
 
     const mtype = realQuoted ? Object.keys(realQuoted).find(k => TYPE_MAP[k]) : null;
-    const type = realQuoted ? TYPE_MAP[mtype] : 'txt';
+    const type = realQuoted ? (TYPE_MAP[mtype] || 'txt') : 'txt';
 
     let captionText = '';
     if (realQuoted) {
-      captionText = realQuoted.conversation ||
+      captionText =
+        realQuoted.conversation ||
         realQuoted.extendedTextMessage?.text ||
-        realQuoted[mtype]?.caption || '';
+        realQuoted[mtype]?.caption ||
+        '';
     } else {
       captionText = flags.remaining;
     }
 
     const doc = {};
 
+    // ===== TEXT =====
     if (type === 'txt') {
       doc.text = captionText || '(empty)';
       if (flags.textColor) doc.textColor = flags.textColor;
       if (flags.bgColor) doc.backgroundColor = flags.bgColor;
-    } else {
+    }
+    // ===== MEDIA =====
+    else {
       await conn.sendMessage(from, { react: { text: '⏳', key: mek.key } });
 
-      const contextInfo = mek?.message?.extendedTextMessage?.contextInfo || {};
+      // Proper quoted message for download
+      const ctx = mek?.message?.extendedTextMessage?.contextInfo ||
+                  mek?.message?.imageMessage?.contextInfo ||
+                  mek?.message?.videoMessage?.contextInfo || {};
+
       const mediaMsg = {
         key: {
           remoteJid: from,
           fromMe: false,
-          id: contextInfo.stanzaId || mek?.key?.id,
-          participant: contextInfo.participant || mek?.key?.participant
+          id: ctx.stanzaId || quoted?.id || mek?.key?.id,
+          participant: ctx.participant || mek?.key?.participant || undefined
         },
-        message: { [mtype]: realQuoted[mtype] }
+        message: realQuoted
       };
 
-      const buffer = await downloadMediaMessage(
-        mediaMsg,
-        'buffer',
-        {},
-        { logger: console, reuploadRequest: conn.updateMediaMessage }
-      );
+      let buffer;
+      try {
+        buffer = await downloadMediaMessage(
+          mediaMsg,
+          'buffer',
+          {},
+          {
+            logger: console,
+            reuploadRequest: conn.updateMediaMessage
+          }
+        );
+      } catch (dlErr) {
+        // Fallback: try with m directly if quoted object shape differs
+        buffer = await downloadMediaMessage(
+          {
+            key: mek.key,
+            message: { [mtype]: realQuoted[mtype] }
+          },
+          'buffer',
+          {},
+          { reuploadRequest: conn.updateMediaMessage }
+        );
+      }
+
+      if (!buffer || !Buffer.isBuffer(buffer) || buffer.length < 100) {
+        throw new Error('Media download failed or file too small');
+      }
 
       if (type === 'img') {
         doc.image = buffer;
