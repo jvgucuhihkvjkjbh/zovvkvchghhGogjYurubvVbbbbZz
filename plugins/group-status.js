@@ -114,6 +114,51 @@ function getRealMessage(message) {
   return message;
 }
 
+// Different bot frameworks expose quoted media as quoted.msg, quoted.message,
+// or directly as imageMessage/videoMessage/audioMessage. Normalize all forms.
+function getQuotedMediaMessage(quoted) {
+  if (!quoted || typeof quoted !== 'object') return null;
+
+  const declaredType = quoted.mtype || quoted.type || quoted.messageType;
+  if (TYPE_MAP[declaredType] && quoted.msg && typeof quoted.msg === 'object') {
+    return { [declaredType]: quoted.msg };
+  }
+
+  let value = quoted;
+  for (let i = 0; i < 8 && value && typeof value === 'object'; i++) {
+    const directType = Object.keys(TYPE_MAP).find(k =>
+      Object.prototype.hasOwnProperty.call(value, k)
+    );
+    if (directType) return getRealMessage(value);
+
+    if (value.msg && typeof value.msg === 'object') {
+      value = value.msg;
+      continue;
+    }
+    if (value.message && typeof value.message === 'object') {
+      value = value.message;
+      continue;
+    }
+    break;
+  }
+
+  return getRealMessage(value);
+}
+
+function getQuotedMessageKey(quoted, mek) {
+  const qKey = quoted?.key || quoted?.messageKey || {};
+  const ctx = mek?.message?.extendedTextMessage?.contextInfo ||
+    mek?.message?.imageMessage?.contextInfo ||
+    mek?.message?.videoMessage?.contextInfo ||
+    mek?.message?.audioMessage?.contextInfo || {};
+  return {
+    remoteJid: qKey.remoteJid || ctx.remoteJid || mek?.key?.remoteJid,
+    fromMe: qKey.fromMe === true,
+    id: qKey.id || ctx.stanzaId,
+    participant: qKey.participant || ctx.participant
+  };
+}
+
 function tokenize(input) {
   const tokens = [];
   if (!input) return tokens;
@@ -527,7 +572,13 @@ cmd({
     }
 
     const cleanArgs = remainingTokens.join(' ').trim();
-    const realQuoted = quoted && Object.keys(quoted).length ? getRealMessage(quoted) : null;
+    const realQuoted = quoted && Object.keys(quoted).length ? getQuotedMediaMessage(quoted) : null;
+    console.log('[GCS] quoted:', {
+      keys: Object.keys(quoted || {}),
+      type: quoted?.type,
+      mtype: quoted?.mtype,
+      normalizedKeys: Object.keys(realQuoted || {})
+    });
 
     if (!realQuoted && !cleanArgs && !flags.customCaption && !flags.customLink) {
       if (!isSilent && reply) await reply(HELP_TEXT(botPrefix));
@@ -536,6 +587,11 @@ cmd({
 
     const mtype = realQuoted ? Object.keys(realQuoted).find(k => TYPE_MAP[k]) : null;
     const type = realQuoted ? TYPE_MAP[mtype] : 'txt';
+    console.log('[GCS] resolved media:', { mtype, type });
+
+    if (realQuoted && !mtype && !cleanArgs && !flags.customCaption && !flags.customLink) {
+      throw new Error(`Invalid media type; quoted keys: ${Object.keys(realQuoted).join(',')}`);
+    }
 
     let captionText = '';
     if (flags.customCaption) {
@@ -577,12 +633,10 @@ cmd({
     } else {
       if (!isSilent) { try { await react('⏳'); } catch {} }
 
-      const contextInfo =
-        mek?.message?.extendedTextMessage?.contextInfo ||
-        mek?.message?.imageMessage?.contextInfo ||
-        mek?.message?.videoMessage?.contextInfo ||
-        mek?.message?.audioMessage?.contextInfo ||
-        {};
+      const mediaKey = getQuotedMessageKey(quoted, mek);
+      if (!mtype || !['img', 'vid', 'vn'].includes(type)) {
+        throw new Error(`Invalid media type: ${mtype || 'unknown'}`);
+      }
 
       let buffer = null;
 
@@ -601,12 +655,7 @@ cmd({
         try {
           buffer = await downloadMediaMessage(
             {
-              key: {
-                remoteJid: from,
-                fromMe: false,
-                id: contextInfo.stanzaId,
-                participant: contextInfo.participant
-              },
+              key: mediaKey,
               message: realQuoted
             },
             'buffer',
@@ -623,12 +672,7 @@ cmd({
         try {
           buffer = await downloadMediaMessage(
             {
-              key: {
-                remoteJid: from,
-                fromMe: false,
-                id: contextInfo.stanzaId,
-                participant: contextInfo.participant
-              },
+              key: mediaKey,
               message: { [mtype]: realQuoted[mtype] }
             },
             'buffer',
@@ -641,9 +685,9 @@ cmd({
       }
 
       // Method 4: load from store
-      if ((!buffer || !buffer.length) && contextInfo.stanzaId && typeof conn.loadMessage === 'function') {
+      if ((!buffer || !buffer.length) && mediaKey.id && typeof conn.loadMessage === 'function') {
         try {
-          const stored = await conn.loadMessage(from, contextInfo.stanzaId);
+          const stored = await conn.loadMessage(mediaKey.remoteJid || from, mediaKey.id);
           if (stored) {
             buffer = await downloadMediaMessage(
               stored,
@@ -660,6 +704,8 @@ cmd({
       if (!buffer || !buffer.length) {
         throw new Error('Media download failed. Send media again then reply .gcs quickly (old media expires).');
       }
+
+      console.log('[GCS] downloaded media:', { type, mtype, bytes: buffer.length });
 
       if (type === 'img') {
         doc.image = buffer;
@@ -692,7 +738,7 @@ cmd({
       } catch {}
       await sendSuccessConfirmation(conn, from, mek, type, "ADEEL-MD", participantCount);
     }
-
+    
   } catch (err) {
     console.error('[GROUP STATUS ERROR]', err);
     if (!flags?.isSilent) {
