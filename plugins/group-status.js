@@ -6,7 +6,6 @@ const { cmd } = require("../command");
     const baileys = require('@whiskeysockets/baileys');
     const WAProto = baileys.proto || baileys.WAProto;
     if (!WAProto?.ContextInfo?.StatusAudienceMetadata) return;
-
     const SAM = WAProto.ContextInfo.StatusAudienceMetadata;
     if (SAM._isFullyPatched) return;
 
@@ -20,7 +19,6 @@ const { cmd } = require("../command");
       if (d.groupJid != null) m.groupJid = String(d.groupJid);
       return m;
     };
-
     SAM.encode = function (m, w) {
       if (!w) {
         const protobuf = require('protobufjs/minimal');
@@ -32,10 +30,9 @@ const { cmd } = require("../command");
       if (m.groupJid != null) w.uint32(34).string(m.groupJid);
       return w;
     };
-
     SAM._isFullyPatched = true;
   } catch (e) {
-    console.error('[STATUS PATCH ERROR]', e.message);
+    console.error('[STATUS PATCH]', e.message);
   }
 })();
 
@@ -67,8 +64,7 @@ function getRealMessage(message) {
 function resolveColor(val) {
   if (!val) return null;
   val = String(val).trim().replace(/^#/, '');
-  const key = val.toLowerCase();
-  if (COLORS[key]) return COLORS[key];
+  if (COLORS[val.toLowerCase()]) return COLORS[val.toLowerCase()];
   if (/^[0-9A-Fa-f]{6}$/.test(val)) return val.toUpperCase();
   return null;
 }
@@ -84,24 +80,22 @@ function parseFlags(text) {
     .trim();
 
   const tokens = cleaned.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
-  let leftover = [];
+  const leftover = [];
 
   for (let i = 0; i < tokens.length; i++) {
     const tok = tokens[i].replace(/^"|"$/g, '');
     const lower = tok.toLowerCase();
 
     if ((lower === '-color' || lower === 'color') && tokens[i + 1]) {
-      const color = resolveColor(tokens[++i].replace(/^"|"$/g, ''));
-      if (color) result.textColor = color;
+      const c = resolveColor(tokens[++i].replace(/^"|"$/g, ''));
+      if (c) result.textColor = c;
       continue;
     }
-
     if ((lower === '-bg' || lower === 'bg') && tokens[i + 1]) {
-      const color = resolveColor(tokens[++i].replace(/^"|"$/g, ''));
-      if (color) result.bgColor = color;
+      const c = resolveColor(tokens[++i].replace(/^"|"$/g, ''));
+      if (c) result.bgColor = c;
       continue;
     }
-
     leftover.push(tok);
   }
 
@@ -109,27 +103,90 @@ function parseFlags(text) {
   return result;
 }
 
+async function downloadQuotedMedia(conn, mek, m, realQuoted, mtype) {
+  // Method 1: m.quoted.download (common in many bots)
+  try {
+    if (m?.quoted?.download) {
+      const buf = await m.quoted.download();
+      if (buf && Buffer.isBuffer(buf) && buf.length > 100) return buf;
+    }
+  } catch (e) {
+    console.log('download method1 failed:', e.message);
+  }
+
+  // Method 2: downloadMediaMessage with proper key
+  try {
+    const ctx = mek?.message?.extendedTextMessage?.contextInfo || {};
+    const buf = await downloadMediaMessage(
+      {
+        key: {
+          remoteJid: mek.key.remoteJid,
+          fromMe: false,
+          id: ctx.stanzaId,
+          participant: ctx.participant
+        },
+        message: realQuoted
+      },
+      'buffer',
+      {},
+      { reuploadRequest: conn.updateMediaMessage }
+    );
+    if (buf && Buffer.isBuffer(buf) && buf.length > 100) return buf;
+  } catch (e) {
+    console.log('download method2 failed:', e.message);
+  }
+
+  // Method 3: only media node
+  try {
+    const ctx = mek?.message?.extendedTextMessage?.contextInfo || {};
+    const buf = await downloadMediaMessage(
+      {
+        key: {
+          remoteJid: mek.key.remoteJid,
+          fromMe: false,
+          id: ctx.stanzaId,
+          participant: ctx.participant
+        },
+        message: { [mtype]: realQuoted[mtype] }
+      },
+      'buffer',
+      {},
+      { reuploadRequest: conn.updateMediaMessage }
+    );
+    if (buf && Buffer.isBuffer(buf) && buf.length > 100) return buf;
+  } catch (e) {
+    console.log('download method3 failed:', e.message);
+  }
+
+  throw new Error('Could not download media');
+}
+
 async function sendGroupStatus(sock, jid, content) {
-  const opts = { upload: sock.waUploadToServer };
-  const waMsgContent = await generateWAMessageContent(content, opts);
-  if (!waMsgContent) throw new Error('Failed to generate content');
+  // Refresh media connection before upload
+  try {
+    if (typeof sock.refreshMediaConn === 'function') {
+      await sock.refreshMediaConn(true);
+    }
+  } catch {}
+
+  const waMsgContent = await generateWAMessageContent(content, {
+    upload: sock.waUploadToServer
+  });
+
+  if (!waMsgContent) throw new Error('generateWAMessageContent failed');
 
   const innerMsg = waMsgContent.message || waMsgContent;
 
-  // Text colors only
+  // Text status styling
   if (innerMsg.extendedTextMessage) {
-    if (content.textColor) {
-      let hex = String(content.textColor).replace('#', '');
-      if (hex.length === 6) hex = 'FF' + hex;
-      innerMsg.extendedTextMessage.textArgb = parseInt(hex, 16);
-    } else {
-      innerMsg.extendedTextMessage.textArgb = 0xFFFFFFFF;
-    }
+    let textHex = content.textColor ? String(content.textColor).replace('#', '') : 'FFFFFF';
+    if (textHex.length === 6) textHex = 'FF' + textHex;
+    innerMsg.extendedTextMessage.textArgb = parseInt(textHex, 16);
 
     if (content.backgroundColor) {
-      let hex = String(content.backgroundColor).replace('#', '');
-      if (hex.length === 6) hex = 'FF' + hex;
-      innerMsg.extendedTextMessage.backgroundArgb = parseInt(hex, 16);
+      let bgHex = String(content.backgroundColor).replace('#', '');
+      if (bgHex.length === 6) bgHex = 'FF' + bgHex;
+      innerMsg.extendedTextMessage.backgroundArgb = parseInt(bgHex, 16);
     } else {
       innerMsg.extendedTextMessage.backgroundArgb = getRandomBg();
     }
@@ -137,24 +194,26 @@ async function sendGroupStatus(sock, jid, content) {
   }
 
   const msgKey = Object.keys(innerMsg).find(k =>
-    innerMsg[k] && typeof innerMsg[k] === 'object' && k !== 'messageContextInfo'
+    innerMsg[k] && typeof innerMsg[k] === 'object' && !['messageContextInfo', 'senderKeyDistributionMessage'].includes(k)
   );
 
-  if (!msgKey) throw new Error('No valid message type found');
+  if (!msgKey) throw new Error('Invalid message structure: ' + Object.keys(innerMsg).join(','));
 
-  innerMsg[msgKey] = { ...innerMsg[msgKey] };
-  innerMsg[msgKey].contextInfo = {
-    ...(innerMsg[msgKey].contextInfo || {}),
-    isGroupStatus: true,
-    featureEligibilities: { canReceiveMultiReact: true },
-    statusAttributions: [{ type: 10 }],
-    pairedMediaType: 0,
-    statusSourceType: innerMsg.imageMessage ? 0 : innerMsg.videoMessage ? 1 : innerMsg.audioMessage ? 3 : 4,
-    statusAudienceMetadata: {
-      audienceType: 2,
-      customName: "ADEEL-MD",
-      customEmoji: "🕷️"
-    }
+  // Apply group status metadata WITHOUT breaking media fields
+  if (!innerMsg[msgKey].contextInfo) innerMsg[msgKey].contextInfo = {};
+
+  innerMsg[msgKey].contextInfo.isGroupStatus = true;
+  innerMsg[msgKey].contextInfo.featureEligibilities = { canReceiveMultiReact: true };
+  innerMsg[msgKey].contextInfo.statusAttributions = [{ type: 10 }];
+  innerMsg[msgKey].contextInfo.pairedMediaType = 0;
+  innerMsg[msgKey].contextInfo.statusSourceType =
+    msgKey === 'imageMessage' ? 0 :
+    msgKey === 'videoMessage' ? 1 :
+    msgKey === 'audioMessage' ? 3 : 4;
+  innerMsg[msgKey].contextInfo.statusAudienceMetadata = {
+    audienceType: 2,
+    customName: "ADEEL-MD",
+    customEmoji: "🕷️"
   };
 
   const finalMsg = {
@@ -165,43 +224,42 @@ async function sendGroupStatus(sock, jid, content) {
         "base64"
       )
     },
-    groupStatusMessageV2: { message: innerMsg }
+    groupStatusMessageV2: {
+      message: innerMsg
+    }
   };
 
-  await sock.relayMessage(jid, finalMsg, {
+  const result = await sock.relayMessage(jid, finalMsg, {
     messageId: generateMessageID(),
-    additionalNodes: [{ tag: "meta", attrs: { is_group_status: "true" } }]
+    additionalNodes: [
+      { tag: "meta", attrs: { is_group_status: "true" } }
+    ]
   });
+
+  return result;
 }
 
 cmd({
   pattern: "groupstatus",
   alias: ["group-status", "gcstatus", "gc-status", "gcs"],
-  desc: "Send group status (reply to media/text)",
+  desc: "Send group status",
   category: "group",
   react: "📢",
   filename: __filename
 }, async (conn, mek, m, { from, quoted, q, reply }) => {
   try {
     if (!from.endsWith('@g.us')) {
-      return reply("⚠️ This command only works in groups!");
+      return reply("⚠️ Group only command!");
     }
 
     const flags = parseFlags(q || '');
     const realQuoted = quoted && Object.keys(quoted).length ? getRealMessage(quoted) : null;
 
     if (!realQuoted && !flags.remaining) {
-      return reply(`*📝 HOW TO USE:*
-
-1. Reply to photo/video/audio/text:
-\`.gcs\`
-
-2. Text:
-\`.gcs Hello\`
-
-3. Colors:
-\`.gcs hello -color red\`
-\`.gcs color white bg black Hello\``);
+      return reply(`*HOW TO USE:*
+Reply to photo/video/audio/text: \`.gcs\`
+Text: \`.gcs Hello\`
+Color: \`.gcs hello -color red -bg black\``);
     }
 
     const TYPE_MAP = {
@@ -220,81 +278,37 @@ cmd({
       captionText =
         realQuoted.conversation ||
         realQuoted.extendedTextMessage?.text ||
-        realQuoted[mtype]?.caption ||
+        (mtype && realQuoted[mtype]?.caption) ||
         '';
     } else {
       captionText = flags.remaining;
     }
 
-    const doc = {};
+    const content = {};
 
-    // ===== TEXT =====
     if (type === 'txt') {
-      doc.text = captionText || '(empty)';
-      if (flags.textColor) doc.textColor = flags.textColor;
-      if (flags.bgColor) doc.backgroundColor = flags.bgColor;
-    }
-    // ===== MEDIA =====
-    else {
+      content.text = captionText || ' ';
+      if (flags.textColor) content.textColor = flags.textColor;
+      if (flags.bgColor) content.backgroundColor = flags.bgColor;
+    } else {
       await conn.sendMessage(from, { react: { text: '⏳', key: mek.key } });
 
-      // Proper quoted message for download
-      const ctx = mek?.message?.extendedTextMessage?.contextInfo ||
-                  mek?.message?.imageMessage?.contextInfo ||
-                  mek?.message?.videoMessage?.contextInfo || {};
-
-      const mediaMsg = {
-        key: {
-          remoteJid: from,
-          fromMe: false,
-          id: ctx.stanzaId || quoted?.id || mek?.key?.id,
-          participant: ctx.participant || mek?.key?.participant || undefined
-        },
-        message: realQuoted
-      };
-
-      let buffer;
-      try {
-        buffer = await downloadMediaMessage(
-          mediaMsg,
-          'buffer',
-          {},
-          {
-            logger: console,
-            reuploadRequest: conn.updateMediaMessage
-          }
-        );
-      } catch (dlErr) {
-        // Fallback: try with m directly if quoted object shape differs
-        buffer = await downloadMediaMessage(
-          {
-            key: mek.key,
-            message: { [mtype]: realQuoted[mtype] }
-          },
-          'buffer',
-          {},
-          { reuploadRequest: conn.updateMediaMessage }
-        );
-      }
-
-      if (!buffer || !Buffer.isBuffer(buffer) || buffer.length < 100) {
-        throw new Error('Media download failed or file too small');
-      }
+      const buffer = await downloadQuotedMedia(conn, mek, m, realQuoted, mtype);
 
       if (type === 'img') {
-        doc.image = buffer;
-        if (captionText) doc.caption = captionText;
+        content.image = buffer;
+        if (captionText) content.caption = captionText;
       } else if (type === 'vid') {
-        doc.video = buffer;
-        if (captionText) doc.caption = captionText;
+        content.video = buffer;
+        if (captionText) content.caption = captionText;
       } else if (type === 'vn') {
-        doc.audio = buffer;
-        doc.mimetype = 'audio/mp4';
-        doc.ptt = true;
+        content.audio = buffer;
+        content.mimetype = 'audio/mp4';
+        content.ptt = true;
       }
     }
 
-    await sendGroupStatus(conn, from, doc);
+    await sendGroupStatus(conn, from, content);
     await conn.sendMessage(from, { react: { text: '✅', key: mek.key } });
 
   } catch (err) {
@@ -302,6 +316,6 @@ cmd({
     try {
       await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
     } catch {}
-    reply(`❌ Failed: ${err.message}`);
+    reply(`❌ ${err.message}`);
   }
 });
