@@ -61,6 +61,35 @@ function getRealMessage(message) {
   return message;
 }
 
+/*
+ * Frameworks expose quoted messages in different shapes. Some expose the
+ * inner message directly, while others expose { message, key, ... } or
+ * { msg, ... }. Normalize those shapes before looking for imageMessage,
+ * videoMessage, audioMessage, etc. This prevents silent media -> text fallback.
+ */
+function getQuotedContent(quoted) {
+  if (!quoted || typeof quoted !== 'object') return null;
+
+  let value = quoted;
+  for (let i = 0; i < 6 && value && typeof value === 'object'; i++) {
+    const directType = ['imageMessage', 'videoMessage', 'audioMessage', 'extendedTextMessage', 'conversation']
+      .some((key) => Object.prototype.hasOwnProperty.call(value, key));
+    if (directType) return getRealMessage(value);
+
+    if (value.message && typeof value.message === 'object') {
+      value = value.message;
+      continue;
+    }
+    if (value.msg && typeof value.msg === 'object') {
+      value = value.msg;
+      continue;
+    }
+    break;
+  }
+
+  return getRealMessage(value);
+}
+
 function resolveColor(val) {
   if (!val) return null;
   val = String(val).trim().replace(/^#/, '');
@@ -103,114 +132,120 @@ function parseFlags(text) {
   return result;
 }
 
-const TYPE_MAP = {
-  imageMessage: 'img',
-  videoMessage: 'vid',
-  audioMessage: 'vn',
-  extendedTextMessage: 'txt',
-  conversation: 'txt'
-};
+function getMessageKey(message) {
+  return Object.keys(message || {}).find((key) =>
+    ['imageMessage', 'videoMessage', 'audioMessage'].includes(key)
+  );
+}
 
-const SHORT_TYPE_MAP = {
-  image: 'imageMessage',
-  video: 'videoMessage',
-  audio: 'audioMessage',
-  ptt: 'audioMessage'
-};
-
-// Root-cause fix: previously mtype/type were derived ONLY from Object.keys(realQuoted).
-// If the framework's `quoted` object isn't shaped exactly like { imageMessage: {...} },
-// that lookup silently fails, `type` falls back to 'txt', and a blank TEXT status gets
-// posted instead of the media (with no error at all). We now also check m.quoted.mtype
-// (a common convention in Baileys wrapper frameworks) as a more reliable source.
-function detectType(m, realQuoted) {
-  const rawFromKeys = realQuoted ? Object.keys(realQuoted).find(k => TYPE_MAP[k]) : null;
-  if (rawFromKeys) return { mtype: rawFromKeys, type: TYPE_MAP[rawFromKeys] };
-
-  const rawFromM = m?.quoted?.mtype || null;
-  if (rawFromM) {
-    if (TYPE_MAP[rawFromM]) return { mtype: rawFromM, type: TYPE_MAP[rawFromM] };
-    if (SHORT_TYPE_MAP[rawFromM]) return { mtype: SHORT_TYPE_MAP[rawFromM], type: TYPE_MAP[SHORT_TYPE_MAP[rawFromM]] };
-  }
-
-  return { mtype: null, type: 'txt' };
+function describeMedia(message) {
+  const key = getMessageKey(message);
+  if (!key) return { key: null, fields: Object.keys(message || {}) };
+  const media = message[key] || {};
+  return {
+    key,
+    fields: Object.keys(media),
+    hasUrl: Boolean(media.url || media.directPath),
+    hasMediaKey: Boolean(media.mediaKey),
+    hasFileEncSha256: Boolean(media.fileEncSha256),
+    hasFileSha256: Boolean(media.fileSha256),
+    mimetype: media.mimetype,
+    seconds: media.seconds,
+    hasJpegThumbnail: Boolean(media.jpegThumbnail)
+  };
 }
 
 async function downloadQuotedMedia(conn, mek, m, realQuoted, mtype) {
+  if (!realQuoted || !mtype) throw new Error(`No supported quoted media found (keys: ${Object.keys(realQuoted || {}).join(',')})`);
+
   // Method 1: m.quoted.download (common in many bots)
   try {
     if (m?.quoted?.download) {
       const buf = await m.quoted.download();
-      if (buf && Buffer.isBuffer(buf) && buf.length > 100) return buf;
+      if (Buffer.isBuffer(buf) && buf.length > 100) return buf;
+      console.warn('[GCS] quoted.download returned an invalid buffer');
     }
   } catch (e) {
-    console.log('download method1 failed:', e.message);
+    console.warn('[GCS] download method 1 failed:', e.message);
   }
 
-  // Method 2: downloadMediaMessage with proper key
+  const ctx = mek?.message?.extendedTextMessage?.contextInfo || {};
+  const key = {
+    remoteJid: mek?.key?.remoteJid,
+    fromMe: false,
+    id: ctx.stanzaId,
+    participant: ctx.participant
+  };
+  if (!key.remoteJid || !key.id) {
+    throw new Error(`Quoted media key is incomplete (remoteJid=${key.remoteJid}, stanzaId=${key.id})`);
+  }
+
+  // Method 2: complete quoted message.
   try {
-    const ctx = mek?.message?.extendedTextMessage?.contextInfo || {};
     const buf = await downloadMediaMessage(
-      {
-        key: {
-          remoteJid: mek.key.remoteJid,
-          fromMe: false,
-          id: ctx.stanzaId,
-          participant: ctx.participant
-        },
-        message: realQuoted
-      },
+      { key, message: realQuoted },
       'buffer',
       {},
       { reuploadRequest: conn.updateMediaMessage }
     );
-    if (buf && Buffer.isBuffer(buf) && buf.length > 100) return buf;
+    if (Buffer.isBuffer(buf) && buf.length > 100) return buf;
+    console.warn('[GCS] download method 2 returned an invalid buffer');
   } catch (e) {
-    console.log('download method2 failed:', e.message);
+    console.warn('[GCS] download method 2 failed:', e.message);
   }
 
-  // Method 3: only media node
+  // Method 3: only the media node.
   try {
-    const ctx = mek?.message?.extendedTextMessage?.contextInfo || {};
     const buf = await downloadMediaMessage(
-      {
-        key: {
-          remoteJid: mek.key.remoteJid,
-          fromMe: false,
-          id: ctx.stanzaId,
-          participant: ctx.participant
-        },
-        message: { [mtype]: realQuoted[mtype] }
-      },
+      { key, message: { [mtype]: realQuoted[mtype] } },
       'buffer',
       {},
       { reuploadRequest: conn.updateMediaMessage }
     );
-    if (buf && Buffer.isBuffer(buf) && buf.length > 100) return buf;
+    if (Buffer.isBuffer(buf) && buf.length > 100) return buf;
+    console.warn('[GCS] download method 3 returned an invalid buffer');
   } catch (e) {
-    console.log('download method3 failed:', e.message);
+    console.warn('[GCS] download method 3 failed:', e.message);
   }
 
-  throw new Error('Could not download media');
+  throw new Error('Could not download quoted media: all download methods failed');
 }
 
 async function sendGroupStatus(sock, jid, content) {
-  // Refresh media connection before upload
   try {
-    if (typeof sock.refreshMediaConn === 'function') {
-      await sock.refreshMediaConn(true);
-    }
-  } catch {}
+    if (typeof sock.refreshMediaConn === 'function') await sock.refreshMediaConn(true);
+  } catch (e) {
+    console.warn('[GCS] refreshMediaConn failed:', e.message);
+  }
 
   const waMsgContent = await generateWAMessageContent(content, {
     upload: sock.waUploadToServer
   });
-
-  if (!waMsgContent) throw new Error('generateWAMessageContent failed');
+  if (!waMsgContent) throw new Error('generateWAMessageContent returned no content');
 
   const innerMsg = waMsgContent.message || waMsgContent;
+  console.log('[GCS] generated content:', JSON.stringify(describeMedia(innerMsg)));
 
-  // Text status styling
+  const generatedMediaKey = getMessageKey(innerMsg);
+  if (content.image || content.video || content.audio) {
+    if (!generatedMediaKey) {
+      throw new Error(`Media upload produced no media message; generated keys: ${Object.keys(innerMsg).join(',')}`);
+    }
+    const mediaInfo = describeMedia(innerMsg);
+    const required = ['hasUrl', 'hasMediaKey', 'hasFileEncSha256', 'hasFileSha256', 'mimetype'];
+    const missing = required.filter((field) => !mediaInfo[field]);
+    if (missing.length) {
+      throw new Error(`Uploaded ${generatedMediaKey} is incomplete; missing: ${missing.join(', ')}`);
+    }
+    if (generatedMediaKey === 'videoMessage' && !innerMsg.videoMessage.seconds) {
+      console.warn('[GCS] videoMessage has no seconds/duration field');
+    }
+    if (generatedMediaKey === 'audioMessage' && !innerMsg.audioMessage.seconds) {
+      console.warn('[GCS] audioMessage has no seconds/duration field');
+    }
+  }
+
+  // Text status styling — intentionally unchanged.
   if (innerMsg.extendedTextMessage) {
     let textHex = content.textColor ? String(content.textColor).replace('#', '') : 'FFFFFF';
     if (textHex.length === 6) textHex = 'FF' + textHex;
@@ -232,9 +267,6 @@ async function sendGroupStatus(sock, jid, content) {
 
   if (!msgKey) throw new Error('Invalid message structure: ' + Object.keys(innerMsg).join(','));
 
-  console.log('[SWGC DEBUG] resolved msgKey:', msgKey, '| fields:', Object.keys(innerMsg[msgKey] || {}));
-
-  // Apply group status metadata WITHOUT breaking media fields
   if (!innerMsg[msgKey].contextInfo) innerMsg[msgKey].contextInfo = {};
 
   innerMsg[msgKey].contextInfo.isGroupStatus = true;
@@ -264,14 +296,24 @@ async function sendGroupStatus(sock, jid, content) {
     }
   };
 
-  const result = await sock.relayMessage(jid, finalMsg, {
-    messageId: generateMessageID(),
-    additionalNodes: [
-      { tag: "meta", attrs: { is_group_status: "true" } }
-    ]
-  });
+  console.log('[GCS] relaying:', JSON.stringify({
+    jid,
+    msgKey,
+    media: describeMedia(innerMsg),
+    contextInfo: innerMsg[msgKey].contextInfo
+  }));
 
-  return result;
+  try {
+    return await sock.relayMessage(jid, finalMsg, {
+      messageId: generateMessageID(),
+      additionalNodes: [
+        { tag: "meta", attrs: { is_group_status: "true" } }
+      ]
+    });
+  } catch (e) {
+    console.error('[GCS] relayMessage failed:', e);
+    throw new Error(`relayMessage failed: ${e.message}`);
+  }
 }
 
 cmd({
@@ -283,23 +325,30 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { from, quoted, q, reply }) => {
   try {
-    if (!from.endsWith('@g.us')) {
-      return reply("⚠️ Group only command!");
-    }
+    if (!from.endsWith('@g.us')) return reply("⚠️ Group only command!");
 
     const flags = parseFlags(q || '');
-    const realQuoted = quoted && Object.keys(quoted).length ? getRealMessage(quoted) : null;
+    const realQuoted = quoted && Object.keys(quoted).length ? getQuotedContent(quoted) : null;
+    console.log('[GCS] quoted keys:', Object.keys(quoted || {}), 'normalized keys:', Object.keys(realQuoted || {}));
 
     if (!realQuoted && !flags.remaining) {
       return reply(`*HOW TO USE:*
-Reply to photo/video/audio/text: \`.gcs\`
-Text: \`.gcs Hello\`
-Color: \`.gcs hello -color red -bg black\``);
+Reply to photo/video/audio/text: \.gcs\`
+Text: \.gcs Hello\`
+Color: \.gcs hello -color red -bg black\``);
     }
 
-    const { mtype, type } = detectType(m, realQuoted);
+    const TYPE_MAP = {
+      imageMessage: 'img',
+      videoMessage: 'vid',
+      audioMessage: 'vn',
+      extendedTextMessage: 'txt',
+      conversation: 'txt'
+    };
 
-    console.log('[SWGC DEBUG] quoted keys:', realQuoted ? Object.keys(realQuoted) : null, '| m.quoted.mtype:', m?.quoted?.mtype, '| resolved type:', type, mtype);
+    const mtype = realQuoted ? Object.keys(realQuoted).find(k => TYPE_MAP[k]) : null;
+    const type = realQuoted ? (TYPE_MAP[mtype] || 'txt') : 'txt';
+    console.log('[GCS] resolved:', { mtype, type });
 
     let captionText = '';
     if (realQuoted) {
@@ -320,8 +369,8 @@ Color: \`.gcs hello -color red -bg black\``);
       if (flags.bgColor) content.backgroundColor = flags.bgColor;
     } else {
       await conn.sendMessage(from, { react: { text: '⏳', key: mek.key } });
-
       const buffer = await downloadQuotedMedia(conn, mek, m, realQuoted, mtype);
+      console.log('[GCS] downloaded media:', { mtype, bytes: buffer.length, firstBytes: buffer.subarray(0, 12).toString('hex') });
 
       if (type === 'img') {
         content.image = buffer;
@@ -331,19 +380,16 @@ Color: \`.gcs hello -color red -bg black\``);
         if (captionText) content.caption = captionText;
       } else if (type === 'vn') {
         content.audio = buffer;
-        content.mimetype = 'audio/mp4';
+        content.mimetype = realQuoted.audioMessage?.mimetype || 'audio/mp4';
         content.ptt = true;
       }
     }
 
     await sendGroupStatus(conn, from, content);
     await conn.sendMessage(from, { react: { text: '✅', key: mek.key } });
-
   } catch (err) {
     console.error('[GROUP STATUS ERROR]', err);
-    try {
-      await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-    } catch {}
+    try { await conn.sendMessage(from, { react: { text: '❌', key: mek.key } }); } catch {}
     reply(`❌ ${err.message}`);
   }
 });
