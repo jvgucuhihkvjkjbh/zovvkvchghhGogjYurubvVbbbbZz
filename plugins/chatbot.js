@@ -4,8 +4,10 @@ const { isSudo } = require('../lib/sudo');
 const {
     isChatbotOn,
     setChatbot,
-    isGlobalChatbotOn,
-    setGlobalChatbot,
+    isGlobalChatsOn,
+    setGlobalChats,
+    isGlobalGroupsOn,
+    setGlobalGroups,
     getHistory,
     addToHistory,
     clearHistory,
@@ -16,7 +18,7 @@ const {
 cmd({
     pattern: "chatbot",
     alias: ["cb", "aichat"],
-    desc: "Turn chatbot ON/OFF in current chat or globally",
+    desc: "Turn chatbot ON/OFF in current chat, all chats, or all groups",
     category: "ai",
     react: "🤖",
     filename: __filename
@@ -29,31 +31,42 @@ cmd({
         const option = (args[0] || '').toLowerCase();
         const scope = (args[1] || '').toLowerCase();
 
-        if (option === 'on' && scope === 'all') {
-            setGlobalChatbot(true);
-            return reply("✅ *Chatbot ON for ALL chats* ✅\n\nMain ab har chat aur group me normal messages ka reply karunga.\nBand karne ke liye: `.chatbot off all`");
+        if (option === 'on' && scope === 'chat') {
+            setGlobalChats(true);
+            return reply("✅ Chatbot ON for all chats");
         }
 
-        if (option === 'off' && scope === 'all') {
-            setGlobalChatbot(false);
-            return reply("❌ *Chatbot OFF for ALL chats* ❌\n\nAb sirf per-chat setting ya commands pe kaam karunga.");
+        if (option === 'off' && scope === 'chat') {
+            setGlobalChats(false);
+            return reply("❌ Chatbot OFF for all chats");
+        }
+
+        if (option === 'on' && (scope === 'group' || scope === 'groups')) {
+            setGlobalGroups(true);
+            return reply("✅ Chatbot ON for all groups");
+        }
+
+        if (option === 'off' && (scope === 'group' || scope === 'groups')) {
+            setGlobalGroups(false);
+            return reply("❌ Chatbot OFF for all groups");
         }
 
         if (option === 'on') {
             setChatbot(from, true);
             clearHistory(from);
-            return reply("✅ *Chatbot ON* ✅\n\nAb main is chat me normal messages ka reply karunga.\nBand karne ke liye: `.chatbot off`");
+            return reply("✅ Chatbot ON");
         }
 
         if (option === 'off') {
             setChatbot(from, false);
             clearHistory(from);
-            return reply("❌ *Chatbot OFF* ❌\n\nAb sirf commands pe kaam karunga.");
+            return reply("❌ Chatbot OFF");
         }
 
-        const status = isChatbotOn(from) ? "ON ✅" : "OFF ❌";
-        const globalStatus = isGlobalChatbotOn() ? "ON ✅" : "OFF ❌";
-        return reply(`🤖 *Chatbot Status (this chat):* ${status}\n🌐 *Global Chatbot:* ${globalStatus}\n\n• \`.chatbot on\` - Start AI chat here\n• \`.chatbot off\` - Stop AI chat here\n• \`.chatbot on all\` - Start AI chat in every chat/group\n• \`.chatbot off all\` - Stop global AI chat`);
+        const status = isChatbotOn(from) ? "ON" : "OFF";
+        const chatsStatus = isGlobalChatsOn() ? "ON" : "OFF";
+        const groupsStatus = isGlobalGroupsOn() ? "ON" : "OFF";
+        return reply(`This chat: ${status}\nAll chats: ${chatsStatus}\nAll groups: ${groupsStatus}`);
 
     } catch (e) {
         console.error(e);
