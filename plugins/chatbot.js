@@ -1,12 +1,22 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 const { isSudo } = require('../lib/sudo');
-const { isChatbotOn, setChatbot, getHistory, addToHistory, clearHistory, markBotMessage, isBotMessage } = require('../lib/chatbot');
+const {
+    isChatbotOn,
+    setChatbot,
+    isGlobalChatbotOn,
+    setGlobalChatbot,
+    getHistory,
+    addToHistory,
+    clearHistory,
+    isBotMessage,
+    wrapConnSend
+} = require('../lib/chatbot');
 
 cmd({
     pattern: "chatbot",
     alias: ["cb", "aichat"],
-    desc: "Turn chatbot ON/OFF in current chat",
+    desc: "Turn chatbot ON/OFF in current chat or globally",
     category: "ai",
     react: "🤖",
     filename: __filename
@@ -17,6 +27,17 @@ cmd({
         }
 
         const option = (args[0] || '').toLowerCase();
+        const scope = (args[1] || '').toLowerCase();
+
+        if (option === 'on' && scope === 'all') {
+            setGlobalChatbot(true);
+            return reply("✅ *Chatbot ON for ALL chats* ✅\n\nMain ab har chat aur group me normal messages ka reply karunga.\nBand karne ke liye: `.chatbot off all`");
+        }
+
+        if (option === 'off' && scope === 'all') {
+            setGlobalChatbot(false);
+            return reply("❌ *Chatbot OFF for ALL chats* ❌\n\nAb sirf per-chat setting ya commands pe kaam karunga.");
+        }
 
         if (option === 'on') {
             setChatbot(from, true);
@@ -31,7 +52,8 @@ cmd({
         }
 
         const status = isChatbotOn(from) ? "ON ✅" : "OFF ❌";
-        return reply(`🤖 *Chatbot Status:* ${status}\n\n• \`.chatbot on\` - Start AI chat\n• \`.chatbot off\` - Stop AI chat`);
+        const globalStatus = isGlobalChatbotOn() ? "ON ✅" : "OFF ❌";
+        return reply(`🤖 *Chatbot Status (this chat):* ${status}\n🌐 *Global Chatbot:* ${globalStatus}\n\n• \`.chatbot on\` - Start AI chat here\n• \`.chatbot off\` - Stop AI chat here\n• \`.chatbot on all\` - Start AI chat in every chat/group\n• \`.chatbot off all\` - Stop global AI chat`);
 
     } catch (e) {
         console.error(e);
@@ -41,6 +63,8 @@ cmd({
 
 async function handleChatbotMessage(conn, mek, m, { from, body, reply, isCmd }) {
     try {
+        wrapConnSend(conn);
+
         if (isCmd) return false;
         if (isBotMessage(mek?.key?.id)) return false;
         if (!isChatbotOn(from)) return false;
@@ -71,8 +95,7 @@ async function handleChatbotMessage(conn, mek, m, { from, body, reply, isCmd }) 
         addToHistory(from, 'user', userMsg);
         addToHistory(from, 'bot', aiReply);
 
-        const sent = await conn.sendMessage(from, { text: aiReply }, { quoted: mek });
-        markBotMessage(sent?.key?.id);
+        await conn.sendMessage(from, { text: aiReply }, { quoted: mek });
 
         await conn.sendPresenceUpdate('paused', from);
         return true;
