@@ -102,7 +102,9 @@ async function convertToWhatsAppPTT(buffer) {
     await execAsync(
       `"\( {ffmpegPath}" -y -i " \){inputPath}" -vn -ac 1 -ar 48000 -c:a libopus -b:a 64k "${outputPath}"`
     );
-    return fs.readFileSync(outputPath);
+    const out = fs.readFileSync(outputPath);
+    if (!out || out.length < 100) throw new Error('Empty converted file');
+    return out;
   } finally {
     try { fs.unlinkSync(inputPath); } catch {}
     try { fs.unlinkSync(outputPath); } catch {}
@@ -137,7 +139,7 @@ cmd({
         `Color: \`.gstatus Hello -color red -bg black\`\n` +
         `Reply media: \`.gstatus\`\n` +
         `Reply + title: \`.gstatus My title\`\n` +
-        `Reply voice: \`.gstatus\``
+        `Reply voice/audio: \`.gstatus\``
       );
     }
 
@@ -201,28 +203,28 @@ cmd({
           contextInfo
         };
       } else if (msgType === "audio") {
+        // Real voice note?
         const isPTT =
           quotedMsg?.message?.audioMessage?.ptt === true ||
           quotedMsg?.ptt === true ||
           Object.keys(quotedMsg?.message || {})[0] === "pttMessage" ||
-          mimeType.includes("ogg") ||
           false;
 
         let audioBuffer = mediaBuffer;
         let outMime = "audio/ogg; codecs=opus";
 
         if (isPTT) {
+          // Voice note → as-is (yeh play hoti hai)
           audioBuffer = mediaBuffer;
-          outMime = mimeType.includes("ogg")
-            ? "audio/ogg; codecs=opus"
-            : (mimeType || "audio/ogg; codecs=opus");
+          outMime = mimeType || "audio/ogg; codecs=opus";
         } else {
+          // Audio file → convert to voice note
           try {
             audioBuffer = await convertToWhatsAppPTT(mediaBuffer);
             outMime = "audio/ogg; codecs=opus";
           } catch (e) {
             console.log("Audio convert failed:", e.message);
-            return reply("❌ Audio file status pe play nahi hoti. Voice note (mic) use karo.");
+            return reply("❌ Audio convert fail. Voice note (mic) use karo.");
           }
         }
 
