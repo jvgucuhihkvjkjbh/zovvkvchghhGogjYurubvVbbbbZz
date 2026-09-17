@@ -1,6 +1,12 @@
 const { cmd } = require('../command');
 const { generateMessageID } = require('@whiskeysockets/baileys');
-const converter = require('../data/converter');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { exec } = require('child_process');
+const { promisify } = require('util');
+const execAsync = promisify(exec);
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 
 const COLORS = {
   red: 'FF0000', blue: '1DA1F2', green: '25D366', yellow: 'FFD700',
@@ -84,6 +90,24 @@ function buildColoredTextMessage(caption, textColor, bgColor, mentionedJid) {
       }
     }
   };
+}
+
+async function convertToWhatsAppPTT(buffer) {
+  const inputPath = path.join(os.tmpdir(), `gstatus_in_${Date.now()}.bin`);
+  const outputPath = path.join(os.tmpdir(), `gstatus_out_${Date.now()}.ogg`);
+
+  fs.writeFileSync(inputPath, buffer);
+
+  try {
+    await execAsync(
+      `"\( {ffmpegPath}" -y -i " \){inputPath}" -vn -ac 1 -ar 48000 -c:a libopus -b:a 64k "${outputPath}"`
+    );
+    const out = fs.readFileSync(outputPath);
+    return out;
+  } finally {
+    try { fs.unlinkSync(inputPath); } catch {}
+    try { fs.unlinkSync(outputPath); } catch {}
+  }
 }
 
 cmd({
@@ -178,23 +202,24 @@ cmd({
           contextInfo
         };
       } else if (msgType === "audio") {
-        let ext = "ogg";
-        if (mimeType.includes("mpeg") || mimeType.includes("mp3")) ext = "mp3";
-        else if (mimeType.includes("mp4") || mimeType.includes("m4a")) ext = "mp4";
-        else if (mimeType.includes("wav")) ext = "wav";
-        else if (mimeType.includes("ogg") || mimeType.includes("opus")) ext = "ogg";
-
-        let pttBuffer = mediaBuffer;
+        let audioBuffer = mediaBuffer;
         try {
-          pttBuffer = await converter.toPTT(mediaBuffer, ext);
+          audioBuffer = await convertToWhatsAppPTT(mediaBuffer);
         } catch (e) {
-          console.log("toPTT failed, using original:", e.message);
+          console.log("ffmpeg convert failed:", e.message);
         }
 
+        let seconds =
+          quotedMsg?.message?.audioMessage?.seconds ||
+          quotedMsg?.seconds ||
+          quotedMsg?.msg?.seconds ||
+          undefined;
+
         messageContent = {
-          audio: pttBuffer,
+          audio: audioBuffer,
           mimetype: "audio/ogg; codecs=opus",
           ptt: true,
+          seconds,
           contextInfo
         };
       } else {
