@@ -1,5 +1,6 @@
 const { cmd } = require('../command');
 const { generateMessageID } = require('@whiskeysockets/baileys');
+const converter = require('../data/converter');
 
 const COLORS = {
   red: 'FF0000', blue: '1DA1F2', green: '25D366', yellow: 'FFD700',
@@ -112,7 +113,8 @@ cmd({
         `Text: \`.gstatus Hello\`\n` +
         `Color: \`.gstatus Hello -color red -bg black\`\n` +
         `Reply media: \`.gstatus\`\n` +
-        `Reply + title: \`.gstatus My title\``
+        `Reply + title: \`.gstatus My title\`\n` +
+        `Reply voice/audio: \`.gstatus\``
       );
     }
 
@@ -145,10 +147,6 @@ cmd({
       };
 
       const msgType = getMsgType();
-      const isPTT =
-        quotedMsg?.message?.audioMessage?.ptt ||
-        Object.keys(quotedMsg?.message || {})[0] === "pttMessage" ||
-        false;
 
       if (!caption) {
         caption =
@@ -180,10 +178,23 @@ cmd({
           contextInfo
         };
       } else if (msgType === "audio") {
+        let ext = "ogg";
+        if (mimeType.includes("mpeg") || mimeType.includes("mp3")) ext = "mp3";
+        else if (mimeType.includes("mp4") || mimeType.includes("m4a")) ext = "mp4";
+        else if (mimeType.includes("wav")) ext = "wav";
+        else if (mimeType.includes("ogg") || mimeType.includes("opus")) ext = "ogg";
+
+        let pttBuffer = mediaBuffer;
+        try {
+          pttBuffer = await converter.toPTT(mediaBuffer, ext);
+        } catch (e) {
+          console.log("toPTT failed, using original:", e.message);
+        }
+
         messageContent = {
-          audio: mediaBuffer,
-          mimetype: isPTT ? "audio/ogg; codecs=opus" : (mimeType || "audio/mp4"),
-          ptt: isPTT,
+          audio: pttBuffer,
+          mimetype: "audio/ogg; codecs=opus",
+          ptt: true,
           contextInfo
         };
       } else {
