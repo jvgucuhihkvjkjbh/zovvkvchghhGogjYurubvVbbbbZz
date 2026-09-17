@@ -234,8 +234,10 @@ cmd({
             false;
 
         const content = {};
+        let isMedia = false;
 
         if (quotedMsg) {
+            isMedia = true;
             const buffer = await quotedMsg.download();
             if (!buffer) {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
@@ -243,19 +245,29 @@ cmd({
             }
 
             const msgType = getMsgType();
+            const mentionedJid = [];
+            try {
+                const meta = await conn.groupMetadata(from);
+                if (meta?.participants) mentionedJid.push(...meta.participants.map(p => p.id));
+            } catch {}
+
+            const contextInfo = { isGroupStatus: true, mentionedJid };
 
             if (msgType === "img") {
                 content.image = buffer;
                 if (caption) content.caption = caption;
                 content.mimetype = mimeType || 'image/jpeg';
+                content.contextInfo = contextInfo;
             } else if (msgType === "vid") {
                 content.video = buffer;
                 if (caption) content.caption = caption;
                 content.mimetype = mimeType || 'video/mp4';
+                content.contextInfo = contextInfo;
             } else if (msgType === "vn") {
                 content.audio = buffer;
                 content.mimetype = isPTT ? 'audio/ogg; codecs=opus' : (mimeType || 'audio/mp4');
                 content.ptt = isPTT;
+                content.contextInfo = contextInfo;
             } else {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
                 return reply("❌ Unsupported media type.");
@@ -266,7 +278,13 @@ cmd({
             if (flags.bgColor) content.backgroundColor = flags.bgColor;
         }
 
-        await sendGroupStatus(conn, from, content);
+        // Media: use the proven working plain sendMessage path (real relay path
+        // never posts media reliably on this account). Text: real invisible status.
+        if (isMedia) {
+            await conn.sendMessage(from, content);
+        } else {
+            await sendGroupStatus(conn, from, content);
+        }
 
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
         reply(`✅ *Status posted to this group!*\n\n━━━━━━━━━━━━━━━━━━\n~ *ADEEL-MD*`);
