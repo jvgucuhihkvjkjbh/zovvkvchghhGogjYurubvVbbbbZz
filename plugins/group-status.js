@@ -100,21 +100,9 @@ const COLORS = {
 };
 
 const RANDOM_BG_COLORS = [
-  0xFF7B2CBF, // Purple
-  0xFF1D3557, // Navy
-  0xFF2B2D42, // Charcoal Blue
-  0xFFD90429, // Crimson Red
-  0xFF0077B6, // Ocean Blue
-  0xFF007F5F, // Emerald Green
-  0xFF5A189A, // Royal Violet
-  0xFF6B705C, // Olive Earth
-  0xFFE76F51, // Terracotta Orange
-  0xFF2A9D8F, // Teal
-  0xFF3D348B, // Indigo
-  0xFF6A040F, // Dark Burgundy
-  0xFF3F37C9, // Electric Indigo
-  0xFF03045E, // Midnight Blue
-  0xFF1A1A1D, // Onyx Black
+  0xFF7B2CBF, 0xFF1D3557, 0xFF2B2D42, 0xFFD90429, 0xFF0077B6,
+  0xFF007F5F, 0xFF5A189A, 0xFF6B705C, 0xFFE76F51, 0xFF2A9D8F,
+  0xFF3D348B, 0xFF6A040F, 0xFF3F37C9, 0xFF03045E, 0xFF1A1A1D,
 ];
 
 function getRandomArgbColor() {
@@ -122,14 +110,7 @@ function getRandomArgbColor() {
 }
 
 const FONTS = {
-  system: 0,
-  sans: 1,
-  serif: 2,
-  script: 3,
-  morning: 4,
-  calistoga: 5,
-  oswald: 6,
-  courier: 7
+  system: 0, sans: 1, serif: 2, script: 3, morning: 4, calistoga: 5, oswald: 6, courier: 7
 };
 
 const TYPE_MAP = {
@@ -215,27 +196,13 @@ function parseSwgcFlags(rawText) {
     const tok = tokens[i];
     const lower = tok.toLowerCase();
 
-    if (SILENT_FLAGS.has(lower)) {
-      result.isSilent = true;
-      i++;
-      continue;
-    }
-
-    if (lower === '-ai') {
-      result.useAiBadge = true;
-      i++;
-      continue;
-    }
+    if (SILENT_FLAGS.has(lower)) { result.isSilent = true; i++; continue; }
+    if (lower === '-ai') { result.useAiBadge = true; i++; continue; }
 
     if (LINK_FLAGS.has(lower)) {
       result.useLinkPreview = true;
       const val = tokens[i + 1];
-      if (val && /^https?:\/\//i.test(val)) {
-        result.customLink = val;
-        i += 2;
-      } else {
-        i += 1;
-      }
+      if (val && /^https?:\/\//i.test(val)) { result.customLink = val; i += 2; } else { i += 1; }
       continue;
     }
 
@@ -245,9 +212,7 @@ function parseSwgcFlags(rawText) {
         const key = val.toLowerCase();
         result.textColor = COLORS[key] || val;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else { i += 1; }
       continue;
     }
 
@@ -256,14 +221,10 @@ function parseSwgcFlags(rawText) {
       if (val !== undefined) {
         const key = val.toLowerCase();
         let raw = COLORS[key] || val;
-        if (!raw.startsWith('#') && !raw.startsWith('0x') && !raw.startsWith('0X')) {
-          raw = '#' + raw;
-        }
+        if (!raw.startsWith('#') && !raw.startsWith('0x') && !raw.startsWith('0X')) raw = '#' + raw;
         result.bgColor = raw;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else { i += 1; }
       continue;
     }
 
@@ -274,42 +235,25 @@ function parseSwgcFlags(rawText) {
         let f = FONTS[key] !== undefined ? FONTS[key] : parseInt(val, 10);
         result.textFont = isNaN(f) ? null : f;
         i += 2;
-      } else {
-        i += 1;
-      }
+      } else { i += 1; }
       continue;
     }
 
     if (lower === '-t') {
       const val = tokens[i + 1];
-      if (val !== undefined) {
-        result.customName = val;
-        i += 2;
-      } else {
-        i += 1;
-      }
+      if (val !== undefined) { result.customName = val; i += 2; } else { i += 1; }
       continue;
     }
 
     if (lower === '-e') {
       const val = tokens[i + 1];
-      if (val !== undefined) {
-        result.customEmoji = val;
-        i += 2;
-      } else {
-        i += 1;
-      }
+      if (val !== undefined) { result.customEmoji = val; i += 2; } else { i += 1; }
       continue;
     }
 
     if (lower === '-c') {
       const val = tokens[i + 1];
-      if (val !== undefined) {
-        result.customCaption = val;
-        i += 2;
-      } else {
-        i += 1;
-      }
+      if (val !== undefined) { result.customCaption = val; i += 2; } else { i += 1; }
       continue;
     }
 
@@ -327,9 +271,7 @@ function isUnsafeLinkTarget(urlStr) {
     const host = u.hostname.toLowerCase();
     if (host === 'localhost' || host === '0.0.0.0' || host === '::1' || host === '169.254.169.254') return true;
     return false;
-  } catch {
-    return true;
-  }
+  } catch { return true; }
 }
 
 async function fetchLinkPreview(url) {
@@ -344,17 +286,9 @@ async function fetchLinkPreview(url) {
     });
 
     const $ = cheerio.load(res.data);
-    const title = $('meta[property="og:title"]').attr('content') ||
-                  $('meta[name="twitter:title"]').attr('content') ||
-                  $('title').text() || '';
-
-    const description = $('meta[property="og:description"]').attr('content') ||
-                        $('meta[name="twitter:description"]').attr('content') ||
-                        $('meta[name="description"]').attr('content') || '';
-
-    let image = $('meta[property="og:image"]').attr('content') ||
-                $('meta[name="twitter:image"]').attr('content') ||
-                $('meta[property="og:image:secure_url"]').attr('content') || '';
+    const title = $('meta[property="og:title"]').attr('content') || $('meta[name="twitter:title"]').attr('content') || $('title').text() || '';
+    const description = $('meta[property="og:description"]').attr('content') || $('meta[name="twitter:description"]').attr('content') || $('meta[name="description"]').attr('content') || '';
+    let image = $('meta[property="og:image"]').attr('content') || $('meta[name="twitter:image"]').attr('content') || $('meta[property="og:image:secure_url"]').attr('content') || '';
 
     let jpegThumbnail = null;
     if (image) {
@@ -364,24 +298,14 @@ async function fetchLinkPreview(url) {
         image = `${u.protocol}//${u.host}${image}`;
       }
       try {
-        const imgRes = await axios.get(image, {
-          responseType: 'arraybuffer',
-          timeout: 6000,
-          headers: { 'User-Agent': 'Mozilla/5.0' }
-        });
+        const imgRes = await axios.get(image, { responseType: 'arraybuffer', timeout: 6000, headers: { 'User-Agent': 'Mozilla/5.0' } });
         jpegThumbnail = Buffer.from(imgRes.data);
       } catch (e) {
         console.error('[SWGC] Image thumbnail fetch failed:', e.message);
       }
     }
 
-    return {
-      title: title.trim(),
-      description: description.trim(),
-      canonicalUrl: url,
-      matchedText: url,
-      jpegThumbnail
-    };
+    return { title: title.trim(), description: description.trim(), canonicalUrl: url, matchedText: url, jpegThumbnail };
   } catch (err) {
     console.error('[SWGC] Link preview fetch failed:', err.message);
     return null;
@@ -453,14 +377,8 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
     innerMsg[msgKey].contextInfo = { ...(innerMsg[msgKey].contextInfo || {}) };
 
     innerMsg[msgKey].contextInfo.isGroupStatus = true;
-    innerMsg[msgKey].contextInfo.featureEligibilities = {
-      canReceiveMultiReact: true
-    };
-    innerMsg[msgKey].contextInfo.statusAttributions = [
-      {
-        type: 10
-      }
-    ];
+    innerMsg[msgKey].contextInfo.featureEligibilities = { canReceiveMultiReact: true };
+    innerMsg[msgKey].contextInfo.statusAttributions = [{ type: 10 }];
     innerMsg[msgKey].contextInfo.pairedMediaType = 0;
 
     if (innerMsg.imageMessage) innerMsg[msgKey].contextInfo.statusSourceType = 0;
@@ -489,21 +407,11 @@ async function groupStatus(sock, jid, rawContent, useAiBadge = false, customName
   const messageId = generateMessageID();
   const relayOpts = {
     messageId,
-    additionalNodes: [
-      {
-        tag: "meta",
-        attrs: {
-          is_group_status: "true"
-        }
-      }
-    ]
+    additionalNodes: [{ tag: "meta", attrs: { is_group_status: "true" } }]
   };
 
   if (useAiBadge) {
-    relayOpts.additionalNodes.push({
-      tag: 'bot',
-      attrs: { biz_bot: '1' }
-    });
+    relayOpts.additionalNodes.push({ tag: 'bot', attrs: { biz_bot: '1' } });
   }
 
   await sock.relayMessage(jid, finalMsg, relayOpts);
@@ -533,10 +441,7 @@ async function sendSuccessConfirmation(sock, from, mek, mediaType, botName = "AD
         id: 'STATUS-' + Math.random().toString(36).substring(2).toUpperCase()
       },
       message: {
-        contactsArrayMessage: {
-          displayName: `${botName}`,
-          contacts: dummyContacts
-        }
+        contactsArrayMessage: { displayName: `${botName}`, contacts: dummyContacts }
       }
     };
 
@@ -544,35 +449,21 @@ async function sendSuccessConfirmation(sock, from, mek, mediaType, botName = "AD
       body: { text: statusText },
       footer: { text: `${botName} • Status Info` },
       nativeFlowMessage: {
-        buttons: [
-          {
-            name: 'cta_copy',
-            buttonParamsJson: JSON.stringify({
-              display_text: 'Sukses',
-              copy_code: 'Sukses'
-            })
-          }
-        ]
+        buttons: [{ name: 'cta_copy', buttonParamsJson: JSON.stringify({ display_text: 'Sukses', copy_code: 'Sukses' }) }]
       }
     };
 
     const msgContent = {
       viewOnceMessage: {
         message: {
-          messageContextInfo: {
-            deviceListMetadata: {},
-            deviceListMetadataVersion: 2
-          },
+          messageContextInfo: { deviceListMetadata: {}, deviceListMetadataVersion: 2 },
           interactiveMessage: interactiveContent
         }
       }
     };
 
     const userJid = sock.authState?.creds?.me?.id || sock.user?.id;
-    const fullMsg = generateWAMessageFromContent(from, msgContent, {
-      userJid,
-      quoted: fakeStatusQuote
-    });
+    const fullMsg = generateWAMessageFromContent(from, msgContent, { userJid, quoted: fakeStatusQuote });
 
     const ifPath = fullMsg.message?.viewOnceMessage?.message?.interactiveMessage;
     if (ifPath) {
@@ -589,29 +480,16 @@ async function sendSuccessConfirmation(sock, from, mek, mediaType, botName = "AD
     }
 
     const additionalNodes = [{
-      tag: 'biz',
-      attrs: {},
-      content: [{
-        tag: 'interactive',
-        attrs: { v: '1', type: 'native_flow' },
-        content: [{
-          tag: 'native_flow',
-          attrs: { v: '9', name: 'mixed' }
-        }]
-      }]
+      tag: 'biz', attrs: {},
+      content: [{ tag: 'interactive', attrs: { v: '1', type: 'native_flow' }, content: [{ tag: 'native_flow', attrs: { v: '9', name: 'mixed' } }] }]
     }];
 
-    await sock.relayMessage(from, fullMsg.message, {
-      messageId: fullMsg.key.id,
-      additionalNodes
-    });
+    await sock.relayMessage(from, fullMsg.message, { messageId: fullMsg.key.id, additionalNodes });
 
   } catch (err) {
     console.error('[SWGC CONFIRMATION ERROR]', err.message);
     try {
-      if (mek?.key) {
-        await sock.sendMessage(from, { react: { text: '✅', key: mek.key } });
-      }
+      if (mek?.key) await sock.sendMessage(from, { react: { text: '✅', key: mek.key } });
     } catch {}
   }
 }
@@ -734,9 +612,7 @@ cmd({
             }
 
             const preview = await fetchLinkPreview(targetUrl);
-            if (preview) {
-              doc.linkPreview = preview;
-            }
+            if (preview) doc.linkPreview = preview;
           }
         }
 
@@ -747,38 +623,35 @@ cmd({
         if (flags.textFont !== null) doc.textFont = flags.textFont;
 
       } else {
+        // ── PROVEN WORKING DOWNLOAD METHOD (same as the working single-group command) ──
         if (!isSilent) await react('⏳');
 
-        const contextInfo = mek?.message?.extendedTextMessage?.contextInfo || {};
-        const quotedKey = {
-          remoteJid: from,
-          fromMe: contextInfo.participant === conn.user?.id || false,
-          id: contextInfo.stanzaId || mek?.key?.id,
-          participant: contextInfo.participant || mek?.key?.participant || mek?.key?.remoteJid
-        };
+        const quotedMsgObj = m.quoted;
+        const mimeType = quotedMsgObj ? (quotedMsgObj.msg || quotedMsgObj).mimetype || '' : '';
 
-        const mediaMsg = {
-          key: quotedKey,
-          message: { [mtype]: realQuoted[mtype] }
-        };
+        if (!quotedMsgObj || typeof quotedMsgObj.download !== 'function') {
+          throw new Error('Could not find quoted media to download.');
+        }
 
-        const buffer = await downloadMediaMessage(
-          mediaMsg,
-          'buffer',
-          {},
-          { logger: console, reuploadRequest: conn.updateMediaMessage }
-        );
+        const buffer = await quotedMsgObj.download();
+        if (!buffer || !Buffer.isBuffer(buffer) || buffer.length < 100) {
+          throw new Error('Failed to download media (empty buffer).');
+        }
+
+        const isPTT = realQuoted?.audioMessage?.ptt || false;
 
         if (type === 'img') {
           doc.image = buffer;
           if (captionText) doc.caption = captionText;
+          doc.mimetype = mimeType || 'image/jpeg';
         } else if (type === 'vid') {
           doc.video = buffer;
           if (captionText) doc.caption = captionText;
+          doc.mimetype = mimeType || 'video/mp4';
         } else if (type === 'vn') {
           doc.audio = buffer;
-          doc.mimetype = 'audio/mp4';
-          doc.ptt = true;
+          doc.mimetype = isPTT ? 'audio/ogg; codecs=opus' : (mimeType || 'audio/mp4');
+          doc.ptt = isPTT;
         }
       }
 
@@ -806,9 +679,7 @@ cmd({
         let participantCount = 1;
         try {
           const meta = await conn.groupMetadata(jid);
-          if (meta && meta.participants) {
-            participantCount = meta.participants.length;
-          }
+          if (meta && meta.participants) participantCount = meta.participants.length;
         } catch {}
 
         await sendSuccessConfirmation(conn, from, mek, type, "ADEEL-MD", participantCount);
