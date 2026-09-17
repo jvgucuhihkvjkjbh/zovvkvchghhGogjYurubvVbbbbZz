@@ -94,16 +94,14 @@ function buildColoredTextMessage(caption, textColor, bgColor, mentionedJid) {
 
 async function convertToWhatsAppPTT(buffer) {
   const id = Date.now();
-  const inputPath = path.join(os.tmpdir(), `gstatus_in_${id}.bin`);
-  const outputPath = path.join(os.tmpdir(), `gstatus_out_${id}.ogg`);
+  const inputPath = path.join(os.tmpdir(), 'gstatus_in_' + id + '.bin');
+  const outputPath = path.join(os.tmpdir(), 'gstatus_out_' + id + '.ogg');
 
   fs.writeFileSync(inputPath, buffer);
 
   try {
-    // Step 1: convert to proper WhatsApp voice (opus)
-    await execAsync(
-      `"\( {ffmpegPath}" -y -i " \){inputPath}" -vn -ac 1 -ar 48000 -c:a libopus -b:a 64k "${outputPath}"`
-    );
+    const cmd = '"' + ffmpegPath + '" -y -i "' + inputPath + '" -vn -ac 1 -ar 48000 -c:a libopus -b:a 64k "' + outputPath + '"';
+    await execAsync(cmd);
 
     if (!fs.existsSync(outputPath)) {
       throw new Error('Converted file not created');
@@ -115,8 +113,8 @@ async function convertToWhatsAppPTT(buffer) {
     }
     return out;
   } finally {
-    try { fs.unlinkSync(inputPath); } catch {}
-    try { fs.unlinkSync(outputPath); } catch {}
+    try { fs.unlinkSync(inputPath); } catch (e) {}
+    try { fs.unlinkSync(outputPath); } catch (e) {}
   }
 }
 
@@ -158,7 +156,7 @@ cmd({
     try {
       const meta = await conn.groupMetadata(from);
       mentionedJid = (meta.participants || []).map(p => p.id);
-    } catch {}
+    } catch (e) {}
 
     if (quotedMsg) {
       const mediaBuffer = await quotedMsg.download();
@@ -212,13 +210,12 @@ cmd({
           contextInfo
         };
       } else if (msgType === "audio") {
-        // ALWAYS convert audio → WhatsApp voice first, then status
         let audioBuffer;
         try {
           audioBuffer = await convertToWhatsAppPTT(mediaBuffer);
         } catch (e) {
           console.log("Convert error:", e.message);
-          return reply(`❌ Voice convert fail: ${e.message}`);
+          return reply("❌ Voice convert fail: " + e.message);
         }
 
         let seconds =
@@ -231,7 +228,7 @@ cmd({
           audio: audioBuffer,
           mimetype: "audio/ogg; codecs=opus",
           ptt: true,
-          seconds,
+          seconds: seconds,
           contextInfo
         };
       } else {
@@ -252,7 +249,7 @@ cmd({
     console.error("GStatus Error:", error);
     try {
       await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
-    } catch {}
-    reply(`❌ ${error.message}`);
+    } catch (e) {}
+    reply("❌ " + error.message);
   }
 });
