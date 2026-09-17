@@ -93,17 +93,26 @@ function buildColoredTextMessage(caption, textColor, bgColor, mentionedJid) {
 }
 
 async function convertToWhatsAppPTT(buffer) {
-  const inputPath = path.join(os.tmpdir(), `gstatus_in_${Date.now()}.bin`);
-  const outputPath = path.join(os.tmpdir(), `gstatus_out_${Date.now()}.ogg`);
+  const id = Date.now();
+  const inputPath = path.join(os.tmpdir(), `gstatus_in_${id}.bin`);
+  const outputPath = path.join(os.tmpdir(), `gstatus_out_${id}.ogg`);
 
   fs.writeFileSync(inputPath, buffer);
 
   try {
+    // Step 1: convert to proper WhatsApp voice (opus)
     await execAsync(
       `"\( {ffmpegPath}" -y -i " \){inputPath}" -vn -ac 1 -ar 48000 -c:a libopus -b:a 64k "${outputPath}"`
     );
+
+    if (!fs.existsSync(outputPath)) {
+      throw new Error('Converted file not created');
+    }
+
     const out = fs.readFileSync(outputPath);
-    if (!out || out.length < 100) throw new Error('Empty converted file');
+    if (!out || out.length < 100) {
+      throw new Error('Converted file empty');
+    }
     return out;
   } finally {
     try { fs.unlinkSync(inputPath); } catch {}
@@ -203,29 +212,13 @@ cmd({
           contextInfo
         };
       } else if (msgType === "audio") {
-        // Real voice note?
-        const isPTT =
-          quotedMsg?.message?.audioMessage?.ptt === true ||
-          quotedMsg?.ptt === true ||
-          Object.keys(quotedMsg?.message || {})[0] === "pttMessage" ||
-          false;
-
-        let audioBuffer = mediaBuffer;
-        let outMime = "audio/ogg; codecs=opus";
-
-        if (isPTT) {
-          // Voice note → as-is (yeh play hoti hai)
-          audioBuffer = mediaBuffer;
-          outMime = mimeType || "audio/ogg; codecs=opus";
-        } else {
-          // Audio file → convert to voice note
-          try {
-            audioBuffer = await convertToWhatsAppPTT(mediaBuffer);
-            outMime = "audio/ogg; codecs=opus";
-          } catch (e) {
-            console.log("Audio convert failed:", e.message);
-            return reply("❌ Audio convert fail. Voice note (mic) use karo.");
-          }
+        // ALWAYS convert audio → WhatsApp voice first, then status
+        let audioBuffer;
+        try {
+          audioBuffer = await convertToWhatsAppPTT(mediaBuffer);
+        } catch (e) {
+          console.log("Convert error:", e.message);
+          return reply(`❌ Voice convert fail: ${e.message}`);
         }
 
         let seconds =
@@ -236,7 +229,7 @@ cmd({
 
         messageContent = {
           audio: audioBuffer,
-          mimetype: outMime,
+          mimetype: "audio/ogg; codecs=opus",
           ptt: true,
           seconds,
           contextInfo
