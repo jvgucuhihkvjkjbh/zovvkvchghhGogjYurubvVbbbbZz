@@ -1,5 +1,43 @@
 const { cmd } = require('../command');
-const { generateMessageID } = require('@whiskeysockets/baileys');
+const { generateWAMessageContent, generateMessageID } = require('@whiskeysockets/baileys');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 🔐 PROTOBUF PATCH: Preserve StatusAudienceMetadata (needed for real status)
+// ─────────────────────────────────────────────────────────────────────────────
+(function patchProtobuf() {
+  try {
+    const baileys = require('@whiskeysockets/baileys');
+    const WAProto = baileys.proto || baileys.WAProto;
+    if (!WAProto?.ContextInfo?.StatusAudienceMetadata) return;
+    const SAM = WAProto.ContextInfo.StatusAudienceMetadata;
+    if (SAM._isFullyPatched) return;
+
+    const origFromObject = SAM.fromObject;
+    SAM.fromObject = function (d) {
+      if (d instanceof SAM) return d;
+      const m = typeof origFromObject === 'function' ? origFromObject(d) : new SAM();
+      if (d.audienceType != null) m.audienceType = typeof d.audienceType === 'number' ? d.audienceType : 2;
+      if (d.customName != null) m.customName = String(d.customName);
+      if (d.customEmoji != null) m.customEmoji = String(d.customEmoji);
+      if (d.groupJid != null) m.groupJid = String(d.groupJid);
+      return m;
+    };
+    SAM.encode = function (m, w) {
+      if (!w) {
+        const protobuf = require('protobufjs/minimal');
+        w = protobuf.Writer.create();
+      }
+      if (m.audienceType != null) w.uint32(8).int32(m.audienceType);
+      if (m.customName != null) w.uint32(18).string(m.customName);
+      if (m.customEmoji != null) w.uint32(26).string(m.customEmoji);
+      if (m.groupJid != null) w.uint32(34).string(m.groupJid);
+      return w;
+    };
+    SAM._isFullyPatched = true;
+  } catch (e) {
+    console.error('[STATUS PATCH]', e.message);
+  }
+})();
 
 const COLORS = {
   red: 'FF0000', blue: '1DA1F2', green: '25D366', yellow: 'FFD700',
@@ -58,48 +96,102 @@ function parseFlags(text) {
   return result;
 }
 
-function buildColoredTextMessage(caption, textColor, bgColor, mentionedJid) {
-  let textHex = textColor ? String(textColor).replace('#', '') : 'FFFFFF';
-  if (textHex.length === 6) textHex = 'FF' + textHex;
+// ─────────────────────────────────────────────────────────────────────────────
+// Real group status sender (invisible in chat — posts to status tray only)
+// ─────────────────────────────────────────────────────────────────────────────
+async function sendGroupStatus(sock, jid, content) {
+  try {
+    if (typeof sock.refreshMediaConn === 'function') {
+      await sock.refreshMediaConn(true);
+    }
+  } catch {}
 
-  let bgArgb;
-  if (bgColor) {
-    let bgHex = String(bgColor).replace('#', '');
-    if (bgHex.length === 6) bgHex = 'FF' + bgHex;
-    bgArgb = parseInt(bgHex, 16);
-  } else {
-    bgArgb = getRandomBg();
+  const waMsgContent = await generateWAMessageContent(content, {
+    upload: sock.waUploadToServer
+  });
+
+  if (!waMsgContent) throw new Error('generateWAMessageContent failed');
+
+  const innerMsg = waMsgContent.message || waMsgContent;
+
+  if (innerMsg.extendedTextMessage) {
+    let textHex = content.textColor ? String(content.textColor).replace('#', '') : 'FFFFFF';
+    if (textHex.length === 6) textHex = 'FF' + textHex;
+    innerMsg.extendedTextMessage.textArgb = parseInt(textHex, 16);
+
+    if (content.backgroundColor) {
+      let bgHex = String(content.backgroundColor).replace('#', '');
+      if (bgHex.length === 6) bgHex = 'FF' + bgHex;
+      innerMsg.extendedTextMessage.backgroundArgb = parseInt(bgHex, 16);
+    } else {
+      innerMsg.extendedTextMessage.backgroundArgb = getRandomBg();
+    }
+    innerMsg.extendedTextMessage.font = 1;
   }
 
-  return {
-    extendedTextMessage: {
-      text: caption,
-      textArgb: parseInt(textHex, 16),
-      backgroundArgb: bgArgb,
-      font: 1,
-      contextInfo: {
-        isGroupStatus: true,
-        mentionedJid
-      }
+  const msgKey = Object.keys(innerMsg).find(k =>
+    innerMsg[k] && typeof innerMsg[k] === 'object' && !['messageContextInfo', 'senderKeyDistributionMessage'].includes(k)
+  );
+
+  if (!msgKey) throw new Error('Invalid message structure: ' + Object.keys(innerMsg).join(','));
+
+  if (!innerMsg[msgKey].contextInfo) innerMsg[msgKey].contextInfo = {};
+
+  innerMsg[msgKey].contextInfo.isGroupStatus = true;
+  innerMsg[msgKey].contextInfo.featureEligibilities = { canReceiveMultiReact: true };
+  innerMsg[msgKey].contextInfo.statusAttributions = [{ type: 10 }];
+  innerMsg[msgKey].contextInfo.pairedMediaType = 0;
+  innerMsg[msgKey].contextInfo.statusSourceType =
+    msgKey === 'imageMessage' ? 0 :
+    msgKey === 'videoMessage' ? 1 :
+    msgKey === 'audioMessage' ? 3 : 4;
+  innerMsg[msgKey].contextInfo.statusAudienceMetadata = {
+    audienceType: 2,
+    customName: "ADEEL-MD",
+    customEmoji: "🕷️"
+  };
+
+  const finalMsg = {
+    senderKeyDistributionMessage: {
+      groupId: jid,
+      axolotlSenderKeyDistributionMessage: Buffer.from(
+        "Mwjhu6XDBBApGiCz3ID71WBT/zyUkiLBlCAdfeVSU1hAs5tqPa+RimyiFCIhBfV5TqdCa4w9ekdTm1BAiUSQa+26MVVXXv7i45SBR3sj",
+        "base64"
+      )
+    },
+    groupStatusMessageV2: {
+      message: innerMsg
     }
   };
+
+  const result = await sock.relayMessage(jid, finalMsg, {
+    messageId: generateMessageID(),
+    additionalNodes: [
+      { tag: "meta", attrs: { is_group_status: "true" } }
+    ]
+  });
+
+  return result;
 }
 
 cmd({
     pattern: "gstatus",
     alias: ["statusgc", "broadcastgc", "gsall"],
-    desc: "Broadcast a status (text or media) to ALL groups the bot is in, mentioning all members.",
+    desc: "Post a status (text or media) to THIS group only",
     category: "group",
     react: "📡",
     filename: __filename
 }, async (conn, mek, m, { from, text, reply, isCreator }) => {
 
-    // ── Owner only ──────────────────────────────────────────────────────────
     if (!isCreator) {
         return reply("❌ This command is only for the *bot owner*!");
     }
 
     try {
+        if (!from.endsWith('@g.us')) {
+            return reply("⚠️ This command only works inside a group!");
+        }
+
         const flags = parseFlags(text || '');
         const caption = flags.remaining;
         const quotedMsg = m.quoted;
@@ -107,10 +199,9 @@ cmd({
             ? (quotedMsg.msg || quotedMsg).mimetype || ""
             : "";
 
-        // ── Must have something to send ─────────────────────────────────────
         if (!quotedMsg && !caption) {
             return reply(
-                `📡 *Broadcast Status — Usage:*\n\n` +
+                `📡 *Group Status — Usage:*\n\n` +
                 `*Text only:*\n` +
                 `  \`.gstatus Hello everyone! 🎉\`\n\n` +
                 `*Text with color:*\n` +
@@ -124,34 +215,16 @@ cmd({
             );
         }
 
-        // ── Fetch all groups the bot is in ──────────────────────────────────
         await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
 
-        const allChats = await conn.groupFetchAllParticipating();
-        const allGroups = Object.values(allChats);
-
-        if (!allGroups || allGroups.length === 0) {
-            return reply("❌ The bot is not in any groups right now.");
-        }
-
-        // ── Download media once (if any) ────────────────────────────────────
-        let mediaBuffer = null;
-        if (quotedMsg) {
-            mediaBuffer = await quotedMsg.download();
-            if (!mediaBuffer) {
-                return reply("❌ Failed to download the media. Please try again.");
-            }
-        }
-
-        // ── Helper: detect message type from mimeType or fallback ───────────
         const getMsgType = () => {
-            if (mimeType.startsWith("image/")) return "image";
-            if (mimeType.startsWith("video/")) return "video";
-            if (mimeType.startsWith("audio/")) return "audio";
+            if (mimeType.startsWith("image/")) return "img";
+            if (mimeType.startsWith("video/")) return "vid";
+            if (mimeType.startsWith("audio/")) return "vn";
             const msgType = Object.keys(quotedMsg?.message || {})[0] || "";
-            if (msgType === "imageMessage") return "image";
-            if (msgType === "videoMessage") return "video";
-            if (msgType === "audioMessage" || msgType === "pttMessage") return "audio";
+            if (msgType === "imageMessage") return "img";
+            if (msgType === "videoMessage") return "vid";
+            if (msgType === "audioMessage" || msgType === "pttMessage") return "vn";
             return null;
         };
 
@@ -160,82 +233,47 @@ cmd({
             Object.keys(quotedMsg?.message || {})[0] === "pttMessage" ||
             false;
 
-        // ── Broadcast to every group ────────────────────────────────────────
-        let successCount = 0;
-        let failCount = 0;
+        const content = {};
 
-        for (const group of allGroups) {
-            const groupId = group.id;
-
-            try {
-                const mentionedJid = (group.participants || []).map(p => p.id);
-
-                if (mediaBuffer) {
-                    const msgType = getMsgType();
-                    const contextInfo = { isGroupStatus: true, mentionedJid };
-                    let messageContent = {};
-
-                    if (msgType === "image") {
-                        messageContent = {
-                            image: mediaBuffer,
-                            caption: caption || "",
-                            mimetype: mimeType || "image/jpeg",
-                            contextInfo
-                        };
-                    } else if (msgType === "video") {
-                        messageContent = {
-                            video: mediaBuffer,
-                            caption: caption || "",
-                            mimetype: mimeType || "video/mp4",
-                            contextInfo
-                        };
-                    } else if (msgType === "audio") {
-                        messageContent = {
-                            audio: mediaBuffer,
-                            mimetype: isPTT ? "audio/ogg; codecs=opus" : "audio/mp4",
-                            ptt: isPTT,
-                            contextInfo
-                        };
-                    } else {
-                        failCount++;
-                        continue;
-                    }
-
-                    await conn.sendMessage(groupId, messageContent);
-                } else {
-                    // Text status with color/bg (same mechanism as the single-group status command)
-                    const coloredMsg = buildColoredTextMessage(caption, flags.textColor, flags.bgColor, mentionedJid);
-                    await conn.relayMessage(groupId, coloredMsg, {
-                        messageId: generateMessageID()
-                    });
-                }
-
-                successCount++;
-
-                // Small delay between sends to avoid rate-limiting
-                await new Promise(r => setTimeout(r, 800));
-
-            } catch (groupErr) {
-                console.error(`Broadcast failed for group ${groupId}:`, groupErr.message);
-                failCount++;
+        if (quotedMsg) {
+            const buffer = await quotedMsg.download();
+            if (!buffer) {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                return reply("❌ Failed to download the media. Please try again.");
             }
+
+            const msgType = getMsgType();
+
+            if (msgType === "img") {
+                content.image = buffer;
+                if (caption) content.caption = caption;
+                content.mimetype = mimeType || 'image/jpeg';
+            } else if (msgType === "vid") {
+                content.video = buffer;
+                if (caption) content.caption = caption;
+                content.mimetype = mimeType || 'video/mp4';
+            } else if (msgType === "vn") {
+                content.audio = buffer;
+                content.mimetype = isPTT ? 'audio/ogg; codecs=opus' : (mimeType || 'audio/mp4');
+                content.ptt = isPTT;
+            } else {
+                await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+                return reply("❌ Unsupported media type.");
+            }
+        } else {
+            content.text = caption || ' ';
+            if (flags.textColor) content.textColor = flags.textColor;
+            if (flags.bgColor) content.backgroundColor = flags.bgColor;
         }
 
-        // ── Done — send summary ─────────────────────────────────────────────
-        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+        await sendGroupStatus(conn, from, content);
 
-        reply(
-            `✅ *Broadcast Complete!*\n\n` +
-            `📡 *Total Groups:* ${allGroups.length}\n` +
-            `✔️ *Sent Successfully:* ${successCount}\n` +
-            `❌ *Failed:* ${failCount}\n\n` +
-            `━━━━━━━━━━━━━━━━━━\n` +
-            `~ *ADEEL-MD*`
-        );
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+        reply(`✅ *Status posted to this group!*\n\n━━━━━━━━━━━━━━━━━━\n~ *ADEEL-MD*`);
 
     } catch (error) {
-        console.error("BroadcastStatus Error:", error);
-        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
+        console.error("GroupStatus Error:", error);
+        try { await conn.sendMessage(from, { react: { text: "❌", key: mek.key } }); } catch {}
         reply(`❌ *Error:* ${error.message}`);
     }
 });
