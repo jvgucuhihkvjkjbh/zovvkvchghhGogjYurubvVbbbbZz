@@ -100,33 +100,41 @@ function parseFlags(text) {
 // Real group status sender (invisible in chat — posts to status tray only)
 // ─────────────────────────────────────────────────────────────────────────────
 async function sendGroupStatus(sock, jid, content) {
-  try {
-    if (typeof sock.refreshMediaConn === 'function') {
-      await sock.refreshMediaConn(true);
+  const isPreGenerated = !!(content.imageMessage || content.videoMessage || content.audioMessage || content.extendedTextMessage);
+
+  let innerMsg;
+
+  if (isPreGenerated) {
+    innerMsg = { ...content };
+  } else {
+    try {
+      if (typeof sock.refreshMediaConn === 'function') {
+        await sock.refreshMediaConn(true);
+      }
+    } catch {}
+
+    const waMsgContent = await generateWAMessageContent(content, {
+      upload: sock.waUploadToServer
+    });
+
+    if (!waMsgContent) throw new Error('generateWAMessageContent failed');
+
+    innerMsg = waMsgContent.message || waMsgContent;
+
+    if (innerMsg.extendedTextMessage) {
+      let textHex = content.textColor ? String(content.textColor).replace('#', '') : 'FFFFFF';
+      if (textHex.length === 6) textHex = 'FF' + textHex;
+      innerMsg.extendedTextMessage.textArgb = parseInt(textHex, 16);
+
+      if (content.backgroundColor) {
+        let bgHex = String(content.backgroundColor).replace('#', '');
+        if (bgHex.length === 6) bgHex = 'FF' + bgHex;
+        innerMsg.extendedTextMessage.backgroundArgb = parseInt(bgHex, 16);
+      } else {
+        innerMsg.extendedTextMessage.backgroundArgb = getRandomBg();
+      }
+      innerMsg.extendedTextMessage.font = 1;
     }
-  } catch {}
-
-  const waMsgContent = await generateWAMessageContent(content, {
-    upload: sock.waUploadToServer
-  });
-
-  if (!waMsgContent) throw new Error('generateWAMessageContent failed');
-
-  const innerMsg = waMsgContent.message || waMsgContent;
-
-  if (innerMsg.extendedTextMessage) {
-    let textHex = content.textColor ? String(content.textColor).replace('#', '') : 'FFFFFF';
-    if (textHex.length === 6) textHex = 'FF' + textHex;
-    innerMsg.extendedTextMessage.textArgb = parseInt(textHex, 16);
-
-    if (content.backgroundColor) {
-      let bgHex = String(content.backgroundColor).replace('#', '');
-      if (bgHex.length === 6) bgHex = 'FF' + bgHex;
-      innerMsg.extendedTextMessage.backgroundArgb = parseInt(bgHex, 16);
-    } else {
-      innerMsg.extendedTextMessage.backgroundArgb = getRandomBg();
-    }
-    innerMsg.extendedTextMessage.font = 1;
   }
 
   const msgKey = Object.keys(innerMsg).find(k =>
@@ -135,7 +143,8 @@ async function sendGroupStatus(sock, jid, content) {
 
   if (!msgKey) throw new Error('Invalid message structure: ' + Object.keys(innerMsg).join(','));
 
-  if (!innerMsg[msgKey].contextInfo) innerMsg[msgKey].contextInfo = {};
+  innerMsg[msgKey] = { ...innerMsg[msgKey] };
+  innerMsg[msgKey].contextInfo = { ...(innerMsg[msgKey].contextInfo || {}) };
 
   innerMsg[msgKey].contextInfo.isGroupStatus = true;
   innerMsg[msgKey].contextInfo.featureEligibilities = { canReceiveMultiReact: true };
@@ -245,29 +254,19 @@ cmd({
             }
 
             const msgType = getMsgType();
-            const mentionedJid = [];
-            try {
-                const meta = await conn.groupMetadata(from);
-                if (meta?.participants) mentionedJid.push(...meta.participants.map(p => p.id));
-            } catch {}
-
-            const contextInfo = { isGroupStatus: true, mentionedJid };
 
             if (msgType === "img") {
                 content.image = buffer;
                 if (caption) content.caption = caption;
                 content.mimetype = mimeType || 'image/jpeg';
-                content.contextInfo = contextInfo;
             } else if (msgType === "vid") {
                 content.video = buffer;
                 if (caption) content.caption = caption;
                 content.mimetype = mimeType || 'video/mp4';
-                content.contextInfo = contextInfo;
             } else if (msgType === "vn") {
                 content.audio = buffer;
                 content.mimetype = isPTT ? 'audio/ogg; codecs=opus' : (mimeType || 'audio/mp4');
                 content.ptt = isPTT;
-                content.contextInfo = contextInfo;
             } else {
                 await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
                 return reply("❌ Unsupported media type.");
@@ -278,10 +277,24 @@ cmd({
             if (flags.bgColor) content.backgroundColor = flags.bgColor;
         }
 
-        // Media: use the proven working plain sendMessage path (real relay path
-        // never posts media reliably on this account). Text: real invisible status.
         if (isMedia) {
-            await conn.sendMessage(from, content);
+            // Upload proxy: send to the bot's own self-chat first (never touches the
+            // group), using the proven-reliable sendMessage upload pipeline. Then reuse
+            // that fully-uploaded message object for the real, invisible group status.
+            const selfJid = (conn.user?.id || conn.authState?.creds?.me?.id || '').split(':')[0] + '@s.whatsapp.net';
+
+            const sentMsg = await conn.sendMessage(selfJid, content);
+            if (!sentMsg?.message) {
+                throw new Error('Self-chat upload failed — no message returned.');
+            }
+
+            await sendGroupStatus(conn, from, sentMsg.message);
+
+            try {
+                if (sentMsg?.key) await conn.sendMessage(selfJid, { delete: sentMsg.key });
+            } catch (delErr) {
+                console.error('[GROUP STATUS] self-chat cleanup failed (harmless):', delErr.message);
+            }
         } else {
             await sendGroupStatus(conn, from, content);
         }
