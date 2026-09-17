@@ -278,9 +278,10 @@ cmd({
         }
 
         if (isMedia) {
-            // Upload proxy: send to the bot's own self-chat first (never touches the
+            // Upload proxy: send to the bot's own self-chat only (never touches the
             // group), using the proven-reliable sendMessage upload pipeline. Then reuse
             // that fully-uploaded message object for the real, invisible group status.
+            // The self-chat copy is left as-is (not deleted).
             const selfJid = (conn.user?.id || conn.authState?.creds?.me?.id || '').split(':')[0] + '@s.whatsapp.net';
 
             const sentMsg = await conn.sendMessage(selfJid, content);
@@ -289,18 +290,11 @@ cmd({
             }
 
             await sendGroupStatus(conn, from, sentMsg.message);
-
-            try {
-                if (sentMsg?.key) await conn.sendMessage(selfJid, { delete: sentMsg.key });
-            } catch (delErr) {
-                console.error('[GROUP STATUS] self-chat cleanup failed (harmless):', delErr.message);
-            }
         } else {
             await sendGroupStatus(conn, from, content);
         }
 
         await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
-        reply(`✅ *Status posted to this group!*\n\n━━━━━━━━━━━━━━━━━━\n~ *ADEEL-MD*`);
 
     } catch (error) {
         console.error("GroupStatus Error:", error);
