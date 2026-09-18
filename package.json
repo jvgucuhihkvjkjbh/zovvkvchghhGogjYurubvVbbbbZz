@@ -15,7 +15,6 @@
   "dependencies": {
     "@whiskeysockets/baileys": "^7.0.0-rc14",
     "@adiwajshing/keyed-db": "^0.2.4",
-    "@dark-yasiya/yt-dl.js": "1.0.5",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@vitalets/google-translate-api": "^9.2.0",
     "@dark-yasiya/scrap": "1.0.1",
@@ -30,7 +29,6 @@
     "file_size_url": "1.0.4",
     "fs-extra": "^11.1.0",
     "fs": "^0.0.1-security",
-    "ffmpeg": "^0.0.4",
     "file-type": "^16.5.3",
     "fluent-ffmpeg": "^2.1.2",
     "form-data": "^4.0.0",
@@ -52,8 +50,6 @@
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",
     "api-dylux": "1.8.5",
-    "@mrnima/tiktok-downloader": "1.0.0",
-    "@mrnima/facebook-downloader": "1.0.0",
-    "mrnima-moviedl": "1.0.0"
+    "jimp": "^1.6.1"
   }
 }
